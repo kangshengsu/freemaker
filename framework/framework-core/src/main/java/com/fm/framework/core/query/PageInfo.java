@@ -11,7 +11,6 @@ import java.util.List;
  * @author clufeng
  */
 @Data
-
 public class PageInfo<E> implements Page<E> {
 
     /**
@@ -48,4 +47,13 @@ public class PageInfo<E> implements Page<E> {
     public int getTotalPages() {
         return getPageSize() == 0 ? 1 : (int) Math.ceil((double) total / (double) getPageSize());
     }
+    @Override
+    public int getTotal() {
+        return total;
+    }
+    @Override
+    public List<E> getData() {
+        return (List<E>) data;
+    }
+
 }
