@@ -12,6 +12,7 @@ import org.springframework.context.annotation.*;
 @Configuration
 @SpringBootApplication(scanBasePackages = {"com.fm.framework"})
 @EnableAspectJAutoProxy
+@MapperScan(basePackages = "com.fm.framework")
 public class FrameworkApplication extends SpringBootServletInitializer {
     public static void main(String[] args) {
         SpringApplication.run(FrameworkApplication.class, args);
