@@ -69,9 +69,9 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
     }
 
     protected Long genId(T model) {
-        if(Objects.nonNull(idGenerator)) {
+        /*if(Objects.nonNull(idGenerator)) {
             return idGenerator.gen(SqlHelper.table(model.getClass()).getTableName());
-        }
+        }*/
         return null;
     }
 
