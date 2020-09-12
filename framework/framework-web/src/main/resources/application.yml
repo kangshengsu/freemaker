@@ -1,6 +1,0 @@
-# Application
-spring:
-  application:
-    name: framework
-  profiles:
-    active: dev
