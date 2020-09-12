@@ -1,0 +1,6 @@
+# Application
+spring:
+  application:
+    name: api-web
+  profiles:
+    active: dev
