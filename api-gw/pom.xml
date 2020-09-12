@@ -20,6 +20,10 @@
             <groupId>com.freemaker</groupId>
             <artifactId>framework-web</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.freemaker</groupId>
+            <artifactId>business-base</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
