@@ -12,6 +12,7 @@
         <module>framework</module>
         <module>api-gw</module>
         <module>api-web</module>
+        <module>business-base</module>
     </modules>
 
 
