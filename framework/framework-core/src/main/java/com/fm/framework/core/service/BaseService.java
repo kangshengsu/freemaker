@@ -18,6 +18,7 @@ import com.fm.framework.core.query.QueryItem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -69,9 +70,9 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
     }
 
     protected Long genId(T model) {
-        /*if(Objects.nonNull(idGenerator)) {
+        if(Objects.nonNull(idGenerator)) {
             return idGenerator.gen(SqlHelper.table(model.getClass()).getTableName());
-        }*/
+        }
         return null;
     }
 

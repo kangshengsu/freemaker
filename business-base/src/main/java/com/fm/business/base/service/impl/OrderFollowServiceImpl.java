@@ -7,7 +7,7 @@
 package com.fm.business.base.service.impl;
 
 
-import com.fm.business.base.mapper.IOrderFollowMapper;
+import com.fm.business.base.dao.IOrderFollowMapper;
 import com.fm.business.base.model.OrderFollow;
 import com.fm.business.base.service.IOrderFollowService;
 import org.springframework.stereotype.Service;

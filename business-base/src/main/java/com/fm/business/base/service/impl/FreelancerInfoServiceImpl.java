@@ -7,7 +7,7 @@
 package com.fm.business.base.service.impl;
 
 
-import com.fm.business.base.mapper.IFreelancerInfoMapper;
+import com.fm.business.base.dao.IFreelancerInfoMapper;
 import com.fm.business.base.model.FreelancerInfo;
 import com.fm.business.base.service.IFreelancerInfoService;
 import org.springframework.stereotype.Service;

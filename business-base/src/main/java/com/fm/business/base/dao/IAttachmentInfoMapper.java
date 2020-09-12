@@ -1,23 +1,23 @@
 /**
- * @filename:BdJobCateDao 2020年09月11日
+ * @filename:AttachmentInfoDao 2020年09月11日
  * @project HowWork  V1.0
  * Copyright(c) 2020 LiuDuo Co. Ltd. 
  * All right reserved. 
  */
-package com.fm.business.base.mapper;
+package com.fm.business.base.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.fm.business.base.model.BdJobCate;
+import com.fm.business.base.model.AttachmentInfo;
 import org.apache.ibatis.annotations.Mapper;
 
 /**   
- * @Description:(岗位数据访问层)
+ * @Description:(附件数据访问层)
  *
  * @version: V1.0
  * @author: LiuDuo
  * 
  */
 @Mapper
-public interface IBdJobCateMapper extends BaseMapper<BdJobCate> {
+public interface IAttachmentInfoMapper extends BaseMapper<AttachmentInfo> {
 	
 }

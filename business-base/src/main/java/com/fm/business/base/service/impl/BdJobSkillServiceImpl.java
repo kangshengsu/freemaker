@@ -7,7 +7,7 @@
 package com.fm.business.base.service.impl;
 
 
-import com.fm.business.base.mapper.IBdJobSkillMapper;
+import com.fm.business.base.dao.IBdJobSkillMapper;
 import com.fm.business.base.model.BdJobSkill;
 import com.fm.business.base.service.IBdJobSkillService;
 import org.springframework.stereotype.Service;

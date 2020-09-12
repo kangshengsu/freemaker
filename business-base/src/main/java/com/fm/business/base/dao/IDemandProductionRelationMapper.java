@@ -4,7 +4,7 @@
  * Copyright(c) 2020 LiuDuo Co. Ltd. 
  * All right reserved. 
  */
-package com.fm.business.base.mapper;
+package com.fm.business.base.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.fm.business.base.model.DemandProductionRelation;

@@ -7,7 +7,7 @@
 package com.fm.business.base.service.impl;
 
 
-import com.fm.business.base.mapper.IProductionInfoMapper;
+import com.fm.business.base.dao.IProductionInfoMapper;
 import com.fm.business.base.model.ProductionInfo;
 import com.fm.business.base.service.IProductionInfoService;
 import com.fm.framework.core.service.BaseService;

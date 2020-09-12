@@ -6,7 +6,7 @@
  */
 package com.fm.business.base.service.impl;
 
-import com.fm.business.base.mapper.IProductionSkillRelationMapper;
+import com.fm.business.base.dao.IProductionSkillRelationMapper;
 import com.fm.business.base.model.ProductionSkillRelation;
 import com.fm.business.base.service.IProductionSkillRelationService;
 import org.springframework.stereotype.Service;

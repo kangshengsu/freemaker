@@ -7,12 +7,11 @@
 package com.fm.business.base.service.impl;
 
 
-import com.fm.business.base.mapper.IOrderInfoDetailMapper;
+import com.fm.business.base.dao.IOrderInfoDetailMapper;
 import com.fm.business.base.model.OrderInfoDetail;
 import com.fm.business.base.service.IOrderInfoDetailService;
 import org.springframework.stereotype.Service;
 import com.fm.framework.core.service.BaseService;
-import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.slf4j.Slf4j;
 
 /**   

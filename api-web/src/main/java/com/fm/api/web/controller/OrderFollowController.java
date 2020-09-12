@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderFollowController extends BaseController<OrderFollow, OrderFollowVO> {
 
     @Autowired
-    @Qualifier("orderFollowService")
     private IOrderFollowService orderFollowService;
 
     @RequestMapping(value = "create",method = RequestMethod.POST)

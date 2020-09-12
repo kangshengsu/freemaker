@@ -6,7 +6,7 @@
  */
 package com.fm.business.base.service.impl;
 
-import com.fm.business.base.mapper.IOrderInfoMapper;
+import com.fm.business.base.dao.IOrderInfoMapper;
 import com.fm.business.base.model.OrderInfo;
 import com.fm.business.base.service.IOrderInfoService;
 import org.springframework.stereotype.Service;

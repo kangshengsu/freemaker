@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class EmployerInfoController extends BaseController<EmployerInfo, EmployerInfoVO> {
 
     @Autowired
-    @Qualifier("employerInfoService")
     private IEmployerInfoService employerInfoService;
 
     @RequestMapping(value = "create",method = RequestMethod.POST)

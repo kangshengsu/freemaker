@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class FreelancerInfoController extends BaseController<FreelancerInfo, FreelancerInfoVO> {
 
     @Autowired
-    @Qualifier("freelancerInfoService")
     private IFreelancerInfoService freelancerInfoService;
 
     @RequestMapping(value = "create",method = RequestMethod.POST)

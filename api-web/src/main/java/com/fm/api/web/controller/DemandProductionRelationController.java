@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class DemandProductionRelationController extends BaseController<DemandProductionRelation, DemandProductionRelationVO> {
 
     @Autowired
-    @Qualifier("demandProductionRelationService")
     private IDemandProductionRelationService demandProductionRelationService;
 
     @RequestMapping(value = "create",method = RequestMethod.POST)

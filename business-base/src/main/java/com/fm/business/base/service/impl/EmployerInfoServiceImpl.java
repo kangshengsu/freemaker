@@ -7,7 +7,7 @@
 package com.fm.business.base.service.impl;
 
 
-import com.fm.business.base.mapper.IEmployerInfoMapper;
+import com.fm.business.base.dao.IEmployerInfoMapper;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.service.IEmployerInfoService;
 import org.springframework.stereotype.Service;

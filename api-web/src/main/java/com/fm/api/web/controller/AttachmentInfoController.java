@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AttachmentInfoController extends BaseController<AttachmentInfo, AttachmentInfoVO> {
 
     @Autowired
-    @Qualifier("attachmentInfoService")
     private IAttachmentInfoService attachmentInfoService;
 
     @RequestMapping(value = "create",method = RequestMethod.POST)

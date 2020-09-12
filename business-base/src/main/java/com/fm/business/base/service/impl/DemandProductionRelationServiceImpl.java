@@ -6,12 +6,11 @@
  */
 package com.fm.business.base.service.impl;
 
-import com.fm.business.base.mapper.IDemandProductionRelationMapper;
+import com.fm.business.base.dao.IDemandProductionRelationMapper;
 import com.fm.business.base.model.DemandProductionRelation;
 import com.fm.business.base.service.IDemandProductionRelationService;
 import org.springframework.stereotype.Service;
 import com.fm.framework.core.service.BaseService;
-import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.slf4j.Slf4j;
 
 /**   

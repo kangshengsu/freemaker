@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> {
 
     @Autowired
-    @Qualifier("bdJobCateService")
     private IBdJobCateService bdJobCateService;
 
     @RequestMapping(value = "create",method = RequestMethod.POST)

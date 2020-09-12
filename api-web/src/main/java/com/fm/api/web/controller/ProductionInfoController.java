@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductionInfoController extends BaseController<ProductionInfo, ProductionInfoVO> {
 
     @Autowired
-    @Qualifier("productionInfoService")
     private IProductionInfoService productionInfoService;
 
     @RequestMapping(value = "create",method = RequestMethod.POST)

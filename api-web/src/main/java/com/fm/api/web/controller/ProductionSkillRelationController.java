@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductionSkillRelationController extends BaseController<ProductionSkillRelation, ProductionSkillRelationVO> {
 
     @Autowired
-    @Qualifier("productionSkillRelationService")
     private IProductionSkillRelationService productionSkillRelationService;
 
     @RequestMapping(value = "create",method = RequestMethod.POST)

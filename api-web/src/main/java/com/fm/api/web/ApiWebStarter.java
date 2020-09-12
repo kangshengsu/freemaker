@@ -11,8 +11,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
  * @version 1.0.0
  **/
 @SpringBootApplication(scanBasePackages = "com.fm")
-@EnableAspectJAutoProxy
-@MapperScan(basePackages = "com.fm")
+@MapperScan("com.fm.**.dao")
 public class ApiWebStarter {
 
     public static void main(String[] args) {

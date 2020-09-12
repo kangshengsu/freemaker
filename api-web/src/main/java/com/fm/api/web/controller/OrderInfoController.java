@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> {
 
     @Autowired
-    @Qualifier("orderInfoService")
     private IOrderInfoService orderInfoService;
 
     @RequestMapping(value = "create",method = RequestMethod.POST)

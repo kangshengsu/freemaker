@@ -7,7 +7,7 @@
 package com.fm.business.base.service.impl;
 
 
-import com.fm.business.base.mapper.IAttachmentInfoMapper;
+import com.fm.business.base.dao.IAttachmentInfoMapper;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.service.IAttachmentInfoService;
 import org.springframework.stereotype.Service;
