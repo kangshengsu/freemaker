@@ -9,24 +9,15 @@ spring:
     password: how_work_test
 
 # springboot监控
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
 
 mybatis-plus:
-  mapper-locations: classpath*:mapper/*.xml
-  #typeAliasesPackage: com.lxg.springboot.dao.mybatisplus
   configuration:
   #这个配置会将执行的sql打印出来，在开发或测试的时候可以用
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     #主键类型  0:"数据库ID自增", 1:"用户输入ID",2:"全局唯一ID (数字类型唯一ID)", 3:"全局唯一ID UUID,"该类型为未设置主键类型,5, "字符串全局唯一ID"";
-    id-type: 0
-    db-column-underline: true
-    refresh-mapper: true
     db-config:
       logic-delete-field: isDelete
       logic-delete-value: 1 # 逻辑已删除值(默认为 1)
       logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
+      id-type: input
