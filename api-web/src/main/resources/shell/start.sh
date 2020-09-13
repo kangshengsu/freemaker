@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-LOG_DIR =`pwd`/logs
+LOG_DIR=`pwd`/logs
 
 echo "日志目录：${LOG_DIR}"
 
 mkdir -p ${LOG_DIR}
 
-JAR_NAME = `ls | grep api-web-*.jar`
+JAR_NAME=`ls | grep api-web-*.jar`
 
 echo "jar名称：${JAR_NAME}"
 
