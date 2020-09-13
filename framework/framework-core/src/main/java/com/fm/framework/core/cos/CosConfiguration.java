@@ -24,8 +24,7 @@ public class CosConfiguration {
         COSCredentials cosCredentials = new BasicCOSCredentials(properties.getSecretId(), properties.getSecretKey());
         Region region = new Region(properties.getRegion());
         ClientConfig clientConfig = new ClientConfig(region);
-        //https
-        //clientConfig.setHttpProtocol(HttpProtocol.https);
+        clientConfig.setHttpProtocol(HttpProtocol.https);
         return new COSClient(cosCredentials, clientConfig);
     }
 
