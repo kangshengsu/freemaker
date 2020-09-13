@@ -1,10 +1,10 @@
 /**
- * @filename:ProductionReviewInfo 2020年09月11日
+ * @filename:ProductionSkillRelation 2020年09月11日
  * @project HowWork  V1.0
  * Copyright(c) 2020 LiuDuo Co. Ltd. 
  * All right reserved. 
  */
-package com.fm.business.base.model;
+package com.fm.business.base.model.production;
 
 import com.fm.framework.core.model.BaseModel;
 import lombok.Data;
@@ -12,14 +12,14 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**   
- * @Description:(作品审核实体类)
+ * @Description:(作品技能关系实体类)
  * 
  * @version: V1.0
  * @author: LiuDuo
  * 
  */
 @Data
-public class ProductionReviewInfo extends BaseModel implements Serializable {
+public class ProductionSkillRelation extends BaseModel implements Serializable {
 
 	private static final long serialVersionUID = 1599831722595L;
 	
@@ -36,21 +36,9 @@ public class ProductionReviewInfo extends BaseModel implements Serializable {
 
 
     /**
-    * 审核人
+    * 技能编码
     **/
-	private String reviewerCode;
-
-
-    /**
-    * 审核意见
-    **/
-	private String reviewerOpinion;
-
-
-    /**
-    * 状态（10-未审核，20-审核未通过，30-审核通过）
-    **/
-	private Integer status;
+	private String skillCode;
 
 
     /**
@@ -75,6 +63,7 @@ public class ProductionReviewInfo extends BaseModel implements Serializable {
     * 修改人
     **/
 	private String updateUser;
+
 
 
 

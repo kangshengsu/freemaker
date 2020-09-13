@@ -4,19 +4,18 @@
 * Copyright(c) 2020 LiuDuo Co. Ltd.
 * All right reserved.
 */
-package com.fm.api.web.controller;
+package com.fm.api.web.controller.production;
 
-import com.fm.business.base.model.ProductionInfo;
+import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.framework.core.query.Page;
-import com.fm.business.base.service.IProductionInfoService;
+import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
-import com.fm.api.web.vo.ProductionInfoVO;
+import com.fm.api.web.vo.production.ProductionInfoVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 */
 
 @RestController
-@RequestMapping("/productionInfo")
+@RequestMapping("/production/productionInfo")
 public class ProductionInfoController extends BaseController<ProductionInfo, ProductionInfoVO> {
 
     @Autowired

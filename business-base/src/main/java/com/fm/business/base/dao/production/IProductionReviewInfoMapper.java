@@ -4,10 +4,10 @@
  * Copyright(c) 2020 LiuDuo Co. Ltd. 
  * All right reserved. 
  */
-package com.fm.business.base.dao;
+package com.fm.business.base.dao.production;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.fm.business.base.model.ProductionReviewInfo;
+import com.fm.business.base.model.production.ProductionReviewInfo;
 import org.apache.ibatis.annotations.Mapper;
 
 /**   
