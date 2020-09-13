@@ -16,6 +16,7 @@ spring:
   redis:
       host: 172.21.16.17
       password: HowWork!
+      database: 1
 
 mybatis-plus:
   configuration:
