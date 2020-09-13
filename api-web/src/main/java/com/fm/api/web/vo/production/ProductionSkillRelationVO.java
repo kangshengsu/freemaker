@@ -4,7 +4,7 @@
  * Copyright(c) 2020 LiuDuo Co. Ltd. 
  * All right reserved. 
  */
-package com.fm.api.web.vo;
+package com.fm.api.web.vo.production;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.framework.web.VO;

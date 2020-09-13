@@ -4,12 +4,12 @@
  * Copyright(c) 2018 LiuDuo Co. Ltd. 
  * All right reserved. 
  */
-package com.fm.business.base.service.impl;
+package com.fm.business.base.service.production.impl;
 
 
-import com.fm.business.base.dao.IProductionInfoMapper;
-import com.fm.business.base.model.ProductionInfo;
-import com.fm.business.base.service.IProductionInfoService;
+import com.fm.business.base.dao.production.IProductionInfoMapper;
+import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.service.BaseService;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
