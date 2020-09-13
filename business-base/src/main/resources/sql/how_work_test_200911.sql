@@ -358,3 +358,35 @@ CREATE TABLE `production_skill_relation` (
 -- ----------------------------
 -- Records of production_skill_relation
 -- ----------------------------
+
+-- ----------------------------
+-- Table structure for display_config
+-- ----------------------------
+DROP TABLE IF EXISTS `display_config`;
+CREATE  TABLE display_config
+(
+  id            BIGINT AUTO_INCREMENT
+  COMMENT '逻辑主键' PRIMARY KEY,
+  display_code          VARCHAR(32)         NOT NULL
+  COMMENT '绑定资源编码',
+  display_type          TINYINT(4)         NOT NULL
+  COMMENT '绑定资源类型（1-领域，2-技能，3-作品）',
+  expired_time  DATETIME            NOT NULL
+  COMMENT '过期时间',
+  create_time   DATETIME            NOT NULL
+  COMMENT '创建时间',
+  update_time   DATETIME            NOT NULL ON UPDATE CURRENT_TIMESTAMP
+  COMMENT '修改时间',
+  create_user   VARCHAR(50)         NOT NULL
+  COMMENT '创建人',
+  update_user   VARCHAR(50)         NOT NULL
+  COMMENT '修改人',
+  is_deleted    TINYINT DEFAULT '0' NOT NULL
+  COMMENT '删除标记（0-否，1-是）'
+)
+  COMMENT '展位配置表'
+  ENGINE = InnoDB
+  CHARSET = utf8;
+-- ----------------------------
+-- Records of display_config
+-- ----------------------------
