@@ -36,6 +36,6 @@ public class RedisTest {
         RBucket<Object> bucket = redissonClient.getBucket("haha");
         bucket.set("123");
         RBucket<Object> haha = redissonClient.getBucket("haha");
-        System.out.println(haha.get());
+        Assert.assertEquals("123",haha.get());
     }
 }
