@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 LOG_DIR=`pwd`/logs
 
 echo "日志目录：${LOG_DIR}"
