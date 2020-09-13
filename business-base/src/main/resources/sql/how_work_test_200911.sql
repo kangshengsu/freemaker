@@ -370,7 +370,7 @@ CREATE  TABLE display_config
   display_code          VARCHAR(32)         NOT NULL
   COMMENT '绑定资源编码',
   display_type          TINYINT(4)         NOT NULL
-  COMMENT '绑定资源类型（1-领域，2-技能，3-作品）',
+  COMMENT '绑定资源类型（1-领域，2-技能，3-首页作品 4-推荐作品，5-优选作品...）',
   expired_time  DATETIME            NOT NULL
   COMMENT '过期时间',
   create_time   DATETIME            NOT NULL
