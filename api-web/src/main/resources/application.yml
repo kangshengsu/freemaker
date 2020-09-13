@@ -19,7 +19,7 @@ mybatis-plus:
 wx:
   miniapp:
     appid: wxebd3588df98ae1a7
-    secret: xxx
+    secret: c88bd845c78c0ddb15a8511f12096022
     token: 123456
     aesKey: yyyy
     msgDataFormat: JSON

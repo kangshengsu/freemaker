@@ -45,7 +45,7 @@
         <weixin.version>3.9.0</weixin.version>
         <swagger.version>2.6.1</swagger.version>
         <guava.version>18.0</guava.version>
-
+        <commons-io.version>2.8.0</commons-io.version>
     </properties>
 
     <dependencies>
