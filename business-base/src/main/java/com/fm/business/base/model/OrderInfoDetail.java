@@ -95,12 +95,6 @@ public class OrderInfoDetail extends BaseModel implements Serializable {
 	private String updateUser;
 
 
-    /**
-    * 删除标记（0-否，1-是）
-    **/
-	private Integer isDeleted;
-
-
 
     /**
      * 获取主键方法，主键整体平台定义成Long数据类型，方便数据的整体插入性能

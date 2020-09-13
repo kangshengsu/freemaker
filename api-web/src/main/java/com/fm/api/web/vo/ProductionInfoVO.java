@@ -98,10 +98,6 @@ public class ProductionInfoVO extends VO implements Serializable {
 	private String updateUser;
 
 
-    /**
-    * 删除标记（0-否，1-是）
-    **/
-	private Integer isDeleted;
 
 
 
