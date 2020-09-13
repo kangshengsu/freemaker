@@ -1,19 +1,19 @@
 /**
-* @filename:OrderInfoDetailController 2020年09月11日
+* @filename:OrderFollowController 2020年09月11日
 * @project HowWork  V1.0
 * Copyright(c) 2020 LiuDuo Co. Ltd.
 * All right reserved.
 */
-package com.fm.api.web.controller;
+package com.fm.api.web.controller.order;
 
-import com.fm.business.base.model.OrderInfoDetail;
+import com.fm.business.base.model.OrderFollow;
 import com.fm.framework.core.query.Page;
-import com.fm.business.base.service.IOrderInfoDetailService;
+import com.fm.business.base.service.IOrderFollowService;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
-import com.fm.api.web.vo.OrderInfoDetailVO;
+import com.fm.api.web.vo.OrderFollowVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
 *
-* <p>说明： 订单详情API接口层</p>
+* <p>说明： 订单流水API接口层</p>
 * @version: V1.0
 * @author: LiuDuo
 * @time    2020年09月11日
@@ -32,14 +32,14 @@ import org.springframework.web.bind.annotation.RestController;
 */
 
 @RestController
-@RequestMapping("/orderInfoDetail")
-public class OrderInfoDetailController extends BaseController<OrderInfoDetail, OrderInfoDetailVO> {
+@RequestMapping("/order/orderFollow")
+public class OrderFollowController extends BaseController<OrderFollow, OrderFollowVO> {
 
     @Autowired
-    private IOrderInfoDetailService orderInfoDetailService;
+    private IOrderFollowService orderFollowService;
 
     @RequestMapping(value = "create",method = RequestMethod.POST)
-    public ApiResponse<Boolean> create(@RequestBody OrderInfoDetailVO form) {
+    public ApiResponse<Boolean> create(@RequestBody OrderFollowVO form) {
 
         return super.create(form);
 
@@ -53,34 +53,34 @@ public class OrderInfoDetailController extends BaseController<OrderInfoDetail, O
     }
 
     @RequestMapping(value = "update",method = RequestMethod.POST)
-    public ApiResponse<Boolean> update(@RequestBody OrderInfoDetailVO form) {
+    public ApiResponse<Boolean> update(@RequestBody OrderFollowVO form) {
 
         return super.update(form);
 
     }
 
     @RequestMapping(value = "list",method = RequestMethod.POST)
-    public ApiResponse<Page<OrderInfoDetailVO>> list(@RequestBody QueryRequest queryRequest) {
+    public ApiResponse<Page<OrderFollowVO>> list(@RequestBody QueryRequest queryRequest) {
 
         return super.list(queryRequest);
     }
 
 
     @Override
-    protected Service<OrderInfoDetail> service() {
-        return orderInfoDetailService;
+    protected Service<OrderFollow> service() {
+        return orderFollowService;
     }
 
     @Override
-    protected OrderInfoDetail convert(OrderInfoDetailVO form) {
-        OrderInfoDetail model = new OrderInfoDetail();
+    protected OrderFollow convert(OrderFollowVO form) {
+        OrderFollow model = new OrderFollow();
         BeanUtils.copyProperties(form,model);
         return model;
     }
 
     @Override
-    protected OrderInfoDetailVO convert(OrderInfoDetail model) {
-        OrderInfoDetailVO form = new OrderInfoDetailVO();
+    protected OrderFollowVO convert(OrderFollow model) {
+        OrderFollowVO form = new OrderFollowVO();
         BeanUtils.copyProperties(model,form);
         return form;
     }

@@ -1,19 +1,19 @@
 /**
-* @filename:OrderInfoController 2020年09月11日
+* @filename:OrderInfoDetailController 2020年09月11日
 * @project HowWork  V1.0
 * Copyright(c) 2020 LiuDuo Co. Ltd.
 * All right reserved.
 */
-package com.fm.api.web.controller;
+package com.fm.api.web.controller.order;
 
-import com.fm.business.base.model.OrderInfo;
+import com.fm.business.base.model.OrderInfoDetail;
 import com.fm.framework.core.query.Page;
-import com.fm.business.base.service.IOrderInfoService;
+import com.fm.business.base.service.IOrderInfoDetailService;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
-import com.fm.api.web.vo.OrderInfoVO;
+import com.fm.api.web.vo.OrderInfoDetailVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
 *
-* <p>说明： 订单信息API接口层</p>
+* <p>说明： 订单详情API接口层</p>
 * @version: V1.0
 * @author: LiuDuo
 * @time    2020年09月11日
@@ -32,14 +32,14 @@ import org.springframework.web.bind.annotation.RestController;
 */
 
 @RestController
-@RequestMapping("/orderInfo")
-public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> {
+@RequestMapping("/order/orderInfoDetail")
+public class OrderInfoDetailController extends BaseController<OrderInfoDetail, OrderInfoDetailVO> {
 
     @Autowired
-    private IOrderInfoService orderInfoService;
+    private IOrderInfoDetailService orderInfoDetailService;
 
     @RequestMapping(value = "create",method = RequestMethod.POST)
-    public ApiResponse<Boolean> create(@RequestBody OrderInfoVO form) {
+    public ApiResponse<Boolean> create(@RequestBody OrderInfoDetailVO form) {
 
         return super.create(form);
 
@@ -53,34 +53,34 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
     }
 
     @RequestMapping(value = "update",method = RequestMethod.POST)
-    public ApiResponse<Boolean> update(@RequestBody OrderInfoVO form) {
+    public ApiResponse<Boolean> update(@RequestBody OrderInfoDetailVO form) {
 
         return super.update(form);
 
     }
 
     @RequestMapping(value = "list",method = RequestMethod.POST)
-    public ApiResponse<Page<OrderInfoVO>> list(@RequestBody QueryRequest queryRequest) {
+    public ApiResponse<Page<OrderInfoDetailVO>> list(@RequestBody QueryRequest queryRequest) {
 
         return super.list(queryRequest);
     }
 
 
     @Override
-    protected Service<OrderInfo> service() {
-        return orderInfoService;
+    protected Service<OrderInfoDetail> service() {
+        return orderInfoDetailService;
     }
 
     @Override
-    protected OrderInfo convert(OrderInfoVO form) {
-        OrderInfo model = new OrderInfo();
+    protected OrderInfoDetail convert(OrderInfoDetailVO form) {
+        OrderInfoDetail model = new OrderInfoDetail();
         BeanUtils.copyProperties(form,model);
         return model;
     }
 
     @Override
-    protected OrderInfoVO convert(OrderInfo model) {
-        OrderInfoVO form = new OrderInfoVO();
+    protected OrderInfoDetailVO convert(OrderInfoDetail model) {
+        OrderInfoDetailVO form = new OrderInfoDetailVO();
         BeanUtils.copyProperties(model,form);
         return form;
     }
