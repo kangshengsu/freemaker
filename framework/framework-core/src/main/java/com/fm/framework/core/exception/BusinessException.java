@@ -10,9 +10,9 @@ import lombok.Getter;
 @Getter
 public class BusinessException extends RuntimeException {
 
-    private final String errorCode;
+    private final int errorCode;
 
-    public BusinessException(String errorCode, String message) {
+    public BusinessException(int errorCode, String message) {
         super(message);
         this.errorCode = errorCode;
     }

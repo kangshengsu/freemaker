@@ -1,7 +1,7 @@
 package com.fm.api.gw.controller;
 
 import com.fm.api.gw.service.WxService;
-import com.fm.api.gw.vo.UserInfoVO;
+import com.fm.api.gw.vo.UserVO;
 import com.fm.api.gw.vo.WeChatLoginVO;
 import com.fm.framework.web.response.ApiResponse;
 import com.fm.framework.web.response.ApiStatus;
@@ -14,27 +14,28 @@ import javax.annotation.Resource;
 @Slf4j
 @RestController
 @RequestMapping("/miniApp")
-public class MiniAppController  {
+public class MiniAppController {
 
     @Resource
     private WxService wxService;
 
     /**
      * 小程序登录
+     *
      * @param weChatLoginVO
      * @return
      */
-    @RequestMapping(value = "/login",method ={ RequestMethod.POST})
-    public ApiResponse getSessionKey(@RequestBody WeChatLoginVO weChatLoginVO){
-        UserInfoVO userInfo = wxService.getSessionInfo(weChatLoginVO);
+    @RequestMapping(value = "/login", method = {RequestMethod.POST})
+    public ApiResponse getSessionKey(@RequestBody WeChatLoginVO weChatLoginVO) {
+        UserVO userInfo = wxService.getSessionInfo(weChatLoginVO);
         return ApiResponse.of(ApiStatus.SUCCESS, userInfo);
     }
 
 
     @ApiOperation("小程序获取手机号")
-    @PostMapping(value = "/phoneLogin",consumes = "application/json;charset=UTF-8" )
-    public ApiResponse phoneLogin(@RequestBody WeChatLoginVO weChatLoginDTO){
-        UserInfoVO userInfo = null;
+    @PostMapping(value = "/phoneLogin", consumes = "application/json;charset=UTF-8")
+    public ApiResponse phoneLogin(@RequestBody WeChatLoginVO weChatLoginDTO) {
+        UserVO userInfo = null;
 //        try {
 //            userInfoDTO = minProgramService.phoneLogin(weChatLoginDTO);
 //        } catch (Exception e) {

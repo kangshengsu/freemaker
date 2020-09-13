@@ -2,10 +2,14 @@ package com.fm.api.gw.vo;
 
 import com.fm.framework.web.VO;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
-public class UserInfoVO  extends VO implements Serializable {
+@Setter
+@Getter
+public class UserVO extends VO implements Serializable {
 
     @ApiModelProperty(value = "用户编码", notes = "用户编码")
     private String userCode;
@@ -19,7 +23,12 @@ public class UserInfoVO  extends VO implements Serializable {
     @ApiModelProperty(value = "用户手机号", notes = "加密手机号")
     private String userMobile;
 
-    @ApiModelProperty(value = "openId", notes = "openID")
+    @ApiModelProperty(value = "openId", notes = "小程序openId")
     private String openId;
 
+    @ApiModelProperty(value = "sessionId", notes = "用户sessionId")
+    private String sessionId;
+
+    @ApiModelProperty(value = "unionid", notes = "小程序unionid")
+    private String unionid;
 }
