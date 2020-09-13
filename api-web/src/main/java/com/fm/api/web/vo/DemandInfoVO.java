@@ -6,6 +6,7 @@
  */
 package com.fm.api.web.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.framework.web.VO;
 import lombok.Data;
 import java.io.Serializable;
@@ -58,6 +59,7 @@ public class DemandInfoVO extends VO implements Serializable {
     /**
     * 期望交付时间
     **/
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 	private Date expectDeliveryTime;
 
 
@@ -112,12 +114,14 @@ public class DemandInfoVO extends VO implements Serializable {
     /**
     * 创建时间
     **/
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 	private Date createTime;
 
 
     /**
     * 修改时间
     **/
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 	private Date updateTime;
 
 
