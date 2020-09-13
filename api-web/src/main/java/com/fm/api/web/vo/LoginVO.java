@@ -1,5 +1,8 @@
 package com.fm.api.web.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fm.framework.web.VO;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -12,7 +15,7 @@ import java.io.Serializable;
  * @create: 2020-09-12 17:37
  **/
 @Data
-public class LoginVO implements Serializable{
+public class LoginVO extends VO implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
@@ -21,13 +24,37 @@ public class LoginVO implements Serializable{
      * 编码
      **/
     @NotBlank(message = "用户编码不能为空")
-    private String code;
-
-
+    private String username;
 
     /**
      * 密码
      **/
     @NotBlank(message = "密码不能为空")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
+    /**
+     * token
+     **/
+    private String token;
+
+    /**
+     * roles
+     **/
+    private String[] roles;
+
+    /**
+     * name
+     **/
+    private String name;
+
+    /**
+     * avatar
+     **/
+    private String avatar;
+
+    /**
+     * introduction
+     **/
+    private String introduction;
 }

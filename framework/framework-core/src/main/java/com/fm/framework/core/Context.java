@@ -10,6 +10,8 @@ public class Context {
 
     private static ThreadLocal<Long> loginUserThreadLocal = new ThreadLocal<>();
     private static ThreadLocal<String> loginUserCodeThreadLocal = new ThreadLocal<>();
+    private static ThreadLocal<String> loginUserNameThreadLocal = new ThreadLocal<>();
+    private static ThreadLocal<String> loginUserTokenThreadLocal = new ThreadLocal<>();
 
 
     public static void setCurrUser(Long user) {
@@ -24,12 +26,32 @@ public class Context {
         }
     }
 
+    public static void setCurrUserName(String userName) {
+        if(userName != null) {
+            loginUserNameThreadLocal.set(userName);
+        }
+    }
+
+    public static void setCurrUserToken(String userToken) {
+        if(userToken != null) {
+            loginUserTokenThreadLocal.set(userToken);
+        }
+    }
+
     public static Long getCurrUser() {
         return loginUserThreadLocal.get();
     }
 
     public static String getCurrUserCode() {
         return loginUserCodeThreadLocal.get();
+    }
+
+    public static String getCurrUserName() {
+        return loginUserNameThreadLocal.get();
+    }
+
+    public static String getCurrUserToken() {
+        return loginUserTokenThreadLocal.get();
     }
 
     public static void removeCurrUserCode() {
@@ -39,5 +61,13 @@ public class Context {
     public static void removeCurrUser() {
         loginUserThreadLocal.remove();
     }
+
+    public static void removeCurrName() {
+        loginUserNameThreadLocal.remove();
+    }
+    public static void removeCurrToken() {
+        loginUserTokenThreadLocal.remove();
+    }
+
 
 }

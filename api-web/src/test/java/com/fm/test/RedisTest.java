@@ -1,6 +1,8 @@
 package com.fm.test;
 
 import com.fm.api.web.ApiWebStarter;
+import com.fm.business.base.model.SysUser;
+import com.fm.framework.core.utils.JsonUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,5 +39,13 @@ public class RedisTest {
         bucket.set("123");
         RBucket<Object> haha = redissonClient.getBucket("haha");
         Assert.assertEquals("123",haha.get());
+    }
+    @Test
+    public void testObject(){
+        SysUser sysUser = new SysUser();
+        sysUser.setCode("123456");
+        redissonClient.getBucket("liuduo").set(sysUser,100,TimeUnit.SECONDS);
+        String cacheCode = ((SysUser)redissonClient.getBucket("liuduo").get()).getCode();
+        Assert.assertEquals("123456",cacheCode);
     }
 }

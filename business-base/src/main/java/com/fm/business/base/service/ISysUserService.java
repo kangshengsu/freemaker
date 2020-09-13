@@ -23,4 +23,5 @@ public interface ISysUserService extends Service<SysUser> {
      */
     SysUser findByCode(String code);
 
+
 }

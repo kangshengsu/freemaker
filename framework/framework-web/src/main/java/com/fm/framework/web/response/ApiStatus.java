@@ -16,7 +16,8 @@ public enum ApiStatus {
     LOCKED(423, "Locked"),
     INTERNAL_SERVER_ERROR(500, "Internal Server Error"),
     SERVICE_UNAVAILABLE(503, "Service Unavailable"),
-    SERVICE_EXCEPTION(50000, "请求异常，请检查参数后重试！");
+    SERVICE_EXCEPTION(50000, "请求异常，请检查参数后重试！"),
+    LOGIN_NOT_FOUND(9527, "请重新登录！");
 
     private final int code;
 
