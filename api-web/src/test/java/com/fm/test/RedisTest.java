@@ -4,6 +4,7 @@ import com.fm.api.web.ApiWebStarter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
 import org.redisson.api.RSetCache;
 import org.redisson.api.RedissonClient;
@@ -26,9 +27,15 @@ public class RedisTest {
 
     @Test
     public void name() throws InterruptedException {
+
         RLock myLock = redissonClient.getLock("lock");
         Assert.assertTrue(myLock.tryLock(1, TimeUnit.SECONDS));
         myLock.lock(5, TimeUnit.SECONDS);
         myLock.unlock();
+        RBucket<String> keyObject = redissonClient.getBucket("key");
+        RBucket<Object> bucket = redissonClient.getBucket("haha");
+        bucket.set("123");
+        RBucket<Object> haha = redissonClient.getBucket("haha");
+        System.out.println(haha.get());
     }
 }
