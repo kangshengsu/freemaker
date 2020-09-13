@@ -34,7 +34,6 @@
     </dependencies>
 
     <build>
-        <finalName>how_work</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
