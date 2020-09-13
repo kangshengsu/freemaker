@@ -7,8 +7,8 @@
 package com.fm.business.base.service.impl;
 
 
-import com.fm.business.base.dao.IBdJobCateMapper;
-import com.fm.business.base.model.BdJobCate;
+import com.fm.business.base.dao.job.IBdJobCateMapper;
+import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.service.IBdJobCateService;
 import org.springframework.stereotype.Service;
 import com.fm.framework.core.service.BaseService;
