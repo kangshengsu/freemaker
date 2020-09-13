@@ -1,0 +1,20 @@
+server:
+  port: 8002
+# mysql
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://172.21.16.11:3306/how_work?useUnicode=true&characterEncoding=utf-8&useSSL=false&autoReconnect=true&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull
+    username: how_work
+    password: how_work
+  cos:
+    appId: 1301749332
+    secretId: AKIDALMUUvExISTJz5nk6LPJ3c37peLtuUXP
+    secretKey: o953qTxk2DG8QXTEsSvBFuLUVFyZutd5
+    bucketName: howwork-1301749332
+    region: ap-beijing
+  redis:
+    host: 172.21.16.17
+    password: HowWork!
+    database: 0
+
