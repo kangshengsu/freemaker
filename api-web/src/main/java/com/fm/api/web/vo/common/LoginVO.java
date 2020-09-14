@@ -1,4 +1,4 @@
-package com.fm.api.web.vo;
+package com.fm.api.web.vo.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

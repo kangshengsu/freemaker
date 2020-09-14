@@ -6,6 +6,7 @@
 */
 package com.fm.api.web.controller.production;
 
+import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.framework.core.query.Page;
 import com.fm.business.base.service.production.IProductionInfoService;
@@ -70,17 +71,12 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         return productionInfoService;
     }
 
-    @Override
-    protected ProductionInfo convert(ProductionInfoVO form) {
-        ProductionInfo model = new ProductionInfo();
-        BeanUtils.copyProperties(form,model);
-        return model;
-    }
 
     @Override
     protected ProductionInfoVO convert(ProductionInfo model) {
-        ProductionInfoVO form = new ProductionInfoVO();
-        BeanUtils.copyProperties(model,form);
+        ProductionInfoVO form = super.convert(model);
+        //转换枚举值
+        form.setStatus(ProductionStatus.get(model.getStatus()).getName());
         return form;
     }
 

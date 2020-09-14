@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fm.business.base.constant.CacheKeyConstant;
 import com.fm.business.base.model.SysUser;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.utils.JsonUtil;
@@ -55,9 +56,10 @@ public class SSOInterceptor implements  HandlerInterceptor {
         if(readCookieMap(request).get(TOKEN_KEY) != null){
 
             String token = readCookieMap(request).get(TOKEN_KEY).getValue();
+            String cacheKye = String.format(CacheKeyConstant.LOGIN_TOKEN.getKey(),token);
             //获取当前登录token是否有效
             try{
-                RBucket<SysUser> currUser = redissonClient.getBucket(token);
+                RBucket<SysUser> currUser = redissonClient.getBucket(cacheKye);
                 if(currUser != null && currUser.get() != null){
                     //存入上下文
                     Context.setCurrUser(currUser.get().getId());

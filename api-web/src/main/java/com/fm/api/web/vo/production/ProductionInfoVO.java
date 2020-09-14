@@ -60,7 +60,7 @@ public class ProductionInfoVO extends VO implements Serializable {
     /**
     * 状态（10-未发布，20-审核中，30-审核未通过，40-已发布,50-已删除）
     **/
-	private Integer status;
+	private String status;
 
 
     /**

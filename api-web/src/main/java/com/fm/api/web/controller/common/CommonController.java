@@ -1,12 +1,11 @@
-package com.fm.api.web.controller;
+package com.fm.api.web.controller.common;
 
-import com.fm.api.web.vo.LoginVO;
-import com.fm.api.web.vo.SysUserVO;
+import com.fm.api.web.vo.common.LoginVO;
+import com.fm.business.base.constant.CacheKeyConstant;
 import com.fm.business.base.model.SysUser;
 import com.fm.business.base.service.ISysUserService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.service.Service;
-import com.fm.framework.core.utils.JsonUtil;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
 import org.redisson.api.RedissonClient;
@@ -48,7 +47,7 @@ public class CommonController extends BaseController<SysUser, LoginVO> {
      * @param form
      * @return
      */
-    @RequestMapping(value = "login",method = RequestMethod.POST)
+    @RequestMapping(value = "/login",method = RequestMethod.POST)
     public ApiResponse<LoginVO> login(@Valid @RequestBody LoginVO form){
         //获取用户
         SysUser sysUser = sysUserService.findByCode(form.getUsername());
@@ -60,9 +59,10 @@ public class CommonController extends BaseController<SysUser, LoginVO> {
         if(sysUser.getPassword().equals(form.getPassword())){
             //分配token
             String token = UUID.randomUUID().toString();
+            String cacheKye = String.format(CacheKeyConstant.LOGIN_TOKEN.getKey(),token);
             form.setToken(token);
             //缓存token
-            redissonClient.getBucket(token).set(sysUser,DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
+            redissonClient.getBucket(cacheKye).set(sysUser,DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
 
         }else{
             return failed("密码不正确！");
@@ -77,7 +77,7 @@ public class CommonController extends BaseController<SysUser, LoginVO> {
      * 登出
      * @return
      */
-    @RequestMapping(value = "logout",method = RequestMethod.POST)
+    @RequestMapping(value = "/logout",method = RequestMethod.POST)
     public ApiResponse<Boolean> logout(){
 
         redissonClient.getBucket(Context.getCurrUserToken()).delete();
