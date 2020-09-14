@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public enum CacheKeyConstant {
+public enum CacheKeyConstants {
     /**
      * 登录token redis key
      */

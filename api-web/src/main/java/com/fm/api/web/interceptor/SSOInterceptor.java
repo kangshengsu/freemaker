@@ -2,18 +2,14 @@ package com.fm.api.web.interceptor;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fm.business.base.constant.CacheKeyConstant;
+import com.fm.business.base.constant.CacheKeyConstants;
 import com.fm.business.base.model.SysUser;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.utils.JsonUtil;
@@ -23,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -56,7 +51,7 @@ public class SSOInterceptor implements  HandlerInterceptor {
         if(readCookieMap(request).get(TOKEN_KEY) != null){
 
             String token = readCookieMap(request).get(TOKEN_KEY).getValue();
-            String cacheKye = String.format(CacheKeyConstant.LOGIN_TOKEN.getKey(),token);
+            String cacheKye = String.format(CacheKeyConstants.LOGIN_TOKEN.getKey(),token);
             //获取当前登录token是否有效
             try{
                 RBucket<SysUser> currUser = redissonClient.getBucket(cacheKye);

@@ -1,7 +1,7 @@
 package com.fm.api.web.controller.common;
 
 import com.fm.api.web.vo.common.LoginVO;
-import com.fm.business.base.constant.CacheKeyConstant;
+import com.fm.business.base.constant.CacheKeyConstants;
 import com.fm.business.base.model.SysUser;
 import com.fm.business.base.service.ISysUserService;
 import com.fm.framework.core.Context;
@@ -59,7 +59,7 @@ public class CommonController extends BaseController<SysUser, LoginVO> {
         if(sysUser.getPassword().equals(form.getPassword())){
             //分配token
             String token = UUID.randomUUID().toString();
-            String cacheKye = String.format(CacheKeyConstant.LOGIN_TOKEN.getKey(),token);
+            String cacheKye = String.format(CacheKeyConstants.LOGIN_TOKEN.getKey(),token);
             form.setToken(token);
             //缓存token
             redissonClient.getBucket(cacheKye).set(sysUser,DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
