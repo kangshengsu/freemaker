@@ -20,6 +20,6 @@ nohup ${JAVA_HOME}/bin/java -Xms512m -Xmx512m -XX:+HeapDumpOnOutOfMemoryError -X
 
 echo `jobs`
 
-sleep 5s
+sleep 10s
 
 echo "api-web 启动成功..."
