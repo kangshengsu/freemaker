@@ -8,4 +8,4 @@ kill ${PID}
 
 sleep 10s
 
-echo "进程${PID}成功...."
+echo "关闭进程${PID}成功...."
