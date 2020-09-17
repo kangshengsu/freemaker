@@ -23,9 +23,6 @@ import java.util.Date;
 public class BdJobCateVO extends VO implements Serializable {
 
 	private static final long serialVersionUID = 1599835185585L;
-	
-
-
     /**
     * 
     **/
@@ -53,7 +50,7 @@ public class BdJobCateVO extends VO implements Serializable {
     /**
     * 
     **/
-	private Long parentId;
+	private String parentCode;
 
 
     /**
@@ -80,12 +77,4 @@ public class BdJobCateVO extends VO implements Serializable {
     * 修改人
     **/
 	private String updateUser;
-
-
-
-
-
-
-
-
 }

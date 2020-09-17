@@ -16,6 +16,9 @@ public interface ITreeNode {
      * 返回当前树节点父级节点ID
      * @return 父级节点ID
      */
+    String getParentCode();
+
+
     Long getParentId();
 
 

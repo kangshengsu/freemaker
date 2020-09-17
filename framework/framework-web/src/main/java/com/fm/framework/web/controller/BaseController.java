@@ -12,8 +12,10 @@ import com.fm.framework.web.response.ApiStatus;
 import lombok.extern.slf4j.XSlf4j;
 import org.springframework.beans.BeanUtils;
 
+import javax.cache.integration.CacheLoader;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,6 +39,10 @@ public abstract class BaseController<M extends BaseModel, V extends VO> {
 
         M model = convert(form);
 
+        model.setCreateTime(Calendar.getInstance().getTime());
+        model.setUpdateTime(Calendar.getInstance().getTime());
+        model.setCreateUser("demoUser");
+        model.setUpdateUser("demoUser");
         boolean result = this.service().save(model);
 
         return success(result);

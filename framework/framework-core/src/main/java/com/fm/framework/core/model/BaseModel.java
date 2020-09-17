@@ -3,6 +3,7 @@ package com.fm.framework.core.model;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * <p>Base Mode</p>
@@ -23,6 +24,11 @@ public abstract class BaseModel {
      * @param id 主键
      */
     public abstract void setId(Long id);
+
+    public abstract void setCreateTime(Date createTime);
+    public abstract void setUpdateTime(Date updateTime);
+    public abstract void setCreateUser(String createUser);
+    public abstract void setUpdateUser(String updateUser);
     /**
      * 是否删除标志
      */

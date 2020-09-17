@@ -108,7 +108,7 @@ public class TreeBaseService<M extends BaseMapper<T>, T extends BaseModel & ITre
     protected void setIncode(T node) {
         String parentIncode = null;
         if(!TreeUtil.isNull4ParentId(node)) {
-            T parent = getBaseMapper().selectById(node.getParentId());
+            T parent = getBaseMapper().selectById(node.getParentCode());
             log.debug("查询父组织信息: {}", parent);
             parentIncode = parent.getIncode();
         }
