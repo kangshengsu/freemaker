@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50718
 File Encoding         : 65001
 
-Date: 2020-09-11 23:31:32
+Date: 2020-09-18 00:24:57
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -34,12 +34,13 @@ CREATE TABLE `attachment_info` (
   `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
   `ts` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '数据库时间戳',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='附件表';
+) ENGINE=InnoDB AUTO_INCREMENT=102 DEFAULT CHARSET=utf8 COMMENT='附件表';
 
 -- ----------------------------
 -- Records of attachment_info
 -- ----------------------------
 INSERT INTO `attachment_info` VALUES ('12', '2', '23', '3', '1', '2', '1', '2020-09-11 23:12:21', '2020-09-11 23:18:47', '11', '1', '1', '2020-09-11 23:18:47');
+INSERT INTO `attachment_info` VALUES ('101', null, '22', null, null, null, null, '2020-09-12 15:14:09', '2020-09-12 15:14:09', 'test', '123', '0', '2020-09-12 15:14:09');
 
 -- ----------------------------
 -- Table structure for bd_job_cate
@@ -120,7 +121,7 @@ CREATE TABLE `demand_info` (
 -- ----------------------------
 -- Records of demand_info
 -- ----------------------------
-INSERT INTO `demand_info` VALUES ('1', '21', '12', '2', '12', '12', '2020-09-11 21:49:00', '0', '0', '1', '1', '1', '12', '', '', '2020-09-11 21:49:16', '2020-09-11 21:49:34', '122', '12', '0', '2020-09-11 21:49:30');
+INSERT INTO `demand_info` VALUES ('1', 'demand_001', 'user01', '2', '12', '12', '2020-09-11 21:49:00', '0', '0', '1', '1', '1', '12', '', '', '2020-09-11 21:49:16', '2020-09-13 20:13:08', '122', '12', '0', '2020-09-13 20:13:08');
 
 -- ----------------------------
 -- Table structure for demand_production_relation
@@ -135,12 +136,34 @@ CREATE TABLE `demand_production_relation` (
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `create_user` varchar(50) NOT NULL COMMENT '创建人',
   `update_user` varchar(50) NOT NULL COMMENT '修改人',
-  `is_deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `ts` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '数据库时间戳',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='订单流水';
 
 -- ----------------------------
 -- Records of demand_production_relation
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for display_config
+-- ----------------------------
+DROP TABLE IF EXISTS `display_config`;
+CREATE TABLE `display_config` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '逻辑主键',
+  `display_code` varchar(32) NOT NULL COMMENT '绑定资源编码',
+  `display_type` tinyint(4) NOT NULL COMMENT '绑定资源类型（1-领域，2-技能，3-作品）',
+  `expired_time` datetime NOT NULL COMMENT '过期时间',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `create_user` varchar(50) NOT NULL COMMENT '创建人',
+  `update_user` varchar(50) NOT NULL COMMENT '修改人',
+  `is_deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='展位配置表';
+
+-- ----------------------------
+-- Records of display_config
 -- ----------------------------
 
 -- ----------------------------
@@ -161,7 +184,8 @@ CREATE TABLE `employer_info` (
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `create_user` varchar(50) NOT NULL COMMENT '创建人',
   `update_user` varchar(50) NOT NULL COMMENT '修改人',
-  `is_deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `ts` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '数据库时间戳',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='雇佣者信息表';
 
@@ -191,13 +215,15 @@ CREATE TABLE `freelancer_info` (
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `create_user` varchar(50) NOT NULL COMMENT '创建人',
   `update_user` varchar(50) NOT NULL COMMENT '修改人',
-  `is_deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `ts` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '数据库时间戳',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='自由职业者信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='自由职业者信息表';
 
 -- ----------------------------
 -- Records of freelancer_info
 -- ----------------------------
+INSERT INTO `freelancer_info` VALUES ('1', 'zhangsan', '张三', '1231231', '1', '12', '12', '001', '002', '112', '112', '11', '1', '2020-09-13 22:47:30', '2020-09-13 22:47:35', '1', '1', '0', null);
 
 -- ----------------------------
 -- Table structure for leaf_alloc
@@ -215,6 +241,7 @@ CREATE TABLE `leaf_alloc` (
 -- ----------------------------
 -- Records of leaf_alloc
 -- ----------------------------
+INSERT INTO `leaf_alloc` VALUES ('attachment_info', '201', '100', null, '2020-09-12 15:14:09');
 INSERT INTO `leaf_alloc` VALUES ('leaf-segment-test', '1', '2000', 'Test leaf Segment Mode Get Id', '2020-09-10 16:19:14');
 
 -- ----------------------------
@@ -230,7 +257,8 @@ CREATE TABLE `order_follow` (
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `create_user` varchar(50) NOT NULL COMMENT '创建人',
   `update_user` varchar(50) NOT NULL COMMENT '修改人',
-  `is_deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `ts` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '数据库时间戳',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='订单流水';
 
@@ -258,13 +286,17 @@ CREATE TABLE `order_info` (
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `create_user` varchar(50) NOT NULL COMMENT '创建人',
   `update_user` varchar(50) NOT NULL COMMENT '修改人',
-  `is_deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `ts` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '数据库时间戳',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='订单信息';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='订单信息';
 
 -- ----------------------------
 -- Records of order_info
 -- ----------------------------
+INSERT INTO `order_info` VALUES ('1', '12', '12', '2', '10', '0', '2020-09-13 18:06:30', '2020-09-13 18:06:36', '123', '阿斯达', '1说的', '2020-09-13 18:06:55', '2020-09-13 18:06:57', '123', '567', '0', '2020-09-13 18:07:05');
+INSERT INTO `order_info` VALUES ('2', '123', '12', '2', '10', '0', '2020-09-13 18:06:30', '2020-09-13 18:06:36', '123', '阿斯达', '1说的', '2020-09-13 18:06:55', '2020-09-13 18:06:57', '123', '567', '0', '2020-09-13 18:07:05');
+INSERT INTO `order_info` VALUES ('3', '1234', '12', '2', '10', '0', '2020-09-13 18:06:30', '2020-09-13 18:06:36', '123', '阿斯达', '1说的', '2020-09-13 18:06:55', '2020-09-13 18:06:57', '123', '567', '0', '2020-09-13 18:07:05');
 
 -- ----------------------------
 -- Table structure for order_info_detail
@@ -283,7 +315,8 @@ CREATE TABLE `order_info_detail` (
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `create_user` varchar(50) NOT NULL COMMENT '创建人',
   `update_user` varchar(50) NOT NULL COMMENT '修改人',
-  `is_deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `ts` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '数据库时间戳',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='订单详情';
 
@@ -309,13 +342,16 @@ CREATE TABLE `production_info` (
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `create_user` varchar(50) NOT NULL COMMENT '创建人',
   `update_user` varchar(50) NOT NULL COMMENT '修改人',
-  `is_deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `ts` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '数据库时间戳',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='作品表';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='作品表';
 
 -- ----------------------------
 -- Records of production_info
 -- ----------------------------
+INSERT INTO `production_info` VALUES ('1', '1', '123', '胸口碎大石', '各种石头各种碎', '3000.01', '10', 'job_code', 'tree_code', '2020-09-13 22:06:23', '2020-09-13 22:06:25', 'liuduo', 'liuduo', '0', '2020-09-13 22:06:41');
+INSERT INTO `production_info` VALUES ('2', '2', '123', '倒拔垂杨柳', '啥都能干', '6000.01', '20', 'job_code', 'tree_code', '2020-09-13 22:06:23', '2020-09-13 22:06:25', 'liuduo', 'liuduo', '0', '2020-09-13 22:06:41');
 
 -- ----------------------------
 -- Table structure for production_review_info
@@ -331,7 +367,8 @@ CREATE TABLE `production_review_info` (
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `create_user` varchar(50) NOT NULL COMMENT '创建人',
   `update_user` varchar(50) NOT NULL COMMENT '修改人',
-  `is_deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `ts` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '数据库时间戳',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='作品审核表';
 
@@ -351,7 +388,8 @@ CREATE TABLE `production_skill_relation` (
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `create_user` varchar(50) NOT NULL COMMENT '创建人',
   `update_user` varchar(50) NOT NULL COMMENT '修改人',
-  `is_deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `ts` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '数据库时间戳',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='作品与技能关联表';
 
@@ -360,33 +398,55 @@ CREATE TABLE `production_skill_relation` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for display_config
+-- Table structure for sys_base_dict
 -- ----------------------------
-DROP TABLE IF EXISTS `display_config`;
-CREATE  TABLE display_config
-(
-  id            BIGINT AUTO_INCREMENT
-  COMMENT '逻辑主键' PRIMARY KEY,
-  display_code          VARCHAR(32)         NOT NULL
-  COMMENT '绑定资源编码',
-  display_type          TINYINT(4)         NOT NULL
-  COMMENT '绑定资源类型（1-领域，2-技能，3-作品）',
-  expired_time  DATETIME            NOT NULL
-  COMMENT '过期时间',
-  create_time   DATETIME            NOT NULL
-  COMMENT '创建时间',
-  update_time   DATETIME            NOT NULL ON UPDATE CURRENT_TIMESTAMP
-  COMMENT '修改时间',
-  create_user   VARCHAR(50)         NOT NULL
-  COMMENT '创建人',
-  update_user   VARCHAR(50)         NOT NULL
-  COMMENT '修改人',
-  is_deleted    TINYINT DEFAULT '0' NOT NULL
-  COMMENT '删除标记（0-否，1-是）'
-)
-  COMMENT '展位配置表'
-  ENGINE = InnoDB
-  CHARSET = utf8;
+DROP TABLE IF EXISTS `sys_base_dict`;
+CREATE TABLE `sys_base_dict` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `name` varchar(64) NOT NULL DEFAULT '' COMMENT '分类名称',
+  `code` varchar(32) NOT NULL DEFAULT '' COMMENT '分类编号',
+  `memo` varchar(128) NOT NULL DEFAULT '' COMMENT '备注',
+  `parent_id` int(11) DEFAULT NULL COMMENT '与id进行关联',
+  `node_level` int(11) DEFAULT NULL COMMENT '节点级别',
+  `belong_group` int(11) DEFAULT NULL COMMENT '类型分类',
+  `order_num` int(11) DEFAULT '0' COMMENT '排序值',
+  `create_user_code` bigint(20) DEFAULT '0' COMMENT '创建人ID',
+  `update_user_code` bigint(20) DEFAULT '0' COMMENT '修改人ID',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `is_delete` tinyint(1) DEFAULT '0' COMMENT '删除标识，默认为0',
+  `ts` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '数据库时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_group` (`belong_group`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='数据字典';
+
 -- ----------------------------
--- Records of display_config
+-- Records of sys_base_dict
 -- ----------------------------
+INSERT INTO `sys_base_dict` VALUES ('1', '测试字典', 'TEST1', '测1', '1', '1', '1', '1', '0', '0', '2020-09-17 22:05:54', '2020-09-17 22:05:57', '0', '2020-09-17 22:06:44.466');
+INSERT INTO `sys_base_dict` VALUES ('2', '测试字典2', 'TEST2', '测2', '1', '2', '1', '2', '0', '0', '2020-09-17 22:05:54', '2020-09-17 22:05:57', '0', '2020-09-17 22:06:53.090');
+INSERT INTO `sys_base_dict` VALUES ('3', '测试字典3', 'TEST3', '测3', '1', '2', '1', '1', '0', '0', '2020-09-17 22:05:54', '2020-09-17 22:05:57', '0', '2020-09-17 22:06:54.933');
+
+-- ----------------------------
+-- Table structure for sys_user
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_user`;
+CREATE TABLE `sys_user` (
+  `id` bigint(20) NOT NULL COMMENT '逻辑主键',
+  `code` varchar(32) NOT NULL COMMENT '编码',
+  `name` varchar(32) NOT NULL COMMENT '名字',
+  `password` varchar(64) DEFAULT '',
+  `phone` varchar(20) DEFAULT NULL,
+  `last_login_time` datetime DEFAULT NULL COMMENT '最近登录时间',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `is_delete` tinyint(4) DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `ts` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '数据库时间戳',
+  PRIMARY KEY (`id`),
+  KEY `INDEX_CODE` (`code`) COMMENT '编码索引'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='基础用户表';
+
+-- ----------------------------
+-- Records of sys_user
+-- ----------------------------
+INSERT INTO `sys_user` VALUES ('1', 'wyb', '王一博', 'wyb', null, null, '2020-09-12 18:00:02', '0', '2020-09-13 10:35:19');
+INSERT INTO `sys_user` VALUES ('2', 'admin', '管理员', '21232f297a57a5a743894a0e4a801fc3', '18888888888', null, '2020-09-13 13:56:20', '0', '2020-09-13 16:07:04');
