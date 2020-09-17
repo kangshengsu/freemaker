@@ -4,19 +4,15 @@
  * Copyright(c) 2018 LiuDuo Co. Ltd. 
  * All right reserved. 
  */
-package com.fm.business.base.service.impl;
+package com.fm.business.base.service.sys.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.fm.business.base.model.SysUser;
-import com.fm.business.base.dao.ISysUserMapper;
-import com.fm.business.base.service.ISysUserService;
-import com.fm.framework.core.model.DBFieldConst;
+import com.fm.business.base.model.sys.SysUser;
+import com.fm.business.base.dao.sys.ISysUserMapper;
+import com.fm.business.base.service.sys.ISysUserService;
 import org.springframework.stereotype.Service;
 import com.fm.framework.core.service.BaseService;
-import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.slf4j.Slf4j;
-
-import java.sql.Wrapper;
 
 /**   
  * @Description:(用户服务实现)

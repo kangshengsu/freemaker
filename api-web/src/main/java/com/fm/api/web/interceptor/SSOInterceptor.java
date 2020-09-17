@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fm.business.base.constant.CacheKeyConstants;
-import com.fm.business.base.model.SysUser;
+import com.fm.business.base.model.sys.SysUser;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.utils.JsonUtil;
 import com.fm.framework.web.response.ApiResponse;

@@ -15,6 +15,7 @@ import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import com.fm.api.web.vo.production.ProductionInfoVO;
+import com.fm.framework.web.response.ApiStatus;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,28 +39,39 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
     @Autowired
     private IProductionInfoService productionInfoService;
 
-    @RequestMapping(value = "create",method = RequestMethod.POST)
+    @RequestMapping(value = "/getDetail",method = RequestMethod.POST)
+    public ApiResponse<ProductionInfoVO> getDetail(@RequestBody Long id) {
+        ProductionInfo model = productionInfoService.get(id);
+        //组装 自由职业者数据
+        if(model == null){
+            return failed("未获得相应数据！");
+        }
+        return success(convert(model));
+
+    }
+
+    @RequestMapping(value = "/create",method = RequestMethod.POST)
     public ApiResponse<Boolean> create(@RequestBody ProductionInfoVO form) {
 
         return super.create(form);
 
     }
 
-    @RequestMapping(value = "delete",method = RequestMethod.POST)
+    @RequestMapping(value = "/delete",method = RequestMethod.POST)
     public ApiResponse<Boolean> delete(@RequestBody Long id) {
 
         return super.delete(id);
 
     }
 
-    @RequestMapping(value = "update",method = RequestMethod.POST)
+    @RequestMapping(value = "/update",method = RequestMethod.POST)
     public ApiResponse<Boolean> update(@RequestBody ProductionInfoVO form) {
 
         return super.update(form);
 
     }
 
-    @RequestMapping(value = "list",method = RequestMethod.POST)
+    @RequestMapping(value = "/list",method = RequestMethod.POST)
     public ApiResponse<Page<ProductionInfoVO>> list(@RequestBody QueryRequest queryRequest) {
 
         return super.list(queryRequest);

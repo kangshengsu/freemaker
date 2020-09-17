@@ -2,8 +2,8 @@ package com.fm.api.web.controller.common;
 
 import com.fm.api.web.vo.common.LoginVO;
 import com.fm.business.base.constant.CacheKeyConstants;
-import com.fm.business.base.model.SysUser;
-import com.fm.business.base.service.ISysUserService;
+import com.fm.business.base.model.sys.SysUser;
+import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;

@@ -4,16 +4,16 @@
 * Copyright(c) 2020 LiuDuo Co. Ltd.
 * All right reserved.
 */
-package com.fm.api.web.controller;
+package com.fm.api.web.controller.sys;
 
-import com.fm.business.base.model.SysUser;
+import com.fm.business.base.model.sys.SysUser;
 import com.fm.framework.core.query.Page;
-import com.fm.business.base.service.ISysUserService;
+import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
-import com.fm.api.web.vo.SysUserVO;
+import com.fm.api.web.vo.sys.SysUserVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

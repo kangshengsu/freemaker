@@ -4,9 +4,9 @@
  * Copyright(c) 2020 LiuDuo Co. Ltd. 
  * All right reserved. 
  */
-package com.fm.business.base.service;
+package com.fm.business.base.service.sys;
 
-import com.fm.business.base.model.SysUser;
+import com.fm.business.base.model.sys.SysUser;
 import com.fm.framework.core.service.Service;
 /**   
  * @Description:(用户服务层)

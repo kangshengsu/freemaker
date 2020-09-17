@@ -14,6 +14,8 @@ import org.springframework.beans.BeanUtils;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -95,6 +97,14 @@ public abstract class BaseController<M extends BaseModel, V extends VO> {
         BeanUtils.copyProperties(model, form);
         return form;
     }
+
+    protected List<V> convert(List<M> model) {
+        if(model == null || model.isEmpty()){
+            return Collections.EMPTY_LIST;
+        }
+        return model.stream().map(this::convert).collect(Collectors.toList());
+    }
+
 
     private M getMInstance() throws IllegalAccessException, InstantiationException {
         Class<M> clazz;

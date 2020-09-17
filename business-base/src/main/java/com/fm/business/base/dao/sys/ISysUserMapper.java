@@ -4,11 +4,11 @@
  * Copyright(c) 2020 LiuDuo Co. Ltd. 
  * All right reserved. 
  */
-package com.fm.business.base.dao;
+package com.fm.business.base.dao.sys;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-import com.fm.business.base.model.SysUser;
+import com.fm.business.base.model.sys.SysUser;
 
 /**   
  * @Description:(用户数据访问层)

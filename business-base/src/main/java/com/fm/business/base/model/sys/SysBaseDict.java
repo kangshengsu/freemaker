@@ -1,10 +1,10 @@
 /**
- * @filename:SysUser 2020年09月11日
+ * @filename:SysBaseDict 2020年09月11日
  * @project HowWork  V1.0
  * Copyright(c) 2020 LiuDuo Co. Ltd. 
  * All right reserved. 
  */
-package com.fm.business.base.model;
+package com.fm.business.base.model.sys;
 
 import com.fm.framework.core.model.BaseModel;
 import lombok.Data;
@@ -12,57 +12,87 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**   
- * @Description:(用户实体类)
+ * @Description:(基础字典实体类)
  * 
  * @version: V1.0
  * @author: LiuDuo
  * 
  */
 @Data
-public class SysUser extends BaseModel implements Serializable {
+public class SysBaseDict extends BaseModel implements Serializable {
 
-	private static final long serialVersionUID = 1599898313938L;
+	private static final long serialVersionUID = 1600351931385L;
 	
     /**
-    * 逻辑主键
+    * 主键ID
     **/
 	private Long id;
 
 
     /**
-    * 编码
-    **/
-	private String code;
-
-
-    /**
-    * 名字
+    * 分类名称
     **/
 	private String name;
 
 
     /**
-    * 
+    * 分类编号
     **/
-	private String password;
+	private String code;
 
 
     /**
-    * 
+    * 备注
     **/
-	private String phone;
+	private String memo;
 
 
     /**
-    * 最近登录时间
+    * 与id进行关联
     **/
-	private Date lastLoginTime;
+	private Integer parentId;
+
+
+    /**
+    * 节点级别
+    **/
+	private Integer nodeLevel;
+
+
+    /**
+    * 类型分类
+    **/
+	private Integer belongGroup;
+
+
+    /**
+    * 排序值
+    **/
+	private Integer orderNum;
+
+
+    /**
+    * 创建人ID
+    **/
+	private Long createUserCode;
+
+
+    /**
+    * 修改人ID
+    **/
+	private Long updateUserCode;
 
 
     /**
     * 创建时间
     **/
 	private Date createTime;
+
+
+    /**
+    * 更新时间
+    **/
+	private Date updateTime;
 
 
 

@@ -1,7 +1,6 @@
 package com.fm.business.base.enums;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 
 /**
