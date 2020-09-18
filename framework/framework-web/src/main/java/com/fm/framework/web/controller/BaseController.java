@@ -39,10 +39,6 @@ public abstract class BaseController<M extends BaseModel, V extends VO> {
 
         M model = convert(form);
 
-        model.setCreateTime(Calendar.getInstance().getTime());
-        model.setUpdateTime(Calendar.getInstance().getTime());
-        model.setCreateUser("demoUser");
-        model.setUpdateUser("demoUser");
         boolean result = this.service().save(model);
 
         return success(result);
