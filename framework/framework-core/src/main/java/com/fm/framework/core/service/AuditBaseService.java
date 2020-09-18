@@ -22,6 +22,7 @@ public class AuditBaseService<M extends BaseMapper<T>, T extends BaseModel & IAu
         model.setCreateTime(LocalDateTime.now());
         model.setCreateUser(Context.getCurrUser());
         model.setCreateUserCode(Context.getCurrUserCode());
+        this.beforeUpdate(model);
     }
 
     @Override

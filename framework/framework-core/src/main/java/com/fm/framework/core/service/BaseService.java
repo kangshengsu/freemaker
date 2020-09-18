@@ -164,9 +164,14 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
     public boolean update(T model) {
         boolean result;
         beforeUpdate(model);
+        T before = get(model.getId());
+        if(model.getTs() == null){
+            model.setTs(before.getTs());
+        }
         UpdateWrapper<T> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq(DBFieldConst.ID, model.getId()).eq(DBFieldConst.TS, model.getTs());
-        T before = get(model.getId());
+        //更新时依赖数据库表配置更新
+        model.setTs(null);
         result = update(model, updateWrapper);
         if (result) {
             afterUpdate(model);

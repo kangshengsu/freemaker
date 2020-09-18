@@ -9,6 +9,8 @@ package com.fm.api.web.vo.production;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.framework.web.VO;
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -29,6 +31,7 @@ public class ProductionReviewInfoVO extends VO implements Serializable {
     /**
     * 作品编码
     **/
+	@NotBlank(message = "作品编码不能为空")
 	private String productionCode;
 
 
@@ -41,6 +44,7 @@ public class ProductionReviewInfoVO extends VO implements Serializable {
     /**
     * 审核意见
     **/
+	@NotBlank(message = "审核意见不能为空")
 	private String reviewerOpinion;
 
 
