@@ -30,4 +30,10 @@ public class CosTest {
 
         storageService.upload("pictures/me.jpg", data);
     }
+
+    @Test
+    public void name() {
+        storageService.getTmpSecret();
+
+    }
 }

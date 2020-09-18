@@ -1,5 +1,7 @@
 package com.fm.framework.core.service;
 
+import com.fm.framework.core.model.CosTmpSecret;
+
 import java.io.File;
 import java.io.InputStream;
 
@@ -10,9 +12,11 @@ import java.io.InputStream;
  */
 public interface StorageService {
 
-    public String upload(String patch, byte[] bytes);
+    String upload(String patch, byte[] bytes);
 
-    public String upload(String patch, String fileName, File file);
+    String upload(String patch, String fileName, File file);
 
-    public void download();
+    void download();
+
+    CosTmpSecret getTmpSecret();
 }
