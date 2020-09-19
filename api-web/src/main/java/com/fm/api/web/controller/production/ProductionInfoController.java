@@ -7,7 +7,9 @@
 package com.fm.api.web.controller.production;
 
 import com.fm.business.base.enums.ProductionStatus;
+import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.framework.core.query.Page;
 import com.fm.business.base.service.production.IProductionInfoService;
@@ -42,6 +44,9 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
 
     @Autowired
     private IFreelancerInfoService freelancerInfoService;
+
+    @Autowired
+    private IBdJobCateService bdJobCateService;
 
 
     @RequestMapping(value = "/create",method = RequestMethod.POST)
@@ -85,6 +90,9 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         form.setStatusName(ProductionStatus.get(model.getStatus()).getName());
         //获取作者数据
         form.setFreelancerInfo(freelancerInfoService.get(model.getFreelancerId()));
+        //获取岗位加领域
+        BdJobCate jobCate = bdJobCateService.get(model.getJobCateId());
+        form.setJobCateName(jobCate.getCateName());
 
         return form;
     }

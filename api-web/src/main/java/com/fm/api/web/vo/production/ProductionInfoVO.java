@@ -77,6 +77,10 @@ public class ProductionInfoVO extends VO implements Serializable {
     **/
 	private Long jobCateId;
 
+    /**
+     * 所属领域 + 岗位数据路径
+     **/
+    private String jobCateName;
 
     /**
     * 技能全路径
