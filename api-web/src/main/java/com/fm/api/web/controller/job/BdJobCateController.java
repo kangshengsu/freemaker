@@ -24,10 +24,7 @@ import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,9 +64,8 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
     }
 
     @RequestMapping(value = "update",method = RequestMethod.POST)
-    public ApiResponse<Boolean> update(@RequestBody BdJobCateVO form) {
-
-        return super.update(form);
+    public ApiResponse<Boolean> update(@RequestBody BdJobCateVO newNode) {
+        return saveJob(newNode, false);
     }
 
     @RequestMapping(value = "list",method = RequestMethod.POST)
@@ -87,20 +83,24 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
         JobNodeVO treeNode;
         for (BdJobCateVO bdJobCateVO : bdJobCateVOs) {
             treeNode = new JobNodeVO();
-            treeNode.setLabel(bdJobCateVO.getCateCode());
+            treeNode.setJobId(bdJobCateVO.getId());
+            treeNode.setCode(bdJobCateVO.getCateCode());
             treeNode.setLabel(bdJobCateVO.getCateName());
             treeNode.setTreeCode(bdJobCateVO.getTreeCode());
             treeNode.setCateType(bdJobCateVO.getCateType());
+            treeNode.setParentId(bdJobCateVO.getParentId());
 
             treeNodeList.add(treeNode);
         }
 
         for (BdJobSkillVO bdJobSkillVO : bdJobSkillVOs) {
             treeNode = new JobNodeVO();
-            treeNode.setLabel(bdJobSkillVO.getSkillCode());
+            treeNode.setJobId(bdJobSkillVO.getId());
+            treeNode.setCode(bdJobSkillVO.getSkillCode());
             treeNode.setLabel(bdJobSkillVO.getSkillName());
             treeNode.setTreeCode(bdJobSkillVO.getCateTreeCode());
             treeNode.setCateType(JobNodeType.SKILL.getType());
+            treeNode.setParentId(bdJobSkillVO.getJobCateId());
 
             treeNodeList.add(treeNode);
         }
@@ -110,23 +110,57 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
 
     @RequestMapping(value = "addJob",method = RequestMethod.POST)
     public ApiResponse<Boolean> addJob(@RequestBody BdJobCateVO newNode) {
-        newNode.setTreeCode(TreeIncodeUtil.create(newNode.getParentCode()));
-
-        return super.create(newNode);
+        return saveJob(newNode, true);
     }
 
-    @RequestMapping(value = "delNode",method = RequestMethod.POST)
-    public ApiResponse<Boolean> delJob(@RequestBody BdJobCateVO selNode) {
-        return super.delete(selNode.getId());
+    private ApiResponse<Boolean> saveJob(BdJobCateVO newNode, boolean isAdd) {
+        newNode.setTreeCode(TreeIncodeUtil.create(newNode.getParentCode()));
+        newNode.setParentId(newNode.getParentId());
+
+        ApiResponse<Boolean> result;
+        if (!JobNodeType.SKILL.getType().equals(newNode.getCateType())) {
+            if (isAdd) {
+                result = super.create(newNode);
+            } else {
+                result = super.update(newNode);
+            }
+        } else {
+            BdJobSkill jobSkill = new BdJobSkill();
+            jobSkill.setId(newNode.getId());
+            jobSkill.setSkillCode(newNode.getCateCode());
+            jobSkill.setSkillName(newNode.getCateName());
+            jobSkill.setJobCateId(newNode.getParentId());
+            jobSkill.setCateTreeCode(newNode.getTreeCode());
+            if (isAdd) {
+                result = super.success(bdJobSkillService.save(jobSkill));
+            } else {
+                result = super.success(bdJobSkillService.update(jobSkill));
+            }
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "delJob",method = RequestMethod.POST)
+    public ApiResponse<Boolean> delJob(@RequestBody JobNodeVO jobNodeVO) {
+        ApiResponse<Boolean> result;
+        if (JobNodeType.SKILL.getType().equals(jobNodeVO.getCateType())) {
+            result = super.success(this.bdJobSkillService.delete(jobNodeVO.getJobId()));
+        } else {
+            result = super.delete(jobNodeVO.getJobId());
+        }
+
+        return result;
     }
 
     private JobNodeVO transferTree( List<JobNodeVO> treeNodeList) {
-        TreeNode<JobNodeVO> treeRoot = TreeUtil.buildTree(treeNodeList);
+        TreeNode<JobNodeVO> treeNodes = TreeUtil.buildTree(treeNodeList);
         JobNodeVO root = new JobNodeVO();
         root.setLabel("ROOT");
         root.setLabel("岗位技能树");
         root.setChildren(new ArrayList<>());
-        getChildren(root, treeRoot.getChilds());
+        treeNodes.setValue(root);
+        getChildren(root, treeNodes.getChilds());
 
         return root;
     }
@@ -139,6 +173,7 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
         JobNodeVO thisNode;
         for (TreeNode<JobNodeVO> child : children) {
             thisNode = child.getValue();
+            thisNode.setChildren(new ArrayList<>());
             getChildren(thisNode, child.getChilds());
 
             parent.getChildren().add(thisNode);

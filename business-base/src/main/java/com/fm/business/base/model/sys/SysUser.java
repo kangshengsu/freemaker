@@ -65,9 +65,12 @@ public class SysUser extends BaseModel implements Serializable {
 	private Date createTime;
 
 
+    private Date updateTime;
+
+    private String createUser;
 
 
-
+    private String updateUser;
 
 
     /**

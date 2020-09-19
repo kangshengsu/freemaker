@@ -34,6 +34,8 @@ public class JobNodeVO implements ITreeNode, Serializable {
 
 	private Integer cateType;
 
+	private Long jobId;
+
 	private Long parentId;
 
 	private String parentCode;
@@ -42,7 +44,7 @@ public class JobNodeVO implements ITreeNode, Serializable {
 
 	@Override
 	public Long getNodeId() {
-		return null;
+		return jobId;
 	}
 
 	@Override

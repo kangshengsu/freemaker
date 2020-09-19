@@ -52,7 +52,7 @@ CREATE TABLE `bd_job_cate` (
   `cate_code` varchar(10) NOT NULL,
   `cate_type` smallint(6) NOT NULL,
   `tree_code` varchar(64) NOT NULL,
-  `parent_id` bigint(20) NOT NULL,
+  `parent_code` varchar(10) NOT NULL,
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `create_user` varchar(50) NOT NULL COMMENT '创建人',
