@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import com.fm.framework.core.constants.CommonConstants;
+import com.fm.framework.core.constants.SymbolConstants;
 import com.fm.framework.core.event.*;
 import com.fm.framework.core.id.IdGenerator;
 import com.fm.framework.core.model.BaseModel;
@@ -20,7 +20,6 @@ import com.fm.framework.core.query.QueryItem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -459,7 +458,7 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
      * @return
      */
     private String camelToUnderline(String filedName){
-        if(filedName == null || filedName.contains(CommonConstants.UNDERLINE)){
+        if(filedName == null || filedName.contains(SymbolConstants.UNDERLINE)){
             return filedName;
         }
         return StringUtils.camelToUnderline(filedName);

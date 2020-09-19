@@ -9,6 +9,8 @@ package com.fm.api.web.controller.demand;
 import com.fm.api.web.vo.DemandInfoVO;
 import com.fm.business.base.model.DemandInfo;
 import com.fm.business.base.service.IDemandInfoService;
+import com.fm.framework.core.query.OrderItem;
+import com.fm.framework.core.query.OrderType;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
@@ -61,6 +63,8 @@ public class DemandInfoController extends BaseController<DemandInfo, DemandInfoV
     @RequestMapping(value = "list",method = RequestMethod.POST)
     public ApiResponse<Page<DemandInfoVO>> list(@RequestBody QueryRequest queryRequest) {
 
+        OrderItem orderItem = new OrderItem(OrderType.desc,"recommendCount");
+        queryRequest.setOrderItem(orderItem);
         return super.list(queryRequest);
     }
 

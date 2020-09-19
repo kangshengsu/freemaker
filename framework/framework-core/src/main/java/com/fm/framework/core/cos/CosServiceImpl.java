@@ -1,8 +1,9 @@
 package com.fm.framework.core.cos;
 
+import com.fm.framework.core.constants.SymbolConstants;
 import com.fm.framework.core.exception.OssException;
-import com.fm.framework.core.model.CosTmpSecret;
-import com.fm.framework.core.service.StorageService;
+import com.fm.framework.core.model.OssTmpSecret;
+import com.fm.framework.core.service.FileService;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.model.ObjectMetadata;
 import com.qcloud.cos.model.PutObjectResult;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.TreeMap;
@@ -25,8 +25,8 @@ import java.util.TreeMap;
  * @date 2020/9/13
  */
 @Slf4j
-@Service("cosServiceImpl")
-public class CosServiceImpl implements StorageService {
+@Service("cosService")
+public class CosServiceImpl implements FileService {
 
     @Autowired
     private COSClient cosClient;
@@ -57,8 +57,8 @@ public class CosServiceImpl implements StorageService {
      * @return
      */
     @Override
-    public CosTmpSecret getTmpSecret() {
-        CosTmpSecret cosTmpSecret;
+    public OssTmpSecret getTmpSecret() {
+        OssTmpSecret ossTmpSecret;
         TreeMap<String, Object> config = new TreeMap<>();
         try {
             config.put("SecretId", cosProperties.getSecretId());
@@ -87,13 +87,13 @@ public class CosServiceImpl implements StorageService {
             };
             config.put("allowActions", allowActions);
             JSONObject resultObject = CosStsClient.getCredential(config);
-            cosTmpSecret = this.parseSecret(resultObject);
+            ossTmpSecret = this.parseSecret(resultObject);
         } catch (IOException ioException) {
             log.error("获取腾讯云存储临时密匙失败:", ioException);
             throw new OssException(OssException.CONNECT_FAILURE, "获取云存储密匙失败");
         }
-        log.debug("获取腾讯云存储临时密匙为:{}", cosTmpSecret);
-        return cosTmpSecret;
+        log.debug("获取腾讯云存储临时密匙为:{}", ossTmpSecret);
+        return ossTmpSecret;
     }
 
     @Override
@@ -108,14 +108,15 @@ public class CosServiceImpl implements StorageService {
     }
 
     @Override
-    public String upload(String patch, String fileName, File file) {
-        // TODO: 2020/9/19
-        return null;
-    }
+    public String getBaseUrl() {
+        StringBuilder fileUrlBuilder = new StringBuilder();
+        fileUrlBuilder.append(cosProperties.getPrefix())
+                .append(cosProperties.getBucketName()).append(SymbolConstants.POINT)
+                .append(cosProperties.getMidfix()).append(SymbolConstants.POINT)
+                .append(cosProperties.getRegion()).append(SymbolConstants.POINT)
+                .append(cosProperties.getSuffix()).append(SymbolConstants.SLASH);
 
-    @Override
-    public void download() {
-        // TODO: 2020/9/19
+        return fileUrlBuilder.toString();
     }
 
     /**
@@ -124,15 +125,15 @@ public class CosServiceImpl implements StorageService {
      * @param jsonObject
      * @return
      */
-    private CosTmpSecret parseSecret(JSONObject jsonObject) {
+    private OssTmpSecret parseSecret(JSONObject jsonObject) {
         if (jsonObject == null) {
             throw new OssException(OssException.CONNECT_FAILURE, "获取云存储密匙失败");
         }
-        CosTmpSecret cosTmpSecret = new CosTmpSecret();
+        OssTmpSecret ossTmpSecret = new OssTmpSecret();
         JSONObject credentials = (JSONObject) jsonObject.get(CREDENTIALS);
-        cosTmpSecret.setTmpSecretId((String) credentials.get(TMP_SECRET_ID));
-        cosTmpSecret.setTmpSecretKey((String) credentials.get(TMP_SECRET_KEY));
-        cosTmpSecret.setSessionToken((String) credentials.get(SESSION_TOKEN));
-        return cosTmpSecret;
+        ossTmpSecret.setTmpSecretId((String) credentials.get(TMP_SECRET_ID));
+        ossTmpSecret.setTmpSecretKey((String) credentials.get(TMP_SECRET_KEY));
+        ossTmpSecret.setSessionToken((String) credentials.get(SESSION_TOKEN));
+        return ossTmpSecret;
     }
 }

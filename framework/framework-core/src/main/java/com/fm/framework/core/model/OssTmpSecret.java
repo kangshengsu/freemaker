@@ -5,14 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Cos临时秘钥
+ * 临时秘钥
  * @author zhangleqi
  * @date 2020-09-18 11:27 下午
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CosTmpSecret {
+public class OssTmpSecret {
 
     /**
      * 临时密钥 Id，可用于计算签名
@@ -28,4 +28,13 @@ public class CosTmpSecret {
      */
     private String sessionToken;
 
+    /**
+     * 桶名称
+     */
+    private String bucketName;
+
+    /**
+     * 区域名称
+     */
+    private String region;
 }
