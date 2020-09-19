@@ -8,6 +8,7 @@ package com.fm.api.web.controller.production;
 
 import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.framework.core.query.Page;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.service.Service;
@@ -39,16 +40,9 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
     @Autowired
     private IProductionInfoService productionInfoService;
 
-    @RequestMapping(value = "/getDetail",method = RequestMethod.POST)
-    public ApiResponse<ProductionInfoVO> getDetail(@RequestBody Long id) {
-        ProductionInfo model = productionInfoService.get(id);
-        //组装 自由职业者数据
-        if(model == null){
-            return failed("未获得相应数据！");
-        }
-        return success(convert(model));
+    @Autowired
+    private IFreelancerInfoService freelancerInfoService;
 
-    }
 
     @RequestMapping(value = "/create",method = RequestMethod.POST)
     public ApiResponse<Boolean> create(@RequestBody ProductionInfoVO form) {
@@ -88,7 +82,10 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
     protected ProductionInfoVO convert(ProductionInfo model) {
         ProductionInfoVO form = super.convert(model);
         //转换枚举值
-        form.setStatus(ProductionStatus.get(model.getStatus()).getName());
+        form.setStatusName(ProductionStatus.get(model.getStatus()).getName());
+        //获取作者数据
+        form.setFreelancerInfo(freelancerInfoService.get(model.getFreelancerId()));
+
         return form;
     }
 
