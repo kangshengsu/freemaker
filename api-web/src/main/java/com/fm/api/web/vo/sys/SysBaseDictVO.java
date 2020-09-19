@@ -9,11 +9,11 @@ package com.fm.api.web.vo.sys;
 import com.fm.framework.web.VO;
 import lombok.Data;
 import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
-import java.util.List;
 
 /**   
- * @Description:(基础字典请求实体类)
+ * @Description:(数据字典请求实体类)
  * 
  * @version: V1.0
  * @author: LiuDuo
@@ -22,7 +22,7 @@ import java.util.List;
 @Data
 public class SysBaseDictVO extends VO implements Serializable {
 
-	private static final long serialVersionUID = 1600351931385L;
+	private static final long serialVersionUID = 1600497555102L;
 	
 
 
@@ -71,31 +71,30 @@ public class SysBaseDictVO extends VO implements Serializable {
     /**
     * 创建人ID
     **/
-	private Long createUserCode;
+	private Long createUser;
 
 
     /**
     * 修改人ID
     **/
-	private Long updateUserCode;
+	private Long updateUser;
 
 
     /**
     * 创建时间
     **/
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 	private Date createTime;
 
 
     /**
     * 更新时间
     **/
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 	private Date updateTime;
 
 
-	/**
-	 *	子级数据
-	 */
-	private List<SysBaseDictVO> children;
+
 
 
 

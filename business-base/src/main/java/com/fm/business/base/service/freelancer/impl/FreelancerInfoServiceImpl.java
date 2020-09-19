@@ -10,6 +10,7 @@ package com.fm.business.base.service.freelancer.impl;
 import com.fm.business.base.dao.freelancer.IFreelancerInfoMapper;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
+import com.fm.framework.core.service.AuditBaseService;
 import org.springframework.stereotype.Service;
 import com.fm.framework.core.service.BaseService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service("freelancerInfoService")
-public class FreelancerInfoServiceImpl extends BaseService<IFreelancerInfoMapper, FreelancerInfo> implements IFreelancerInfoService {
+public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoMapper, FreelancerInfo> implements IFreelancerInfoService {
 
 
 }

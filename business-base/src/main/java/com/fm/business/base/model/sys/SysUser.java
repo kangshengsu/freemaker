@@ -21,7 +21,7 @@ import java.util.Date;
 @Data
 public class SysUser extends BaseModel implements Serializable {
 
-	private static final long serialVersionUID = 1599898313938L;
+	private static final long serialVersionUID = 1600497555102L;
 	
     /**
     * 逻辑主键

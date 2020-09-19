@@ -10,6 +10,7 @@ package com.fm.business.base.service.impl;
 import com.fm.business.base.dao.IAttachmentInfoMapper;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.service.IAttachmentInfoService;
+import com.fm.framework.core.service.AuditBaseService;
 import org.springframework.stereotype.Service;
 import com.fm.framework.core.service.BaseService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service("attachmentInfoService")
-public class AttachmentInfoServiceImpl extends BaseService<IAttachmentInfoMapper, AttachmentInfo> implements IAttachmentInfoService {
+public class AttachmentInfoServiceImpl extends AuditBaseService<IAttachmentInfoMapper, AttachmentInfo> implements IAttachmentInfoService {
 
 }

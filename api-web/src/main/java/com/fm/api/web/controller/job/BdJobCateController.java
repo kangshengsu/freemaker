@@ -99,7 +99,7 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
             treeNode = new JobNodeVO();
             treeNode.setLabel(bdJobSkillVO.getSkillCode());
             treeNode.setLabel(bdJobSkillVO.getSkillName());
-            treeNode.setTreeCode(bdJobSkillVO.getTreeCode());
+            treeNode.setTreeCode(bdJobSkillVO.getCateTreeCode());
             treeNode.setCateType(JobNodeType.SKILL.getType());
 
             treeNodeList.add(treeNode);

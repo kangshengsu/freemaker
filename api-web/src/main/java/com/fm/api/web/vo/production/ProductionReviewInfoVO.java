@@ -6,12 +6,10 @@
  */
 package com.fm.api.web.vo.production;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.framework.web.VO;
 import lombok.Data;
-
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 
 /**   
@@ -24,15 +22,14 @@ import java.util.Date;
 @Data
 public class ProductionReviewInfoVO extends VO implements Serializable {
 
-	private static final long serialVersionUID = 1599835185585L;
+	private static final long serialVersionUID = 1600497555102L;
 	
 
 
     /**
     * 作品编码
     **/
-	@NotBlank(message = "作品编码不能为空")
-	private String productionCode;
+	private Long productionId;
 
 
     /**
@@ -44,7 +41,6 @@ public class ProductionReviewInfoVO extends VO implements Serializable {
     /**
     * 审核意见
     **/
-	@NotBlank(message = "审核意见不能为空")
 	private String reviewerOpinion;
 
 
@@ -71,13 +67,16 @@ public class ProductionReviewInfoVO extends VO implements Serializable {
     /**
     * 创建人
     **/
-	private String createUser;
+	private Long createUser;
 
 
     /**
     * 修改人
     **/
-	private String updateUser;
+	private Long updateUser;
+
+
+
 
 
 

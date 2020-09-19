@@ -6,10 +6,10 @@
  */
 package com.fm.api.web.vo.order;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.framework.web.VO;
 import lombok.Data;
 import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 
 /**   
@@ -22,14 +22,14 @@ import java.util.Date;
 @Data
 public class OrderFollowVO extends VO implements Serializable {
 
-	private static final long serialVersionUID = 1599835185585L;
+	private static final long serialVersionUID = 1600497555102L;
 	
 
 
     /**
     * 订单号
     **/
-	private String orderCode;
+	private Long orderId;
 
 
     /**
@@ -61,13 +61,16 @@ public class OrderFollowVO extends VO implements Serializable {
     /**
     * 创建人
     **/
-	private String createUser;
+	private Long createUser;
 
 
     /**
     * 修改人
     **/
-	private String updateUser;
+	private Long updateUser;
+
+
+
 
 
 

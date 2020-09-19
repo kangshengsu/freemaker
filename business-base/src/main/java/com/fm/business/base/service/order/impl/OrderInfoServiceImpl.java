@@ -9,6 +9,7 @@ package com.fm.business.base.service.order.impl;
 import com.fm.business.base.dao.order.IOrderInfoMapper;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.service.order.IOrderInfoService;
+import com.fm.framework.core.service.AuditBaseService;
 import org.springframework.stereotype.Service;
 import com.fm.framework.core.service.BaseService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service("orderInfoService")
-public class OrderInfoServiceImpl extends BaseService<IOrderInfoMapper, OrderInfo> implements IOrderInfoService {
+public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, OrderInfo> implements IOrderInfoService {
 
 }

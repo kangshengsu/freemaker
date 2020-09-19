@@ -7,6 +7,7 @@
 package com.fm.business.base.model.order;
 
 import com.fm.framework.core.model.BaseModel;
+import com.fm.framework.core.model.IAudit;
 import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
@@ -19,9 +20,9 @@ import java.util.Date;
  * 
  */
 @Data
-public class OrderInfo extends BaseModel implements Serializable {
+public class OrderInfo extends BaseModel implements Serializable,IAudit {
 
-	private static final long serialVersionUID = 1599831722595L;
+	private static final long serialVersionUID = 1600497555102L;
 	
     /**
     * 逻辑主键
@@ -38,13 +39,13 @@ public class OrderInfo extends BaseModel implements Serializable {
     /**
     * 需求类型
     **/
-	private Long jobCode;
+	private Long jobCateId;
 
 
     /**
     * 需求类型
     **/
-	private Long treeCode;
+	private String cateTreeCode;
 
 
     /**
@@ -74,19 +75,19 @@ public class OrderInfo extends BaseModel implements Serializable {
     /**
     * 需求编码
     **/
-	private String demandCode;
+	private Long demandId;
 
 
     /**
     * 需求执行人
     **/
-	private String freelancer;
+	private Long freelancerId;
 
 
     /**
     * 需求提出人
     **/
-	private String employer;
+	private Long employerId;
 
 
     /**
@@ -104,13 +105,15 @@ public class OrderInfo extends BaseModel implements Serializable {
     /**
     * 创建人
     **/
-	private String createUser;
+	private Long createUser;
 
 
     /**
     * 修改人
     **/
-	private String updateUser;
+	private Long updateUser;
+
+
 
 
 

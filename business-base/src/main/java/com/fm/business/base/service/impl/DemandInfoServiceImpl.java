@@ -9,6 +9,7 @@ package com.fm.business.base.service.impl;
 import com.fm.business.base.dao.IDemandInfoMapper;
 import com.fm.business.base.model.DemandInfo;
 import com.fm.business.base.service.IDemandInfoService;
+import com.fm.framework.core.service.AuditBaseService;
 import org.springframework.stereotype.Service;
 import com.fm.framework.core.service.BaseService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service("demandInfoService")
-public class DemandInfoServiceImpl extends BaseService<IDemandInfoMapper, DemandInfo> implements IDemandInfoService {
+public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, DemandInfo> implements IDemandInfoService {
 
 
 }

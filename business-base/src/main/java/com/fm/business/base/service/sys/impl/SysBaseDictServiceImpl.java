@@ -11,6 +11,7 @@ import com.fm.business.base.constant.BaseDictGroupConstants;
 import com.fm.business.base.model.sys.SysBaseDict;
 import com.fm.business.base.dao.sys.ISysBaseDictMapper;
 import com.fm.business.base.service.sys.ISysBaseDictService;
+import com.fm.framework.core.service.AuditBaseService;
 import org.springframework.stereotype.Service;
 import com.fm.framework.core.service.BaseService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ import java.util.List;
  */
 @Slf4j
 @Service("sysBaseDictService")
-public class SysBaseDictServiceImpl extends BaseService<ISysBaseDictMapper, SysBaseDict> implements ISysBaseDictService  {
+public class SysBaseDictServiceImpl extends AuditBaseService<ISysBaseDictMapper, SysBaseDict> implements ISysBaseDictService  {
 
     /**
      * 根据所属分组获取字典数据

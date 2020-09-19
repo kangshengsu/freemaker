@@ -48,10 +48,10 @@ public class ProductionReviewInfoServiceImpl extends AuditBaseService<IProductio
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Throwable.class)
     public boolean review(ProductionReviewInfo productionReviewInfo, ProductionReviewStatus productionReviewStatus) {
         //检查当前作品状态 只允许审核审核中的作品
-        ProductionInfo productionInfo = productionInfoService.get(Long.valueOf(productionReviewInfo.getProductionCode()));
+        ProductionInfo productionInfo = productionInfoService.get(productionReviewInfo.getProductionId());
         if(productionInfo == null){
             throw new BusinessException("作品不存在！");
         }else if(!ProductionStatus.REVIEW.getCode().equals(productionInfo.getStatus())){
@@ -68,7 +68,7 @@ public class ProductionReviewInfoServiceImpl extends AuditBaseService<IProductio
         }
         //更新作品状态
         ProductionInfo updateProductionInfo = new ProductionInfo();
-        updateProductionInfo.setId(Long.valueOf(productionReviewInfo.getProductionCode()));
+        updateProductionInfo.setId(productionReviewInfo.getProductionId());
         if(ProductionReviewStatus.REVIEW_PASS.equals(productionReviewStatus)){
             updateProductionInfo.setStatus(ProductionStatus.RELEASE.getCode());
         }else if(ProductionReviewStatus.REVIEW_NOT_PASS.equals(productionReviewStatus)){

@@ -6,12 +6,10 @@
  */
 package com.fm.api.web.vo.sys;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.framework.web.VO;
 import lombok.Data;
-
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 
 /**   
@@ -24,7 +22,7 @@ import java.util.Date;
 @Data
 public class SysUserVO extends VO implements Serializable {
 
-	private static final long serialVersionUID = 1599898313938L;
+	private static final long serialVersionUID = 1600497555102L;
 	
 
 
@@ -41,13 +39,13 @@ public class SysUserVO extends VO implements Serializable {
 
 
     /**
-    * 密码
+    * 
     **/
 	private String password;
 
 
     /**
-    * 电话号码
+    * 
     **/
 	private String phone;
 

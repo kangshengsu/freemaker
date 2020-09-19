@@ -6,10 +6,10 @@
  */
 package com.fm.api.web.vo.production;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.framework.web.VO;
 import lombok.Data;
 import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -23,7 +23,7 @@ import java.util.Date;
 @Data
 public class ProductionInfoVO extends VO implements Serializable {
 
-	private static final long serialVersionUID = 1599835185585L;
+	private static final long serialVersionUID = 1600497555102L;
 	
 
 
@@ -36,7 +36,7 @@ public class ProductionInfoVO extends VO implements Serializable {
     /**
     * 发布用户编码
     **/
-	private String freelancerCode;
+	private Long freelancerId;
 
 
     /**
@@ -60,45 +60,47 @@ public class ProductionInfoVO extends VO implements Serializable {
     /**
     * 状态（10-未发布，20-审核中，30-审核未通过，40-已发布,50-已删除）
     **/
-	private String status;
+	private Integer status;
 
 
     /**
     * 所属领域
     **/
-	private String jobCode;
+	private Long jobCateId;
 
 
     /**
     * 技能全路径
     **/
-	private String treeCode;
+	private String cateTreeCode;
 
 
     /**
     * 创建时间
     **/
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-	private Date createTime;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    private Date createTime;
 
 
     /**
     * 修改时间
     **/
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-	private Date updateTime;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    private Date updateTime;
 
 
     /**
     * 创建人
     **/
-	private String createUser;
+	private Long createUser;
 
 
     /**
     * 修改人
     **/
-	private String updateUser;
+	private Long updateUser;
+
+
 
 
 

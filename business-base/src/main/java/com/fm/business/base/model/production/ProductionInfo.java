@@ -11,9 +11,6 @@ import com.fm.framework.core.model.IAudit;
 import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 
 /**   
@@ -26,7 +23,7 @@ import java.util.Date;
 @Data
 public class ProductionInfo extends BaseModel implements Serializable,IAudit {
 
-	private static final long serialVersionUID = 1599831722595L;
+	private static final long serialVersionUID = 1600497555102L;
 	
     /**
     * 逻辑主键
@@ -43,7 +40,7 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
     /**
     * 发布用户编码
     **/
-	private String freelancerCode;
+	private Long freelancerId;
 
 
     /**
@@ -73,13 +70,13 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
     /**
     * 所属领域
     **/
-	private String jobCode;
+	private Long jobCateId;
 
 
     /**
     * 技能全路径
     **/
-	private String treeCode;
+	private String cateTreeCode;
 
 
     /**
@@ -97,13 +94,15 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
     /**
     * 创建人
     **/
-	private String createUser;
+	private Long createUser;
 
 
     /**
     * 修改人
     **/
-	private String updateUser;
+	private Long updateUser;
+
+
 
 
 
@@ -128,5 +127,4 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
     public void setId(Long id) {
         this.id = id;
     }
-
 }

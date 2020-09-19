@@ -7,21 +7,22 @@
 package com.fm.business.base.model.sys;
 
 import com.fm.framework.core.model.BaseModel;
+import com.fm.framework.core.model.IAudit;
 import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
 /**   
- * @Description:(基础字典实体类)
+ * @Description:(数据字典实体类)
  * 
  * @version: V1.0
  * @author: LiuDuo
  * 
  */
 @Data
-public class SysBaseDict extends BaseModel implements Serializable {
+public class SysBaseDict extends BaseModel implements Serializable,IAudit {
 
-	private static final long serialVersionUID = 1600351931385L;
+	private static final long serialVersionUID = 1600497555102L;
 	
     /**
     * 主键ID
@@ -74,13 +75,13 @@ public class SysBaseDict extends BaseModel implements Serializable {
     /**
     * 创建人ID
     **/
-	private Long createUserCode;
+	private Long createUser;
 
 
     /**
     * 修改人ID
     **/
-	private Long updateUserCode;
+	private Long updateUser;
 
 
     /**

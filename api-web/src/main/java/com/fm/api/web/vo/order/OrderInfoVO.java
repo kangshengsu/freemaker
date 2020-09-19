@@ -6,10 +6,10 @@
  */
 package com.fm.api.web.vo.order;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.framework.web.VO;
 import lombok.Data;
 import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 
 /**   
@@ -22,7 +22,7 @@ import java.util.Date;
 @Data
 public class OrderInfoVO extends VO implements Serializable {
 
-	private static final long serialVersionUID = 1599835185585L;
+	private static final long serialVersionUID = 1600497555102L;
 	
 
 
@@ -35,13 +35,13 @@ public class OrderInfoVO extends VO implements Serializable {
     /**
     * 需求类型
     **/
-	private Long jobCode;
+	private Long jobCateId;
 
 
     /**
     * 需求类型
     **/
-	private Long treeCode;
+	private String cateTreeCode;
 
 
     /**
@@ -59,7 +59,6 @@ public class OrderInfoVO extends VO implements Serializable {
     /**
     * 期望交付时间
     **/
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 	private Date expectDeliveryTime;
 
 
@@ -73,19 +72,19 @@ public class OrderInfoVO extends VO implements Serializable {
     /**
     * 需求编码
     **/
-	private String demandCode;
+	private Long demandId;
 
 
     /**
     * 需求执行人
     **/
-	private String freelancer;
+	private Long freelancerId;
 
 
     /**
     * 需求提出人
     **/
-	private String employer;
+	private Long employerId;
 
 
     /**
@@ -105,13 +104,16 @@ public class OrderInfoVO extends VO implements Serializable {
     /**
     * 创建人
     **/
-	private String createUser;
+	private Long createUser;
 
 
     /**
     * 修改人
     **/
-	private String updateUser;
+	private Long updateUser;
+
+
+
 
 
 

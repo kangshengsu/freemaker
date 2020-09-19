@@ -9,6 +9,7 @@ package com.fm.business.base.service.production.impl;
 import com.fm.business.base.dao.production.IProductionSkillRelationMapper;
 import com.fm.business.base.model.production.ProductionSkillRelation;
 import com.fm.business.base.service.production.IProductionSkillRelationService;
+import com.fm.framework.core.service.AuditBaseService;
 import org.springframework.stereotype.Service;
 import com.fm.framework.core.service.BaseService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service("productionSkillRelationService")
-public class ProductionSkillRelationServiceImpl extends BaseService<IProductionSkillRelationMapper, ProductionSkillRelation> implements IProductionSkillRelationService {
+public class ProductionSkillRelationServiceImpl extends AuditBaseService<IProductionSkillRelationMapper, ProductionSkillRelation> implements IProductionSkillRelationService {
 
 }

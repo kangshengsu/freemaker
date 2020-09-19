@@ -37,14 +37,14 @@ public interface IAudit {
      * 获取创建人
      * @return 创建人ID
      */
-    String getCreateUser();
+    Long getCreateUser();
 
 
     /**
      * 设置创建人
      * @param createUser 创建人ID
      */
-    void setCreateUser(String createUser);
+    void setCreateUser(Long createUser);
 
 
 
@@ -52,14 +52,14 @@ public interface IAudit {
      * 获取更新用户
      * @return 更新用户
      */
-    String getUpdateUser();
+    Long getUpdateUser();
 
 
     /**
      * 设置更新人
      * @param updateUser 更新人ID
      */
-    void setUpdateUser(String updateUser);
+    void setUpdateUser(Long updateUser);
 
 
 
