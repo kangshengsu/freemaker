@@ -262,7 +262,10 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
         if (!Objects.isNull(orderItem)
                 && !Objects.isNull(orderItem.getFields())
                 && orderItem.getFields().length > 0) {
-            Arrays.asList(orderItem.getFields()).stream().forEach( field -> camelToUnderline(field));
+            String[] fields = Arrays.asList(orderItem.getFields()).stream().map(
+                    field -> camelToUnderline(field)
+            ).toArray(String[] :: new);
+            orderItem = new OrderItem(orderItem.getType(),fields);
             switch (orderItem.getType()) {
                 case asc:
                     queryWrapper.orderByAsc(orderItem.getFields());
@@ -460,7 +463,6 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
             return filedName;
         }
         return StringUtils.camelToUnderline(filedName);
-
     }
 
 }
