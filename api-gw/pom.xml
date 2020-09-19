@@ -43,7 +43,7 @@
         </dependency>
         <dependency>
             <groupId>com.freemaker</groupId>
-            <artifactId>api-common</artifactId>
+            <artifactId>framework-web</artifactId>
         </dependency>
     </dependencies>
 
