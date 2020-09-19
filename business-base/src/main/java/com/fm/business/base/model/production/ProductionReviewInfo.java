@@ -39,7 +39,7 @@ public class ProductionReviewInfo extends BaseModel implements Serializable,IAud
     /**
     * 审核人
     **/
-	private String reviewerCode;
+	private Long reviewerId;
 
 
     /**

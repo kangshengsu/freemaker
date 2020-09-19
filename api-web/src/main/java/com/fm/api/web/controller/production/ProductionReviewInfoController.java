@@ -7,7 +7,10 @@
 package com.fm.api.web.controller.production;
 
 import com.fm.business.base.enums.ProductionReviewStatus;
+import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.production.ProductionReviewInfo;
+import com.fm.business.base.model.sys.SysUser;
+import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.query.Page;
 import com.fm.business.base.service.production.IProductionReviewInfoService;
@@ -40,6 +43,9 @@ public class ProductionReviewInfoController extends BaseController<ProductionRev
 
     @Autowired
     private IProductionReviewInfoService productionReviewInfoService;
+
+    @Autowired
+    private ISysUserService sysUserService;
 
     /**
      * 审核通过
@@ -104,17 +110,20 @@ public class ProductionReviewInfoController extends BaseController<ProductionRev
         return productionReviewInfoService;
     }
 
-    @Override
-    protected ProductionReviewInfo convert(ProductionReviewInfoVO form) {
-        ProductionReviewInfo model = new ProductionReviewInfo();
-        BeanUtils.copyProperties(form,model);
-        return model;
-    }
 
     @Override
     protected ProductionReviewInfoVO convert(ProductionReviewInfo model) {
-        ProductionReviewInfoVO form = new ProductionReviewInfoVO();
-        BeanUtils.copyProperties(model,form);
+
+        ProductionReviewInfoVO form = super.convert(model);
+        //获取审核人信息
+        form.setStatusName(ProductionReviewStatus.get(model.getStatus()).getName());
+
+        //获取作者数据
+        SysUser sysUser = sysUserService.get(model.getReviewerId());
+        if( sysUser != null ){
+            form.setReviewerName(sysUser.getName());
+        }
+
         return form;
     }
 

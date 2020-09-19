@@ -58,7 +58,7 @@ public class ProductionReviewInfoServiceImpl extends AuditBaseService<IProductio
             throw new BusinessException("不允许审核非【审核中】状态的作品！");
         }
         //设置审核人
-        productionReviewInfo.setReviewerCode(Context.getCurrUser().toString());
+        productionReviewInfo.setReviewerId(Context.getCurrUser());
         //设置审核状态
         productionReviewInfo.setStatus(productionReviewStatus.getCode());
         //保存审核结果

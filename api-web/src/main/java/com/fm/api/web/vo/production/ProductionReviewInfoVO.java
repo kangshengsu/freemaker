@@ -35,8 +35,12 @@ public class ProductionReviewInfoVO extends VO implements Serializable {
     /**
     * 审核人
     **/
-	private String reviewerCode;
+	private Long reviewerId;
 
+	/**
+	 * 审核人名称
+	 */
+	private String reviewerName;
 
     /**
     * 审核意见
@@ -49,6 +53,10 @@ public class ProductionReviewInfoVO extends VO implements Serializable {
     **/
 	private Integer status;
 
+	/**
+	 * 状态名称
+	 */
+	private String statusName;
 
     /**
     * 创建时间
