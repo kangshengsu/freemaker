@@ -88,11 +88,6 @@ public class ProductionInfoVO extends VO implements Serializable {
     private String cateTreeCode;
 
     /**
-     * 领域名称
-     */
-    private String jobCateName;
-
-    /**
      * 创建时间
      **/
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
