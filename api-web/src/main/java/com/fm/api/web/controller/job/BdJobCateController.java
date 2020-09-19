@@ -6,7 +6,7 @@
 */
 package com.fm.api.web.controller.job;
 
-import com.fm.api.web.enums.JobNodeType;
+import com.fm.business.base.enums.JobNodeType;
 import com.fm.api.web.vo.job.BdJobCateVO;
 import com.fm.api.web.vo.job.BdJobSkillVO;
 import com.fm.api.web.vo.job.JobNodeVO;
@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,6 +49,26 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
 
     @Autowired
     private IBdJobSkillService bdJobSkillService;
+
+    /**
+     * 获取领域数据
+     * @param form
+     * @return
+     */
+    @RequestMapping(value = "/findJobCateDomain",method = RequestMethod.POST)
+    public ApiResponse<List<BdJobCateVO>> findJobCateDomain(@RequestBody BdJobCateVO form) {
+        return success(convert(bdJobCateService.findJobCateDomain(form.getKeyword())));
+    }
+
+    /**
+     * 获取领域下的岗位数据
+     * @param form
+     * @return
+     */
+    @RequestMapping(value = "/findJobCatePost",method = RequestMethod.POST)
+    public ApiResponse<List<BdJobCateVO>> findJobCatePost(@RequestBody BdJobCateVO form) {
+        return success(convert(bdJobCateService.findJobCatePost(form.getParentId(),form.getKeyword())));
+    }
 
     @RequestMapping(value = "create",method = RequestMethod.POST)
     public ApiResponse<Boolean> create(@RequestBody BdJobCateVO form) {

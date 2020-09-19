@@ -1,4 +1,4 @@
-package com.fm.api.web.enums;
+package com.fm.business.base.enums;
 
 public enum JobNodeType {
     JOB(10, "领域"),

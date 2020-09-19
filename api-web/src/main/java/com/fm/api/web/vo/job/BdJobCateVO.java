@@ -25,6 +25,7 @@ public class BdJobCateVO extends VO implements Serializable {
 	private static final long serialVersionUID = 1600497555102L;
 	
 
+	private String keyword;
 
     /**
     * 

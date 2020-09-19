@@ -16,10 +16,9 @@ import com.fm.framework.web.response.ApiResponse;
 import com.fm.api.web.vo.freelancer.FreelancerInfoVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
 *
@@ -36,6 +35,22 @@ public class FreelancerInfoController extends BaseController<FreelancerInfo, Fre
 
     @Autowired
     private IFreelancerInfoService freelancerInfoService;
+
+
+    /**
+     * 根据名字和电话模糊查找数据最多返回10条
+     * @param form
+     * @return
+     */
+    @RequestMapping(value = "/findLikeNameOrPhone",method = RequestMethod.POST)
+    public ApiResponse<List<FreelancerInfoVO>> findLikeNameOrPhone(@RequestBody FreelancerInfoVO form) {
+
+        List<FreelancerInfo> freelancerInfos = freelancerInfoService.findLikeNameOrPhone(form.getKeyword());
+
+        return success(convert(freelancerInfos));
+
+    }
+
 
     @RequestMapping(value = "create",method = RequestMethod.POST)
     public ApiResponse<Boolean> create(@RequestBody FreelancerInfoVO form) {

@@ -25,6 +25,7 @@ public class FreelancerInfoVO extends VO implements Serializable {
 	private static final long serialVersionUID = 1600497555102L;
 	
 
+	private String keyword;
 
     /**
     * 自由职业者编码
