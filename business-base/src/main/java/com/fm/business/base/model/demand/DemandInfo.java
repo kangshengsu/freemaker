@@ -1,10 +1,10 @@
 /**
  * @filename:DemandInfo 2020年09月11日
  * @project HowWork  V1.0
- * Copyright(c) 2020 LiuDuo Co. Ltd. 
- * All right reserved. 
+ * Copyright(c) 2020 LiuDuo Co. Ltd.
+ * All right reserved.
  */
-package com.fm.business.base.model;
+package com.fm.business.base.model.demand;
 
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
@@ -12,18 +12,18 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-/**   
+/**
  * @Description:(需求实体类)
- * 
+ *
  * @version: V1.0
  * @author: LiuDuo
- * 
+ *
  */
 @Data
 public class DemandInfo extends BaseModel implements Serializable,IAudit {
 
 	private static final long serialVersionUID = 1600497555102L;
-	
+
     /**
     * 逻辑主键
     **/

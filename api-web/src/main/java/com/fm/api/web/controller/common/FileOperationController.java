@@ -2,6 +2,8 @@ package com.fm.api.web.controller.common;
 
 import com.fm.framework.core.model.OssTmpSecret;
 import com.fm.framework.core.service.FileService;
+import com.fm.framework.web.response.ApiResponse;
+import com.fm.framework.web.response.ApiStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,16 +27,16 @@ public class FileOperationController {
      * 获取云存储密匙
      */
     @RequestMapping(value = "/getTmpSecret",method = RequestMethod.GET)
-    public OssTmpSecret getTmpSecret(){
+    public ApiResponse<OssTmpSecret> getTmpSecret(){
 
-        return fileService.getTmpSecret();
+        return  ApiResponse.ofSuccess(fileService.getTmpSecret());
     }
 
     /**
      * 获取url前缀信息
      */
     @RequestMapping(value = "/getBaseUrl",method = RequestMethod.GET)
-    public String getBaseUrl(){
-        return fileService.getBaseUrl();
+    public ApiResponse<String> getBaseUrl(){
+        return ApiResponse.ofSuccess(fileService.getBaseUrl());
     }
 }

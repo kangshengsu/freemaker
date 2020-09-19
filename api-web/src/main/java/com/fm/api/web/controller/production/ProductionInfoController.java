@@ -6,9 +6,11 @@
 */
 package com.fm.api.web.controller.production;
 
+import com.fm.business.base.enums.AttachmentBusinessType;
 import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.business.base.service.IAttachmentInfoService;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.framework.core.query.Page;
@@ -46,8 +48,10 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
     private IFreelancerInfoService freelancerInfoService;
 
     @Autowired
-    private IBdJobCateService bdJobCateService;
+    private IBdJobCateService iBdJobCateService;
 
+    @Autowired
+    private IAttachmentInfoService iAttachmentInfoService;
 
     @RequestMapping(value = "/create",method = RequestMethod.POST)
     public ApiResponse<Boolean> create(@RequestBody ProductionInfoVO form) {
@@ -90,11 +94,14 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         form.setStatusName(ProductionStatus.get(model.getStatus()).getName());
         //获取作者数据
         form.setFreelancerInfo(freelancerInfoService.get(model.getFreelancerId()));
-        //获取岗位加领域
-        BdJobCate jobCate = bdJobCateService.get(model.getJobCateId());
-        form.setJobCateName(jobCate.getCateName());
-
+        BdJobCate bdJobCate = iBdJobCateService.get(model.getJobCateId());
+        if (bdJobCate != null) {
+            form.setJobCateName(bdJobCate.getCateName());
+        }
+        //获取附件列表
+        form.setAttachmentInfos(iAttachmentInfoService.getByCodeAndType(form.getCode(), AttachmentBusinessType.PRODUCTION));
         return form;
     }
 
 }
+

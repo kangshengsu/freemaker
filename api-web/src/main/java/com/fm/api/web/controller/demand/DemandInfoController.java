@@ -7,10 +7,15 @@
 package com.fm.api.web.controller.demand;
 
 import com.fm.api.web.vo.DemandInfoVO;
-import com.fm.business.base.model.DemandInfo;
-import com.fm.business.base.service.IDemandInfoService;
-import com.fm.framework.core.query.OrderItem;
-import com.fm.framework.core.query.OrderType;
+import com.fm.business.base.enums.DemandStatus;
+import com.fm.business.base.enums.ProductionStatus;
+import com.fm.business.base.model.EmployerInfo;
+import com.fm.business.base.model.demand.DemandInfo;
+import com.fm.business.base.model.job.BdJobCate;
+import com.fm.business.base.service.IBdJobCateService;
+import com.fm.business.base.service.IEmployerInfoService;
+import com.fm.business.base.service.demand.IDemandInfoService;
+import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
@@ -38,6 +43,12 @@ public class DemandInfoController extends BaseController<DemandInfo, DemandInfoV
 
     @Autowired
     private IDemandInfoService demandInfoService;
+
+    @Autowired
+    private IEmployerInfoService iEmployerInfoService;
+
+    @Autowired
+    private IBdJobCateService iBdJobCateService;
 
     @RequestMapping(value = "create",method = RequestMethod.POST)
     public ApiResponse<Boolean> create(@RequestBody DemandInfoVO form) {
@@ -80,8 +91,20 @@ public class DemandInfoController extends BaseController<DemandInfo, DemandInfoV
 
     @Override
     protected DemandInfoVO convert(DemandInfo model) {
-        DemandInfoVO form = new DemandInfoVO();
-        BeanUtils.copyProperties(model,form);
+        DemandInfoVO form = super.convert(model);
+        //转换枚举值
+        form.setStatusName(DemandStatus.get(model.getStatus()).getName());
+        //获取作者数据
+        EmployerInfo employerInfo = iEmployerInfoService.get(model.getEmployerId());
+        if (employerInfo != null) {
+            form.setEmployerName(employerInfo.getName());
+        }
+
+        //获取需求信息
+        BdJobCate bdJobCate = iBdJobCateService.get(model.getJobCateId());
+        if (bdJobCate != null) {
+            form.setJobCateIdName(bdJobCate.getCateName());
+        }
         return form;
     }
 

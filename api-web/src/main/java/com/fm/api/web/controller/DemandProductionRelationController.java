@@ -6,9 +6,9 @@
 */
 package com.fm.api.web.controller;
 
-import com.fm.business.base.model.DemandProductionRelation;
+import com.fm.business.base.model.demand.DemandProductionRelation;
 import com.fm.framework.core.query.Page;
-import com.fm.business.base.service.IDemandProductionRelationService;
+import com.fm.business.base.service.demand.IDemandProductionRelationService;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
@@ -16,7 +16,6 @@ import com.fm.framework.web.response.ApiResponse;
 import com.fm.api.web.vo.DemandProductionRelationVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
