@@ -30,4 +30,11 @@ public class FileOperationController {
         return fileService.getTmpSecret();
     }
 
+    /**
+     * 获取url前缀信息
+     */
+    @RequestMapping(value = "/getBaseUrl",method = RequestMethod.GET)
+    public String getBaseUrl(){
+        return fileService.getBaseUrl();
+    }
 }

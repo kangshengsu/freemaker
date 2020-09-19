@@ -63,8 +63,6 @@ public class DemandInfoController extends BaseController<DemandInfo, DemandInfoV
     @RequestMapping(value = "list",method = RequestMethod.POST)
     public ApiResponse<Page<DemandInfoVO>> list(@RequestBody QueryRequest queryRequest) {
 
-        OrderItem orderItem = new OrderItem(OrderType.desc,"recommendCount");
-        queryRequest.setOrderItem(orderItem);
         return super.list(queryRequest);
     }
 
