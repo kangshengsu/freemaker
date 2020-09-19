@@ -3,10 +3,12 @@ package com.fm.framework.core.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.fm.framework.core.constants.CommonConstants;
 import com.fm.framework.core.event.*;
 import com.fm.framework.core.id.IdGenerator;
 import com.fm.framework.core.model.BaseModel;
@@ -26,10 +28,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -263,6 +262,7 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
         if (!Objects.isNull(orderItem)
                 && !Objects.isNull(orderItem.getFields())
                 && orderItem.getFields().length > 0) {
+            Arrays.asList(orderItem.getFields()).stream().forEach( field -> camelToUnderline(field));
             switch (orderItem.getType()) {
                 case asc:
                     queryWrapper.orderByAsc(orderItem.getFields());
@@ -280,6 +280,7 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
     protected void setQueryItem2Wrapper(List<QueryItem> queryItemList, QueryWrapper<T> queryWrapper) {
         if (queryItemList != null) {
             queryItemList.forEach(queryItem -> {
+                queryItem.setQueryField(camelToUnderline(queryItem.getQueryField()));
                 switch (queryItem.getType()) {
                     case eq:
                         queryWrapper.eq(queryItem.getQueryField(), queryItem.getValue());
@@ -449,5 +450,17 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
         return pageInfo;
     }
 
+    /**
+     * 驼峰命名转换下划线
+     * @param filedName
+     * @return
+     */
+    private String camelToUnderline(String filedName){
+        if(filedName == null || filedName.contains(CommonConstants.UNDERLINE)){
+            return filedName;
+        }
+        return StringUtils.camelToUnderline(filedName);
+
+    }
 
 }
