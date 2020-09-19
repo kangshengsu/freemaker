@@ -7,9 +7,13 @@
 package com.fm.business.base.model.production;
 
 import com.fm.framework.core.model.BaseModel;
+import com.fm.framework.core.model.IAudit;
 import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 /**   
@@ -20,7 +24,7 @@ import java.util.Date;
  * 
  */
 @Data
-public class ProductionInfo extends BaseModel implements Serializable {
+public class ProductionInfo extends BaseModel implements Serializable,IAudit {
 
 	private static final long serialVersionUID = 1599831722595L;
 	
@@ -124,4 +128,5 @@ public class ProductionInfo extends BaseModel implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
 }
