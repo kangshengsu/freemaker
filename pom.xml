@@ -13,6 +13,7 @@
         <module>api-gw</module>
         <module>api-web</module>
         <module>business-base</module>
+        <module>api-common</module>
     </modules>
 
 

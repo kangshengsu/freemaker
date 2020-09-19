@@ -8,5 +8,5 @@ package com.fm.framework.core.exception;
 public interface ErrorCode {
 
     String TS_INVALID = "1003";
-
+    String RESULT_INVALID = "2001";
 }
