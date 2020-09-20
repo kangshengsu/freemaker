@@ -6,7 +6,12 @@
 */
 package com.fm.api.web.controller.production;
 
+import com.fm.business.base.enums.ProductionReviewStatus;
+import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.production.ProductionReviewInfo;
+import com.fm.business.base.model.sys.SysUser;
+import com.fm.business.base.service.sys.ISysUserService;
+import com.fm.framework.core.Context;
 import com.fm.framework.core.query.Page;
 import com.fm.business.base.service.production.IProductionReviewInfoService;
 import com.fm.framework.core.service.Service;
@@ -20,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 /**
 *
@@ -37,28 +44,61 @@ public class ProductionReviewInfoController extends BaseController<ProductionRev
     @Autowired
     private IProductionReviewInfoService productionReviewInfoService;
 
-    @RequestMapping(value = "create",method = RequestMethod.POST)
+    @Autowired
+    private ISysUserService sysUserService;
+
+    /**
+     * 审核通过
+     * @param form
+     * @return
+     */
+    @RequestMapping(value = "/reviewPass",method = RequestMethod.POST)
+    public ApiResponse<Boolean> reviewPass(@Valid @RequestBody ProductionReviewInfoVO form) {
+        boolean result = productionReviewInfoService.review(convert(form), ProductionReviewStatus.REVIEW_PASS);
+        if(!result){
+            return failed("操作失败");
+        }
+        return success(Boolean.TRUE);
+
+    }
+
+    /**
+     * 审核失败
+     * @param form
+     * @return
+     */
+    @RequestMapping(value = "/reviewNotPass",method = RequestMethod.POST)
+    public ApiResponse<Boolean> reviewNotPass(@Valid @RequestBody ProductionReviewInfoVO form) {
+        boolean result = productionReviewInfoService.review(convert(form), ProductionReviewStatus.REVIEW_NOT_PASS);
+        if(!result){
+            return failed("操作失败");
+        }
+        return success(Boolean.TRUE);
+
+    }
+
+    @RequestMapping(value = "/create",method = RequestMethod.POST)
     public ApiResponse<Boolean> create(@RequestBody ProductionReviewInfoVO form) {
 
         return super.create(form);
 
     }
 
-    @RequestMapping(value = "delete",method = RequestMethod.POST)
+    @RequestMapping(value = "/delete",method = RequestMethod.POST)
     public ApiResponse<Boolean> delete(@RequestBody Long id) {
 
         return super.delete(id);
 
     }
 
-    @RequestMapping(value = "update",method = RequestMethod.POST)
+    @RequestMapping(value = "/update",method = RequestMethod.POST)
     public ApiResponse<Boolean> update(@RequestBody ProductionReviewInfoVO form) {
 
         return super.update(form);
 
     }
 
-    @RequestMapping(value = "list",method = RequestMethod.POST)
+    @RequestMapping(value = "/list",method = RequestMethod.POST)
     public ApiResponse<Page<ProductionReviewInfoVO>> list(@RequestBody QueryRequest queryRequest) {
 
         return super.list(queryRequest);
@@ -70,17 +110,20 @@ public class ProductionReviewInfoController extends BaseController<ProductionRev
         return productionReviewInfoService;
     }
 
-    @Override
-    protected ProductionReviewInfo convert(ProductionReviewInfoVO form) {
-        ProductionReviewInfo model = new ProductionReviewInfo();
-        BeanUtils.copyProperties(form,model);
-        return model;
-    }
 
     @Override
     protected ProductionReviewInfoVO convert(ProductionReviewInfo model) {
-        ProductionReviewInfoVO form = new ProductionReviewInfoVO();
-        BeanUtils.copyProperties(model,form);
+
+        ProductionReviewInfoVO form = super.convert(model);
+        //获取审核人信息
+        form.setStatusName(ProductionReviewStatus.get(model.getStatus()).getName());
+
+        //获取作者数据
+        SysUser sysUser = sysUserService.get(model.getReviewerId());
+        if( sysUser != null ){
+            form.setReviewerName(sysUser.getName());
+        }
+
         return form;
     }
 

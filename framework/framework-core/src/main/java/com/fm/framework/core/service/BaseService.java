@@ -3,10 +3,12 @@ package com.fm.framework.core.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.fm.framework.core.constants.SymbolConstants;
 import com.fm.framework.core.event.*;
 import com.fm.framework.core.id.IdGenerator;
 import com.fm.framework.core.model.BaseModel;
@@ -18,7 +20,6 @@ import com.fm.framework.core.query.QueryItem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -26,10 +27,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -164,9 +162,14 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
     public boolean update(T model) {
         boolean result;
         beforeUpdate(model);
+        T before = get(model.getId());
+        if(model.getTs() == null){
+            model.setTs(before.getTs());
+        }
         UpdateWrapper<T> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq(DBFieldConst.ID, model.getId()).eq(DBFieldConst.TS, model.getTs());
-        T before = get(model.getId());
+        //更新时依赖数据库表配置更新
+        model.setTs(null);
         result = update(model, updateWrapper);
         if (result) {
             afterUpdate(model);
@@ -258,6 +261,10 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
         if (!Objects.isNull(orderItem)
                 && !Objects.isNull(orderItem.getFields())
                 && orderItem.getFields().length > 0) {
+            String[] fields = Arrays.asList(orderItem.getFields()).stream().map(
+                    field -> camelToUnderline(field)
+            ).toArray(String[] :: new);
+            orderItem = new OrderItem(orderItem.getType(),fields);
             switch (orderItem.getType()) {
                 case asc:
                     queryWrapper.orderByAsc(orderItem.getFields());
@@ -275,6 +282,7 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
     protected void setQueryItem2Wrapper(List<QueryItem> queryItemList, QueryWrapper<T> queryWrapper) {
         if (queryItemList != null) {
             queryItemList.forEach(queryItem -> {
+                queryItem.setQueryField(camelToUnderline(queryItem.getQueryField()));
                 switch (queryItem.getType()) {
                     case eq:
                         queryWrapper.eq(queryItem.getQueryField(), queryItem.getValue());
@@ -375,7 +383,7 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
     }
 
     @Override
-    public List<T> getByIds(List<Long> ids) {
+    public List<T> getByIds(Collection<Long> ids) {
 
         if(CollectionUtils.isEmpty(ids)) {
             return new ArrayList<>();
@@ -444,5 +452,16 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
         return pageInfo;
     }
 
+    /**
+     * 驼峰命名转换下划线
+     * @param filedName
+     * @return
+     */
+    private String camelToUnderline(String filedName){
+        if(filedName == null || filedName.contains(SymbolConstants.UNDERLINE)){
+            return filedName;
+        }
+        return StringUtils.camelToUnderline(filedName);
+    }
 
 }

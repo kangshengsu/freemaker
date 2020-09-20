@@ -13,6 +13,7 @@
         <module>api-gw</module>
         <module>api-web</module>
         <module>business-base</module>
+        <module>api-common</module>
     </modules>
 
 
@@ -37,14 +38,14 @@
         <h2.version>1.4.200</h2.version>
         <junit.version>4.12</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <druid.version>1.1.23</druid.version>
         <spring.starter.cache.version>2.3.3.RELEASE</spring.starter.cache.version>
         <caffeine.version>2.8.5</caffeine.version>
         <qcloud.oss.version>5.6.2</qcloud.oss.version>
+        <qcloud.cos.sts.version>3.0.8</qcloud.cos.sts.version>
         <redisson.starter.version>3.13.4</redisson.starter.version>
         <weixin.version>3.9.0</weixin.version>
         <swagger.version>2.6.1</swagger.version>
-        <guava.version>18.0</guava.version>
+        <guava.version>28.2-jre</guava.version>
         <commons-io.version>2.8.0</commons-io.version>
         <jackson.version>2.10.2</jackson.version>
     </properties>
@@ -75,12 +76,6 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis.plus.boot.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
-                <version>${druid.version}</version>
             </dependency>
 
             <dependency>
@@ -198,6 +193,12 @@
                 <groupId>com.qcloud</groupId>
                 <artifactId>cos_api</artifactId>
                 <version>${qcloud.oss.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.tencent.cloud</groupId>
+                <artifactId>cos-sts-java</artifactId>
+                <version>${qcloud.cos.sts.version}</version>
             </dependency>
 
             <dependency>

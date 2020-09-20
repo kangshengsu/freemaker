@@ -6,8 +6,8 @@ import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * <p>审计服务</p>
@@ -19,17 +19,17 @@ public class AuditBaseService<M extends BaseMapper<T>, T extends BaseModel & IAu
     @Override
     protected void initDefaultField(T model) {
         super.initDefaultField(model);
-        model.setCreateTime(LocalDateTime.now());
+        model.setCreateTime(new Date());
         model.setCreateUser(Context.getCurrUser());
-        model.setCreateUserCode(Context.getCurrUserCode());
+        model.setUpdateTime(new Date());
+        model.setUpdateUser(Context.getCurrUser());
     }
 
     @Override
     protected void beforeUpdate(T model) {
         super.beforeUpdate(model);
-        model.setUpdateTime(LocalDateTime.now());
+        model.setUpdateTime(new Date());
         model.setUpdateUser(Context.getCurrUser());
-        model.setUpdateUserCode(Context.getCurrUserCode());
     }
 
     @Override
@@ -37,7 +37,7 @@ public class AuditBaseService<M extends BaseMapper<T>, T extends BaseModel & IAu
         super.beforeUpdate(models);
         if(!CollectionUtils.isEmpty(models)) {
             models.forEach(model -> {
-                model.setUpdateTime(LocalDateTime.now());
+                model.setUpdateTime(new Date());
                 model.setUpdateUser(Context.getCurrUser());
             });
         }

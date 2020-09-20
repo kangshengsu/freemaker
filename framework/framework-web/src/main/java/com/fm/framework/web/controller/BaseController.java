@@ -9,7 +9,15 @@ import com.fm.framework.web.VO;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import com.fm.framework.web.response.ApiStatus;
+import lombok.extern.slf4j.XSlf4j;
+import org.springframework.beans.BeanUtils;
 
+import javax.cache.integration.CacheLoader;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -70,8 +78,67 @@ public abstract class BaseController<M extends BaseModel, V extends VO> {
 
     protected abstract Service<M> service();
 
-    protected abstract M convert(V form);
+    protected M convert(V form) {
+        M model = null;
+        try {
+            model = getMInstance();
+        } catch (IllegalAccessException e) {
+        } catch (InstantiationException e) {
+        }
+        BeanUtils.copyProperties(form, model);
+        return model;
+    }
 
-    protected abstract V convert(M model);
+    protected V convert(M model) {
+        V form = null;
+        try {
+            form = getVInstance();
+        } catch (IllegalAccessException e) {
+        } catch (InstantiationException e) {
+        }
+        BeanUtils.copyProperties(model, form);
+        return form;
+    }
 
+    protected List<V> convert(List<M> model) {
+        if(model == null || model.isEmpty()){
+            return Collections.EMPTY_LIST;
+        }
+        return model.stream().map(this::convert).collect(Collectors.toList());
+    }
+
+
+    private M getMInstance() throws IllegalAccessException, InstantiationException {
+        Class<M> clazz;
+        M m = null;
+        Type superclass = getClass().getGenericSuperclass();
+        ParameterizedType parameterizedType = null;
+        if (superclass instanceof ParameterizedType) {
+            parameterizedType = (ParameterizedType) superclass;
+            Type[] typeArray = parameterizedType.getActualTypeArguments();
+            if (typeArray != null && typeArray.length > 0) {
+                clazz = (Class<M>) typeArray[0];
+                m = clazz.newInstance();
+            }
+        }
+
+        return m;
+    }
+
+    private V getVInstance() throws IllegalAccessException, InstantiationException {
+        Class<V> clazz;
+        V v = null;
+        Type superclass = getClass().getGenericSuperclass();
+        ParameterizedType parameterizedType = null;
+        if (superclass instanceof ParameterizedType) {
+            parameterizedType = (ParameterizedType) superclass;
+            Type[] typeArray = parameterizedType.getActualTypeArguments();
+            if (typeArray != null && typeArray.length > 0) {
+                clazz = (Class<V>) typeArray[1];
+                v = clazz.newInstance();
+            }
+        }
+
+        return v;
+    }
 }

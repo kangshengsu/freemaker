@@ -1,0 +1,24 @@
+server:
+  port: 8004
+# mysql
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://172.21.16.11:3306/how_work_test?useUnicode=true&characterEncoding=utf-8&useSSL=false&autoReconnect=true&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull
+    username: how_work_test
+    password: how_work_test
+  cos:
+    appId: 1301749332
+    secretId: AKIDALMUUvExISTJz5nk6LPJ3c37peLtuUXP
+    secretKey: o953qTxk2DG8QXTEsSvBFuLUVFyZutd5
+    bucketName: howwork-1301749332
+    region: ap-beijing
+  redis:
+      host: 172.21.16.17
+      password: HowWork!
+      database: 1
+
+mybatis-plus:
+  configuration:
+    #这个配置会将执行的sql打印出来，在开发或测试的时候可以用
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

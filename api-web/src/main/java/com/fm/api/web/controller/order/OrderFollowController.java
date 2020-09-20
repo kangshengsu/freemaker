@@ -6,17 +6,16 @@
 */
 package com.fm.api.web.controller.order;
 
-import com.fm.business.base.model.OrderFollow;
+import com.fm.business.base.model.order.OrderFollow;
 import com.fm.framework.core.query.Page;
-import com.fm.business.base.service.IOrderFollowService;
+import com.fm.business.base.service.order.IOrderFollowService;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
-import com.fm.api.web.vo.OrderFollowVO;
+import com.fm.api.web.vo.order.OrderFollowVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

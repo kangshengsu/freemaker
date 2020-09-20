@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fm.business.base.dao.IDemandInfoMapper">
 
-	<resultMap id="BaseResultMap" type="com.fm.business.base.model.DemandInfo">
+	<resultMap id="BaseResultMap" type="com.fm.business.base.model.demand.DemandInfo">
 		<id column="id" property="id" />
 		<id column="code" property="code" />
 		<id column="employer_code" property="employerCode" />
@@ -28,5 +28,5 @@
 	<sql id="Base_Column_List">
 		id, code, employer_code, status, job_code, tree_code, expect_delivery_time, budget, recommend_count, province_code, city_code, district_code, county_code, summarize, description, create_time, update_time, create_user, update_user, is_delete, ts
 	</sql>
-	
+
 </mapper>

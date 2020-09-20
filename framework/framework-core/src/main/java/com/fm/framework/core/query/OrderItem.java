@@ -1,6 +1,7 @@
 package com.fm.framework.core.query;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
@@ -10,6 +11,7 @@ import java.util.Objects;
  * @author clufeng
  */
 @Getter
+@Setter
 public class OrderItem {
 
     private final String[] fields;

@@ -3,6 +3,7 @@ package com.fm.framework.core.model;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * <p>Base Mode</p>

@@ -30,8 +30,8 @@ public class MyBatisTest {
     public void testCreate(){
         AttachmentInfo attachmentInfo = new AttachmentInfo();
         attachmentInfo.setBusinessCode("22");
-        attachmentInfo.setCreateUser("test");
-        attachmentInfo.setUpdateUser("123");
+        attachmentInfo.setCreateUser(12L);
+        attachmentInfo.setUpdateUser(123L);
         attachmentInfo.setCreateTime(new Date());
         attachmentInfo.setUpdateTime(new Date());
         attachmentInfoService.save(attachmentInfo);

@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 @Setter
 @Getter
-public class UserVO extends VO implements Serializable {
+public class  UserVO extends VO implements Serializable {
 
     @ApiModelProperty(value = "用户编码", notes = "用户编码")
     private String userCode;

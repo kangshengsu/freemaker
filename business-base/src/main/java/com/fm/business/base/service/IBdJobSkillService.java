@@ -6,7 +6,7 @@
  */
 package com.fm.business.base.service;
 
-import com.fm.business.base.model.BdJobSkill;
+import com.fm.business.base.model.job.BdJobSkill;
 import com.fm.framework.core.service.Service;
 
 /**

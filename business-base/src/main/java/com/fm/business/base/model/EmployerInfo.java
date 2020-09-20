@@ -7,6 +7,7 @@
 package com.fm.business.base.model;
 
 import com.fm.framework.core.model.BaseModel;
+import com.fm.framework.core.model.IAudit;
 import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
@@ -19,9 +20,9 @@ import java.util.Date;
  * 
  */
 @Data
-public class EmployerInfo extends BaseModel implements Serializable {
+public class EmployerInfo extends BaseModel implements Serializable,IAudit {
 
-	private static final long serialVersionUID = 1599831722595L;
+	private static final long serialVersionUID = 1600497555102L;
 	
     /**
     * 逻辑主键
@@ -92,13 +93,13 @@ public class EmployerInfo extends BaseModel implements Serializable {
     /**
     * 创建人
     **/
-	private String createUser;
+	private Long createUser;
 
 
     /**
     * 修改人
     **/
-	private String updateUser;
+	private Long updateUser;
 
 
 

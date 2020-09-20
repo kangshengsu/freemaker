@@ -6,10 +6,10 @@
  */
 package com.fm.api.web.vo.production;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.framework.web.VO;
 import lombok.Data;
 import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 
 /**   
@@ -22,21 +22,25 @@ import java.util.Date;
 @Data
 public class ProductionSkillRelationVO extends VO implements Serializable {
 
-	private static final long serialVersionUID = 1599835185585L;
+	private static final long serialVersionUID = 1600497555102L;
 	
 
 
     /**
     * 作品编码
     **/
-	private String productionCode;
+	private Long productionId;
 
 
     /**
     * 技能编码
     **/
-	private String skillCode;
+	private Long jobSkillId;
 
+	/**
+	 * 技能名称
+	 */
+	private String jobSkillName;
 
     /**
     * 创建时间
@@ -55,13 +59,17 @@ public class ProductionSkillRelationVO extends VO implements Serializable {
     /**
     * 创建人
     **/
-	private String createUser;
+	private Long createUser;
 
 
     /**
     * 修改人
     **/
-	private String updateUser;
+	private Long updateUser;
+
+
+
+
 
 
 

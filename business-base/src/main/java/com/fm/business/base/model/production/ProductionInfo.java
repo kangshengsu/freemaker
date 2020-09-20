@@ -6,11 +6,16 @@
  */
 package com.fm.business.base.model.production;
 
+import com.fm.business.base.model.AttachmentInfo;
+import com.fm.business.base.model.freelancer.FreelancerInfo;
+import com.fm.business.base.model.job.BdJobCate;
 import com.fm.framework.core.model.BaseModel;
+import com.fm.framework.core.model.IAudit;
 import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**   
  * @Description:(作品实体类)
@@ -20,9 +25,9 @@ import java.util.Date;
  * 
  */
 @Data
-public class ProductionInfo extends BaseModel implements Serializable {
+public class ProductionInfo extends BaseModel implements Serializable,IAudit {
 
-	private static final long serialVersionUID = 1599831722595L;
+	private static final long serialVersionUID = 1600497555102L;
 	
     /**
     * 逻辑主键
@@ -39,8 +44,10 @@ public class ProductionInfo extends BaseModel implements Serializable {
     /**
     * 发布用户编码
     **/
-	private String freelancerCode;
+	private Long freelancerId;
 
+
+	private transient FreelancerInfo freelancerInfo;
 
     /**
     * 作品标题
@@ -69,13 +76,18 @@ public class ProductionInfo extends BaseModel implements Serializable {
     /**
     * 所属领域
     **/
-	private String jobCode;
+	private Long jobCateId;
 
 
     /**
     * 技能全路径
     **/
-	private String treeCode;
+	private String cateTreeCode;
+
+    /**
+     * 领域-岗位
+     */
+	private transient BdJobCate bdJobCate;
 
 
     /**
@@ -93,17 +105,25 @@ public class ProductionInfo extends BaseModel implements Serializable {
     /**
     * 创建人
     **/
-	private String createUser;
+	private Long createUser;
 
 
     /**
     * 修改人
     **/
-	private String updateUser;
+	private Long updateUser;
 
 
+    /**
+     * 附件
+     */
+    private transient List<AttachmentInfo> attachmentInfos;
 
 
+    /**
+     * 技能
+     */
+    private transient List<ProductionSkillRelation> productionSkillRelations;
 
     /**
      * 获取主键方法，主键整体平台定义成Long数据类型，方便数据的整体插入性能

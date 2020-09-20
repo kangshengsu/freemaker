@@ -83,7 +83,7 @@ public interface Service<T extends BaseModel> {
      * @param ids ids
      * @return id获取的数据
      */
-    List<T> getByIds(List<Long> ids);
+    List<T> getByIds(Collection<Long> ids);
 
     /**
      * 获取所有数据，包括禁用状态的数据
