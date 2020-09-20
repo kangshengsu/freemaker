@@ -6,12 +6,16 @@
  */
 package com.fm.business.base.model.production;
 
+import com.fm.business.base.model.AttachmentInfo;
+import com.fm.business.base.model.freelancer.FreelancerInfo;
+import com.fm.business.base.model.job.BdJobCate;
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
 import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**   
  * @Description:(作品实体类)
@@ -42,6 +46,8 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
     **/
 	private Long freelancerId;
 
+
+	private transient FreelancerInfo freelancerInfo;
 
     /**
     * 作品标题
@@ -79,6 +85,9 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
 	private String cateTreeCode;
 
 
+	private transient BdJobCate bdJobCate;
+
+
     /**
     * 创建时间
     **/
@@ -104,7 +113,7 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
 
 
 
-
+    private transient List<AttachmentInfo> attachmentInfos;
 
 
 

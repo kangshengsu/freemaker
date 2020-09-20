@@ -11,6 +11,7 @@ import com.fm.business.base.enums.AttachmentBusinessType;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.framework.core.service.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -29,5 +30,14 @@ public interface IAttachmentInfoService extends Service<AttachmentInfo> {
      * @return 附件信息
      */
      List<AttachmentInfo> getByCodeAndType(String businessCode, AttachmentBusinessType type);
+
+    /**
+     * 根据附件编码和业务类型获取附件信息
+     *
+     * @param businessCodes 业务编码集合
+     * @param type  业务类型
+     * @return 附件信息
+     */
+    List<AttachmentInfo> getByCodeAndType(Collection<String> businessCodes, AttachmentBusinessType type);
 
 }

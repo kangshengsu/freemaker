@@ -17,8 +17,11 @@ import com.fm.framework.core.service.AuditBaseService;
 import org.springframework.stereotype.Service;
 import com.fm.framework.core.service.BaseService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**   
@@ -69,5 +72,16 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
                     .like(BdJobCate::getCateCode, keyword);
         }
         return getBaseMapper().selectList(wrapper);
+    }
+
+    @Override
+    public List<BdJobCate> get(Collection<String> codes) {
+
+        if(CollectionUtils.isEmpty(codes)) {
+            return Collections.emptyList();
+        }
+
+        return list(Wrappers.lambdaQuery(BdJobCate.class).in(BdJobCate::getCateCode, codes));
+
     }
 }

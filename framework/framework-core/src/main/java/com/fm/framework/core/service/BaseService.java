@@ -383,7 +383,7 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
     }
 
     @Override
-    public List<T> getByIds(List<Long> ids) {
+    public List<T> getByIds(Collection<Long> ids) {
 
         if(CollectionUtils.isEmpty(ids)) {
             return new ArrayList<>();
