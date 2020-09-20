@@ -125,4 +125,9 @@ public class ProductionInfoVO extends VO implements Serializable {
      **/
     private Long updateUser;
 
+    /**
+     * 创建 修改 时的 领域-岗位-技能数据
+     */
+    private List<List<Long>> jobs;
+
 }

@@ -188,13 +188,11 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
         if (children == null || children.size() == 0) {
             return;
         }
-
+        parent.setChildren(new ArrayList<>());
         JobNodeVO thisNode;
         for (TreeNode<JobNodeVO> child : children) {
             thisNode = child.getValue();
-            thisNode.setChildren(new ArrayList<>());
             getChildren(thisNode, child.getChilds());
-
             parent.getChildren().add(thisNode);
         }
     }

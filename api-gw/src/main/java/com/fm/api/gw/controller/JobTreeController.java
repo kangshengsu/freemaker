@@ -32,7 +32,7 @@ import java.util.List;
 */
 
 @RestController
-@RequestMapping("/jobTree")
+@RequestMapping("api/v1/jobTree")
 public class JobTreeController extends BaseController<BdJobCate, JobCateVO> {
 
     @Autowired

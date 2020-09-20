@@ -52,6 +52,7 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
 
     }
 
+
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     public ApiResponse<Boolean> delete(@RequestBody Long id) {
 
@@ -92,5 +93,23 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         return form;
     }
 
+    @Override
+    protected ProductionInfo convert(ProductionInfoVO form) {
+        ProductionInfo productionInfo = super.convert(form);
+        //现场景只允许选择同一个岗位下的技能
+        List<List<Long>> jobs = form.getJobs();
+        //获取岗位id
+        Long jobCateId = 0L;
+        //获取技能ids
+        List<Long> jobSkillIds = new ArrayList<>();
+        for( List<Long> job : jobs ){
+            jobSkillIds.add(job.get(job.size() - 1));
+            jobCateId = job.get(job.size() - 2);
+        };
+        productionInfo.setJobCateId(jobCateId);
+        productionInfo.setJobSkillIds(jobSkillIds);
+
+        return productionInfo;
+    }
 }
 
