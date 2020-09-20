@@ -84,7 +84,9 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
     **/
 	private String cateTreeCode;
 
-
+    /**
+     * 领域-岗位
+     */
 	private transient BdJobCate bdJobCate;
 
 
@@ -112,10 +114,16 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
 	private Long updateUser;
 
 
-
+    /**
+     * 附件
+     */
     private transient List<AttachmentInfo> attachmentInfos;
 
 
+    /**
+     * 技能
+     */
+    private transient List<ProductionSkillRelation> productionSkillRelations;
 
     /**
      * 获取主键方法，主键整体平台定义成Long数据类型，方便数据的整体插入性能

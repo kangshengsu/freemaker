@@ -14,10 +14,13 @@ import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.business.base.model.production.ProductionSkillRelation;
 import com.fm.business.base.service.IAttachmentInfoService;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
+import com.fm.business.base.service.production.IProductionSkillRelationService;
+import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.AuditBaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +45,56 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
     private IFreelancerInfoService freelancerInfoService;
 
     @Autowired
-    private IBdJobCateService iBdJobCateService;
+    private IBdJobCateService bdJobCateService;
 
     @Autowired
-    private IAttachmentInfoService iAttachmentInfoService;
+    private IAttachmentInfoService attachmentInfoService;
 
+    @Autowired
+    private IProductionSkillRelationService productionSkillRelationService;
+
+
+    /**
+     *
+     * @param codes 作品编码集合
+     * @return
+     */
+    @Override
+    public List<ProductionInfo> get(Collection<String> codes) {
+
+        if(CollectionUtils.isEmpty(codes)) {
+            return Collections.emptyList();
+        }
+
+        List<ProductionInfo> result = list(Wrappers.lambdaQuery(ProductionInfo.class).in(ProductionInfo::getCode, codes));
+
+        fillProductInfoRelation(result);
+
+        return result;
+    }
+
+    /**
+     * 分页查询
+     *
+     * 完善补全信息
+     * @param mybatisPlusPage
+     * @return
+     */
+    @Override
+    protected Page<ProductionInfo> toPage(com.baomidou.mybatisplus.extension.plugins.pagination.Page<ProductionInfo> mybatisPlusPage) {
+        Page<ProductionInfo> productionInfoPage = super.toPage(mybatisPlusPage);
+        if(productionInfoPage.getData()!=null && !productionInfoPage.getData().isEmpty()){
+            //补全信息
+            fillProductInfoRelation(productionInfoPage.getData());
+        }
+        return productionInfoPage;
+    }
+
+
+    /**
+     * 补全数据
+     * @param productionInfos
+     */
     private void fillProductInfoRelation(Collection<ProductionInfo> productionInfos) {
 
         if (CollectionUtils.isEmpty(productionInfos)) {
@@ -59,19 +107,22 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
         Set<String> attachmentCodes = new HashSet<>();
 
+        Set<Long> productionIds = new HashSet<>();
+
         productionInfos.forEach(productionInfo -> {
             freelancerIds.add(productionInfo.getFreelancerId());
             jobCateIds.add(productionInfo.getJobCateId());
             attachmentCodes.add(productionInfo.getCode());
+            productionIds.add(productionInfo.getId());
         });
 
         Map<Long, FreelancerInfo> freelancerInfoMap = freelancerInfoService.getByIds(freelancerIds)
                 .stream().collect(Collectors.toMap(FreelancerInfo::getId, Function.identity(), (v1, v2) -> v2));
 
-        Map<Long, BdJobCate> jobCateMap = iBdJobCateService.getByIds(jobCateIds)
+        Map<Long, BdJobCate> jobCateMap = bdJobCateService.getByIds(jobCateIds)
                 .stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
 
-        Map<String, List<AttachmentInfo>> attachmentMap = iAttachmentInfoService.getByCodeAndType(attachmentCodes, AttachmentBusinessType.PRODUCTION)
+        Map<String, List<AttachmentInfo>> attachmentMap = attachmentInfoService.getByCodeAndType(attachmentCodes, AttachmentBusinessType.PRODUCTION)
                 .stream().collect(Collectors.toMap(AttachmentInfo::getBusinessCode, v -> {
                     List<AttachmentInfo> list = new ArrayList<>();
                     list.add(v);
@@ -80,6 +131,9 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
                     v1.addAll(v2);
                     return v1;
                 }));
+
+        Map<Long, List<ProductionSkillRelation>> proSkillRMap = productionSkillRelationService.getByProductionIds(productionIds);
+
 
         productionInfos.forEach(productionInfo -> {
 
@@ -95,6 +149,10 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
                 productionInfo.setAttachmentInfos(attachmentMap.get(productionInfo.getCode()));
             }
 
+            if(proSkillRMap.containsKey(productionInfo.getId())) {
+                productionInfo.setProductionSkillRelations(proSkillRMap.get(productionInfo.getId()));
+            }
+
         });
 
     }
@@ -108,22 +166,10 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         //获取作者数据
         productionInfo.setFreelancerInfo(freelancerInfoService.get(productionInfo.getFreelancerId()));
         //岗位信息
-        productionInfo.setBdJobCate(iBdJobCateService.get(productionInfo.getJobCateId()));
+        productionInfo.setBdJobCate(bdJobCateService.get(productionInfo.getJobCateId()));
         //获取附件列表
-        productionInfo.setAttachmentInfos(iAttachmentInfoService.getByCodeAndType(productionInfo.getCode(), AttachmentBusinessType.PRODUCTION));
+        productionInfo.setAttachmentInfos(attachmentInfoService.getByCodeAndType(productionInfo.getCode(), AttachmentBusinessType.PRODUCTION));
     }
 
-    @Override
-    public List<ProductionInfo> get(Collection<String> codes) {
 
-        if(CollectionUtils.isEmpty(codes)) {
-            return Collections.emptyList();
-        }
-
-        List<ProductionInfo> result = list(Wrappers.lambdaQuery(ProductionInfo.class).in(ProductionInfo::getCode, codes));
-
-        fillProductInfoRelation(result);
-
-        return result;
-    }
 }
