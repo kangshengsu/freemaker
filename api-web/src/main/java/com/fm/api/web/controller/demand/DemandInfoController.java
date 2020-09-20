@@ -6,16 +6,14 @@
 */
 package com.fm.api.web.controller.demand;
 
-import com.fm.api.web.vo.DemandInfoVO;
+import com.fm.api.web.vo.demand.DemandInfoVO;
 import com.fm.business.base.enums.DemandStatus;
-import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
-import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;

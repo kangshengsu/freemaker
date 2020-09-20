@@ -17,4 +17,10 @@ import com.fm.framework.core.service.Service;
  */
 public interface IDemandInfoService extends Service<DemandInfo> {
 
+    /**
+     * 根据需求id更新推荐人数
+     * @param id
+     * @param recommendCount
+     */
+    void updateRecommendCountById(Long id,Integer recommendCount);
 }

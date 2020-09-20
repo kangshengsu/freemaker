@@ -22,54 +22,56 @@ import java.util.Date;
 @Data
 public class DemandProductionRelation extends BaseModel implements Serializable,IAudit {
 
-	private static final long serialVersionUID = 1600497555102L;
+    private static final long serialVersionUID = 1600497555102L;
 
     /**
-    * 逻辑主键
-    **/
-	private Long id;
-
-
-    /**
-    * 订单号
-    **/
-	private Long orderId;
-
+     * 逻辑主键
+     **/
+    private Long id;
 
     /**
-    * 关系状态
-    **/
-	private Integer status;
-
-
-    /**
-    * 作品编码
-    **/
-	private Long productionId;
-
+     * 需求编号
+     **/
+    private Long demandId;
 
     /**
-    * 创建时间
-    **/
-	private Date createTime;
+     * 订单编号
+     **/
+    private Long orderId;
+
+    /**
+     * 关系状态
+     **/
+    private Integer status;
+
+    /**
+     * 作品编码
+     **/
+    private Long productionId;
 
 
     /**
-    * 修改时间
-    **/
-	private Date updateTime;
+     * 创建时间
+     **/
+    private Date createTime;
 
 
     /**
-    * 创建人
-    **/
-	private Long createUser;
+     * 修改时间
+     **/
+    private Date updateTime;
 
 
     /**
-    * 修改人
-    **/
-	private Long updateUser;
+     * 创建人
+     **/
+    private Long createUser;
+
+
+    /**
+     * 修改人
+     **/
+    private Long updateUser;
 
 
 
