@@ -10,6 +10,7 @@ package com.fm.business.base.service.production.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.production.IProductionInfoMapper;
 import com.fm.business.base.enums.AttachmentBusinessType;
+import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
@@ -22,9 +23,11 @@ import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.business.base.service.production.IProductionSkillRelationService;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.AuditBaseService;
+import com.fm.framework.core.utils.CodeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -52,6 +55,36 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
     @Autowired
     private IProductionSkillRelationService productionSkillRelationService;
+
+
+    @Override
+    protected void beforeSave(ProductionInfo model) {
+        super.beforeSave(model);
+        //生成code
+        model.setCode(CodeUtil.generateNewCode());
+        if(model.getStatus() == null){
+            model.setStatus(ProductionStatus.REVIEW.getCode());
+        }
+    }
+
+    @Override
+    protected void afterSave(ProductionInfo model) {
+        //保存 作品技能关系数据
+        List<Long> jobSkillIds = model.getJobSkillIds();
+        if(!CollectionUtils.isEmpty(jobSkillIds)){
+            List<ProductionSkillRelation> productionSkillRelations = new ArrayList<>();
+            for(Long jobSkillId : jobSkillIds){
+                ProductionSkillRelation productionSkillRelation = new ProductionSkillRelation();
+                productionSkillRelation.setJobSkillId(jobSkillId);
+                productionSkillRelation.setProductionId(model.getId());
+                productionSkillRelations.add(productionSkillRelation);
+            }
+            productionSkillRelationService.save(productionSkillRelations);
+
+        }
+
+
+    }
 
 
     /**
