@@ -37,6 +37,10 @@ public class ProductionSkillRelationVO extends VO implements Serializable {
     **/
 	private Long jobSkillId;
 
+	/**
+	 * 技能名称
+	 */
+	private String jobSkillName;
 
     /**
     * 创建时间

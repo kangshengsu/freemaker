@@ -6,27 +6,27 @@
 */
 package com.fm.api.web.controller.production;
 
-import com.fm.business.base.enums.AttachmentBusinessType;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.fm.api.web.vo.AttachmentInfoVO;
+import com.fm.api.web.vo.production.ProductionInfoVO;
 import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.production.ProductionInfo;
-import com.fm.business.base.service.IAttachmentInfoService;
-import com.fm.business.base.service.IBdJobCateService;
-import com.fm.business.base.service.freelancer.IFreelancerInfoService;
-import com.fm.framework.core.query.Page;
 import com.fm.business.base.service.production.IProductionInfoService;
+import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
-import com.fm.api.web.vo.production.ProductionInfoVO;
-import com.fm.framework.web.response.ApiStatus;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.yaml.snakeyaml.nodes.CollectionNode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
 *
@@ -44,14 +44,6 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
     @Autowired
     private IProductionInfoService productionInfoService;
 
-    @Autowired
-    private IFreelancerInfoService freelancerInfoService;
-
-    @Autowired
-    private IBdJobCateService iBdJobCateService;
-
-    @Autowired
-    private IAttachmentInfoService iAttachmentInfoService;
 
     @RequestMapping(value = "/create",method = RequestMethod.POST)
     public ApiResponse<Boolean> create(@RequestBody ProductionInfoVO form) {
@@ -92,14 +84,11 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         ProductionInfoVO form = super.convert(model);
         //转换枚举值
         form.setStatusName(ProductionStatus.get(model.getStatus()).getName());
-        //获取作者数据
-        form.setFreelancerInfo(freelancerInfoService.get(model.getFreelancerId()));
-        BdJobCate bdJobCate = iBdJobCateService.get(model.getJobCateId());
+        //技能名称
+        BdJobCate bdJobCate = model.getBdJobCate();
         if (bdJobCate != null) {
             form.setJobCateName(bdJobCate.getCateName());
         }
-        //获取附件列表
-        form.setAttachmentInfos(iAttachmentInfoService.getByCodeAndType(form.getCode(), AttachmentBusinessType.PRODUCTION));
         return form;
     }
 

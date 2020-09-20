@@ -6,8 +6,12 @@
  */
 package com.fm.api.web.vo.production;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.fm.api.web.vo.AttachmentInfoVO;
+import com.fm.api.web.vo.freelancer.FreelancerInfoVO;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
+import com.fm.business.base.model.production.ProductionSkillRelation;
 import com.fm.framework.web.VO;
 import lombok.Data;
 import java.io.Serializable;
@@ -97,6 +101,11 @@ public class ProductionInfoVO extends VO implements Serializable {
      * 附件列表
      */
     private List<AttachmentInfo> attachmentInfos;
+
+    /**
+     * 技能列表
+     */
+    private List<ProductionSkillRelation> productionSkillRelations;
 
     /**
      * 修改时间

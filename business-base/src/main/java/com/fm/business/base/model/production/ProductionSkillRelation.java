@@ -6,6 +6,8 @@
  */
 package com.fm.business.base.model.production;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.fm.business.base.model.job.BdJobSkill;
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
 import lombok.Data;
@@ -41,6 +43,11 @@ public class ProductionSkillRelation extends BaseModel implements Serializable,I
     **/
 	private Long jobSkillId;
 
+    /**
+     * 技能名称 别去技能对象了容易在关联岗位又多拉的好多数据
+     */
+    @TableField(exist = false)
+    private String jobSkillName;
 
     /**
     * 创建时间
