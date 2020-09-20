@@ -6,6 +6,8 @@ spring:
     active: dev
   cache:
     type: caffeine
+    caffeine:
+      spec: initialCapacity=10,maximumSize=200,expireAfterWrite=120s
 
 mybatis-plus:
   global-config:

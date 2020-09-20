@@ -70,18 +70,4 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
         return orderInfoService;
     }
 
-    @Override
-    protected OrderInfo convert(OrderInfoVO form) {
-        OrderInfo model = new OrderInfo();
-        BeanUtils.copyProperties(form,model);
-        return model;
-    }
-
-    @Override
-    protected OrderInfoVO convert(OrderInfo model) {
-        OrderInfoVO form = new OrderInfoVO();
-        BeanUtils.copyProperties(model,form);
-        return form;
-    }
-
 }
