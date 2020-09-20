@@ -31,6 +31,8 @@ public enum OrderStatus {
         return this.code;
     }
 
+    public String getName() { return this.name; }
+
     /**
      * 根据code获取枚举
      *
