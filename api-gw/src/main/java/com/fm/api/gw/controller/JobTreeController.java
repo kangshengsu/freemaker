@@ -26,7 +26,7 @@ import java.util.List;
 *
 * <p>说明： 岗位API接口层</p>
 * @version: V1.0
-* @author: LiuDuo
+* @author: kangshengsu
 * @time    2020年09月11日
 *
 */
