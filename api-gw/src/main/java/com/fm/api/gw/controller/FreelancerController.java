@@ -23,6 +23,8 @@ import com.fm.framework.core.service.Service;
 import com.fm.framework.core.utils.TreeUtil;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,7 +45,8 @@ import java.util.List;
 */
 
 @RestController
-@RequestMapping("/freelancer")
+@RequestMapping("api/v1/freelancer")
+@Api("自由职业者相关操作")
 public class FreelancerController extends BaseController<FreelancerInfo, FreelancerInfoAppVO> {
 
     @Autowired
@@ -53,6 +56,7 @@ public class FreelancerController extends BaseController<FreelancerInfo, Freelan
     private IOrderInfoService iOrderInfoService;
 
     @RequestMapping(value = "contactInfo",method = RequestMethod.GET)
+    @ApiOperation("获取联系方式")
     public ApiResponse<ContactInfoAppVO> contactInfo(@RequestParam(value="id") Long freelancerId) {
         if(freelancerId == null){
             throw new BusinessException("自由职业者信息有误");
@@ -67,6 +71,7 @@ public class FreelancerController extends BaseController<FreelancerInfo, Freelan
     }
 
     @RequestMapping(value = "income",method = RequestMethod.GET)
+    @ApiOperation("获取总收入")
     public ApiResponse<FreelancerOrderSummaryVO> income(@RequestParam(value="id") Long freelancerId) {
         List<OrderInfo> orderInfos = iOrderInfoService.queryFinishedOrderByFreelancer(freelancerId);
         FreelancerOrderSummaryVO summaryVO = new FreelancerOrderSummaryVO();
