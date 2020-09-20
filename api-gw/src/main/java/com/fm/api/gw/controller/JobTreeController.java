@@ -42,7 +42,7 @@ public class JobTreeController extends BaseController<BdJobCate, JobCateVO> {
     public ApiResponse<List<TreeNode<JobCateVO>>> treeData() {
         List<BdJobCate> bdJobCateVOs = bdJobCateService.getAll();
         if(CollectionUtils.isEmpty(bdJobCateVOs)){
-            return ApiResponse.ofSuccess(new ArrayList(0));
+            return ApiResponse.ofSuccess(new ArrayList<>(0));
         }
         TreeNode<JobCateVO> treeRoot = TreeUtil.buildTree(convert(bdJobCateVOs));
         TreeUtil.setParentNull(treeRoot);

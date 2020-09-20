@@ -12,6 +12,7 @@ import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.service.AuditBaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -44,16 +45,19 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
     }
 
     @Override
+    @Cacheable(value = "firstLevelJobCateConfig")
     public List<BdJobCate> getFirstLevelJobCateConfig() {
         return getJobCate(get(DisplayType.job_cate_1));
     }
 
     @Override
+    @Cacheable(value = "secondLevelJobCateConfig")
     public List<BdJobCate> getSecondLevelJobCateConfig() {
         return getJobCate(get(DisplayType.job_cate_2));
     }
 
     @Override
+    @Cacheable(value = "recommendProductInfoConfig")
     public List<ProductionInfo> getRecommendProductInfoConfig() {
         return getProductInfo(get(DisplayType.r_product_info));
     }
@@ -63,7 +67,7 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
      * @param displayConfigs 展现配置集合
      * @return 领域、岗位集合
      */
-    private List<BdJobCate> getJobCate(Collection<DisplayConfig> displayConfigs) {
+    public List<BdJobCate> getJobCate(Collection<DisplayConfig> displayConfigs) {
 
         if (displayConfigs.isEmpty()) {
             return Collections.emptyList();
@@ -85,7 +89,7 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
      * @param displayConfigs 展现配置集合
      * @return 领域、岗位集合
      */
-    private List<ProductionInfo> getProductInfo(Collection<DisplayConfig> displayConfigs) {
+    public List<ProductionInfo> getProductInfo(Collection<DisplayConfig> displayConfigs) {
 
         if (displayConfigs.isEmpty()) {
             return Collections.emptyList();
@@ -109,7 +113,7 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
      * @param displayType 展现类型
      * @return 展现信息项
      */
-    private List<DisplayConfig> get(DisplayType displayType) {
+    public List<DisplayConfig> get(DisplayType displayType) {
 
         if (Objects.isNull(displayType) || displayType.getCode() <= 0) {
             return Collections.emptyList();

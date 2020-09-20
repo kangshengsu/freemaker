@@ -11,16 +11,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>api-gw</artifactId>
+    <name>HowWork-Api-网关</name>
 
     <description>API网关</description>
 
-
     <dependencies>
-
-        <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.freemaker</groupId>
             <artifactId>business-base</artifactId>
@@ -44,6 +39,10 @@
         <dependency>
             <groupId>com.freemaker</groupId>
             <artifactId>framework-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
         </dependency>
     </dependencies>
 

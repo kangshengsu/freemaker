@@ -11,6 +11,8 @@
 
     <artifactId>api-web</artifactId>
 
+    <name>HowWork-Api-Web</name>
+
     <description>Freemaker 后台管理端Web API</description>
 
     <dependencies>
@@ -21,10 +23,6 @@
         <dependency>
             <groupId>com.freemaker</groupId>
             <artifactId>business-base</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.freemaker</groupId>
-            <artifactId>api-gw</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
