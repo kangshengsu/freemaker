@@ -28,10 +28,10 @@ import java.util.TreeMap;
 @Service("cosService")
 public class CosServiceImpl implements FileService {
 
-    @Autowired
+    @Autowired(required = false)
     private COSClient cosClient;
 
-    @Autowired
+    @Autowired(required = false)
     private CosProperties cosProperties;
 
     /**

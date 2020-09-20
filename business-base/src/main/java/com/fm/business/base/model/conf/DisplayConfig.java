@@ -32,6 +32,11 @@ public class DisplayConfig extends BaseModel implements IAudit {
     private Integer displayType;
 
     /**
+     * 过期时间
+     */
+    private Date expiredTime;
+
+    /**
      * 创建时间
      **/
     private Date createTime;
