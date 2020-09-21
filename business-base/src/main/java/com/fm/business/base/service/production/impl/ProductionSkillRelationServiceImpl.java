@@ -67,7 +67,18 @@ public class ProductionSkillRelationServiceImpl extends AuditBaseService<IProduc
                 }));
     }
 
+    /**
+     * 根据作品删除
+     *
+     * @param productionId
+     * @return
+     */
+    @Override
+    public boolean deleteByProductionId(Long productionId) {
+        return getBaseMapper().delete(Wrappers.lambdaQuery(ProductionSkillRelation.class)
+                .eq(ProductionSkillRelation::getProductionId,productionId))>0;
 
+    }
 
 
     /**

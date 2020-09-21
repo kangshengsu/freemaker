@@ -15,6 +15,7 @@ import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
+import com.fm.framework.core.utils.JsonUtil;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
@@ -27,6 +28,7 @@ import org.yaml.snakeyaml.nodes.CollectionNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 *
@@ -57,6 +59,21 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
     public ApiResponse<Boolean> delete(@RequestBody Long id) {
 
         return super.delete(id);
+
+    }
+
+    @RequestMapping(value = "/deleteByIds",method = RequestMethod.POST)
+    public ApiResponse<Boolean> deleteByIds(@RequestBody ProductionInfoVO form) {
+        //转换批量ID
+        if(CollectionUtils.isEmpty(form.getIds())){
+            return failed("无删除数据");
+        }
+
+        return success(service().delete( form.getIds().stream().map(id -> {
+            ProductionInfo productionInfo = new ProductionInfo();
+            productionInfo.setId(id);
+            return productionInfo;
+        }).collect(Collectors.toList())));
 
     }
 
@@ -98,6 +115,7 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         ProductionInfo productionInfo = super.convert(form);
         //现场景只允许选择同一个岗位下的技能
         List<List<Long>> jobs = form.getJobs();
+        productionInfo.setCateTreeCode(JsonUtil.obj2String(jobs));
         //获取岗位id
         Long jobCateId = 0L;
         //获取技能ids
@@ -108,7 +126,10 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         };
         productionInfo.setJobCateId(jobCateId);
         productionInfo.setJobSkillIds(jobSkillIds);
-
+        //不需要审核时直接发布状态
+        if(!form.getNeedReview()){
+            form.setStatus(ProductionStatus.RELEASE.getCode());
+        }
         return productionInfo;
     }
 }
