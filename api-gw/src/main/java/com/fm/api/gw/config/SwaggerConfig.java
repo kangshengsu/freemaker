@@ -19,13 +19,17 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.fm.api.gw.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.fm.api.gw"))
                 .paths(PathSelectors.any())
                 .build();
     }
 
-    private ApiInfo apiInfo() {
+
+    public ApiInfo apiInfo(){
         return new ApiInfoBuilder()
+                .title("HowWorks")
+                .description("API文档")
+                .termsOfServiceUrl("")
                 .version("1.0")
                 .build();
     }

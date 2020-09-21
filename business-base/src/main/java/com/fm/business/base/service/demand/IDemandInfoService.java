@@ -22,5 +22,17 @@ public interface IDemandInfoService extends Service<DemandInfo> {
      * @param id
      * @param recommendCount
      */
-    void updateRecommendCountById(Long id,Integer recommendCount);
+    int updateRecommendCountById(Long id,Integer recommendCount);
+
+    /**
+     * 根据需求编码更新需求状态
+     * @param code
+     * @param status
+     * @return
+     */
+    int updateStatusByCode(String code,Integer status);
+
+    int updateByCode(DemandInfo demandInfo);
+
+    DemandInfo getByCode(String code);
 }
