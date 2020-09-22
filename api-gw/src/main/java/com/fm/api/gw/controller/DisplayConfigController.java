@@ -1,7 +1,11 @@
 package com.fm.api.gw.controller;
 
 import com.fm.api.gw.vo.conf.AggDisplayConfigVO;
+import com.fm.api.gw.vo.conf.DisplayConfigVO;
+import com.fm.business.base.model.conf.DisplayConfig;
 import com.fm.business.base.service.conf.IDisplayConfigService;
+import com.fm.framework.core.service.Service;
+import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 首页展示配置Controller
- * @author hubo
+ * @author clufeng
  * @version 1.0.0
  **/
 @RestController
-@RequestMapping("/api/v1/display")
-public class DisplayConfigController  {
+@RequestMapping("/v1/display")
+public class DisplayConfigController extends BaseController<DisplayConfig, DisplayConfigVO> {
 
     private final IDisplayConfigService displayConfigService;
 
@@ -40,4 +44,8 @@ public class DisplayConfigController  {
 
     }
 
+    @Override
+    protected Service<DisplayConfig> service() {
+        return displayConfigService;
+    }
 }
