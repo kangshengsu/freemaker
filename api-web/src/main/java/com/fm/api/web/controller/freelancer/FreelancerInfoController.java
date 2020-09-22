@@ -79,6 +79,10 @@ public class FreelancerInfoController extends BaseController<FreelancerInfo, Fre
         return super.list(queryRequest);
     }
 
+    @RequestMapping(value = "/getById",method = RequestMethod.POST)
+    public ApiResponse<FreelancerInfoVO> list(@RequestBody FreelancerInfoVO form) {
+        return success(convert(freelancerInfoService.get(form.getId())));
+    }
 
     @Override
     protected Service<FreelancerInfo> service() {

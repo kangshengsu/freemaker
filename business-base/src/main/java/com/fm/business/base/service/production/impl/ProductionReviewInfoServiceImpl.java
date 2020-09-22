@@ -54,8 +54,9 @@ public class ProductionReviewInfoServiceImpl extends AuditBaseService<IProductio
         ProductionInfo productionInfo = productionInfoService.get(productionReviewInfo.getProductionId());
         if(productionInfo == null){
             throw new BusinessException("作品不存在！");
-        }else if(!ProductionStatus.REVIEW.getCode().equals(productionInfo.getStatus())){
-            throw new BusinessException("不允许审核非【审核中】状态的作品！");
+        }else if(!ProductionStatus.REVIEW.getCode().equals(productionInfo.getStatus())
+                &&!ProductionStatus.REVIEW_NOT_PASS.getCode().equals(productionInfo.getStatus())){
+            throw new BusinessException("不允许审核非【审核中】或【审核未通过】状态的作品！");
         }
         //设置审核人
         productionReviewInfo.setReviewerId(Context.getCurrUser());
@@ -74,7 +75,7 @@ public class ProductionReviewInfoServiceImpl extends AuditBaseService<IProductio
         }else if(ProductionReviewStatus.REVIEW_NOT_PASS.equals(productionReviewStatus)){
             updateProductionInfo.setStatus(ProductionStatus.REVIEW_NOT_PASS.getCode());
         }
-        if(!productionInfoService.update(updateProductionInfo)){
+        if(!productionInfoService.updateStatus(updateProductionInfo)){
             //更新作品失败 抛出异常回滚审核记录数据
             throw new BusinessException("审核作品时更新作品状态失败！");
         }

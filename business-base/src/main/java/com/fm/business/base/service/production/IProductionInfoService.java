@@ -26,5 +26,11 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
      * @return 作品信息
      */
     List<ProductionInfo> get(Collection<String> codes);
-	
+
+    /**
+     * 变更审核状态
+     * @param productionInfo
+     * @return
+     */
+    boolean updateStatus(ProductionInfo productionInfo);
 }

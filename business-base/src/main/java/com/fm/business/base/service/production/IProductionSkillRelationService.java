@@ -28,4 +28,11 @@ public interface IProductionSkillRelationService extends Service<ProductionSkill
      */
     Map<Long,List<ProductionSkillRelation>> getByProductionIds(Set<Long> ids);
 
+    /**
+     * 根据作品删除
+     * @param productionId
+     * @return
+     */
+    boolean deleteByProductionId(Long productionId);
+
 }
