@@ -45,9 +45,9 @@ import java.util.List;
 */
 
 @RestController
-@RequestMapping("api/v1/freelancer")
+@RequestMapping("v1/freelancer")
 @Api("自由职业者相关操作")
-public class FreelancerController extends BaseController<FreelancerInfo, FreelancerInfoAppVO> {
+public class FreelancerApi extends BaseController<FreelancerInfo, FreelancerInfoAppVO> {
 
     @Autowired
     private IFreelancerInfoService iFreelancerInfoService;
