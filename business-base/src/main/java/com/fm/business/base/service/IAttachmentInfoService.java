@@ -40,4 +40,11 @@ public interface IAttachmentInfoService extends Service<AttachmentInfo> {
      */
     List<AttachmentInfo> getByCodeAndType(Collection<String> businessCodes, AttachmentBusinessType type);
 
+    /**
+     * 业务编码
+     * @param businessCode
+     * @return
+     */
+    boolean deleteByBusinessCode(String businessCode);
+
 }

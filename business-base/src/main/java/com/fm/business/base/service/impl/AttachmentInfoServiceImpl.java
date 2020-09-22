@@ -51,4 +51,16 @@ public class AttachmentInfoServiceImpl extends AuditBaseService<IAttachmentInfoM
                 .eq(AttachmentInfo::getBusinessType, type.getCode()));
     }
 
+    /**
+     * 业务编码
+     *
+     * @param businessCode
+     * @return
+     */
+    @Override
+    public boolean deleteByBusinessCode(String businessCode) {
+        return getBaseMapper().delete(Wrappers.lambdaQuery(AttachmentInfo.class)
+                .eq(AttachmentInfo::getBusinessCode,businessCode))>0;
+    }
+
 }

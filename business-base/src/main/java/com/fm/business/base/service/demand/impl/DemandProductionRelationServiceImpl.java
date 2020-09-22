@@ -67,7 +67,7 @@ public class DemandProductionRelationServiceImpl extends AuditBaseService<IDeman
 
         //插入
         if (!CollectionUtils.isEmpty(newRelations)) {
-            iDemandProductionRelationService.batchInsert(newRelations);
+            iDemandProductionRelationService.save(newRelations);
         }
 
         //删除
@@ -86,14 +86,4 @@ public class DemandProductionRelationServiceImpl extends AuditBaseService<IDeman
         return getBaseMapper().deleteBatchIds(ids);
     }
 
-    @Override
-    public int batchInsert(List<DemandProductionRelation> demandProductionRelations) {
-        int insert = 0;
-        for (DemandProductionRelation demandProductionRelation : demandProductionRelations) {
-            if (this.save(demandProductionRelation)) {
-                insert++;
-            }
-        }
-        return insert;
-    }
 }

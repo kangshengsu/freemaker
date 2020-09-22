@@ -9,6 +9,7 @@ package com.fm.api.gw.controller;
 import com.fm.api.gw.query.OrderInfoQueryRequest;
 import com.fm.api.gw.vo.JobCateVO;
 import com.fm.api.gw.vo.OrderInfoVO;
+import com.fm.business.base.enums.OrderStatus;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.order.OrderFollow;
 import com.fm.business.base.model.order.OrderInfo;
@@ -19,6 +20,7 @@ import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.framework.core.model.TreeNode;
 import com.fm.framework.core.query.Page;
+import com.fm.framework.core.query.PageInfo;
 import com.fm.framework.core.query.QueryItem;
 import com.fm.framework.core.query.QueryType;
 import com.fm.framework.core.service.Service;
@@ -50,7 +52,7 @@ import java.util.Map;
 */
 
 @RestController
-@RequestMapping("/miniApp/orderApi")
+@RequestMapping("/aip/v1/orderApi")
 @Api(value = "订单接口")
 public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
@@ -69,7 +71,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     @RequestMapping(value = "getOrderInfoByEmployerId",method = RequestMethod.GET)
     @ApiOperation(value="根据发布者ID获取订单")
     @ApiImplicitParam(paramType="form", name = "queryRequest", value = "查询条件", required = true, dataType = "OrderInfoQueryRequest")
-    public ApiResponse<Page<OrderInfo>> getOrderInfoByEmployerId(OrderInfoQueryRequest queryRequest) {
+    public ApiResponse<Page<OrderInfoVO>> getOrderInfoByEmployerId(OrderInfoQueryRequest queryRequest) {
         List<QueryItem> queryItems = new ArrayList<>();
         QueryItem queryItem = new QueryItem();
         queryItem.setQueryField("employerId");
@@ -78,13 +80,26 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         queryItems.add(queryItem);
 
         Page<OrderInfo> orderInfoPage = orderInfoService.list(queryItems, queryRequest.getCurrPage(), queryRequest.getPageSize());
-        return ApiResponse.ofSuccess(orderInfoPage);
+        PageInfo<OrderInfoVO> pageInfo = new PageInfo<>();
+        pageInfo.setCurrentPage(orderInfoPage.getCurrentPage());
+        pageInfo.setPageSize(orderInfoPage.getPageSize());
+        pageInfo.setTotal(orderInfoPage.getTotal());
+        pageInfo.setData(convert(orderInfoPage.getData()));
+        fillStatusName(pageInfo.getData());
+
+        return ApiResponse.ofSuccess(pageInfo);
+    }
+
+    private void fillStatusName(List<OrderInfoVO> data) {
+        for (OrderInfoVO orderInfoVO : data) {
+            orderInfoVO.setStatusName(OrderStatus.get(orderInfoVO.getStatus()).getName());
+        }
     }
 
     @ApiOperation(value="根据编码获取订单")
-    @ApiImplicitParam(name = "code", value = "订单编码", required = true, dataType = "")
+    @ApiImplicitParam(paramType="query", name = "code", value = "订单编码", required = true, dataType = "String")
     @RequestMapping(value = "getOrderInfoByCode",method = RequestMethod.GET)
-    public ApiResponse<OrderInfo> getOrderInfoByCode(@RequestParam("code") String code) {
+    public ApiResponse<OrderInfoVO> getOrderInfoByCode(@RequestParam("code") String code) {
         // create queryItemSwagger
         List<QueryItem> queryItems = new ArrayList<>();
         QueryItem queryItem = new QueryItem();
@@ -95,13 +110,14 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
         // search order info
         OrderInfo orderInfo = orderInfoService.getOne(queryItems);
+        OrderInfoVO orderInfoVO = null;
         if (orderInfo != null) {
-            OrderInfoVO orderInfoVO = fillUserInfo(orderInfo);
-
+            orderInfoVO = fillUserInfo(orderInfo);
             fillJobInfo(orderInfoVO);
+            orderInfoVO.setStatusName(OrderStatus.get(orderInfoVO.getStatus()).getName());
         }
 
-        return ApiResponse.ofSuccess(orderInfo);
+        return ApiResponse.ofSuccess(orderInfoVO);
     }
 
     @ApiOperation(value="订单状态变更")
@@ -152,6 +168,9 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
         if (userMap.containsKey(orderInfoVO.getEmployerId())) {
             orderInfoVO.setEmployerName(userMap.get(orderInfoVO.getEmployerId()).getName());
+        }
+        if (userMap.containsKey(orderInfoVO.getFreelancerId())) {
+            orderInfoVO.setFreelancerName(userMap.get(orderInfoVO.getFreelancerId()).getName());
         }
 
         return orderInfoVO;

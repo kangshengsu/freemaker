@@ -32,5 +32,4 @@ public interface IDemandProductionRelationService extends Service<DemandProducti
 
     int deleteByIds(List<Long> ids);
 
-    int batchInsert(List<DemandProductionRelation> demandProductionRelations);
 }

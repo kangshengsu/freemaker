@@ -10,6 +10,8 @@ package com.fm.business.base.service.production.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.production.IProductionInfoMapper;
 import com.fm.business.base.enums.AttachmentBusinessType;
+import com.fm.business.base.enums.AttachmentType;
+import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
@@ -22,10 +24,13 @@ import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.business.base.service.production.IProductionSkillRelationService;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.AuditBaseService;
+import com.fm.framework.core.utils.CodeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -54,6 +59,42 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
     private IProductionSkillRelationService productionSkillRelationService;
 
 
+    @Override
+    protected void beforeSave(ProductionInfo model) {
+        super.beforeSave(model);
+        //生成code
+        model.setCode(CodeUtil.generateNewCode());
+        if(model.getStatus() == null){
+            model.setStatus(ProductionStatus.REVIEW.getCode());
+        }
+    }
+
+    @Override
+    protected void afterSave(ProductionInfo model) {
+        super.afterSave(model);
+        //保存 作品技能关系数据
+        saveSkills(model);
+        //保存 附件数据
+        saveAttachments(model);
+
+    }
+
+    @Override
+    protected void afterUpdate(ProductionInfo model) {
+        super.afterUpdate(model);
+        //移除所有技能和附件并重新保存
+        if(productionSkillRelationService.deleteByProductionId(model.getId())){
+            //保存 作品技能关系数据
+            saveSkills(model);
+        }
+
+        if(attachmentInfoService.deleteByBusinessCode(model.getCode())){
+            //保存 附件数据
+            saveAttachments(model);
+        }
+
+    }
+
     /**
      *
      * @param codes 作品编码集合
@@ -71,6 +112,18 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         fillProductInfoRelation(result);
 
         return result;
+    }
+
+    /**
+     * 变更审核状态
+     *
+     * @param productionInfo
+     * @return
+     */
+    @Override
+    public boolean updateStatus(ProductionInfo productionInfo) {
+        return getBaseMapper().update(productionInfo,Wrappers.lambdaUpdate(ProductionInfo.class)
+                .set(ProductionInfo::getStatus,productionInfo.getStatus()).eq(ProductionInfo::getId,productionInfo.getId())) > 0;
     }
 
     /**
@@ -171,5 +224,49 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         productionInfo.setAttachmentInfos(attachmentInfoService.getByCodeAndType(productionInfo.getCode(), AttachmentBusinessType.PRODUCTION));
     }
 
+    /**
+     * 保存关联技能
+     * @param model
+     * @return
+     */
+    private boolean saveSkills(ProductionInfo model){
+        List<Long> jobSkillIds = model.getJobSkillIds();
+        if(!CollectionUtils.isEmpty(jobSkillIds)){
+            List<ProductionSkillRelation> productionSkillRelations = new ArrayList<>();
+            for(Long jobSkillId : jobSkillIds){
+                ProductionSkillRelation productionSkillRelation = new ProductionSkillRelation();
+                productionSkillRelation.setJobSkillId(jobSkillId);
+                productionSkillRelation.setProductionId(model.getId());
+                productionSkillRelations.add(productionSkillRelation);
+            }
+            return productionSkillRelationService.save(productionSkillRelations);
+
+        }
+        return true;
+    }
+
+    /**
+     * 保存附件
+     * @param model
+     * @return
+     */
+    private boolean saveAttachments(ProductionInfo model){
+        List<String> attachmentInfoPaths = model.getAttachmentInfoPaths();
+        if(!CollectionUtils.isEmpty(attachmentInfoPaths)){
+            List<AttachmentInfo> attachmentInfos = new ArrayList<>();
+            for(String attachmentInfoPath : attachmentInfoPaths){
+                AttachmentInfo attachmentInfo = new AttachmentInfo();
+                attachmentInfo.setBusinessCode(model.getCode());
+                attachmentInfo.setBusinessType(AttachmentBusinessType.PRODUCTION.getCode());
+                attachmentInfo.setType(AttachmentType.PICTURE.getCode());
+                attachmentInfo.setPath(attachmentInfoPath);
+                attachmentInfo.setOtherPath(attachmentInfoPath);
+                attachmentInfo.setName("");
+                attachmentInfos.add(attachmentInfo);
+            }
+            return attachmentInfoService.save(attachmentInfos);
+        }
+        return true;
+    }
 
 }
