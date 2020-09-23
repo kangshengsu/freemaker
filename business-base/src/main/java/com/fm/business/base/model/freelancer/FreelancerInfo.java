@@ -43,6 +43,11 @@ public class FreelancerInfo extends BaseModel implements Serializable,IAudit {
 
 
     /**
+     * 关联账号id
+     */
+    private Long userId;
+
+    /**
     * 技能描述
     **/
 	private String skillSummarize;
@@ -124,10 +129,6 @@ public class FreelancerInfo extends BaseModel implements Serializable,IAudit {
     * 修改人
     **/
 	private Long updateUser;
-
-
-
-
 
 
 

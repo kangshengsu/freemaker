@@ -26,4 +26,6 @@ public interface IFreelancerInfoService extends Service<FreelancerInfo> {
      * @return
      */
     List<FreelancerInfo> findLikeNameOrPhone(String str);
+
+    FreelancerInfo getByUserId(Long currUser);
 }
