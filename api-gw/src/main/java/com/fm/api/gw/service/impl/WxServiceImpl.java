@@ -34,7 +34,7 @@ public class WxServiceImpl implements WxService {
             log.error("小程序授权解析异常", e);
             throw new BusinessException(ApiStatus.MINI_LOGIN_EXCEPTIONA.getCode(), ApiStatus.MINI_LOGIN_EXCEPTIONA.getMessage());
         }
-        userVO.setSessionId(sessionInfo.getSessionKey());
+        userVO.setSessionKey(sessionInfo.getSessionKey());
         userVO.setOpenId(sessionInfo.getOpenid());
         userVO.setUnionid(sessionInfo.getUnionid());
 
