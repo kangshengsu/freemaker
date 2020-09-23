@@ -7,11 +7,13 @@
 package com.fm.api.web.controller.production;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fm.api.web.vo.AttachmentInfoVO;
 import com.fm.api.web.vo.production.ProductionInfoVO;
 import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.business.base.model.production.ProductionSkillRelation;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
@@ -102,11 +104,18 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         ProductionInfoVO form = super.convert(model);
         //转换枚举值
         form.setStatusName(ProductionStatus.get(model.getStatus()).getName());
-        //技能名称
+        //岗位名称
         BdJobCate bdJobCate = model.getBdJobCate();
         if (bdJobCate != null) {
             form.setJobCateName(bdJobCate.getCateName());
         }
+        //技能标签 树路径
+        if(!CollectionUtils.isEmpty(model.getProductionSkillRelations())){
+            form.setJobs(model.getProductionSkillRelations().stream().map(productionSkillRelation ->
+                    JsonUtil.string2Obj(productionSkillRelation.getSkillTreePath(),new TypeReference<List<Long>>(){}))
+                    .collect(Collectors.toList()));
+        }
+
         return form;
     }
 
@@ -115,17 +124,21 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         ProductionInfo productionInfo = super.convert(form);
         //现场景只允许选择同一个岗位下的技能
         List<List<Long>> jobs = form.getJobs();
-        productionInfo.setCateTreeCode(JsonUtil.obj2String(jobs));
         //获取岗位id
         Long jobCateId = 0L;
-        //获取技能ids
-        List<Long> jobSkillIds = new ArrayList<>();
+        //获取技能
+        List<ProductionSkillRelation> productionSkillRelations = new ArrayList<>();
+        productionInfo.setProductionSkillRelations(productionSkillRelations);
         for( List<Long> job : jobs ){
-            jobSkillIds.add(job.get(job.size() - 1));
+
+            ProductionSkillRelation productionSkillRelation = new ProductionSkillRelation();
+            productionSkillRelation.setJobSkillId(job.get(job.size() - 1));
+            productionSkillRelation.setSkillTreePath(JsonUtil.obj2String(job));
+            productionSkillRelations.add(productionSkillRelation);
+            //现阶段只支持 一个岗位下的技能数据
             jobCateId = job.get(job.size() - 2);
         };
         productionInfo.setJobCateId(jobCateId);
-        productionInfo.setJobSkillIds(jobSkillIds);
         //不需要审核时直接发布状态
         if(!form.getNeedReview()){
             form.setStatus(ProductionStatus.RELEASE.getCode());

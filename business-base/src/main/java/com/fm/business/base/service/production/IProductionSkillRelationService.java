@@ -7,6 +7,7 @@
 package com.fm.business.base.service.production;
 
 import com.fm.business.base.model.production.ProductionSkillRelation;
+import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
 
 import java.util.List;
@@ -35,4 +36,12 @@ public interface IProductionSkillRelationService extends Service<ProductionSkill
      */
     boolean deleteByProductionId(Long productionId);
 
+    /**
+     * 根据技能ID分页获取技能和作品关系
+     * @param currentPage
+     * @param pageSize
+     * @param cateSkill 技能ID
+     * @return
+     */
+    Page<ProductionSkillRelation> findByCateSkill(Integer currentPage, Integer pageSize, Long cateSkill);
 }

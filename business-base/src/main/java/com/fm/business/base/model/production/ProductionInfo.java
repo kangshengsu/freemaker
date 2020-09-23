@@ -131,11 +131,6 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
     private transient List<ProductionSkillRelation> productionSkillRelations;
 
     /**
-     * 技能ids
-     */
-    private transient List<Long> jobSkillIds;
-
-    /**
      * 获取主键方法，主键整体平台定义成Long数据类型，方便数据的整体插入性能
      *
      * @return 主键
