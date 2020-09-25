@@ -3,6 +3,7 @@ package com.fm.api.gw.interceptor;
 import com.fm.business.base.constant.CacheKeyConstants;
 import com.fm.business.base.model.sys.SysUser;
 import com.fm.framework.core.Context;
+import com.fm.framework.core.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
@@ -23,18 +24,20 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
-        String cacheKey = request.getParameter("openId");
+        log.info("网关拦截器进入");
+//        String userToken = request.getParameter("userToken");
+        String userToken = "token";
 
         try {
-            RBucket<SysUser> currUser = redissonClient.getBucket(cacheKey);
+            RBucket<SysUser> currUser = redissonClient.getBucket(userToken);
 
-//            if (currUser != null && currUser.get() != null) {
-//                //存入上下文
-//                Context.setCurrUser(currUser.get().getId());
-//                Context.setCurrUserCode(currUser.get().getCode());
-//                Context.setCurrUserName(currUser.get().getName());
-//                return true;
-//            }
+            if (currUser != null && currUser.get() != null) {
+                //存入上下文
+                Context.setCurrUser(currUser.get().getId());
+                Context.setCurrUserCode(currUser.get().getCode());
+                Context.setCurrUserName(currUser.get().getName());
+                return true;
+            }
         } catch (Exception e) {
             log.error("获取小程序用户信息异常！", e);
         }

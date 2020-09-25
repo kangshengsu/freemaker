@@ -4,10 +4,12 @@ import com.fm.api.gw.service.WxService;
 import com.fm.api.gw.vo.UserVO;
 import com.fm.api.gw.vo.WeChatLoginVO;
 import com.fm.business.base.model.sys.SysUser;
+import com.fm.framework.core.utils.JwtUtil;
 import com.fm.framework.web.response.ApiResponse;
 import com.fm.framework.web.response.ApiStatus;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +46,10 @@ public class MiniAppController {
 
         SysUser sysUser = convertSysUser(weChatLoginVO, userInfo);
         //缓存用户信息，供拦截器使用
-        redissonClient.getBucket(userInfo.getOpenId()).set(sysUser,DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
+//        String userToken = JwtUtil.generateToken(sysUser.getOpenId());
+        String userToken = "token";
+        RBucket<SysUser> currUser = redissonClient.getBucket(userToken);
+        currUser.set(sysUser, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
 
         //todo 写用户表
 
