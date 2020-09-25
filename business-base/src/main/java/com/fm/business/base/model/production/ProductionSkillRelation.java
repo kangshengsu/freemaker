@@ -44,6 +44,11 @@ public class ProductionSkillRelation extends BaseModel implements Serializable,I
 	private Long jobSkillId;
 
     /**
+     * 技能树完整路径ID数组格式
+     */
+	private String skillTreePath;
+
+    /**
      * 技能名称 别去技能对象了容易在关联岗位又多拉的好多数据
      */
     @TableField(exist = false)
@@ -71,10 +76,6 @@ public class ProductionSkillRelation extends BaseModel implements Serializable,I
     * 修改人
     **/
 	private Long updateUser;
-
-
-
-
 
 
 

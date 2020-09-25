@@ -68,12 +68,17 @@ public abstract class BaseController<M extends BaseModel, V extends VO> {
         Page<M> pageDatas = this.service().list(queryRequest.getQueryItems(), queryRequest.getOrderItem(),
                 queryRequest.getPagination().getCurrentPage(), queryRequest.getPagination().getPageSize());
 
+        return success(convert(pageDatas));
+    }
+
+    protected Page<V> convert(Page<M> page) {
+
         PageInfo<V> result = new PageInfo<>();
-        result.setCurrentPage(pageDatas.getCurrentPage());
-        result.setPageSize(pageDatas.getPageSize());
-        result.setTotal(pageDatas.getTotal());
-        result.setData(pageDatas.getData().stream().map(this::convert).collect(Collectors.toList()));
-        return success(result);
+        result.setCurrentPage(page.getCurrentPage());
+        result.setPageSize(page.getPageSize());
+        result.setTotal(page.getTotal());
+        result.setData(page.getData().stream().map(this::convert).collect(Collectors.toList()));
+        return result;
     }
 
     protected abstract Service<M> service();

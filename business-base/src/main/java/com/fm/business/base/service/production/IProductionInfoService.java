@@ -7,6 +7,7 @@
 package com.fm.business.base.service.production;
 
 import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
 
 import java.util.Collection;
@@ -33,4 +34,33 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
      * @return
      */
     boolean updateStatus(ProductionInfo productionInfo);
+
+    /**
+     * 分页获取领域下的所有作品
+     * @param currentPage
+     * @param pageSize
+     * @param cateDomain 领域ID
+     * @return
+     */
+    Page<ProductionInfo> findByCateDomain(Integer currentPage,Integer pageSize,Long cateDomain);
+
+
+    /**
+     * 分页获取岗位下的所有作品
+     * @param currentPage
+     * @param pageSize
+     * @param catePost 岗位ID
+     * @return
+     */
+    Page<ProductionInfo> findByCatePost(Integer currentPage,Integer pageSize,Long catePost);
+
+
+    /**
+     * 分页获取技能下的所有作品
+     * @param currentPage
+     * @param pageSize
+     * @param cateSkill 技能ID
+     * @return
+     */
+    Page<ProductionInfo> findByCateSkill(Integer currentPage,Integer pageSize,Long cateSkill);
 }
