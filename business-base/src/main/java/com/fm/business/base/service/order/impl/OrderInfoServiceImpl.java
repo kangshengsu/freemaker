@@ -13,6 +13,7 @@ import com.fm.business.base.dao.order.IOrderInfoMapper;
 import com.fm.business.base.enums.OrderStatus;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.service.order.IOrderInfoService;
+import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.AuditBaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,5 +43,14 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
     public int getOrderCountByDemandId(Long demandId) {
         QueryWrapper<OrderInfo> queryWrapper = this.getQueryWrapper().eq("demandId", demandId);
         return getBaseMapper().selectCount(queryWrapper);
+    }
+
+    @Override
+    public Page<OrderInfo> queryOrderInfoByPage(Long employerId, Long freelancerId, long currPage, long pageSize) {
+        LambdaQueryWrapper<OrderInfo> wrapper = Wrappers.<OrderInfo>lambdaQuery()
+                .eq(OrderInfo::getEmployerId, employerId)
+                .or()
+                .eq(OrderInfo::getFreelancerId, freelancerId);
+        return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currPage, pageSize), wrapper));
     }
 }
