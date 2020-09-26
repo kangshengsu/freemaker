@@ -1,6 +1,6 @@
 package com.fm.api.gw.controller;
 
-import com.fm.api.gw.rpc.WxService;
+import com.fm.api.gw.rpc.WxRpcService;
 import com.fm.api.gw.vo.MiniAppUserVO;
 import com.fm.api.gw.vo.WeChatDecryptVO;
 import com.fm.api.gw.vo.WeChatLoginVO;
@@ -33,11 +33,11 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
-@RequestMapping("/miniApp")
+@RequestMapping("/v1/miniApp")
 public class MiniAppController {
 
     @Resource
-    private WxService wxService;
+    private WxRpcService wxService;
 
     @Autowired
     private RedissonClient redissonClient;
@@ -174,6 +174,7 @@ public class MiniAppController {
         sysUser.setName(weChatLoginVO.getNickName());
         sysUser.setPhone(weChatLoginVO.getNickName());
         sysUser.setCode(openId);
+        sysUser.setAvatarUrl(weChatLoginVO.getAvatarUrl());
     }
 
     private void convertEmployerInfo(EmployerInfo employerInfo, WeChatLoginVO weChatLoginVO, Long userId) {

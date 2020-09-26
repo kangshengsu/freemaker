@@ -75,6 +75,11 @@ public class SysUser extends BaseModel implements Serializable {
     private String updateUser;
 
     /**
+     * 头像
+     **/
+    private String avatarUrl;
+
+    /**
      * 用户的小程序openId
      */
 //    private String openId;
