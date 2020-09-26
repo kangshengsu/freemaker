@@ -59,7 +59,7 @@ public class FreelancerApi extends BaseController<FreelancerInfo, FreelancerInfo
     @RequestMapping(value = "contactInfo",method = RequestMethod.GET)
     @ApiOperation("获取联系方式")
     public ApiResponse<ContactInfoAppVO> contactInfo() {
-        FreelancerInfo freelancerInfo = iFreelancerInfoService.getByUserId(Context.getCurrUser());
+        FreelancerInfo freelancerInfo = iFreelancerInfoService.getByUserId(Context.getCurrUserId());
         if(freelancerInfo == null){
             throw new BusinessException("自由职业者信息有误");
         }
@@ -71,7 +71,7 @@ public class FreelancerApi extends BaseController<FreelancerInfo, FreelancerInfo
     @RequestMapping(value = "income",method = RequestMethod.GET)
     @ApiOperation("获取总收入")
     public ApiResponse<FreelancerOrderSummaryVO> income() {
-        FreelancerInfo freelancerInfo = iFreelancerInfoService.getByUserId(Context.getCurrUser());
+        FreelancerInfo freelancerInfo = iFreelancerInfoService.getByUserId(Context.getCurrUserId());
         if(freelancerInfo == null){
             throw new BusinessException("自由职业者信息有误");
         }
