@@ -16,7 +16,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class LoginConfig implements WebMvcConfigurer {
 
     @Bean
-    public LoginInterceptor ssoInterceptor(){
+    public LoginInterceptor ssoInterceptor() {
         return new LoginInterceptor();
     }
 
@@ -28,7 +28,12 @@ public class LoginConfig implements WebMvcConfigurer {
         registration.addPathPatterns("/**");
         //添加不拦截路径
         registration.excludePathPatterns(
-                                         "/miniApp/syncUserInfo"
-                                         );    
+                "/miniApp",
+                "/**/*.html",
+                "/**/*.js",
+                "/**/*.css",
+                "/**/*.woff",
+                "/**/*.ttf"
+        );
     }
 }
