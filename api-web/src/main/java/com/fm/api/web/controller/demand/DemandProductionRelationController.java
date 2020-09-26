@@ -11,21 +11,16 @@ import com.fm.api.web.vo.demand.RecommendVO;
 import com.fm.business.base.model.demand.DemandProductionRelation;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.production.ProductionInfo;
-import com.fm.business.base.service.demand.IDemandInfoService;
 import com.fm.business.base.service.demand.IDemandProductionRelationService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
-import com.fm.framework.core.constants.SymbolConstants;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
-import com.fm.framework.core.utils.SubModelCompareResult;
-import com.fm.framework.core.utils.UpdateUtils;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -56,10 +51,10 @@ public class DemandProductionRelationController extends BaseController<DemandPro
     @Autowired
     private IFreelancerInfoService iFreelancerInfoService;
 
-    @RequestMapping(value = "getRelationByDemandId",method = RequestMethod.GET)
-    public ApiResponse<List<DemandProductionRelationVO>> getRelationByDemandId(Long demandId) {
+    @RequestMapping(value = "getRelationByDemandId",method = RequestMethod.POST)
+    public ApiResponse<List<DemandProductionRelationVO>> getRelationByDemandId(@RequestBody RecommendVO recommendVO) {
 
-        List<DemandProductionRelationVO> datas = demandProductionRelationService.getByDemandId(demandId).stream().map(this::convert).collect(Collectors.toList());
+        List<DemandProductionRelationVO> datas = demandProductionRelationService.getByDemandId(recommendVO.getDemandId()).stream().map(this::convert).collect(Collectors.toList());
         return ApiResponse.ofSuccess(datas);
     }
 

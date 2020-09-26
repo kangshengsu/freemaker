@@ -13,6 +13,7 @@ import com.fm.business.base.dao.IDemandInfoMapper;
 import com.fm.business.base.enums.DemandStatus;
 import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.service.demand.IDemandInfoService;
+import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.AuditBaseService;
 import com.fm.framework.core.utils.CodeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -21,10 +22,8 @@ import org.springframework.util.StringUtils;
 
 /**
  * @Description:(需求服务实现)
- *
  * @version: V1.0
  * @author: LiuDuo
- *
  */
 @Slf4j
 @Service("demandInfoService")
@@ -32,7 +31,7 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
 
 
     @Override
-    public int updateRecommendCountById(Long id,Integer recommendCount) {
+    public int updateRecommendCountById(Long id, Integer recommendCount) {
         DemandInfo demandInfo = new DemandInfo();
         demandInfo.setId(id);
         demandInfo.setRecommendCount(recommendCount);
@@ -40,7 +39,13 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
     }
 
     @Override
-    public int updateStatusByCode(String code,Integer status) {
+    public Page<DemandInfo> gePageByEmployerId(Integer currentPage, Integer pageSize, Long employerId) {
+        return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
+                getQueryWrapper().eq("employerId", employerId)));
+    }
+
+    @Override
+    public int updateStatusByCode(String code, Integer status) {
         if (DemandStatus.get(status) == null) {
             return 0;
         }
@@ -53,7 +58,7 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
     public int updateByCode(DemandInfo demandInfo) {
         UpdateWrapper<DemandInfo> updateWrapper = Wrappers.update();
         updateWrapper.eq("code", demandInfo.getCode());
-        return this.getBaseMapper().update(demandInfo,updateWrapper);
+        return this.getBaseMapper().update(demandInfo, updateWrapper);
     }
 
     @Override
@@ -65,7 +70,7 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
     @Override
     protected void beforeSave(DemandInfo model) {
         super.beforeSave(model);
-        if(StringUtils.isEmpty(model.getCode())){
+        if (StringUtils.isEmpty(model.getCode())) {
             //生成code
             model.setCode(CodeUtil.generateNewCode());
         }

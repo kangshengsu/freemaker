@@ -9,11 +9,12 @@ import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
 import com.fm.business.base.service.order.IOrderInfoService;
+import com.fm.framework.core.Context;
 import com.fm.framework.core.query.Page;
+import com.fm.framework.core.query.PageInfo;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.core.utils.CodeUtil;
 import com.fm.framework.web.controller.BaseController;
-import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import com.fm.framework.web.response.ApiStatus;
 import io.swagger.annotations.Api;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -31,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2020-09-21 7:21 下午
  */
 @RestController
-@RequestMapping("/aip/v1/demandApi")
+@RequestMapping("/v1/demandApi")
 @Api(value = "需求接口")
 public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO> {
 
@@ -47,27 +49,35 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
     @Autowired
     private IOrderInfoService iOrderInfoService;
 
-    @Override
-    @ApiOperation(value="获取需求分页信息")
-    @RequestMapping(value = "list",method = RequestMethod.POST)
-    public ApiResponse<Page<DemandInfoVO>> list(QueryRequest queryRequest) {
-        return super.list(queryRequest);
+    @ApiOperation(value = "获取需求分页信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "currentPage", value = "当前页", dataType = "String",paramType = "query"),
+            @ApiImplicitParam(name = "pageSize", value = "页大小", dataType = "Integer",paramType = "query")})
+    @RequestMapping(value = "gePageByEmployerId", method = RequestMethod.GET)
+    public ApiResponse<Page<DemandInfoVO>> gePageByEmployerId(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize) {
+        Long currEmployerId = Context.getCurrEmployerId();
+        Page<DemandInfoVO> result = new PageInfo<>();
+        Page<DemandInfo> demandInfoPage = demandInfoService.gePageByEmployerId(currentPage, pageSize, currEmployerId);
+        if (demandInfoPage.getData().size() == 0) {
+            return ApiResponse.ofSuccess(result);
+        }
+        return ApiResponse.ofSuccess(this.convert(demandInfoPage));
     }
 
 
-    @ApiOperation(value="根据需求编码更新需求状态")
+    @ApiOperation(value = "根据需求编码更新需求状态")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="demandCode",value="需求编码",dataType="String"),
-            @ApiImplicitParam(name="status",value="状态",dataType="Integer")})
-    @RequestMapping(value = "updateStatus",method = RequestMethod.POST)
-    public ApiResponse<Boolean> updateStatus(String demandCode,Integer status) {
+            @ApiImplicitParam(name = "demandCode", value = "需求编码", dataType = "String",paramType = "query"),
+            @ApiImplicitParam(name = "status", value = "状态", dataType = "Integer",paramType = "query")})
+    @RequestMapping(value = "updateStatus", method = RequestMethod.GET)
+    public ApiResponse<Boolean> updateStatus(@RequestParam("demandCode") String demandCode, @RequestParam("status") Integer status) {
         demandInfoService.updateStatusByCode(demandCode, status);
         return ApiResponse.ofSuccess(Boolean.TRUE);
     }
 
-    @ApiOperation(value="根据需求编码获取需求明细信息")
-    @ApiImplicitParam(name = "demandCode", value = "需求编码", required = true, dataType = "String")
-    @RequestMapping(value = "getByCode",method = RequestMethod.POST)
+    @ApiOperation(value = "根据需求编码获取需求明细信息")
+    @ApiImplicitParam(name = "demandCode", value = "需求编码", required = true, dataType = "String",paramType = "query")
+    @RequestMapping(value = "getByCode", method = RequestMethod.GET)
     public ApiResponse<DemandInfoVO> getByCode(String demandCode) {
         if (StringUtils.isEmpty(demandCode)) {
             return ApiResponse.ofFailed("需求编号不能为空");
@@ -76,8 +86,8 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         return ApiResponse.ofSuccess(this.convert(demandInfo));
     }
 
-    @ApiOperation(value="发布新需求")
-    @RequestMapping(value = "publish",method = RequestMethod.POST)
+    @ApiOperation(value = "发布新需求")
+    @RequestMapping(value = "publish", method = RequestMethod.POST)
     public ApiResponse<String> publish(DemandInfoVO form) {
         form.setCode(CodeUtil.generateNewCode());
         ApiResponse<Boolean> booleanApiResponse = super.create(form);
@@ -88,8 +98,8 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
 
     }
 
-    @ApiOperation(value="根据需求编码更新需求")
-    @RequestMapping(value = "updateByCode",method = RequestMethod.POST)
+    @ApiOperation(value = "根据需求编码更新需求")
+    @RequestMapping(value = "updateByCode", method = RequestMethod.POST)
     public ApiResponse<Boolean> updateByCode(DemandInfoVO demandInfoVO) {
         if (StringUtils.isEmpty(demandInfoVO.getCode())) {
             return ApiResponse.ofFailed("需求编号不能为空");
