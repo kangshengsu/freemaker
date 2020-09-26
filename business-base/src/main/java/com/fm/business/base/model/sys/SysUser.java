@@ -6,6 +6,8 @@
  */
 package com.fm.business.base.model.sys;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fm.framework.core.model.BaseModel;
 import lombok.Data;
 import java.io.Serializable;
@@ -30,7 +32,7 @@ public class SysUser extends BaseModel implements Serializable {
 
 
     /**
-    * 编码
+    * 编码 openID
     **/
 	private String code;
 
@@ -75,52 +77,7 @@ public class SysUser extends BaseModel implements Serializable {
     /**
      * 用户的小程序openId
      */
-    private String openId;
-
-    /**
-     * 用户的小程序登录凭证
-     */
-    private String credentials;
-
-    /**
-     * 用户的小程序敏感信息解密Key
-     */
-    private String sessionKey;
-
-    /**
-     * 语言
-     */
-    private String language;
-
-    /**
-     * 省
-     */
-    private String province;
-
-    /**
-     * 市
-     */
-    private String city;
-
-    /**
-     * 区
-     */
-    private String district;
-
-    /**
-     * 县
-     */
-    private String county;
-
-    /**
-     * 用户头像URL
-     */
-    private String avatarUrl;
-
-    /**
-     * 用户性别 0-女 1-男
-     */
-    private String gender;
+//    private String openId;
 
     /**
      * 获取主键方法，主键整体平台定义成Long数据类型，方便数据的整体插入性能

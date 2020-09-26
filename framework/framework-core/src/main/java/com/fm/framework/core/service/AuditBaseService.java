@@ -20,16 +20,16 @@ public class AuditBaseService<M extends BaseMapper<T>, T extends BaseModel & IAu
     protected void initDefaultField(T model) {
         super.initDefaultField(model);
         model.setCreateTime(new Date());
-        model.setCreateUser(Context.getCurrUser());
+        model.setCreateUser(Context.getCurrUser() != null ? Context.getCurrUser() : -1L);
         model.setUpdateTime(new Date());
-        model.setUpdateUser(Context.getCurrUser());
+        model.setUpdateUser(Context.getCurrUser() != null ? Context.getCurrUser() : -1L);
     }
 
     @Override
     protected void beforeUpdate(T model) {
         super.beforeUpdate(model);
         model.setUpdateTime(new Date());
-        model.setUpdateUser(Context.getCurrUser());
+        model.setUpdateUser(Context.getCurrUser()!=null?Context.getCurrUser():-1L);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class AuditBaseService<M extends BaseMapper<T>, T extends BaseModel & IAu
         if(!CollectionUtils.isEmpty(models)) {
             models.forEach(model -> {
                 model.setUpdateTime(new Date());
-                model.setUpdateUser(Context.getCurrUser());
+                model.setUpdateUser(Context.getCurrUser()!=null?Context.getCurrUser():-1L);
             });
         }
     }

@@ -1,7 +1,5 @@
 package com.fm.api.web.interceptor;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,9 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fm.business.base.constant.CacheKeyConstants;
 import com.fm.business.base.model.sys.SysUser;
 import com.fm.framework.core.Context;
-import com.fm.framework.core.utils.JsonUtil;
-import com.fm.framework.web.response.ApiResponse;
-import com.fm.framework.web.response.ApiStatus;
+import com.fm.framework.web.utils.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
@@ -69,7 +65,7 @@ public class SSOInterceptor implements  HandlerInterceptor {
 
         }
 
-        responseOutWithJsonOnFail(response);
+        ResponseUtil.getLoginFailedResponse(response);
         return false;
     }
  
@@ -85,28 +81,6 @@ public class SSOInterceptor implements  HandlerInterceptor {
      */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-    }
-
-    /**
-     * 以JSON格式输出
-     * @param response
-     */
-    protected void responseOutWithJsonOnFail(HttpServletResponse response) {
-        //将实体对象转换为JSON Object转换
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json; charset=utf-8");
-        PrintWriter out = null;
-        try {
-            out = response.getWriter();
-            out.append(JsonUtil.obj2String(
-                    ApiResponse.of(ApiStatus.LOGIN_NOT_FOUND.getCode(),ApiStatus.LOGIN_NOT_FOUND.getMessage(),null)));
-        } catch (IOException e) {
-            log.error("SSOInterceptor responseOutWithJsonOnFail error!",e);
-        } finally {
-            if (out != null) {
-                out.close();
-            }
-        }
     }
 
     /**

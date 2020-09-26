@@ -79,12 +79,12 @@ public class ProductionInfoVO extends VO implements Serializable {
     private String statusName;
 
     /**
-     * 所属领域
+     * 所属岗位
      **/
     private Long jobCateId;
 
     /**
-     * 所属领域 + 岗位数据路径
+     * 所属岗位名称
      **/
     private String jobCateName;
 
@@ -93,7 +93,7 @@ public class ProductionInfoVO extends VO implements Serializable {
      **/
     private String cateTreeCode;
 
-    /**freelancerInfo
+    /**
      * 创建时间
      **/
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")

@@ -6,6 +6,8 @@
  */
 package com.fm.business.base.model;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
 import lombok.Data;
@@ -100,6 +102,12 @@ public class EmployerInfo extends BaseModel implements Serializable,IAudit {
     * 修改人
     **/
 	private Long updateUser;
+
+
+    /**
+     * 关联SysUser的ID
+     **/
+    private Long userId;
 
 
 

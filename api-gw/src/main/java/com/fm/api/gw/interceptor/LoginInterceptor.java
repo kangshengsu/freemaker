@@ -1,8 +1,9 @@
 package com.fm.api.gw.interceptor;
 
-import com.fm.business.base.constant.CacheKeyConstants;
+import com.fm.api.gw.vo.MiniAppUserVO;
 import com.fm.business.base.model.sys.SysUser;
 import com.fm.framework.core.Context;
+import com.fm.framework.web.utils.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class LoginInterceptor implements HandlerInterceptor {
@@ -23,23 +25,40 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
-        String cacheKey = request.getParameter("openId");
+        log.info("网关拦截器进入");
+        String userToken = request.getHeader("userToken");
 
         try {
-            RBucket<SysUser> currUser = redissonClient.getBucket(cacheKey);
+            //存入上下文
+            //todo zyc mockData
+            RBucket<SysUser> currUser = mockUser("999999");
 
-//            if (currUser != null && currUser.get() != null) {
-//                //存入上下文
-//                Context.setCurrUser(currUser.get().getId());
-//                Context.setCurrUserCode(currUser.get().getCode());
-//                Context.setCurrUserName(currUser.get().getName());
-//                return true;
-//            }
+            if (currUser != null && currUser.get() != null) {
+                return true;
+            }
         } catch (Exception e) {
             log.error("获取小程序用户信息异常！", e);
         }
 
-        return true;
+        ResponseUtil.getLoginFailedResponse(response);
+
+        return false;
+    }
+
+    private RBucket<SysUser> mockUser(String userToken) {
+        MiniAppUserVO miniAppUserVO = new MiniAppUserVO();
+        miniAppUserVO.setId(1L);
+        miniAppUserVO.setFreeLancerId(2L);
+        miniAppUserVO.setEmployerId(3L);
+
+        //存入上下文
+        Context.setCurrUser(miniAppUserVO.getId());
+        Context.setCurrEmployerId(miniAppUserVO.getEmployerId());
+        Context.setCurrFreelancerId(miniAppUserVO.getFreeLancerId());
+
+        RBucket<SysUser> currUser = redissonClient.getBucket(userToken);
+        currUser.set(miniAppUserVO, 99999, TimeUnit.HOURS);
+        return currUser;
     }
 
     /**
@@ -55,4 +74,6 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
     }
+
+
 }
