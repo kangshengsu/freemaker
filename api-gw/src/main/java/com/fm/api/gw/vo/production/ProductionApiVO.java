@@ -3,15 +3,23 @@ package com.fm.api.gw.vo.production;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fm.api.gw.vo.freelancer.FreelancerInfoApiVO;
+import com.fm.business.base.enums.ProductionStatus;
+import com.fm.business.base.model.job.BdJobCate;
+import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.framework.core.utils.JsonUtil;
 import com.fm.framework.web.VO;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author ：liuduo
@@ -114,5 +122,40 @@ public class ProductionApiVO extends VO implements Serializable {
      */
     @NotEmpty(message = "技能树列表不能为空",groups = {Release.class, Modify.class})
     private List<List<Long>> jobs;
+
+
+    public static ProductionApiVO convert(ProductionInfo model) {
+        ProductionApiVO form = new ProductionApiVO();
+        BeanUtils.copyProperties(model,form);
+        //转换枚举值
+        form.setStatusName(ProductionStatus.get(model.getStatus()).getName());
+        //岗位名称
+        BdJobCate bdJobCate = model.getBdJobCate();
+        if (bdJobCate != null) {
+            form.setJobCateName(bdJobCate.getCateName());
+        }
+        //技能标签 树路径
+        if(!CollectionUtils.isEmpty(model.getProductionSkillRelations())){
+            form.setJobs(model.getProductionSkillRelations().stream().map(productionSkillRelation ->
+                    JsonUtil.string2Obj(productionSkillRelation.getSkillTreePath(),new TypeReference<List<Long>>(){}))
+                    .collect(Collectors.toList()));
+        }
+        //附件列表
+        if(!CollectionUtils.isEmpty(model.getAttachmentInfos())){
+            form.setAttachmentInfos(model.getAttachmentInfos().stream().map(attachmentInfo ->{
+                AttachmentInfoApiVO attachmentInfoApiVO = new AttachmentInfoApiVO();
+                BeanUtils.copyProperties(attachmentInfo,attachmentInfoApiVO);
+                return attachmentInfoApiVO;
+            }).collect(Collectors.toList()));
+        }
+        //作者 自由职业者
+        if(model.getFreelancerInfo()!=null){
+            FreelancerInfoApiVO freelancerInfoApiVO = new FreelancerInfoApiVO();
+            BeanUtils.copyProperties(model.getFreelancerInfo(),freelancerInfoApiVO);
+            form.setFreelancerInfo(freelancerInfoApiVO);
+        }
+
+        return form;
+    }
 
 }

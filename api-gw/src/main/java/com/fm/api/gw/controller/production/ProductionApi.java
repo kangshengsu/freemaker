@@ -195,36 +195,7 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
 
     @Override
     protected ProductionApiVO convert(ProductionInfo model) {
-        ProductionApiVO form = super.convert(model);
-        //转换枚举值
-        form.setStatusName(ProductionStatus.get(model.getStatus()).getName());
-        //岗位名称
-        BdJobCate bdJobCate = model.getBdJobCate();
-        if (bdJobCate != null) {
-            form.setJobCateName(bdJobCate.getCateName());
-        }
-        //技能标签 树路径
-        if(!CollectionUtils.isEmpty(model.getProductionSkillRelations())){
-            form.setJobs(model.getProductionSkillRelations().stream().map(productionSkillRelation ->
-                    JsonUtil.string2Obj(productionSkillRelation.getSkillTreePath(),new TypeReference<List<Long>>(){}))
-                    .collect(Collectors.toList()));
-        }
-        //附件列表
-        if(!CollectionUtils.isEmpty(model.getAttachmentInfos())){
-            form.setAttachmentInfos(model.getAttachmentInfos().stream().map(attachmentInfo ->{
-                        AttachmentInfoApiVO attachmentInfoApiVO = new AttachmentInfoApiVO();
-                        BeanUtils.copyProperties(attachmentInfo,attachmentInfoApiVO);
-                        return attachmentInfoApiVO;
-                    }).collect(Collectors.toList()));
-        }
-        //作者 自由职业者
-        if(model.getFreelancerInfo()!=null){
-            FreelancerInfoApiVO freelancerInfoApiVO = new FreelancerInfoApiVO();
-            BeanUtils.copyProperties(model.getFreelancerInfo(),freelancerInfoApiVO);
-            form.setFreelancerInfo(freelancerInfoApiVO);
-        }
-
-        return form;
+        return ProductionApiVO.convert(model);
     }
 
     @Override
