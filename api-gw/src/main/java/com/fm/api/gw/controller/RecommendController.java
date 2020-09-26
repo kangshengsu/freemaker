@@ -39,7 +39,7 @@ import java.util.List;
 */
 
 @RestController
-@RequestMapping("/aip/v1/demandApi")
+@RequestMapping("/v1/demandApi")
 @Api(value = "推荐相关接口接口")
 public class RecommendController extends BaseController<DemandProductionRelation, RecommendVO> {
 
