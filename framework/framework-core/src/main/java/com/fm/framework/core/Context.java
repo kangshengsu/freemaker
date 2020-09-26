@@ -44,12 +44,12 @@ public class Context {
         return loginUserThreadLocal.get();
     }
 
-    public static void setLoginFreelancerId(Long freelancerId) {
+    public static void setCurrFreelancerId(Long freelancerId) {
         if(freelancerId != null) {
             loginFreelancerIdThreadLocal.set(freelancerId);
         }
     }
-    public static void setLoginEmployerId(Long employerId) {
+    public static void setCurrEmployerId(Long employerId) {
         if(employerId != null) {
             loginEmployerIdThreadLocal.set(employerId);
         }

@@ -2,6 +2,7 @@ package com.fm.api.gw.interceptor;
 
 import com.fm.api.gw.vo.MiniAppUserVO;
 import com.fm.business.base.model.sys.SysUser;
+import com.fm.framework.core.Context;
 import com.fm.framework.web.utils.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
@@ -49,6 +50,11 @@ public class LoginInterceptor implements HandlerInterceptor {
         miniAppUserVO.setId(1L);
         miniAppUserVO.setFreeLancerId(2L);
         miniAppUserVO.setEmployerId(3L);
+
+        //存入上下文
+        Context.setCurrUser(miniAppUserVO.getId());
+        Context.setCurrEmployerId(miniAppUserVO.getEmployerId());
+        Context.setCurrFreelancerId(miniAppUserVO.getFreeLancerId());
 
         RBucket<SysUser> currUser = redissonClient.getBucket(userToken);
         currUser.set(miniAppUserVO, 99999, TimeUnit.HOURS);
