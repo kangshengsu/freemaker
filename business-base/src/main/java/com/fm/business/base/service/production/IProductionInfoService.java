@@ -6,6 +6,7 @@
  */
 package com.fm.business.base.service.production;
 
+import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
@@ -62,5 +63,17 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
      * @param cateSkill 技能ID
      * @return
      */
+    @Deprecated
     Page<ProductionInfo> findByCateSkill(Integer currentPage,Integer pageSize,Long cateSkill);
+
+    /**
+     * 分页获取作者下的所有作品
+     * @param currentPage
+     * @param pageSize
+     * @param freelancerId 自由职业者ID
+     * @return
+     */
+    Page<ProductionInfo> findByFreelancer(Integer currentPage, Integer pageSize, Long freelancerId, Collection<Integer> statuses);
+
+
 }

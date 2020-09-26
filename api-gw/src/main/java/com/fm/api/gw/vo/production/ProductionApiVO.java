@@ -7,9 +7,7 @@ import com.fm.api.gw.vo.freelancer.FreelancerInfoApiVO;
 import com.fm.framework.web.VO;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -35,6 +33,7 @@ public class ProductionApiVO extends VO implements Serializable {
      * 作品编码
      **/
     @NotEmpty(message = "作品编码不能为空",groups = {DelStatusByCode.class})
+    @Size( max = 50 , message = "作品编码不能超过50",groups = {DelStatusByCode.class})
     private String code;
 
 
@@ -52,6 +51,7 @@ public class ProductionApiVO extends VO implements Serializable {
      * 作品标题
      **/
     @NotBlank(message = "作品标题不能为空",groups = {Release.class, Modify.class})
+    @Size( max = 50 , message = "作品标题不能超过50字",groups = {Release.class, Modify.class})
     private String title;
 
 
@@ -59,6 +59,7 @@ public class ProductionApiVO extends VO implements Serializable {
      * 技能描述
      **/
     @NotBlank(message = "描述不能为空",groups = {Release.class, Modify.class})
+    @Size( max = 300 , message = "技能描述不能超过300字",groups = {Release.class, Modify.class})
     private String summarize;
 
 
@@ -66,6 +67,7 @@ public class ProductionApiVO extends VO implements Serializable {
      * 时薪
      **/
     @NotNull(message = "时薪不能为空",groups = {Release.class, Modify.class})
+    @Max(value = 99999,message = "超过时薪最大值",groups = {Release.class, Modify.class})
     private BigDecimal hourlyWage;
 
 
