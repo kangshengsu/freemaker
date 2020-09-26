@@ -18,6 +18,10 @@
     <dependencies>
         <dependency>
             <groupId>com.freemaker</groupId>
+            <artifactId>framework-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.freemaker</groupId>
             <artifactId>business-base</artifactId>
         </dependency>
         <dependency>
@@ -37,13 +41,10 @@
             <artifactId>weixin-java-mp</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.freemaker</groupId>
-            <artifactId>framework-web</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson-spring-boot-starter</artifactId>
         </dependency>
+
     </dependencies>
 
 </project>

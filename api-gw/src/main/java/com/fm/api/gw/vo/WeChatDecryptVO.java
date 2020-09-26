@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 @Setter
 @Getter
-public class  UserVO extends VO implements Serializable {
+public class WeChatDecryptVO extends VO implements Serializable {
 
     @ApiModelProperty(value = "openId", notes = "小程序openId")
     private String openId;
