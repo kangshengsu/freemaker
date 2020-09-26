@@ -8,6 +8,7 @@ package com.fm.business.base.service.production.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.production.IProductionInfoMapper;
@@ -146,7 +147,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
      * @param currentPage
      * @param pageSize
      * @param cateDomain 领域ID
-     * @return
+     * @return 只返回已发布作品
      */
     @Override
     public Page<ProductionInfo> findByCateDomain(Integer currentPage, Integer pageSize, Long cateDomain) {
@@ -157,8 +158,8 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         }
 
         //根据岗位获取作品数据
-        Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class).in(ProductionInfo::getJobCateId,
-                catePosts.stream().map(bdJobCate -> bdJobCate.getId()).collect(Collectors.toSet()));
+        Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getStatus,ProductionStatus.RELEASE.getCode())
+                .in(ProductionInfo::getJobCateId, catePosts.stream().map(bdJobCate -> bdJobCate.getId()).collect(Collectors.toSet()));
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
     }
@@ -169,12 +170,14 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
      * @param currentPage
      * @param pageSize
      * @param catePost 岗位ID
-     * @return
+     * @return 只返回已发布作品
      */
     @Override
     public Page<ProductionInfo> findByCatePost(Integer currentPage, Integer pageSize, Long catePost) {
         //根据岗位获取作品数据
-        Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getJobCateId, catePost);
+        Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class)
+                .eq(ProductionInfo::getStatus,ProductionStatus.RELEASE.getCode())
+                .eq(ProductionInfo::getJobCateId, catePost);
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
     }
@@ -185,7 +188,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
      * @param currentPage
      * @param pageSize
      * @param cateSkill   技能ID
-     * @return
+     * @return 只返回已发布作品
      */
     @Override
     public Page<ProductionInfo> findByCateSkill(Integer currentPage, Integer pageSize, Long cateSkill) {
@@ -209,6 +212,27 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         result.setData(productionInfos);
 
         return result;
+    }
+
+    /**
+     * 分页获取作者下的所有作品
+     *
+     * @param currentPage
+     * @param pageSize
+     * @param freelancerId 自由职业者ID
+     * @return
+     */
+    @Override
+    public Page<ProductionInfo> findByFreelancer(Integer currentPage, Integer pageSize, Long freelancerId ,Collection<Integer> statuses) {
+        //根据岗位获取作品数据
+        LambdaQueryWrapper<ProductionInfo> queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class)
+                .eq(ProductionInfo::getFreelancerId, freelancerId);
+
+        if(statuses != null){
+            queryWrapper.in(ProductionInfo::getStatus,statuses);
+        }
+
+        return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
     }
 
     /**
