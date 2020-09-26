@@ -7,12 +7,12 @@
 package com.fm.business.base.service.sys.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.fm.business.base.model.sys.SysUser;
 import com.fm.business.base.dao.sys.ISysUserMapper;
+import com.fm.business.base.model.sys.SysUser;
 import com.fm.business.base.service.sys.ISysUserService;
-import org.springframework.stereotype.Service;
 import com.fm.framework.core.service.BaseService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 /**   
  * @Description:(用户服务实现)
@@ -35,5 +35,10 @@ public class SysUserServiceImpl extends BaseService<ISysUserMapper, SysUser> imp
     @Override
     public SysUser findByCode(String code) {
         return getBaseMapper().selectOne(Wrappers.lambdaQuery(SysUser.class).eq(SysUser::getCode,code));
+    }
+
+    @Override
+    protected void afterSave(SysUser sysUser) {
+
     }
 }

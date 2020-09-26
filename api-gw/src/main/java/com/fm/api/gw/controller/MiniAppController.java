@@ -61,6 +61,7 @@ public class MiniAppController {
 
     /**
      * 小程序登录
+     * todo zyc 此处肥长 看着不爽 待改 用BaseService的afterSave方法做
      *
      * @param weChatLoginVO
      * @return
@@ -94,13 +95,20 @@ public class MiniAppController {
             EmployerInfo employerInfo = new EmployerInfo();
             convertEmployerInfo(employerInfo, weChatLoginVO, userId);
 
-            iAccountInfoService.createAccount(freelancerInfo,employerInfo);
+            iAccountInfoService.createAccount(freelancerInfo, employerInfo);
+            List<QueryItem> queryItems = getQueryItemsForUserId(userId);
 
+            EmployerInfo employerInfoResult = iEmployerInfoService.getOne(queryItems);
+            FreelancerInfo freelancerInfoResult = iFreelancerInfoService.getOne(queryItems);
+
+            //塞入缓存
             MiniAppUserVO miniAppUserVO = new MiniAppUserVO();
-            BeanUtils.copyProperties(queryResult,miniAppUserVO);
-            miniAppUserVO.setEmployerId(miniAppUserVO.getId());
-            miniAppUserVO.setFreeLancerId(freelancerInfo.getId());
+            BeanUtils.copyProperties(queryResult, miniAppUserVO);
+            miniAppUserVO.setEmployerId(employerInfoResult.getId());
+            miniAppUserVO.setFreeLancerId(freelancerInfoResult.getId());
+            miniAppUserVO.setId(userId);
             miniAppUserVO.setSessionKey(weChatDecryptVO.getSessionKey());
+
             currUser.set(queryResult, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
 
         } else {
@@ -111,12 +119,7 @@ public class MiniAppController {
             Long userId = sysUser.getId();
 
 
-            List<QueryItem> queryItems = new ArrayList<>();
-            QueryItem queryItem = new QueryItem();
-            queryItem.setQueryField("userId");
-            queryItem.setType(QueryType.eq);
-            queryItem.setValue(userId);
-            queryItems.add(queryItem);
+            List<QueryItem> queryItems = getQueryItemsForUserId(userId);
 
             FreelancerInfo freelancerInfo = iFreelancerInfoService.getOne(queryItems);
             convertFreelancerInfo(freelancerInfo, weChatLoginVO, userId);
@@ -124,17 +127,33 @@ public class MiniAppController {
             EmployerInfo employerInfo = iEmployerInfoService.getOne(queryItems);
             convertEmployerInfo(employerInfo, weChatLoginVO, userId);
 
-            iAccountInfoService.updateAccount(freelancerInfo,employerInfo);
+            iAccountInfoService.updateAccount(freelancerInfo, employerInfo);
 
+            //塞入缓存
             MiniAppUserVO miniAppUserVO = new MiniAppUserVO();
-            BeanUtils.copyProperties(sysUser,miniAppUserVO);
-            miniAppUserVO.setEmployerId(miniAppUserVO.getId());
-            miniAppUserVO.setFreeLancerId(freelancerInfo.getId());
+
+            EmployerInfo employerInfoResult = iEmployerInfoService.getOne(queryItems);
+            FreelancerInfo freelancerInfoResult = iFreelancerInfoService.getOne(queryItems);
+
+            miniAppUserVO.setEmployerId(employerInfoResult.getId());
+            miniAppUserVO.setFreeLancerId(freelancerInfoResult.getId());
+            miniAppUserVO.setId(userId);
             miniAppUserVO.setSessionKey(weChatDecryptVO.getSessionKey());
+
             currUser.set(miniAppUserVO, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
         }
 
         return ApiResponse.of(ApiStatus.SUCCESS.getCode(), ApiStatus.SUCCESS.getMessage(), userToken);
+    }
+
+    private List<QueryItem> getQueryItemsForUserId(Long userId) {
+        List<QueryItem> queryItems = new ArrayList<>();
+        QueryItem queryItem = new QueryItem();
+        queryItem.setQueryField("userId");
+        queryItem.setType(QueryType.eq);
+        queryItem.setValue(userId);
+        queryItems.add(queryItem);
+        return queryItems;
     }
 
     @ApiOperation("小程序获取手机号")
@@ -144,7 +163,7 @@ public class MiniAppController {
         try {
 //            userInfoDTO = wxService.getPhoneNumber(weChatLoginDTO);
         } catch (Exception e) {
-            log.info("获取用户手机号异常",e);
+            log.info("获取用户手机号异常", e);
             return ApiResponse.ofFailed(e.getMessage());
         }
         //更新用户表电话

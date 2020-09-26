@@ -40,7 +40,7 @@ public class Context {
         }
     }
 
-    public static Long getCurrUser() {
+    public static Long getCurrUserId() {
         return loginUserThreadLocal.get();
     }
 

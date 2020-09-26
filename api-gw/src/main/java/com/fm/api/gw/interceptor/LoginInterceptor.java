@@ -1,7 +1,6 @@
 package com.fm.api.gw.interceptor;
 
 import com.fm.api.gw.vo.MiniAppUserVO;
-import com.fm.business.base.model.sys.SysUser;
 import com.fm.framework.core.Context;
 import com.fm.framework.web.utils.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -13,50 +12,62 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 小程序登录拦截器
+ * 校验用户token是否和缓存token一致，不一致提示用户重新登录
+ */
 @Slf4j
 public class LoginInterceptor implements HandlerInterceptor {
 
     @Autowired
     private RedissonClient redissonClient;
 
+    private String mockToken = "999999";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
-        log.info("网关拦截器进入");
         String userToken = request.getHeader("userToken");
+        log.info("小程序网关拦截器进入，token：{}", userToken);
 
-        try {
-            //存入上下文
-            //todo zyc mockData
-            RBucket<SysUser> currUser = mockUser("999999");
+        //region todo zyc mockData to be delete
+        this.fillMockUser();
+        userToken = mockToken;
+        //endregion
 
-            if (currUser != null && currUser.get() != null) {
-                return true;
-            }
-        } catch (Exception e) {
-            log.error("获取小程序用户信息异常！", e);
-        }
-
-        ResponseUtil.getLoginFailedResponse(response);
-
-        return false;
-    }
-
-    private RBucket<SysUser> mockUser(String userToken) {
-        MiniAppUserVO miniAppUserVO = new MiniAppUserVO();
-        miniAppUserVO.setId(1L);
-        miniAppUserVO.setFreeLancerId(2L);
-        miniAppUserVO.setEmployerId(3L);
+        RBucket<MiniAppUserVO> rBucket = redissonClient.getBucket(userToken);
 
         //存入上下文
-        Context.setCurrUser(miniAppUserVO.getId());
-        Context.setCurrEmployerId(miniAppUserVO.getEmployerId());
-        Context.setCurrFreelancerId(miniAppUserVO.getFreeLancerId());
+        return Optional.ofNullable(rBucket)
+                .map(bucket -> bucket.get())
+                .map(currUser -> {
+                    //此处频繁set也不好，因此仅缺值时更新
+                    if (Context.getCurrUserId() != null
+                            && Context.getCurrEmployerId() != null
+                            && Context.getCurrFreelancerId() != null) {
+                        Context.setCurrUser(currUser.getId());
+                        Context.setCurrEmployerId(currUser.getEmployerId());
+                        Context.setCurrFreelancerId(currUser.getFreeLancerId());
+                    }
+                    return true;
+                })
+                .orElseGet(() -> {
+                    ResponseUtil.getLoginFailedResponse(response);
+                    return false;
+                });
+    }
 
-        RBucket<SysUser> currUser = redissonClient.getBucket(userToken);
+    @Deprecated
+    private RBucket<MiniAppUserVO> fillMockUser() {
+        MiniAppUserVO miniAppUserVO = new MiniAppUserVO();
+        miniAppUserVO.setId(11L);
+        miniAppUserVO.setFreeLancerId(22L);
+        miniAppUserVO.setEmployerId(33L);
+
+        RBucket<MiniAppUserVO> currUser = redissonClient.getBucket(mockToken);
         currUser.set(miniAppUserVO, 99999, TimeUnit.HOURS);
         return currUser;
     }

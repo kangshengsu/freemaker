@@ -31,8 +31,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -70,7 +68,7 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
     public ApiResponse<Boolean> release(@RequestBody @Validated(value = {ProductionApiVO.Release.class}) ProductionApiVO apiVO){
 
         //获取发布作者
-        apiVO.setFreelancerId(Context.getCurrUser());
+        apiVO.setFreelancerId(Context.getCurrUserId());
 
         productionInfoService.save(convert(apiVO));
 
