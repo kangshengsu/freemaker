@@ -27,13 +27,13 @@ public class LoginConfig implements WebMvcConfigurer {
         //所有路径都被拦截
         registration.addPathPatterns("/**");
         //添加不拦截路径
-//        registration.excludePathPatterns(
-//                "/miniApp",
-//                "/**/*.html",
-//                "/**/*.js",
-//                "/**/*.css",
-//                "/**/*.woff",
-//                "/**/*.ttf"
-//        );
+        registration.excludePathPatterns(
+                "/miniApp",
+                "/**/*.html",
+                "/**/*.js",
+                "/**/*.css",
+                "/**/*.woff",
+                "/**/*.ttf"
+        );
     }
 }
