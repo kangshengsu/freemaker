@@ -55,11 +55,11 @@ public class Context {
         }
     }
 
-    public static Long getLoginFreelancerId() {
+    public static Long getCurrFreelancerId() {
         return loginFreelancerIdThreadLocal.get();
     }
 
-    public static Long getLoginEmployerId() {
+    public static Long getCurrEmployerId() {
         return loginEmployerIdThreadLocal.get();
     }
 
