@@ -1,6 +1,7 @@
 package com.fm.api.gw.controller;
 
-import com.fm.api.gw.service.WxService;
+import com.fm.api.gw.rpc.WxService;
+import com.fm.api.gw.vo.MiniAppUserVO;
 import com.fm.api.gw.vo.WeChatDecryptVO;
 import com.fm.api.gw.vo.WeChatLoginVO;
 import com.fm.business.base.enums.LanguageEnum;
@@ -95,6 +96,11 @@ public class MiniAppController {
 
             iAccountInfoService.createAccount(freelancerInfo,employerInfo);
 
+            MiniAppUserVO miniAppUserVO = new MiniAppUserVO();
+            BeanUtils.copyProperties(queryResult,miniAppUserVO);
+            miniAppUserVO.setEmployerId(miniAppUserVO.getId());
+            miniAppUserVO.setFreeLancerId(freelancerInfo.getId());
+            miniAppUserVO.setSessionKey(weChatDecryptVO.getSessionKey());
             currUser.set(queryResult, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
 
         } else {
@@ -120,11 +126,13 @@ public class MiniAppController {
 
             iAccountInfoService.updateAccount(freelancerInfo,employerInfo);
 
-            currUser.set(sysUser, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
-
+            MiniAppUserVO miniAppUserVO = new MiniAppUserVO();
+            BeanUtils.copyProperties(sysUser,miniAppUserVO);
+            miniAppUserVO.setEmployerId(miniAppUserVO.getId());
+            miniAppUserVO.setFreeLancerId(freelancerInfo.getId());
+            miniAppUserVO.setSessionKey(weChatDecryptVO.getSessionKey());
+            currUser.set(miniAppUserVO, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
         }
-
-
 
         return ApiResponse.of(ApiStatus.SUCCESS.getCode(), ApiStatus.SUCCESS.getMessage(), userToken);
     }
@@ -133,12 +141,12 @@ public class MiniAppController {
     @PostMapping(value = "/phoneLogin", consumes = "application/json;charset=UTF-8")
     public ApiResponse phoneLogin(@RequestBody WeChatLoginVO weChatLoginDTO) {
         WeChatDecryptVO userInfo = null;
-//        try {
-//            userInfoDTO = minProgramService.phoneLogin(weChatLoginDTO);
-//        } catch (Exception e) {
-//            log.info("获取用户手机号异常",e);
-//            return ApiResponse.ofFailed(e.getMessage());
-//        }
+        try {
+//            userInfoDTO = wxService.getPhoneNumber(weChatLoginDTO);
+        } catch (Exception e) {
+            log.info("获取用户手机号异常",e);
+            return ApiResponse.ofFailed(e.getMessage());
+        }
         //更新用户表电话
         return ApiResponse.of(ApiStatus.SUCCESS, userInfo);
     }

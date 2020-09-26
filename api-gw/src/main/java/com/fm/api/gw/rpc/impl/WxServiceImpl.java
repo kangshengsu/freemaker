@@ -1,9 +1,10 @@
-package com.fm.api.gw.service.impl;
+package com.fm.api.gw.rpc.impl;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
+import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import com.binarywang.spring.starter.wxjava.miniapp.properties.WxMaProperties;
-import com.fm.api.gw.service.WxService;
+import com.fm.api.gw.rpc.WxService;
 import com.fm.api.gw.vo.WeChatDecryptVO;
 import com.fm.api.gw.vo.WeChatLoginVO;
 import com.fm.framework.core.exception.BusinessException;
@@ -39,5 +40,19 @@ public class WxServiceImpl implements WxService {
 
         return weChatDecryptVO;
 
+    }
+
+    /**
+     * 获取手机号码
+     *
+     * @param sessionKey
+     * @param encryptedData
+     * @param iv
+     * @return
+     */
+    public String getPhoneNumber(String sessionKey, String encryptedData, String iv) {
+        // 解密
+        WxMaPhoneNumberInfo phoneNoInfo = wxMaService.getUserService().getPhoneNoInfo(sessionKey, encryptedData, iv);
+        return phoneNoInfo.getPhoneNumber();
     }
 }

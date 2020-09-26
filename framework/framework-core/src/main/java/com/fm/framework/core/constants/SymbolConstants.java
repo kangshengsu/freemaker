@@ -22,4 +22,10 @@ public interface SymbolConstants {
      * 斜线
      */
     String SLASH = "/";
+
+    /**
+     * 默认存活时间
+     */
+    int DEFALUT_LOGIN_SURVIVE_TIME = 24;
+
 }

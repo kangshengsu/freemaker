@@ -1,5 +1,6 @@
 package com.fm.api.gw.interceptor;
 
+import com.fm.api.gw.vo.MiniAppUserVO;
 import com.fm.business.base.model.sys.SysUser;
 import com.fm.framework.web.utils.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class LoginInterceptor implements HandlerInterceptor {
@@ -26,14 +28,11 @@ public class LoginInterceptor implements HandlerInterceptor {
         String userToken = request.getHeader("userToken");
 
         try {
-
-            RBucket<SysUser> currUser = redissonClient.getBucket(userToken);
+            //存入上下文
+            //todo zyc mockData
+            RBucket<SysUser> currUser = mockUser("999999");
 
             if (currUser != null && currUser.get() != null) {
-//                //存入上下文
-//                Context.setCurrUser(currUser.get().getId());
-//                Context.setCurrUserCode(currUser.get().getCode());
-//                Context.setCurrUserName(currUser.get().getName());
                 return true;
             }
         } catch (Exception e) {
@@ -43,6 +42,17 @@ public class LoginInterceptor implements HandlerInterceptor {
         ResponseUtil.getLoginFailedResponse(response);
 
         return false;
+    }
+
+    private RBucket<SysUser> mockUser(String userToken) {
+        MiniAppUserVO miniAppUserVO = new MiniAppUserVO();
+        miniAppUserVO.setId(1L);
+        miniAppUserVO.setFreeLancerId(2L);
+        miniAppUserVO.setEmployerId(3L);
+
+        RBucket<SysUser> currUser = redissonClient.getBucket(userToken);
+        currUser.set(miniAppUserVO, 99999, TimeUnit.HOURS);
+        return currUser;
     }
 
     /**
