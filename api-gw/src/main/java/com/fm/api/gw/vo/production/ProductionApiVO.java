@@ -1,12 +1,15 @@
 package com.fm.api.gw.vo.production;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fm.business.base.model.AttachmentInfo;
-import com.fm.business.base.model.freelancer.FreelancerInfo;
-import com.fm.business.base.model.production.ProductionSkillRelation;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fm.api.gw.vo.freelancer.FreelancerInfoApiVO;
 import com.fm.framework.web.VO;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -22,9 +25,16 @@ public class ProductionApiVO extends VO implements Serializable {
 
     private static final long serialVersionUID = 1600497555108L;
 
+    public interface Release{ }
+
+    public interface Modify{ }
+
+    public interface DelStatusByCode{ }
+
     /**
      * 作品编码
      **/
+    @NotEmpty(message = "作品编码不能为空",groups = {DelStatusByCode.class})
     private String code;
 
 
@@ -36,23 +46,26 @@ public class ProductionApiVO extends VO implements Serializable {
     /**
      * 自由职业者
      */
-    private FreelancerInfo freelancerInfo;
+    private FreelancerInfoApiVO freelancerInfo;
 
     /**
      * 作品标题
      **/
+    @NotBlank(message = "作品标题不能为空",groups = {Release.class, Modify.class})
     private String title;
 
 
     /**
      * 技能描述
      **/
+    @NotBlank(message = "描述不能为空",groups = {Release.class, Modify.class})
     private String summarize;
 
 
     /**
      * 时薪
      **/
+    @NotNull(message = "时薪不能为空",groups = {Release.class, Modify.class})
     private BigDecimal hourlyWage;
 
 
@@ -85,26 +98,19 @@ public class ProductionApiVO extends VO implements Serializable {
     /**
      * 附件列表
      */
-    private List<AttachmentInfo> attachmentInfos;
+    private List<AttachmentInfoApiVO> attachmentInfos;
 
     /**
      * 附件路径
+     * 返回时不序列化
      */
+    @NotEmpty(message = "附件路径列表不能为空",groups = {Release.class, Modify.class})
     private List<String> attachmentInfoPaths;
-
-    /**
-     * 技能列表
-     */
-    private List<ProductionSkillRelation> productionSkillRelations;
 
     /**
      * 创建 修改 时的 领域-岗位-技能数据
      */
+    @NotEmpty(message = "技能树列表不能为空",groups = {Release.class, Modify.class})
     private List<List<Long>> jobs;
-
-    /**
-     * 是否需求审核
-     */
-    private Boolean needReview;
 
 }

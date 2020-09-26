@@ -77,7 +77,9 @@ public abstract class BaseController<M extends BaseModel, V extends VO> {
         result.setCurrentPage(page.getCurrentPage());
         result.setPageSize(page.getPageSize());
         result.setTotal(page.getTotal());
-        result.setData(page.getData().stream().map(this::convert).collect(Collectors.toList()));
+        if(page.getData() != null ){
+            result.setData(page.getData().stream().map(this::convert).collect(Collectors.toList()));
+        }
         return result;
     }
 
