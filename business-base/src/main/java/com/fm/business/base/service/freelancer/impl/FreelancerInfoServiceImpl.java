@@ -16,6 +16,7 @@ import com.fm.framework.core.service.AuditBaseService;
 import org.springframework.stereotype.Service;
 import com.fm.framework.core.service.BaseService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Collections;
@@ -51,5 +52,19 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
                 .like(FreelancerInfo::getPhone,str)
                 .orderByAsc(FreelancerInfo::getName,FreelancerInfo::getPhone)
                 .last("limit 10"));
+    }
+
+    @Override
+    public FreelancerInfo getByUserId(Long userId) {
+        if(null == userId) {
+            return null;
+        }
+
+        List<FreelancerInfo> freelancerInfos = getBaseMapper().selectList(Wrappers.<FreelancerInfo>lambdaQuery().eq(FreelancerInfo::getUserId,userId));
+        if(CollectionUtils.isEmpty(freelancerInfos)) {
+            return null;
+        }
+
+        return freelancerInfos.get(0);
     }
 }
