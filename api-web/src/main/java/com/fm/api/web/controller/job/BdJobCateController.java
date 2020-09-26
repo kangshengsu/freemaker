@@ -107,6 +107,8 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
             treeNode.setLabel(bdJobCateVO.getCateName());
             treeNode.setTreeCode(bdJobCateVO.getTreeCode());
             treeNode.setCateType(bdJobCateVO.getCateType());
+            treeNode.setEnglishName(bdJobCateVO.getEnglishName());
+            treeNode.setIcon(bdJobCateVO.getIcon());
             treeNode.setParentId(bdJobCateVO.getParentId());
 
             treeNodeList.add(treeNode);
@@ -116,6 +118,8 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
             treeNode = new JobNodeVO();
             treeNode.setJobId(bdJobSkillVO.getId());
             treeNode.setCode(bdJobSkillVO.getSkillCode());
+            treeNode.setEnglishName(bdJobSkillVO.getEnglishName());
+            treeNode.setIcon(bdJobSkillVO.getIcon());
             treeNode.setLabel(bdJobSkillVO.getSkillName());
             treeNode.setTreeCode(bdJobSkillVO.getCateTreeCode());
             treeNode.setCateType(JobNodeType.SKILL.getType());
@@ -148,6 +152,8 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
             jobSkill.setId(newNode.getId());
             jobSkill.setSkillCode(newNode.getCateCode());
             jobSkill.setSkillName(newNode.getCateName());
+            jobSkill.setEnglishName(newNode.getEnglishName());
+            jobSkill.setIcon(newNode.getIcon());
             jobSkill.setJobCateId(newNode.getParentId());
             jobSkill.setCateTreeCode(newNode.getTreeCode());
             if (isAdd) {

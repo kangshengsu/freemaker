@@ -41,6 +41,10 @@ public class BdJobCate extends BaseModel implements Serializable,IAudit {
     **/
 	private String cateCode;
 
+	private String englishName;
+
+	private String icon;
+
 
     /**
     * 
