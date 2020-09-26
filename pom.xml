@@ -49,6 +49,7 @@
         <commons-io.version>2.8.0</commons-io.version>
         <jackson.version>2.10.2</jackson.version>
         <commons.pool2.version>2.6.2</commons.pool2.version>
+        <jedis.verison>3.3.0</jedis.verison>
     </properties>
 
     <dependencies>
@@ -242,6 +243,12 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-pool2</artifactId>
                 <version>${commons.pool2.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.verison}</version>
             </dependency>
 
         </dependencies>
