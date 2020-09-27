@@ -75,12 +75,12 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
 
         log.info("getJobCate displayConfigs: {}", displayConfigs);
 
-        Set<String> jobCateCodes = displayConfigs
+        Set<Long> jobCateIds = displayConfigs
                 .stream()
-                .map(DisplayConfig::getDisplayCode)
+                .map(DisplayConfig::getDisplayId)
                 .collect(Collectors.toSet());
 
-        return bdJobCateService.get(jobCateCodes);
+        return bdJobCateService.getByIds(jobCateIds);
 
     }
 
@@ -98,12 +98,12 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
         log.info("getProductInfo displayConfigs: {}", displayConfigs);
 
 
-        Set<String> jobCateCodes = displayConfigs
+        Set<Long> jobProductIds = displayConfigs
                 .stream()
-                .map(DisplayConfig::getDisplayCode)
+                .map(DisplayConfig::getDisplayId)
                 .collect(Collectors.toSet());
 
-        return productionInfoService.get(jobCateCodes);
+        return productionInfoService.getFullInfo(jobProductIds);
 
     }
 

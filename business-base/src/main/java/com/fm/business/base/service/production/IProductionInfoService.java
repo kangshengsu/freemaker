@@ -30,6 +30,13 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
     List<ProductionInfo> get(Collection<String> codes);
 
     /**
+     * 根据作品ID获取作品信息(全部信息)
+     * @param ids 作品ID集合
+     * @return 作品信息
+     */
+    List<ProductionInfo> getFullInfo(Collection<Long> ids);
+
+    /**
      * 变更审核状态
      * @param productionInfo
      * @return
@@ -74,6 +81,9 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
      * @return
      */
     Page<ProductionInfo> findByFreelancer(Integer currentPage, Integer pageSize, Long freelancerId, Collection<Integer> statuses);
+
+
+
 
 
 }

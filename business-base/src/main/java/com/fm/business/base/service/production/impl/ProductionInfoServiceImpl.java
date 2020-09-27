@@ -33,9 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -113,6 +111,20 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         }
 
         List<ProductionInfo> result = list(Wrappers.lambdaQuery(ProductionInfo.class).in(ProductionInfo::getCode, codes));
+
+        fillProductInfoRelation(result);
+
+        return result;
+    }
+
+    @Override
+    public List<ProductionInfo> getFullInfo(Collection<Long> ids) {
+
+        if(CollectionUtils.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+
+        List<ProductionInfo> result = getByIds(ids);
 
         fillProductInfoRelation(result);
 
