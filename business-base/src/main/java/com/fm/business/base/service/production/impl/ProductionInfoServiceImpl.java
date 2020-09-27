@@ -293,7 +293,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         Map<Long, FreelancerInfo> freelancerInfoMap = freelancerInfoService.getByIds(freelancerIds)
                 .stream().collect(Collectors.toMap(FreelancerInfo::getId, Function.identity(), (v1, v2) -> v2));
 
-        Map<Long, BdJobCate> jobCateMap = bdJobCateService.getByIds(jobCateIds)
+        Map<Long, BdJobCate> postCateMap = bdJobCateService.getByIds(jobCateIds)
                 .stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
 
         Map<String, List<AttachmentInfo>> attachmentMap = attachmentInfoService.getByCodeAndType(attachmentCodes, AttachmentBusinessType.PRODUCTION)
@@ -309,14 +309,23 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         Map<Long, List<ProductionSkillRelation>> proSkillRMap = productionSkillRelationService.getByProductionIds(productionIds);
 
 
+        Map<Long, BdJobCate> domainCateMap = bdJobCateService.findJobCateDomain(null)
+                .stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
+
+
         productionInfos.forEach(productionInfo -> {
 
             if(freelancerInfoMap.containsKey(productionInfo.getFreelancerId())) {
                 productionInfo.setFreelancerInfo(freelancerInfoMap.get(productionInfo.getFreelancerId()));
             }
 
-            if(jobCateMap.containsKey(productionInfo.getJobCateId())) {
-                productionInfo.setBdJobCate(jobCateMap.get(productionInfo.getJobCateId()));
+            if(postCateMap.containsKey(productionInfo.getJobCateId())) {
+                productionInfo.setPostCate(postCateMap.get(productionInfo.getJobCateId()));
+
+                if(domainCateMap.containsKey(productionInfo.getPostCate().getParentId())) {
+                    productionInfo.setDomainCate(domainCateMap.get(productionInfo.getPostCate().getParentId()));
+                }
+
             }
 
             if(attachmentMap.containsKey(productionInfo.getCode())) {
@@ -340,7 +349,10 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         //获取作者数据
         productionInfo.setFreelancerInfo(freelancerInfoService.get(productionInfo.getFreelancerId()));
         //岗位信息
-        productionInfo.setBdJobCate(bdJobCateService.get(productionInfo.getJobCateId()));
+        productionInfo.setPostCate(bdJobCateService.get(productionInfo.getJobCateId()));
+
+        productionInfo.setDomainCate(bdJobCateService.get(productionInfo.getPostCate().getParentId()));
+
         //获取附件列表
         productionInfo.setAttachmentInfos(attachmentInfoService.getByCodeAndType(productionInfo.getCode(), AttachmentBusinessType.PRODUCTION));
     }
