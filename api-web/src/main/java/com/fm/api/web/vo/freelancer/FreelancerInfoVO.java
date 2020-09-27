@@ -38,6 +38,10 @@ public class FreelancerInfoVO extends VO implements Serializable {
     **/
 	private String name;
 
+	/**
+	 * 头像
+	 */
+	private String headImg;
 
     /**
     * 技能描述

@@ -44,6 +44,11 @@ public class FreelancerInfo extends BaseModel implements Serializable,IAudit {
     **/
 	private String name;
 
+    /**
+     * 头像
+     */
+	private String headImg;
+
 
     /**
     * 技能描述
