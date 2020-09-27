@@ -100,20 +100,12 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         }
     }
 
-    @ApiOperation(value="根据编码获取订单")
-    @ApiImplicitParam(paramType="query", name = "code", value = "订单编码", required = true, dataType = "String")
-    @RequestMapping(value = "getOrderInfoByCode",method = RequestMethod.GET)
-    public ApiResponse<OrderInfoVO> getOrderInfoByCode(String code) {
-        // create queryItemSwagger
-        List<QueryItem> queryItems = new ArrayList<>();
-        QueryItem queryItem = new QueryItem();
-        queryItem.setQueryField("code");
-        queryItem.setType(QueryType.eq);
-        queryItem.setValue(code);
-        queryItems.add(queryItem);
-
+    @ApiOperation(value="根据主键获取订单")
+    @ApiImplicitParam(paramType="query", name = "code", value = "订单主键", required = true, dataType = "String")
+    @RequestMapping(value = "getOrderInfoById",method = RequestMethod.GET)
+    public ApiResponse<OrderInfoVO> getOrderInfoById(Long id) {
         // search order info
-        OrderInfo orderInfo = orderInfoService.getOne(queryItems);
+        OrderInfo orderInfo = orderInfoService.get(id);
         OrderInfoVO orderInfoVO = null;
         if (orderInfo != null) {
             orderInfoVO = fillUserInfo(orderInfo);
