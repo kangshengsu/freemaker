@@ -2,6 +2,8 @@
 
 JAR_NAME=`ls | grep api-gw-*.jar`
 
+echo "jar名称：${JAR_NAME}"
+
 ps -ef | grep '${JAR_NAME}' | grep -v grep | awk '{print $2}' | xargs kill
 
 sleep 10s
