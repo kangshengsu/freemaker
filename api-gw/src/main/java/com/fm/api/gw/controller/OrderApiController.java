@@ -129,7 +129,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     @ApiOperation(value="订单状态变更")
     @ApiImplicitParam(paramType="body", name = "orderInfoVO", value = "订单操作信息", required = true, dataType = "OrderInfoVO")
     @RequestMapping(value = "updateOrderStatus",method = RequestMethod.PUT)
-    public ApiResponse<Boolean> updateOrderStatus(OrderInfoVO orderInfoVO) {
+    public ApiResponse<Boolean> updateOrderStatus(@RequestBody OrderInfoVO orderInfoVO) {
         this.update(orderInfoVO);
 
         // 写流水
