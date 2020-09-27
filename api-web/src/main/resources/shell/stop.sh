@@ -2,7 +2,7 @@
 
 JAR_NAME=`ls | grep api-web-*.jar`
 
-ps -ef | grep '${JAR_NAME}' | grep -v grep | awk '{print $2}' | xargs kill
+ps -ef | grep "${JAR_NAME}" | grep -v grep | awk '{print $2}' | xargs kill
 
 sleep 10s
 
