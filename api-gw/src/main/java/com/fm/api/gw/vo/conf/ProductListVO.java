@@ -42,7 +42,7 @@ public class ProductListVO extends VO implements Serializable {
     /**
      *
      */
-    private FreelancerInfoApiVO freelancerInfoApiVO;
+    private FreelancerInfoApiVO freelancerInfo;
 
     /**
      *

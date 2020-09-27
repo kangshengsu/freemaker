@@ -17,7 +17,6 @@ public interface DisplayMapper {
     JobCateDisplayVO toJobCateDisplayVO(BdJobCate bdJobCate);
 
     @Mapping(target = "name", source = "title")
-    @Mapping(target = "freelancerInfoApiVO", source = "freelancerInfo")
     @Mapping(target = "images", source = "attachmentInfos")
     ProductListVO toProductListVO(ProductionInfo productionInfo);
 
