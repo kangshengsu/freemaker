@@ -174,7 +174,6 @@ public class MiniAppController {
         sysUser.setName(weChatLoginVO.getNickName());
         sysUser.setPhone(weChatLoginVO.getNickName());
         sysUser.setCode(openId);
-        sysUser.setAvatarUrl(weChatLoginVO.getAvatarUrl());
     }
 
     private void convertEmployerInfo(EmployerInfo employerInfo, WeChatLoginVO weChatLoginVO, Long userId) {
@@ -187,8 +186,8 @@ public class MiniAppController {
         employerInfo.setDistrictCode(Optional.ofNullable(weChatLoginVO.getDistrict()).orElse(""));
         employerInfo.setCountyCode(Optional.ofNullable(weChatLoginVO.getCounty()).orElse(""));
         employerInfo.setAccountCode("");
-
         employerInfo.setUserId(userId);
+        employerInfo.setHeadImg(weChatLoginVO.getAvatarUrl());
     }
 
     private void convertFreelancerInfo(FreelancerInfo freelancerInfo, WeChatLoginVO weChatLoginVO, Long userId) {
@@ -207,5 +206,7 @@ public class MiniAppController {
         freelancerInfo.setDistrictCode(Optional.ofNullable(weChatLoginVO.getDistrict()).orElse(""));
         freelancerInfo.setCountyCode(Optional.ofNullable(weChatLoginVO.getCounty()).orElse(""));
         freelancerInfo.setUserId(userId);
+        freelancerInfo.setHeadImg(weChatLoginVO.getAvatarUrl());
+
     }
 }
