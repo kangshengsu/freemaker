@@ -42,6 +42,9 @@ public class FreelancerInfoApiVO implements Serializable {
 	private String name;
 
 
+	private String headImg;
+
+
     /**
     * 技能描述
     **/

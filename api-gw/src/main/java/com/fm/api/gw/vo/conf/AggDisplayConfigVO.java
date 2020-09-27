@@ -1,7 +1,5 @@
 package com.fm.api.gw.vo.conf;
 
-import com.fm.business.base.model.job.BdJobCate;
-import com.fm.business.base.model.production.ProductionInfo;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,10 +13,10 @@ import java.util.List;
 @Data
 public class AggDisplayConfigVO implements Serializable {
 
-    private List<BdJobCate> firstLevelJobs;
+    private List<JobCateDisplayVO> firstLevelJobs;
 
-    private List<BdJobCate> secondLevelJobs;
+    private List<JobCateDisplayVO> secondLevelJobs;
 
-    private List<ProductionInfo> recommendProductInfos;
+    private List<ProductListVO> recommendProductInfos;
 
 }
