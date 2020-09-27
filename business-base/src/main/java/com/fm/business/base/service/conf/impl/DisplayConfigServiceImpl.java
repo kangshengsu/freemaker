@@ -59,7 +59,14 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
     @Override
     @Cacheable(value = "recommendProductInfoConfig")
     public List<ProductionInfo> getRecommendProductInfoConfig() {
-        return getProductInfo(get(DisplayType.r_product_info));
+
+        List<ProductionInfo> productionInfos = getProductInfo(get(DisplayType.r_product_info));
+
+        productionInfos.forEach(productionInfo -> {
+            productionInfo.setProductionSkillRelations(null);
+        });
+
+        return productionInfos;
     }
 
     /**

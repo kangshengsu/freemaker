@@ -109,8 +109,10 @@ public class EmployerInfo extends BaseModel implements Serializable,IAudit {
      **/
     private Long userId;
 
-
-
+    /**
+     * 头像
+     **/
+    private String headImg;
 
     /**
      * 获取主键方法，主键整体平台定义成Long数据类型，方便数据的整体插入性能
