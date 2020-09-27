@@ -108,14 +108,8 @@ public class ProductionApiVO extends VO implements Serializable {
     /**
      * 附件列表
      */
-    private List<AttachmentInfoApiVO> attachmentInfos;
-
-    /**
-     * 附件路径
-     * 返回时不序列化
-     */
     @NotEmpty(message = "附件路径列表不能为空",groups = {Release.class, Modify.class})
-    private List<String> attachmentInfoPaths;
+    private List<AttachmentInfoApiVO> attachmentInfos;
 
     /**
      * 创建 修改 时的 领域-岗位-技能数据
