@@ -29,10 +29,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -116,6 +113,19 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         return ApiResponse.ofSuccess(orderInfoVO);
     }
 
+    @ApiOperation(value="下单")
+    @ApiImplicitParam(paramType="query", name = "code", value = "订单信息", required = true, dataType = "String")
+    @RequestMapping(value = "save",method = RequestMethod.POST)
+    public ApiResponse<Boolean> save(@RequestBody OrderInfoVO orderInfoVO) {
+        // search order info
+        orderInfoService.save(this.convert(orderInfoVO));
+
+        // 写流水
+        saveFollow(orderInfoVO);
+
+        return ApiResponse.ofSuccess(true);
+    }
+
     @ApiOperation(value="订单状态变更")
     @ApiImplicitParam(paramType="body", name = "orderInfoVO", value = "订单操作信息", required = true, dataType = "OrderInfoVO")
     @RequestMapping(value = "updateOrderStatus",method = RequestMethod.PUT)
@@ -123,13 +133,17 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         this.update(orderInfoVO);
 
         // 写流水
+        saveFollow(orderInfoVO);
+        return ApiResponse.ofSuccess(true);
+    }
+
+    private void saveFollow(OrderInfoVO orderInfoVO) {
+        // 写流水
         OrderFollow orderFollow = new OrderFollow();
         orderFollow.setOrderId(orderInfoVO.getId());
         orderFollow.setOperateType(orderInfoVO.getStatus());
         orderFollow.setMemo(orderInfoVO.getMemo());
         orderFollowService.save(orderFollow);
-
-        return ApiResponse.ofSuccess(true);
     }
 
     @ApiOperation(value="订单信息变更")
@@ -142,6 +156,9 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     private void fillJobInfo(OrderInfoVO orderInfoVO) {
         BdJobCate bdJobCate = bdJobCateService.get(orderInfoVO.getJobCateId());
         orderInfoVO.setJobCateName(bdJobCate.getCateName());
+
+        // 写流水
+        saveFollow(orderInfoVO);
     }
 
     private OrderInfoVO fillUserInfo(OrderInfo orderInfo) {
