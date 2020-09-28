@@ -54,17 +54,7 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
     /**
      * 发布作品
      *
-     * 样例报文：{"id":"","code":"","title":"样例标题","summarize":"样例描述","hourlyWage":998,"freelancerId":3,"needReview":true,"jobs":[[8000,8001,16002],[8000,8001,18000],[8000,8001,20007]],attachmentInfos: [
-     *           {
-     *             name: 'test1',
-     *             path: 'test/00001.jpg',
-     *             otherPath: 'test/00001.jpg'
-     *           },
-     *           {
-     *             name: 'test2',
-     *             path: 'test/00001.jpg',
-     *             otherPath: 'test/00001.jpg'
-     *           }]}
+     * 样例报文：{"id":"","code":"","title":"","summarize":"样例描述","hourlyWage":998,"freelancerId":3,"needReview":true,"jobs":[[8000,8001,16002],[8000,8001,18000],[8000,8001,20007]],"attachmentInfos":[{"name":"test1","path":"test/00001.jpg","otherPath":"test/00001.jpg"},{"name":"test2","path":"test/00001.jpg","otherPath":"test/00001.jpg"}]}
      *
      * @param apiVO
      * @return
@@ -85,17 +75,7 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
     /**
      * 修改作品
      *
-     * 样例报文：{"id":"1","code":"","title":"样例标题","summarize":"样例描述","hourlyWage":998,"freelancerId":3,"needReview":true,"jobs":[[8000,8001,16002],[8000,8001,18000],[8000,8001,20007]],attachmentInfos: [
-     *           {
-     *             name: 'test1',
-     *             path: 'test/00001.jpg',
-     *             otherPath: 'test/00001.jpg'
-     *           },
-     *           {
-     *             name: 'test2',
-     *             path: 'test/00001.jpg',
-     *             otherPath: 'test/00001.jpg'
-     *           }]}
+     * {"id":"1","code":"","title":"","summarize":"样例描述","hourlyWage":998,"freelancerId":3,"needReview":true,"jobs":[[8000,8001,16002],[8000,8001,18000],[8000,8001,20007]],"attachmentInfos":[{"name":"test1","path":"test/00001.jpg","otherPath":"test/00001.jpg"},{"name":"test2","path":"test/00001.jpg","otherPath":"test/00001.jpg"}]}
      * @param apiVO
      * @return
      */
@@ -133,7 +113,6 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
     public ApiResponse<Page<ProductionApiVO>> getByCateDomain(@RequestParam("currentPage") Integer currentPage,
                                                                     @RequestParam("pageSize") Integer pageSize,
                                                                     @RequestParam("cateDomain") Long cateDomain){
-
         return success(convert(productionInfoService.findByCateDomain(currentPage,pageSize,cateDomain)));
 
     }
