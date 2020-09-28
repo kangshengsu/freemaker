@@ -8,6 +8,7 @@ package com.fm.business.base.model.freelancer;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.fm.business.base.model.sys.SysUser;
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
 import lombok.Data;
@@ -43,6 +44,10 @@ public class FreelancerInfo extends BaseModel implements Serializable,IAudit {
     **/
 	private String name;
 
+    /**
+     * 头像
+     */
+    private String headImg;
 
     /**
     * 技能描述
@@ -132,6 +137,12 @@ public class FreelancerInfo extends BaseModel implements Serializable,IAudit {
      * 关联SysUser的ID
      **/
     private Long userId;
+
+
+    /**
+     * 关联SysUser
+     */
+    private transient SysUser user;
 
 
     /**

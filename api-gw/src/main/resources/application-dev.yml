@@ -13,6 +13,9 @@ spring:
     secretKey: o953qTxk2DG8QXTEsSvBFuLUVFyZutd5
     bucketName: howwork-1301749332
     region: ap-beijing
+    prefix: https://
+    midfix: cos
+    suffix: myqcloud.com
   redis:
       host: 172.21.16.17
       password: HowWork!

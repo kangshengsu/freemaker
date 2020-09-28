@@ -3,17 +3,23 @@ package com.fm.api.gw.vo.production;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fm.api.gw.vo.freelancer.FreelancerInfoApiVO;
+import com.fm.business.base.enums.ProductionStatus;
+import com.fm.business.base.model.job.BdJobCate;
+import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.framework.core.utils.JsonUtil;
 import com.fm.framework.web.VO;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
+import org.springframework.util.CollectionUtils;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author ：liuduo
@@ -35,6 +41,7 @@ public class ProductionApiVO extends VO implements Serializable {
      * 作品编码
      **/
     @NotEmpty(message = "作品编码不能为空",groups = {DelStatusByCode.class})
+    @Size( max = 50 , message = "作品编码不能超过50",groups = {DelStatusByCode.class})
     private String code;
 
 
@@ -52,6 +59,7 @@ public class ProductionApiVO extends VO implements Serializable {
      * 作品标题
      **/
     @NotBlank(message = "作品标题不能为空",groups = {Release.class, Modify.class})
+    @Size( max = 50 , message = "作品标题不能超过50字",groups = {Release.class, Modify.class})
     private String title;
 
 
@@ -59,6 +67,7 @@ public class ProductionApiVO extends VO implements Serializable {
      * 技能描述
      **/
     @NotBlank(message = "描述不能为空",groups = {Release.class, Modify.class})
+    @Size( max = 300 , message = "技能描述不能超过300字",groups = {Release.class, Modify.class})
     private String summarize;
 
 
@@ -66,6 +75,7 @@ public class ProductionApiVO extends VO implements Serializable {
      * 时薪
      **/
     @NotNull(message = "时薪不能为空",groups = {Release.class, Modify.class})
+    @Max(value = 99999,message = "超过时薪最大值",groups = {Release.class, Modify.class})
     private BigDecimal hourlyWage;
 
 
@@ -98,19 +108,48 @@ public class ProductionApiVO extends VO implements Serializable {
     /**
      * 附件列表
      */
-    private List<AttachmentInfoApiVO> attachmentInfos;
-
-    /**
-     * 附件路径
-     * 返回时不序列化
-     */
     @NotEmpty(message = "附件路径列表不能为空",groups = {Release.class, Modify.class})
-    private List<String> attachmentInfoPaths;
+    private List<AttachmentInfoApiVO> attachmentInfos;
 
     /**
      * 创建 修改 时的 领域-岗位-技能数据
      */
     @NotEmpty(message = "技能树列表不能为空",groups = {Release.class, Modify.class})
     private List<List<Long>> jobs;
+
+
+    public static ProductionApiVO convert(ProductionInfo model) {
+        ProductionApiVO form = new ProductionApiVO();
+        BeanUtils.copyProperties(model,form);
+        //转换枚举值
+        form.setStatusName(ProductionStatus.get(model.getStatus()).getName());
+        //岗位名称
+        BdJobCate bdJobCate = model.getPostCate();
+        if (bdJobCate != null) {
+            form.setJobCateName(bdJobCate.getCateName());
+        }
+        //技能标签 树路径
+        if(!CollectionUtils.isEmpty(model.getProductionSkillRelations())){
+            form.setJobs(model.getProductionSkillRelations().stream().map(productionSkillRelation ->
+                    JsonUtil.string2Obj(productionSkillRelation.getSkillTreePath(),new TypeReference<List<Long>>(){}))
+                    .collect(Collectors.toList()));
+        }
+        //附件列表
+        if(!CollectionUtils.isEmpty(model.getAttachmentInfos())){
+            form.setAttachmentInfos(model.getAttachmentInfos().stream().map(attachmentInfo ->{
+                AttachmentInfoApiVO attachmentInfoApiVO = new AttachmentInfoApiVO();
+                BeanUtils.copyProperties(attachmentInfo,attachmentInfoApiVO);
+                return attachmentInfoApiVO;
+            }).collect(Collectors.toList()));
+        }
+        //作者 自由职业者
+        if(model.getFreelancerInfo()!=null){
+            FreelancerInfoApiVO freelancerInfoApiVO = new FreelancerInfoApiVO();
+            BeanUtils.copyProperties(model.getFreelancerInfo(),freelancerInfoApiVO);
+            form.setFreelancerInfo(freelancerInfoApiVO);
+        }
+
+        return form;
+    }
 
 }

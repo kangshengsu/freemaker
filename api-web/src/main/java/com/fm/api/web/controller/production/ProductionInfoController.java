@@ -105,7 +105,7 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         //转换枚举值
         form.setStatusName(ProductionStatus.get(model.getStatus()).getName());
         //岗位名称
-        BdJobCate bdJobCate = model.getBdJobCate();
+        BdJobCate bdJobCate = model.getPostCate();
         if (bdJobCate != null) {
             form.setJobCateName(bdJobCate.getCateName());
         }
@@ -141,8 +141,9 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         productionInfo.setJobCateId(jobCateId);
         //不需要审核时直接发布状态
         if(!form.getNeedReview()){
-            form.setStatus(ProductionStatus.RELEASE.getCode());
+            productionInfo.setStatus(ProductionStatus.RELEASE.getCode());
         }
+
         return productionInfo;
     }
 }

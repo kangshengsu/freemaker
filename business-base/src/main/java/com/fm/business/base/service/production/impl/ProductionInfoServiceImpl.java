@@ -8,6 +8,7 @@ package com.fm.business.base.service.production.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.production.IProductionInfoMapper;
@@ -32,9 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -118,6 +117,20 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         return result;
     }
 
+    @Override
+    public List<ProductionInfo> getFullInfo(Collection<Long> ids) {
+
+        if(CollectionUtils.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+
+        List<ProductionInfo> result = getByIds(ids);
+
+        fillProductInfoRelation(result);
+
+        return result;
+    }
+
     /**
      * 变更审核状态
      *
@@ -146,7 +159,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
      * @param currentPage
      * @param pageSize
      * @param cateDomain 领域ID
-     * @return
+     * @return 只返回已发布作品
      */
     @Override
     public Page<ProductionInfo> findByCateDomain(Integer currentPage, Integer pageSize, Long cateDomain) {
@@ -157,8 +170,8 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         }
 
         //根据岗位获取作品数据
-        Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class).in(ProductionInfo::getJobCateId,
-                catePosts.stream().map(bdJobCate -> bdJobCate.getId()).collect(Collectors.toSet()));
+        Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getStatus,ProductionStatus.RELEASE.getCode())
+                .in(ProductionInfo::getJobCateId, catePosts.stream().map(bdJobCate -> bdJobCate.getId()).collect(Collectors.toSet()));
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
     }
@@ -169,12 +182,14 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
      * @param currentPage
      * @param pageSize
      * @param catePost 岗位ID
-     * @return
+     * @return 只返回已发布作品
      */
     @Override
     public Page<ProductionInfo> findByCatePost(Integer currentPage, Integer pageSize, Long catePost) {
         //根据岗位获取作品数据
-        Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getJobCateId, catePost);
+        Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class)
+                .eq(ProductionInfo::getStatus,ProductionStatus.RELEASE.getCode())
+                .eq(ProductionInfo::getJobCateId, catePost);
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
     }
@@ -185,7 +200,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
      * @param currentPage
      * @param pageSize
      * @param cateSkill   技能ID
-     * @return
+     * @return 只返回已发布作品
      */
     @Override
     public Page<ProductionInfo> findByCateSkill(Integer currentPage, Integer pageSize, Long cateSkill) {
@@ -209,6 +224,27 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         result.setData(productionInfos);
 
         return result;
+    }
+
+    /**
+     * 分页获取作者下的所有作品
+     *
+     * @param currentPage
+     * @param pageSize
+     * @param freelancerId 自由职业者ID
+     * @return
+     */
+    @Override
+    public Page<ProductionInfo> findByFreelancer(Integer currentPage, Integer pageSize, Long freelancerId ,Collection<Integer> statuses) {
+        //根据岗位获取作品数据
+        LambdaQueryWrapper<ProductionInfo> queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class)
+                .eq(ProductionInfo::getFreelancerId, freelancerId);
+
+        if(statuses != null){
+            queryWrapper.in(ProductionInfo::getStatus,statuses);
+        }
+
+        return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
     }
 
     /**
@@ -257,7 +293,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         Map<Long, FreelancerInfo> freelancerInfoMap = freelancerInfoService.getByIds(freelancerIds)
                 .stream().collect(Collectors.toMap(FreelancerInfo::getId, Function.identity(), (v1, v2) -> v2));
 
-        Map<Long, BdJobCate> jobCateMap = bdJobCateService.getByIds(jobCateIds)
+        Map<Long, BdJobCate> postCateMap = bdJobCateService.getByIds(jobCateIds)
                 .stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
 
         Map<String, List<AttachmentInfo>> attachmentMap = attachmentInfoService.getByCodeAndType(attachmentCodes, AttachmentBusinessType.PRODUCTION)
@@ -273,14 +309,23 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         Map<Long, List<ProductionSkillRelation>> proSkillRMap = productionSkillRelationService.getByProductionIds(productionIds);
 
 
+        Map<Long, BdJobCate> domainCateMap = bdJobCateService.findJobCateDomain(null)
+                .stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
+
+
         productionInfos.forEach(productionInfo -> {
 
             if(freelancerInfoMap.containsKey(productionInfo.getFreelancerId())) {
                 productionInfo.setFreelancerInfo(freelancerInfoMap.get(productionInfo.getFreelancerId()));
             }
 
-            if(jobCateMap.containsKey(productionInfo.getJobCateId())) {
-                productionInfo.setBdJobCate(jobCateMap.get(productionInfo.getJobCateId()));
+            if(postCateMap.containsKey(productionInfo.getJobCateId())) {
+                productionInfo.setPostCate(postCateMap.get(productionInfo.getJobCateId()));
+
+                if(domainCateMap.containsKey(productionInfo.getPostCate().getParentId())) {
+                    productionInfo.setDomainCate(domainCateMap.get(productionInfo.getPostCate().getParentId()));
+                }
+
             }
 
             if(attachmentMap.containsKey(productionInfo.getCode())) {
@@ -304,7 +349,10 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         //获取作者数据
         productionInfo.setFreelancerInfo(freelancerInfoService.get(productionInfo.getFreelancerId()));
         //岗位信息
-        productionInfo.setBdJobCate(bdJobCateService.get(productionInfo.getJobCateId()));
+        productionInfo.setPostCate(bdJobCateService.get(productionInfo.getJobCateId()));
+
+        productionInfo.setDomainCate(bdJobCateService.get(productionInfo.getPostCate().getParentId()));
+
         //获取附件列表
         productionInfo.setAttachmentInfos(attachmentInfoService.getByCodeAndType(productionInfo.getCode(), AttachmentBusinessType.PRODUCTION));
     }
@@ -333,18 +381,12 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
      * @return
      */
     private boolean saveAttachments(ProductionInfo model){
-        List<String> attachmentInfoPaths = model.getAttachmentInfoPaths();
-        if(!CollectionUtils.isEmpty(attachmentInfoPaths)){
-            List<AttachmentInfo> attachmentInfos = new ArrayList<>();
-            for(String attachmentInfoPath : attachmentInfoPaths){
-                AttachmentInfo attachmentInfo = new AttachmentInfo();
+        List<AttachmentInfo> attachmentInfos = model.getAttachmentInfos();
+        if(!CollectionUtils.isEmpty(attachmentInfos)){
+            for(AttachmentInfo attachmentInfo : attachmentInfos){
                 attachmentInfo.setBusinessCode(model.getCode());
                 attachmentInfo.setBusinessType(AttachmentBusinessType.PRODUCTION.getCode());
                 attachmentInfo.setType(AttachmentType.PICTURE.getCode());
-                attachmentInfo.setPath(attachmentInfoPath);
-                attachmentInfo.setOtherPath(attachmentInfoPath);
-                attachmentInfo.setName("");
-                attachmentInfos.add(attachmentInfo);
             }
             return attachmentInfoService.save(attachmentInfos);
         }

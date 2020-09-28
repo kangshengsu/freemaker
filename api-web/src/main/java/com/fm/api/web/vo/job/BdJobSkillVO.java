@@ -37,6 +37,10 @@ public class BdJobSkillVO extends VO implements Serializable {
     **/
 	private String skillCode;
 
+	private String englishName;
+
+	private String icon;
+
 
     /**
     * 

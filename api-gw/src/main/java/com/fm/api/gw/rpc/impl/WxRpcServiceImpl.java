@@ -4,20 +4,21 @@ import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import com.binarywang.spring.starter.wxjava.miniapp.properties.WxMaProperties;
-import com.fm.api.gw.rpc.WxService;
+import com.fm.api.gw.rpc.WxRpcService;
 import com.fm.api.gw.vo.WeChatDecryptVO;
 import com.fm.api.gw.vo.WeChatLoginVO;
 import com.fm.framework.core.exception.BusinessException;
 import com.fm.framework.web.response.ApiStatus;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.common.service.WxService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
 @Slf4j
 @Service
-public class WxServiceImpl implements WxService {
+public class WxRpcServiceImpl implements WxRpcService {
 
     @Resource
     private WxMaProperties wxProperties;

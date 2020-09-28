@@ -11,6 +11,7 @@ import lombok.Data;
 import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
+import java.util.List;
 
 /**   
  * @Description:(自由职业者信息请求实体类)
@@ -23,7 +24,8 @@ import java.util.Date;
 public class FreelancerInfoVO extends VO implements Serializable {
 
 	private static final long serialVersionUID = 1600497555102L;
-	
+
+	private List<Long> ids;
 
 	private String keyword;
 
@@ -38,6 +40,10 @@ public class FreelancerInfoVO extends VO implements Serializable {
     **/
 	private String name;
 
+	/**
+	 * 头像
+	 */
+	private String headImg;
 
     /**
     * 技能描述

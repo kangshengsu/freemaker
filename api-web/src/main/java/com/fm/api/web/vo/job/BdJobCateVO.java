@@ -38,6 +38,10 @@ public class BdJobCateVO extends VO implements Serializable {
     **/
 	private String cateCode;
 
+	private String englishName;
+
+	private String icon;
+
 
     /**
     * 

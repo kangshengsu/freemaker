@@ -31,10 +31,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -45,7 +42,7 @@ import java.util.stream.Collectors;
 * @time    2020年09月11日
 *
 */
-@Api(value = "作品接口",tags={"作品操作相关接口"})
+@Api(value = "/v1/productionApi",description ="作品相关接口")
 @RestController
 @RequestMapping("/v1/productionApi")
 @Validated
@@ -57,14 +54,24 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
     /**
      * 发布作品
      *
-     * 样例报文：{"id":"","code":"","title":"样例标题","summarize":"样例描述","hourlyWage":998,"freelancerId":3,"needReview":true,"jobs":[[8000,8001,16002],[8000,8001,18000],[8000,8001,20007]],"attachmentInfoPaths":["test/00001.jpg","test/00001.jpg"]}
+     * 样例报文：{"id":"","code":"","title":"样例标题","summarize":"样例描述","hourlyWage":998,"freelancerId":3,"needReview":true,"jobs":[[8000,8001,16002],[8000,8001,18000],[8000,8001,20007]],attachmentInfos: [
+     *           {
+     *             name: 'test1',
+     *             path: 'test/00001.jpg',
+     *             otherPath: 'test/00001.jpg'
+     *           },
+     *           {
+     *             name: 'test2',
+     *             path: 'test/00001.jpg',
+     *             otherPath: 'test/00001.jpg'
+     *           }]}
      *
      * @param apiVO
      * @return
      */
     @PostMapping("/release")
     @ApiOperation(value="发布作品")
-    @ApiImplicitParam(name = "apiVO", value = "作品相关属性", dataType = "ProductionApiVO")
+    @ApiImplicitParam(name = "apiVO", value = "作品相关属性", dataType = "ProductionApiVO",paramType = "body")
     public ApiResponse<Boolean> release(@RequestBody @Validated(value = {ProductionApiVO.Release.class}) ProductionApiVO apiVO){
 
         //获取发布作者
@@ -78,13 +85,23 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
     /**
      * 修改作品
      *
-     * 样例报文：{"id":"1","code":"","title":"样例标题","summarize":"样例描述","hourlyWage":998,"freelancerId":3,"needReview":true,"jobs":[[8000,8001,16002],[8000,8001,18000],[8000,8001,20007]],"attachmentInfoPaths":["test/00001.jpg","test/00001.jpg"]}
+     * 样例报文：{"id":"1","code":"","title":"样例标题","summarize":"样例描述","hourlyWage":998,"freelancerId":3,"needReview":true,"jobs":[[8000,8001,16002],[8000,8001,18000],[8000,8001,20007]],attachmentInfos: [
+     *           {
+     *             name: 'test1',
+     *             path: 'test/00001.jpg',
+     *             otherPath: 'test/00001.jpg'
+     *           },
+     *           {
+     *             name: 'test2',
+     *             path: 'test/00001.jpg',
+     *             otherPath: 'test/00001.jpg'
+     *           }]}
      * @param apiVO
      * @return
      */
     @PostMapping("/modify")
     @ApiOperation(value="修改作品")
-    @ApiImplicitParam(name = "apiVO", value = "作品相关属性", dataType = "ProductionApiVO")
+    @ApiImplicitParam(name = "apiVO", value = "作品相关属性", dataType = "ProductionApiVO",paramType = "body")
     public ApiResponse<Boolean> modify(@RequestBody @Validated(value = {ProductionApiVO.Modify.class}) ProductionApiVO apiVO){
 
         productionInfoService.update(convert(apiVO));
@@ -94,7 +111,7 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
 
     @GetMapping("/getByCode")
     @ApiOperation(value="根据作品编码查看作品详情")
-    @ApiImplicitParam(name = "code", value = "作品编码", dataType = "String")
+    @ApiImplicitParam(name = "code", value = "作品编码", dataType = "String",paramType = "query")
     public ApiResponse<ProductionApiVO> getByCode(@RequestParam("code") String productionCode){
         Set<String> productionCodes = new HashSet<>();
         productionCodes.add(productionCode);
@@ -110,9 +127,9 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
     @GetMapping("/getByCateDomain")
     @ApiOperation(value="根据领域获取作品")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="cateDomain",value="领域ID",dataType="Long"),
-            @ApiImplicitParam(name="currentPage",value="当前页码",dataType="Integer"),
-            @ApiImplicitParam(name="pageSize",value="每页数量",dataType="Integer")})
+            @ApiImplicitParam(name="cateDomain",value="领域ID",dataType="Long",paramType = "query"),
+            @ApiImplicitParam(name="currentPage",value="当前页码",dataType="Integer",paramType = "query"),
+            @ApiImplicitParam(name="pageSize",value="每页数量",dataType="Integer",paramType = "query")})
     public ApiResponse<Page<ProductionApiVO>> getByCateDomain(@RequestParam("currentPage") Integer currentPage,
                                                                     @RequestParam("pageSize") Integer pageSize,
                                                                     @RequestParam("cateDomain") Long cateDomain){
@@ -124,9 +141,9 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
     @GetMapping("/getByCatePost")
     @ApiOperation(value="根据岗位获取作品")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="catePost",value="岗位ID",dataType="Long"),
-            @ApiImplicitParam(name="currentPage",value="当前页码",dataType="Integer"),
-            @ApiImplicitParam(name="pageSize",value="每页数量",dataType="Integer")})
+            @ApiImplicitParam(name="catePost",value="岗位ID",dataType="Long",paramType = "query"),
+            @ApiImplicitParam(name="currentPage",value="当前页码",dataType="Integer",paramType = "query"),
+            @ApiImplicitParam(name="pageSize",value="每页数量",dataType="Integer",paramType = "query")})
     public ApiResponse<Page<ProductionApiVO>> getByCatePost(@RequestParam("currentPage") Integer currentPage,
                                                               @RequestParam("pageSize") Integer pageSize,
                                                               @RequestParam("catePost") Long catePost){
@@ -134,25 +151,51 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
         return success(convert(productionInfoService.findByCatePost(currentPage,pageSize,catePost)));
 
     }
+
     @GetMapping("/getByCateSkill")
-    @ApiOperation(value="根据技能获取作品")
+    @ApiOperation(value="根据技能获取作品（暂时作废，小程序无此诉求，如继续需使用请处理主子表依赖子表状态分页问题）")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="cateSkill",value="技能ID",dataType="Long"),
-            @ApiImplicitParam(name="currentPage",value="当前页码",dataType="Integer"),
-            @ApiImplicitParam(name="pageSize",value="每页数量",dataType="Integer")})
+            @ApiImplicitParam(name="cateSkill",value="技能ID",dataType="Long",paramType = "query"),
+            @ApiImplicitParam(name="currentPage",value="当前页码",dataType="Integer",paramType = "query"),
+            @ApiImplicitParam(name="pageSize",value="每页数量",dataType="Integer",paramType = "query")})
+    @Deprecated
     public ApiResponse<Page<ProductionApiVO>> getByCateSkill(@RequestParam("currentPage") Integer currentPage,
                                                             @RequestParam("pageSize") Integer pageSize,
-                                                            @RequestParam("cateSkill") @Validated() Long cateSkill){
+                                                            @RequestParam("cateSkill") Long cateSkill){
 
         return success(convert(productionInfoService.findByCateSkill(currentPage,pageSize,cateSkill)));
 
     }
 
+    @GetMapping("/getByFreelancer")
+    @ApiOperation(value="根据作者获取作品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="freelancerId",value="自由职业者ID",dataType="Long",paramType = "query"),
+            @ApiImplicitParam(name="currentPage",value="当前页码",dataType="Integer",paramType = "query"),
+            @ApiImplicitParam(name="pageSize",value="每页数量",dataType="Integer",paramType = "query")})
+    public ApiResponse<Page<ProductionApiVO>> getByFreelancer(@RequestParam("currentPage") Integer currentPage,
+                                                              @RequestParam("pageSize") Integer pageSize,
+                                                              @RequestParam("freelancerId") Long freelancerId){
+        Integer[] statues = {ProductionStatus.RELEASE.getCode()};
+        return success(convert(productionInfoService.findByFreelancer(currentPage,pageSize,freelancerId,Arrays.asList(statues))));
+
+    }
+
+    @GetMapping("/getByLoginUser")
+    @ApiOperation(value="获取当前登录人获取作品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="currentPage",value="当前页码",dataType="Integer",paramType = "query"),
+            @ApiImplicitParam(name="pageSize",value="每页数量",dataType="Integer",paramType = "query")})
+    public ApiResponse<Page<ProductionApiVO>> getByLoginUser(@RequestParam("currentPage") Integer currentPage,
+                                                              @RequestParam("pageSize") Integer pageSize){
+        return success(convert(productionInfoService.findByFreelancer(currentPage,pageSize,Context.getCurrFreelancerId(),null)));
+
+    }
 
 
     @PostMapping("/delStatusByCode")
     @ApiOperation(value="删除作品（变更作品状态为已删除）")
-    @ApiImplicitParam(paramType="get", name = "code", value = "作品编码", required = true, dataType = "String")
+    @ApiImplicitParam(paramType="body", name = "apiVO", value = "作品编码", required = true, dataType = "String")
     public ApiResponse<Boolean> delStatusByCode(@RequestBody @Validated(value = {ProductionApiVO.DelStatusByCode.class}) ProductionApiVO apiVO){
         ProductionInfo updateParam = new ProductionInfo();
         updateParam.setCode(apiVO.getCode());
@@ -172,36 +215,7 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
 
     @Override
     protected ProductionApiVO convert(ProductionInfo model) {
-        ProductionApiVO form = super.convert(model);
-        //转换枚举值
-        form.setStatusName(ProductionStatus.get(model.getStatus()).getName());
-        //岗位名称
-        BdJobCate bdJobCate = model.getBdJobCate();
-        if (bdJobCate != null) {
-            form.setJobCateName(bdJobCate.getCateName());
-        }
-        //技能标签 树路径
-        if(!CollectionUtils.isEmpty(model.getProductionSkillRelations())){
-            form.setJobs(model.getProductionSkillRelations().stream().map(productionSkillRelation ->
-                    JsonUtil.string2Obj(productionSkillRelation.getSkillTreePath(),new TypeReference<List<Long>>(){}))
-                    .collect(Collectors.toList()));
-        }
-        //附件列表
-        if(!CollectionUtils.isEmpty(model.getAttachmentInfos())){
-            form.setAttachmentInfos(model.getAttachmentInfos().stream().map(attachmentInfo ->{
-                        AttachmentInfoApiVO attachmentInfoApiVO = new AttachmentInfoApiVO();
-                        BeanUtils.copyProperties(attachmentInfo,attachmentInfoApiVO);
-                        return attachmentInfoApiVO;
-                    }).collect(Collectors.toList()));
-        }
-        //作者 自由职业者
-        if(model.getFreelancerInfo()!=null){
-            FreelancerInfoApiVO freelancerInfoApiVO = new FreelancerInfoApiVO();
-            BeanUtils.copyProperties(model.getFreelancerInfo(),freelancerInfoApiVO);
-            form.setFreelancerInfo(freelancerInfoApiVO);
-        }
-
-        return form;
+        return ProductionApiVO.convert(model);
     }
 
     @Override

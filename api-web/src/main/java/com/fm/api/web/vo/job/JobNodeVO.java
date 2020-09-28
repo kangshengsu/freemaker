@@ -32,6 +32,10 @@ public class JobNodeVO implements ITreeNode, Serializable {
 
 	private String treeCode;
 
+	private String englishName;
+
+	private String icon;
+
 	private Integer cateType;
 
 	private Long jobId;

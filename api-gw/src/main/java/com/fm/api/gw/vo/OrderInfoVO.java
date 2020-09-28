@@ -24,7 +24,8 @@ import java.util.Date;
 public class OrderInfoVO extends VO implements Serializable {
 
 	private static final long serialVersionUID = 1600497555102L;
-	
+
+	private Long id;
 
 
     /**
@@ -132,10 +133,10 @@ public class OrderInfoVO extends VO implements Serializable {
     **/
 	private Long updateUser;
 
-
-
-
-
+	/**
+	 * 用户类型，区分需求提出人还是开发者
+	 */
+	private Integer userType;
 
 
 

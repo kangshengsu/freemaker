@@ -38,13 +38,7 @@ public class OssTmpSecret {
      */
     private String region;
 
-    /**
-     * 开始时间
-     */
     private Long startTime;
 
-    /**
-     * 失效时间
-     */
     private Long expiredTime;
 }

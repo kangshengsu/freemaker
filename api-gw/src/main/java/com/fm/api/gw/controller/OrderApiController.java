@@ -6,10 +6,9 @@
 */
 package com.fm.api.gw.controller;
 
-import com.fm.api.gw.query.OrderInfoQueryRequest;
-import com.fm.api.gw.vo.JobCateVO;
 import com.fm.api.gw.vo.OrderInfoVO;
 import com.fm.business.base.enums.OrderStatus;
+import com.fm.business.base.enums.UserType;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.order.OrderFollow;
 import com.fm.business.base.model.order.OrderInfo;
@@ -18,23 +17,18 @@ import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.order.IOrderFollowService;
 import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.business.base.service.sys.ISysUserService;
-import com.fm.framework.core.model.TreeNode;
+import com.fm.framework.core.Context;
 import com.fm.framework.core.query.Page;
-import com.fm.framework.core.query.PageInfo;
 import com.fm.framework.core.query.QueryItem;
 import com.fm.framework.core.query.QueryType;
 import com.fm.framework.core.service.Service;
-import com.fm.framework.core.utils.TreeUtil;
 import com.fm.framework.web.controller.BaseController;
-import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -52,8 +46,8 @@ import java.util.Map;
 */
 
 @RestController
-@RequestMapping("/aip/v1/orderApi")
-@Api(value = "订单接口")
+@RequestMapping("/v1/orderApi")
+@Api(value = "订单接口", tags={"作品操作相关接口"})
 public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
     @Autowired
@@ -70,25 +64,32 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
     @RequestMapping(value = "getOrderInfoByEmployerId",method = RequestMethod.GET)
     @ApiOperation(value="根据发布者ID获取订单")
-    @ApiImplicitParam(paramType="form", name = "queryRequest", value = "查询条件", required = true, dataType = "OrderInfoQueryRequest")
-    public ApiResponse<Page<OrderInfoVO>> getOrderInfoByEmployerId(OrderInfoQueryRequest queryRequest) {
-        List<QueryItem> queryItems = new ArrayList<>();
-        QueryItem queryItem = new QueryItem();
-        queryItem.setQueryField("employerId");
-        queryItem.setType(QueryType.eq);
-        queryItem.setValue(queryRequest.getEmployerId());
-        queryItems.add(queryItem);
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "currentPage", value = "当前页", dataType = "String",paramType = "query"),
+            @ApiImplicitParam(name = "pageSize", value = "页大小", dataType = "Integer",paramType = "query")})
+    public ApiResponse<Page<OrderInfoVO>> getOrderInfoByEmployerId(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize) {
+        Long currEmployerId = Context.getCurrEmployerId();
+        Long currFreelancerId = Context.getCurrFreelancerId();
 
-        Page<OrderInfo> orderInfoPage = orderInfoService.list(queryItems, queryRequest.getCurrPage(), queryRequest.getPageSize());
-        PageInfo<OrderInfoVO> pageInfo = new PageInfo<>();
-        pageInfo.setCurrentPage(orderInfoPage.getCurrentPage());
-        pageInfo.setPageSize(orderInfoPage.getPageSize());
-        pageInfo.setTotal(orderInfoPage.getTotal());
-        pageInfo.setData(convert(orderInfoPage.getData()));
-        fillStatusName(pageInfo.getData());
+        Page<OrderInfo> orderInfoPage = orderInfoService.queryOrderInfoByPage(currEmployerId, currFreelancerId, currentPage, pageSize);
+        Page<OrderInfoVO> orderInfoVOPage = convert(orderInfoPage);
 
-        return ApiResponse.ofSuccess(pageInfo);
+        fillStatusName(orderInfoVOPage.getData());
+        fillUserType(orderInfoVOPage.getData(), currEmployerId, currFreelancerId);
+
+        return ApiResponse.ofSuccess(orderInfoVOPage);
     }
+
+    private void fillUserType(List<OrderInfoVO> data, Long currEmployerId, Long currFreelancerId) {
+        for (OrderInfoVO datum : data) {
+            if (currEmployerId.equals(datum.getEmployerId())) {
+                datum.setUserType(UserType.EMPLOYER.getCode());
+            } else if (currFreelancerId.equals(datum.getFreelancerId())) {
+                datum.setUserType(UserType.FREELANCER.getCode());
+            }
+        }
+    }
+
 
     private void fillStatusName(List<OrderInfoVO> data) {
         for (OrderInfoVO orderInfoVO : data) {
@@ -96,20 +97,12 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         }
     }
 
-    @ApiOperation(value="根据编码获取订单")
-    @ApiImplicitParam(paramType="query", name = "code", value = "订单编码", required = true, dataType = "String")
-    @RequestMapping(value = "getOrderInfoByCode",method = RequestMethod.GET)
-    public ApiResponse<OrderInfoVO> getOrderInfoByCode(@RequestParam("code") String code) {
-        // create queryItemSwagger
-        List<QueryItem> queryItems = new ArrayList<>();
-        QueryItem queryItem = new QueryItem();
-        queryItem.setQueryField("code");
-        queryItem.setType(QueryType.eq);
-        queryItem.setValue(code);
-        queryItems.add(queryItem);
-
+    @ApiOperation(value="根据主键获取订单")
+    @ApiImplicitParam(paramType="query", name = "code", value = "订单主键", required = true, dataType = "String")
+    @RequestMapping(value = "getOrderInfoById",method = RequestMethod.GET)
+    public ApiResponse<OrderInfoVO> getOrderInfoById(Long id) {
         // search order info
-        OrderInfo orderInfo = orderInfoService.getOne(queryItems);
+        OrderInfo orderInfo = orderInfoService.get(id);
         OrderInfoVO orderInfoVO = null;
         if (orderInfo != null) {
             orderInfoVO = fillUserInfo(orderInfo);
@@ -120,21 +113,37 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         return ApiResponse.ofSuccess(orderInfoVO);
     }
 
-    @ApiOperation(value="订单状态变更")
-    @ApiImplicitParam(paramType="body", name = "orderInfoVO", value = "订单操作信息", required = true, dataType = "OrderInfoVO")
-    @RequestMapping(value = "updateOrderStatus",method = RequestMethod.POST)
-    public ApiResponse<Boolean> updateOrderStatus(OrderInfoVO orderInfoVO) {
-        OrderInfo orderInfo = this.convert(orderInfoVO);
-        orderInfoService.update(orderInfo);
+    @ApiOperation(value="下单")
+    @ApiImplicitParam(paramType="query", name = "code", value = "订单信息", required = true, dataType = "String")
+    @RequestMapping(value = "save",method = RequestMethod.POST)
+    public ApiResponse<Boolean> save(@RequestBody OrderInfoVO orderInfoVO) {
+        // search order info
+        orderInfoService.save(this.convert(orderInfoVO));
 
         // 写流水
-        OrderFollow orderFollow = new OrderFollow();
-        orderFollow.setOrderId(orderInfo.getId());
-        orderFollow.setOperateType(orderInfo.getStatus());
-        orderFollow.setMemo(orderInfoVO.getMemo());
-        orderFollowService.save(orderFollow);
+        saveFollow(orderInfoVO);
 
         return ApiResponse.ofSuccess(true);
+    }
+
+    @ApiOperation(value="订单状态变更")
+    @ApiImplicitParam(paramType="body", name = "orderInfoVO", value = "订单操作信息", required = true, dataType = "OrderInfoVO")
+    @RequestMapping(value = "updateOrderStatus",method = RequestMethod.PUT)
+    public ApiResponse<Boolean> updateOrderStatus(@RequestBody OrderInfoVO orderInfoVO) {
+        this.update(orderInfoVO);
+
+        // 写流水
+        saveFollow(orderInfoVO);
+        return ApiResponse.ofSuccess(true);
+    }
+
+    private void saveFollow(OrderInfoVO orderInfoVO) {
+        // 写流水
+        OrderFollow orderFollow = new OrderFollow();
+        orderFollow.setOrderId(orderInfoVO.getId());
+        orderFollow.setOperateType(orderInfoVO.getStatus());
+        orderFollow.setMemo(orderInfoVO.getMemo());
+        orderFollowService.save(orderFollow);
     }
 
     @ApiOperation(value="订单信息变更")
@@ -147,6 +156,9 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     private void fillJobInfo(OrderInfoVO orderInfoVO) {
         BdJobCate bdJobCate = bdJobCateService.get(orderInfoVO.getJobCateId());
         orderInfoVO.setJobCateName(bdJobCate.getCateName());
+
+        // 写流水
+        saveFollow(orderInfoVO);
     }
 
     private OrderInfoVO fillUserInfo(OrderInfo orderInfo) {

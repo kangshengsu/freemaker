@@ -22,9 +22,9 @@ public class DisplayConfig extends BaseModel implements IAudit {
     private Long id;
 
     /**
-     * 展现配置编码
+     * 展现配置ID
      */
-    private String displayCode;
+    private Long displayId;
 
     /**
      * 展现配置类型

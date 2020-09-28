@@ -50,14 +50,6 @@ public class CosServiceImpl implements FileService {
      *  解析的请求时需要用的token标识
      */
     private static final String SESSION_TOKEN = "sessionToken";
-    /**
-     *  解析的请求时需要的开始标识
-     */
-    private static final String START_TIME = "startTime";
-    /**
-     *  解析的请求时需要的结束标识
-     */
-    private static final String EXPIRED_TIME = "expiredTime";
 
     /**
      * 解析临时密匙
@@ -100,7 +92,7 @@ public class CosServiceImpl implements FileService {
             log.error("获取腾讯云存储临时密匙失败:", ioException);
             throw new OssException(OssException.CONNECT_FAILURE, "获取云存储密匙失败");
         }
-        log.error("获取腾讯云存储临时密匙为:{}", ossTmpSecret);
+        log.debug("获取腾讯云存储临时密匙为:{}", ossTmpSecret);
         return ossTmpSecret;
     }
 
@@ -144,8 +136,10 @@ public class CosServiceImpl implements FileService {
         ossTmpSecret.setSessionToken((String) credentials.get(SESSION_TOKEN));
         ossTmpSecret.setBucketName(cosProperties.getBucketName());
         ossTmpSecret.setRegion(cosProperties.getRegion());
-        ossTmpSecret.setStartTime((Long) jsonObject.get(START_TIME));
-        ossTmpSecret.setExpiredTime(Long.valueOf((Integer) jsonObject.get(EXPIRED_TIME)));
+        Long startTime = (Long) jsonObject.get("startTime");
+        Long expiredTime = Long.valueOf((Integer)jsonObject.get("expiredTime"));
+        ossTmpSecret.setStartTime(startTime);
+        ossTmpSecret.setExpiredTime(expiredTime);
         return ossTmpSecret;
     }
 }

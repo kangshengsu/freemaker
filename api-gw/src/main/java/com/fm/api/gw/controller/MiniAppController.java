@@ -1,6 +1,6 @@
 package com.fm.api.gw.controller;
 
-import com.fm.api.gw.rpc.WxService;
+import com.fm.api.gw.rpc.WxRpcService;
 import com.fm.api.gw.vo.MiniAppUserVO;
 import com.fm.api.gw.vo.WeChatDecryptVO;
 import com.fm.api.gw.vo.WeChatLoginVO;
@@ -33,11 +33,11 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
-@RequestMapping("/miniApp")
+@RequestMapping("/v1/miniApp")
 public class MiniAppController {
 
     @Resource
-    private WxService wxService;
+    private WxRpcService wxService;
 
     @Autowired
     private RedissonClient redissonClient;
@@ -186,8 +186,8 @@ public class MiniAppController {
         employerInfo.setDistrictCode(Optional.ofNullable(weChatLoginVO.getDistrict()).orElse(""));
         employerInfo.setCountyCode(Optional.ofNullable(weChatLoginVO.getCounty()).orElse(""));
         employerInfo.setAccountCode("");
-
         employerInfo.setUserId(userId);
+        employerInfo.setHeadImg(weChatLoginVO.getAvatarUrl());
     }
 
     private void convertFreelancerInfo(FreelancerInfo freelancerInfo, WeChatLoginVO weChatLoginVO, Long userId) {
@@ -206,5 +206,7 @@ public class MiniAppController {
         freelancerInfo.setDistrictCode(Optional.ofNullable(weChatLoginVO.getDistrict()).orElse(""));
         freelancerInfo.setCountyCode(Optional.ofNullable(weChatLoginVO.getCounty()).orElse(""));
         freelancerInfo.setUserId(userId);
+        freelancerInfo.setHeadImg(weChatLoginVO.getAvatarUrl());
+
     }
 }
