@@ -1,4 +1,4 @@
-package com.fm.api.web.config;
+package com.fm.framework.core.config;
 
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
