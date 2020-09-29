@@ -53,8 +53,8 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
     @ApiImplicitParams({
             @ApiImplicitParam(name = "currentPage", value = "当前页", dataType = "String",paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "页大小", dataType = "Integer",paramType = "query")})
-    @RequestMapping(value = "gePageByEmployerId", method = RequestMethod.GET)
-    public ApiResponse<Page<DemandInfoVO>> gePageByEmployerId(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize) {
+    @RequestMapping(value = "getPageByEmployerId", method = RequestMethod.GET)
+    public ApiResponse<Page<DemandInfoVO>> getPageByEmployerId(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize) {
         Long currEmployerId = Context.getCurrEmployerId();
         Page<DemandInfoVO> result = new PageInfo<>();
         Page<DemandInfo> demandInfoPage = demandInfoService.gePageByEmployerId(currentPage, pageSize, currEmployerId);

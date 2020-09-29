@@ -10,14 +10,14 @@ import org.mapstruct.Mappings;
 
 /**
  * liuduo
- *
+ * <p>
  * 作品相关映射
- *
  */
 @Mapper(componentModel = "spring")
 public interface ProductionMapper {
 
     @Mapping(target = "images", source = "attachmentInfos")
+    @Mapping(target = "statusName", expression = "java(com.fm.business.base.enums.ProductionStatus.get(productionInfo.getStatus()).getName())")
     ProductionListVO toProductionListVO(ProductionInfo productionInfo);
 
     @Mappings({
@@ -28,7 +28,7 @@ public interface ProductionMapper {
     ProductionViewVO toProductionViewVO(ProductionInfo productionInfo);
 
     default String statusConvert(Integer status) {
-        if(ProductionStatus.get(status)!=null){
+        if (ProductionStatus.get(status) != null) {
             return ProductionStatus.get(status).getName();
         }
         return null;

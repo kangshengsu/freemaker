@@ -102,10 +102,9 @@ public class ProductionListApi extends BaseController<ProductionInfo,ProductionL
             @ApiImplicitParam(name="currentPage",value="当前页码",dataType="Integer",paramType = "query"),
             @ApiImplicitParam(name="pageSize",value="每页数量",dataType="Integer",paramType = "query")})
     public ApiResponse<Page<ProductionListVO>> getByFreelancer(@RequestParam("currentPage") Integer currentPage,
-                                                              @RequestParam("pageSize") Integer pageSize,
-                                                              @RequestParam("freelancerId") Long freelancerId){
+                                                              @RequestParam("pageSize") Integer pageSize){
         Integer[] statues = {ProductionStatus.RELEASE.getCode()};
-        return success(convert(productionInfoService.findByFreelancer(currentPage,pageSize,freelancerId,Arrays.asList(statues))));
+        return success(convert(productionInfoService.findByFreelancer(currentPage,pageSize,Context.getCurrFreelancerId(),Arrays.asList(statues))));
 
     }
 

@@ -41,6 +41,11 @@ public class ProductionListVO extends VO implements Serializable {
     private JobCateVO postCate;
 
     /**
+     * 作品状态描述
+     */
+    private String statusName;
+
+    /**
      * 作者信息
      */
     private FreelancerInfoApiVO freelancerInfo;
