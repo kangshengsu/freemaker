@@ -139,5 +139,8 @@ public class OrderInfoVO extends VO implements Serializable {
 	private Integer userType;
 
 
-
+	/**
+	 * 订单概括
+	 **/
+	private String summarize;
 }

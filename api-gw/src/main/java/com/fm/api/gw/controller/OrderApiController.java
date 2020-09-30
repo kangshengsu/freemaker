@@ -12,9 +12,11 @@ import com.fm.business.base.enums.UserType;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.order.OrderFollow;
 import com.fm.business.base.model.order.OrderInfo;
+import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.business.base.model.sys.SysUser;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.order.IOrderFollowService;
+import com.fm.business.base.service.order.IOrderInfoDetailService;
 import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.framework.core.Context;
@@ -52,6 +54,9 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
     @Autowired
     private IOrderInfoService orderInfoService;
+
+    @Autowired
+    private IOrderInfoDetailService orderInfoDetailService;
 
     @Autowired
     private ISysUserService sysUserService;
@@ -110,7 +115,21 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
             orderInfoVO.setStatusName(OrderStatus.get(orderInfoVO.getStatus()).getName());
         }
 
+        fillOrderDetailInfo(orderInfoVO);
+
         return ApiResponse.ofSuccess(orderInfoVO);
+    }
+
+    private void fillOrderDetailInfo(OrderInfoVO orderInfoVO) {
+        List<QueryItem> queryItems = new ArrayList<>();
+        QueryItem queryItem = new QueryItem();
+        queryItem.setQueryField("orderId");
+        queryItem.setType(QueryType.eq);
+        queryItem.setValue(orderInfoVO.getId());
+        queryItems.add(queryItem);
+
+        OrderInfoDetail orderInfoDetail = orderInfoDetailService.getOne(queryItems);
+        orderInfoVO.setSummarize(orderInfoDetail.getSummarize());
     }
 
     @ApiOperation(value="下单")
