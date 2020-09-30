@@ -67,12 +67,12 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     @Autowired
     private IOrderFollowService orderFollowService;
 
-    @RequestMapping(value = "getOrderInfoByEmployerId",method = RequestMethod.GET)
-    @ApiOperation(value="根据发布者ID获取订单")
+    @RequestMapping(value = "getOrderListByStakeholder",method = RequestMethod.GET)
+    @ApiOperation(value="根据订单参与者ID获取订单（订单参与者：雇主/自由职业者）")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "currentPage", value = "当前页", dataType = "String",paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "页大小", dataType = "Integer",paramType = "query")})
-    public ApiResponse<Page<OrderInfoVO>> getOrderInfoByEmployerId(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize) {
+    public ApiResponse<Page<OrderInfoVO>> getOrderListByStakeholder(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize) {
         Long currEmployerId = Context.getCurrEmployerId();
         Long currFreelancerId = Context.getCurrFreelancerId();
 
@@ -148,7 +148,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     @ApiOperation(value="订单状态变更")
     @ApiImplicitParam(paramType="body", name = "orderInfoVO", value = "订单操作信息", required = true, dataType = "OrderInfoVO")
     @RequestMapping(value = "updateOrderStatus",method = RequestMethod.PUT)
-    public ApiResponse<Boolean> updateOrderStatus(OrderInfoVO orderInfoVO) {
+    public ApiResponse<Boolean> updateOrderStatus(@RequestBody OrderInfoVO orderInfoVO) {
         this.update(orderInfoVO);
 
         // 写流水

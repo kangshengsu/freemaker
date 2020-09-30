@@ -41,7 +41,7 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
 
     @Override
     public int getOrderCountByDemandId(Long demandId) {
-        QueryWrapper<OrderInfo> queryWrapper = this.getQueryWrapper().eq("demandId", demandId);
+        LambdaQueryWrapper<OrderInfo> queryWrapper = this.getQueryWrapper().lambda().eq(OrderInfo::getDemandId, demandId);
         return getBaseMapper().selectCount(queryWrapper);
     }
 

@@ -41,7 +41,7 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
     @Override
     public Page<DemandInfo> gePageByEmployerId(Integer currentPage, Integer pageSize, Long employerId) {
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
-                getQueryWrapper().eq("employerId", employerId)));
+                getQueryWrapper().lambda().eq(DemandInfo::getEmployerId, employerId)));
     }
 
     @Override

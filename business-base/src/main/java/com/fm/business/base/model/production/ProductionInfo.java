@@ -125,12 +125,6 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
     private transient List<AttachmentInfo> attachmentInfos;
 
     /**
-     * 附件路径
-     */
-
-    private transient List<String> attachmentInfoPaths;
-
-    /**
      * 技能关系
      */
     private transient List<ProductionSkillRelation> productionSkillRelations;

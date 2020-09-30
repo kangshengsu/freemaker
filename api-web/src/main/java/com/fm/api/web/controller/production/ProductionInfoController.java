@@ -141,8 +141,9 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         productionInfo.setJobCateId(jobCateId);
         //不需要审核时直接发布状态
         if(!form.getNeedReview()){
-            form.setStatus(ProductionStatus.RELEASE.getCode());
+            productionInfo.setStatus(ProductionStatus.RELEASE.getCode());
         }
+
         return productionInfo;
     }
 }

@@ -98,22 +98,8 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
         List<BdJobCateVO> bdJobCateVOs = bdJobCateService.getAll().stream().map(this::convert).collect(Collectors.toList());
         List<BdJobSkillVO> bdJobSkillVOs = bdJobSkillService.getAll().stream().map(this::skillConvert).collect(Collectors.toList());
 
-        List<JobNodeVO> treeNodeList = new ArrayList<>();
+        List<JobNodeVO> treeNodeList = makeTreeCateList(bdJobCateVOs);
         JobNodeVO treeNode;
-        for (BdJobCateVO bdJobCateVO : bdJobCateVOs) {
-            treeNode = new JobNodeVO();
-            treeNode.setJobId(bdJobCateVO.getId());
-            treeNode.setCode(bdJobCateVO.getCateCode());
-            treeNode.setLabel(bdJobCateVO.getCateName());
-            treeNode.setTreeCode(bdJobCateVO.getTreeCode());
-            treeNode.setCateType(bdJobCateVO.getCateType());
-            treeNode.setEnglishName(bdJobCateVO.getEnglishName());
-            treeNode.setIcon(bdJobCateVO.getIcon());
-            treeNode.setParentId(bdJobCateVO.getParentId());
-
-            treeNodeList.add(treeNode);
-        }
-
         for (BdJobSkillVO bdJobSkillVO : bdJobSkillVOs) {
             treeNode = new JobNodeVO();
             treeNode.setJobId(bdJobSkillVO.getId());
@@ -129,6 +115,16 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
         }
 
         return ApiResponse.ofSuccess(Arrays.asList(transferTree(treeNodeList)));
+    }
+
+    /**
+     * 获取只有领域岗位技能树
+     * @return
+     */
+    @RequestMapping(value = "treeDataWithoutSkill",method = RequestMethod.GET)
+    public ApiResponse<List<JobNodeVO>> treeDataWithoutSkill() {
+        List<BdJobCateVO> bdJobCateVOs = bdJobCateService.getAll().stream().map(this::convert).collect(Collectors.toList());
+        return ApiResponse.ofSuccess(Arrays.asList(transferTree(makeTreeCateList(bdJobCateVOs))));
     }
 
     @RequestMapping(value = "addJob",method = RequestMethod.POST)
@@ -212,6 +208,30 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
         BdJobSkillVO model = new BdJobSkillVO();
         BeanUtils.copyProperties(form,model);
         return model;
+    }
+
+    /**
+     * 组装 List<BdJobCateVO> 2 List<JobNodeVO>
+     * @param bdJobCateVOs
+     * @return
+     */
+    private List<JobNodeVO> makeTreeCateList(List<BdJobCateVO> bdJobCateVOs){
+        List<JobNodeVO> treeNodeList = new ArrayList<>();
+        JobNodeVO treeNode;
+        for (BdJobCateVO bdJobCateVO : bdJobCateVOs) {
+            treeNode = new JobNodeVO();
+            treeNode.setJobId(bdJobCateVO.getId());
+            treeNode.setCode(bdJobCateVO.getCateCode());
+            treeNode.setLabel(bdJobCateVO.getCateName());
+            treeNode.setTreeCode(bdJobCateVO.getTreeCode());
+            treeNode.setCateType(bdJobCateVO.getCateType());
+            treeNode.setEnglishName(bdJobCateVO.getEnglishName());
+            treeNode.setIcon(bdJobCateVO.getIcon());
+            treeNode.setParentId(bdJobCateVO.getParentId());
+
+            treeNodeList.add(treeNode);
+        }
+        return treeNodeList;
     }
 
 }

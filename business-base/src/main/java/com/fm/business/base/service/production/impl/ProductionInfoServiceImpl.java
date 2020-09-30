@@ -381,18 +381,12 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
      * @return
      */
     private boolean saveAttachments(ProductionInfo model){
-        List<String> attachmentInfoPaths = model.getAttachmentInfoPaths();
-        if(!CollectionUtils.isEmpty(attachmentInfoPaths)){
-            List<AttachmentInfo> attachmentInfos = new ArrayList<>();
-            for(String attachmentInfoPath : attachmentInfoPaths){
-                AttachmentInfo attachmentInfo = new AttachmentInfo();
+        List<AttachmentInfo> attachmentInfos = model.getAttachmentInfos();
+        if(!CollectionUtils.isEmpty(attachmentInfos)){
+            for(AttachmentInfo attachmentInfo : attachmentInfos){
                 attachmentInfo.setBusinessCode(model.getCode());
                 attachmentInfo.setBusinessType(AttachmentBusinessType.PRODUCTION.getCode());
                 attachmentInfo.setType(AttachmentType.PICTURE.getCode());
-                attachmentInfo.setPath(attachmentInfoPath);
-                attachmentInfo.setOtherPath(attachmentInfoPath);
-                attachmentInfo.setName("");
-                attachmentInfos.add(attachmentInfo);
             }
             return attachmentInfoService.save(attachmentInfos);
         }

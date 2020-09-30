@@ -1,7 +1,8 @@
-package com.fm.api.gw.vo.conf;
+package com.fm.api.gw.vo.production.list;
 
 import com.fm.api.gw.vo.freelancer.FreelancerInfoApiVO;
-import com.fm.api.gw.vo.production.AttachmentInfoApiVO;
+import com.fm.api.gw.vo.production.relation.AttachmentVO;
+import com.fm.api.gw.vo.production.relation.JobCateVO;
 import com.fm.framework.web.VO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,12 +18,12 @@ import java.util.List;
  **/
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ProductListVO extends VO implements Serializable {
+public class ProductionListVO extends VO implements Serializable {
 
     /**
-     *
+     * 标题
      */
-    private String name;
+    private String title;
 
     /**
      * 时薪
@@ -30,23 +31,28 @@ public class ProductListVO extends VO implements Serializable {
     private BigDecimal hourlyWage;
 
     /**
-     *
+     * 领域
      */
-    private JobCateDisplayVO domainCate;
+    private JobCateVO domainCate;
 
     /**
-     *
+     * 岗位
      */
-    private JobCateDisplayVO postCate;
+    private JobCateVO postCate;
 
     /**
-     *
+     * 作品状态描述
+     */
+    private String statusName;
+
+    /**
+     * 作者信息
      */
     private FreelancerInfoApiVO freelancerInfo;
 
     /**
-     *
+     * 展示图片信息
      */
-    private List<AttachmentInfoApiVO> images;
+    private List<AttachmentVO> images;
 
 }

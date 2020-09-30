@@ -1,5 +1,6 @@
 package com.fm.api.gw.vo.conf;
 
+import com.fm.api.gw.vo.production.list.ProductionListVO;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -17,6 +18,6 @@ public class AggDisplayConfigVO implements Serializable {
 
     private List<JobCateDisplayVO> secondLevelJobs;
 
-    private List<ProductListVO> recommendProductInfos;
+    private List<ProductionListVO> recommendProductInfos;
 
 }
