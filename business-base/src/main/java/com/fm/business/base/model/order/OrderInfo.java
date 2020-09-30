@@ -59,6 +59,15 @@ public class OrderInfo extends BaseModel implements Serializable,IAudit {
     **/
 	private Double orderMny;
 
+    /**
+     * 订单单价
+     **/
+    private Double orderPrice;
+    /**
+     * 订单数量
+     **/
+    private Double orderTimes;
+
 
     /**
     * 期望交付时间

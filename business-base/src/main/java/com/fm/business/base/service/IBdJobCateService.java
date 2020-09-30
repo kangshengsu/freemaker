@@ -42,4 +42,6 @@ public interface IBdJobCateService extends Service<BdJobCate> {
      * @return 实体对象集合
      */
     List<BdJobCate> get(Collection<String> codes);
+
+    String getFullTreePathById(Long id);
 }

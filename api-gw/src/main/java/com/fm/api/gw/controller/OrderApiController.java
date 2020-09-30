@@ -9,12 +9,16 @@ package com.fm.api.gw.controller;
 import com.fm.api.gw.vo.OrderInfoVO;
 import com.fm.business.base.enums.OrderStatus;
 import com.fm.business.base.enums.UserType;
+import com.fm.business.base.model.EmployerInfo;
+import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.order.OrderFollow;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.business.base.model.sys.SysUser;
 import com.fm.business.base.service.IBdJobCateService;
+import com.fm.business.base.service.IEmployerInfoService;
+import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.order.IOrderFollowService;
 import com.fm.business.base.service.order.IOrderInfoDetailService;
 import com.fm.business.base.service.order.IOrderInfoService;
@@ -59,7 +63,10 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     private IOrderInfoDetailService orderInfoDetailService;
 
     @Autowired
-    private ISysUserService sysUserService;
+    private IFreelancerInfoService freelancerInfoService;
+
+    @Autowired
+    private IEmployerInfoService employerInfoService;
 
     @Autowired
     private IBdJobCateService bdJobCateService;
@@ -113,6 +120,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
             orderInfoVO = fillUserInfo(orderInfo);
             fillJobInfo(orderInfoVO);
             orderInfoVO.setStatusName(OrderStatus.get(orderInfoVO.getStatus()).getName());
+            orderInfoVO.setStatusStep(OrderStatus.get(orderInfoVO.getStatus()).getStep());
         }
 
         fillOrderDetailInfo(orderInfoVO);
@@ -130,6 +138,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
         OrderInfoDetail orderInfoDetail = orderInfoDetailService.getOne(queryItems);
         orderInfoVO.setSummarize(orderInfoDetail.getSummarize());
+        orderInfoVO.setDescription(orderInfoDetail.getDescription());
     }
 
     @ApiOperation(value="下单")
@@ -173,8 +182,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     }
 
     private void fillJobInfo(OrderInfoVO orderInfoVO) {
-        BdJobCate bdJobCate = bdJobCateService.get(orderInfoVO.getJobCateId());
-        orderInfoVO.setJobCateName(bdJobCate.getCateName());
+        orderInfoVO.setJobCateName(bdJobCateService.getFullTreePathById(orderInfoVO.getJobCateId()));
 
         // 写流水
         saveFollow(orderInfoVO);
@@ -182,26 +190,17 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
     private OrderInfoVO fillUserInfo(OrderInfo orderInfo) {
         // get userInfo
-        List<Long> userIds = new ArrayList<>();
-        userIds.add(orderInfo.getEmployerId());
-        userIds.add(orderInfo.getFreelancerId());
-        List<SysUser> sysUsers = sysUserService.getByIds(userIds);
-        Map<Long, SysUser> userMap = new HashMap<>();
-        for (SysUser sysUser : sysUsers) {
-            userMap.put(sysUser.getId(), sysUser);
-        }
+        FreelancerInfo freelancerInfo = freelancerInfoService.get(orderInfo.getFreelancerId());
+        EmployerInfo employerInfo = employerInfoService.get(orderInfo.getEmployerId());
 
         // fill userInfo
         OrderInfoVO orderInfoVO = super.convert(orderInfo);
-        if (userMap.containsKey(orderInfoVO.getFreelancerId())) {
-            orderInfoVO.setFreelancerName(userMap.get(orderInfoVO.getFreelancerId()).getName());
+        if (freelancerInfo != null) {
+            orderInfoVO.setFreelancerName(freelancerInfo.getName());
         }
 
-        if (userMap.containsKey(orderInfoVO.getEmployerId())) {
-            orderInfoVO.setEmployerName(userMap.get(orderInfoVO.getEmployerId()).getName());
-        }
-        if (userMap.containsKey(orderInfoVO.getFreelancerId())) {
-            orderInfoVO.setFreelancerName(userMap.get(orderInfoVO.getFreelancerId()).getName());
+        if (employerInfo != null) {
+            orderInfoVO.setEmployerName(employerInfo.getName());
         }
 
         return orderInfoVO;

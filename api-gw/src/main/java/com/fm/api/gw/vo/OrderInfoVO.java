@@ -44,6 +44,11 @@ public class OrderInfoVO extends VO implements Serializable {
 	 */
 	private String jobCateName;
 
+	/**
+	 * 需求分类
+	 */
+	private String jobCatePath;
+
 
     /**
     * 需求类型
@@ -58,10 +63,20 @@ public class OrderInfoVO extends VO implements Serializable {
 
 	private String statusName;
 
-    /**
-    * 订单金额
-    **/
+	private Integer statusStep;
+
+	/**
+	 * 订单金额
+	 **/
 	private Double orderMny;
+	/**
+	 * 订单单价
+	 **/
+	private Double orderPrice;
+	/**
+	 * 订单数量
+	 **/
+	private Double orderTimes;
 
 	/**
 	 * 流水描述
@@ -144,4 +159,9 @@ public class OrderInfoVO extends VO implements Serializable {
 	 * 订单概括
 	 **/
 	private String summarize;
+
+	/**
+	 * 订单详细描述
+	 **/
+	private String description;
 }
