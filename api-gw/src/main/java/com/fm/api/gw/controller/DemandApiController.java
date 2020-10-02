@@ -28,6 +28,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author zhangleqi
  * @date 2020-09-21 7:21 下午
@@ -51,13 +54,15 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
 
     @ApiOperation(value = "获取需求分页信息")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "currentPage", value = "当前页", dataType = "String",paramType = "query"),
-            @ApiImplicitParam(name = "pageSize", value = "页大小", dataType = "Integer",paramType = "query")})
+            @ApiImplicitParam(name = "currentPage", value = "当前页", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "pageSize", value = "页大小", dataType = "Integer", paramType = "query")})
     @RequestMapping(value = "getPageByEmployerId", method = RequestMethod.GET)
-    public ApiResponse<Page<DemandInfoVO>> getPageByEmployerId(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize) {
+    public ApiResponse<Page<DemandInfoVO>> getPageByEmployerId(@RequestParam("currentPage") Integer currentPage,
+                                                               @RequestParam("pageSize") Integer pageSize,
+                                                               @RequestParam(value = "status", required = false) Integer status) {
         Long currEmployerId = Context.getCurrEmployerId();
         Page<DemandInfoVO> result = new PageInfo<>();
-        Page<DemandInfo> demandInfoPage = demandInfoService.gePageByEmployerId(currentPage, pageSize, currEmployerId);
+        Page<DemandInfo> demandInfoPage = demandInfoService.gePageByEmployerId(currentPage, pageSize, currEmployerId, status);
         if (demandInfoPage.getData().size() == 0) {
             return ApiResponse.ofSuccess(result);
         }
@@ -65,10 +70,27 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
     }
 
 
+    @ApiOperation(value = "获取不同状态下的需求总数")
+    @RequestMapping(value = "getDemandGroupCount", method = RequestMethod.GET)
+    public ApiResponse<Map<String,Integer>> getDemandGroupCount() {
+        Long currEmployerId = Context.getCurrEmployerId();
+        Integer totalCount = demandInfoService.getDemandCountByStatus(currEmployerId, null);
+        Integer openedCount = demandInfoService.getDemandCountByStatus(currEmployerId, DemandStatus.RELEASE.getCode());
+        Integer closedCount = demandInfoService.getDemandCountByStatus(currEmployerId, DemandStatus.CANCEL.getCode());
+
+        Map<String, Integer> groupCount = new HashMap<>();
+        groupCount.put("total", totalCount);
+        groupCount.put("opened", openedCount);
+        groupCount.put("closed", closedCount);
+
+        return ApiResponse.ofSuccess(groupCount);
+    }
+
+
     @ApiOperation(value = "根据需求编码更新需求状态")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "demandCode", value = "需求编码", dataType = "String",paramType = "query"),
-            @ApiImplicitParam(name = "status", value = "状态", dataType = "Integer",paramType = "query")})
+            @ApiImplicitParam(name = "demandCode", value = "需求编码", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "status", value = "状态", dataType = "Integer", paramType = "query")})
     @RequestMapping(value = "updateStatus", method = RequestMethod.GET)
     public ApiResponse<Boolean> updateStatus(@RequestParam("demandCode") String demandCode, @RequestParam("status") Integer status) {
         demandInfoService.updateStatusByCode(demandCode, status);
@@ -76,7 +98,7 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
     }
 
     @ApiOperation(value = "根据需求编码获取需求明细信息")
-    @ApiImplicitParam(name = "demandCode", value = "需求编码", required = true, dataType = "String",paramType = "query")
+    @ApiImplicitParam(name = "demandCode", value = "需求编码", required = true, dataType = "String", paramType = "query")
     @RequestMapping(value = "getByCode", method = RequestMethod.GET)
     public ApiResponse<DemandInfoVO> getByCode(String demandCode) {
         if (StringUtils.isEmpty(demandCode)) {

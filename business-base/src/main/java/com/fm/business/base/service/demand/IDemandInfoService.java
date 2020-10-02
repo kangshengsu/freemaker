@@ -28,13 +28,21 @@ public interface IDemandInfoService extends Service<DemandInfo> {
     int updateRecommendCountById(Long id, Integer recommendCount);
 
     /**
+     * 获取不同状态下的需求总数
      *
+     * @param employerId
+     * @param status
+     * @return
+     */
+    Integer getDemandCountByStatus(Long employerId, Integer status);
+
+    /**
      * @param currentPage 当前页
-     * @param pageSize  页大小
-     * @param employerId 雇主ID
+     * @param pageSize    页大小
+     * @param employerId  雇主ID
      * @return 需求编码
      */
-    Page<DemandInfo> gePageByEmployerId(Integer currentPage, Integer pageSize, Long employerId);
+    Page<DemandInfo> gePageByEmployerId(Integer currentPage, Integer pageSize, Long employerId, Integer status);
 
     /**
      * 根据需求编码更新需求状态
