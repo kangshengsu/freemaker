@@ -17,11 +17,13 @@ import com.fm.business.base.service.IBdJobSkillService;
 import com.fm.framework.core.model.TreeNode;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
+import com.fm.framework.core.utils.CodeUtil;
 import com.fm.framework.core.utils.TreeIncodeUtil;
 import com.fm.framework.core.utils.TreeUtil;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -133,6 +135,10 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
     }
 
     private ApiResponse<Boolean> saveJob(BdJobCateVO newNode, boolean isAdd) {
+        if (StringUtils.isBlank(newNode.getCateCode())) {
+            newNode.setCateCode(CodeUtil.generateNewCode());
+        }
+
         newNode.setTreeCode(TreeIncodeUtil.create(newNode.getParentCode()));
         newNode.setParentId(newNode.getParentId());
 

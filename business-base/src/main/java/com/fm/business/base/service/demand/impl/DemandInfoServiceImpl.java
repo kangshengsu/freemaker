@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.IDemandInfoMapper;
 import com.fm.business.base.enums.DemandStatus;
 import com.fm.business.base.model.demand.DemandInfo;
+import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.service.demand.IDemandInfoService;
 import com.fm.framework.core.enums.DeleteEnum;
 import com.fm.framework.core.query.Page;
@@ -20,6 +21,9 @@ import com.fm.framework.core.utils.CodeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @Description:(需求服务实现)
@@ -93,5 +97,24 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
         if (model.getStatus() == null) {
             model.setStatus(DemandStatus.RELEASE.getCode());
         }
+    }
+
+    /**
+     * 通过名字或电话查找数据 最多返回10条
+     * @param str
+     * @return
+     */
+    @Override
+    public List<DemandInfo> findDemandInfoLikeNameOrCode(String str) {
+
+        if(StringUtils.isEmpty(str)){
+            return Collections.emptyList();
+        }
+
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(DemandInfo.class)
+                .like(DemandInfo::getCode,str)
+                .or()
+                .like(DemandInfo::getSummarize,str)
+                .last("limit 10"));
     }
 }

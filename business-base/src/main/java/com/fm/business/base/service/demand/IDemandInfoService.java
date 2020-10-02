@@ -56,4 +56,6 @@ public interface IDemandInfoService extends Service<DemandInfo> {
     int updateByCode(DemandInfo demandInfo);
 
     DemandInfo getByCode(String code);
+
+    List<DemandInfo> findDemandInfoLikeNameOrCode(String str);
 }
