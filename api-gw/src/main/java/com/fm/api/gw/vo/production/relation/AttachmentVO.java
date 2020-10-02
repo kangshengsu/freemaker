@@ -4,14 +4,12 @@
  * Copyright(c) 2020 LiuDuo Co. Ltd. 
  * All right reserved. 
  */
-package com.fm.api.gw.vo.production;
+package com.fm.api.gw.vo.production.relation;
 
-import com.fm.framework.core.model.BaseModel;
-import com.fm.framework.core.model.IAudit;
 import com.fm.framework.web.VO;
 import lombok.Data;
+
 import java.io.Serializable;
-import java.util.Date;
 
 /**   
  * @Description:(附件实体类)
@@ -21,7 +19,7 @@ import java.util.Date;
  * 
  */
 @Data
-public class AttachmentInfoApiVO extends VO implements Serializable {
+public class AttachmentVO extends VO implements Serializable {
 
 	private static final long serialVersionUID = 1600497555102L;
 

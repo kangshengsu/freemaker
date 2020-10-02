@@ -1,4 +1,4 @@
-package com.fm.api.web.config;
+package com.fm.framework.core.config;
 
 import org.hibernate.validator.HibernateValidator;
 import org.springframework.context.annotation.Bean;

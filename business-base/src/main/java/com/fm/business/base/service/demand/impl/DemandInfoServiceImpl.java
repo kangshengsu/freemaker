@@ -13,6 +13,7 @@ import com.fm.business.base.dao.IDemandInfoMapper;
 import com.fm.business.base.enums.DemandStatus;
 import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.service.demand.IDemandInfoService;
+import com.fm.framework.core.enums.DeleteEnum;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.AuditBaseService;
 import com.fm.framework.core.utils.CodeUtil;
@@ -39,9 +40,24 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
     }
 
     @Override
-    public Page<DemandInfo> gePageByEmployerId(Integer currentPage, Integer pageSize, Long employerId) {
-        return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
-                getQueryWrapper().eq("employerId", employerId)));
+    public Integer getDemandCountByStatus(Long employerId, Integer status) {
+        return getBaseMapper().selectCount(
+                getQueryWrapper().lambda()
+                        .groupBy()
+                        .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
+                        .eq(DemandInfo::getEmployerId, employerId)
+                        .eq(status != null, DemandInfo::getStatus, status));
+    }
+
+    @Override
+    public Page<DemandInfo> gePageByEmployerId(Integer currentPage, Integer pageSize, Long employerId, Integer status) {
+        return toPage(
+                getBaseMapper().selectPage(
+                        new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
+                        getQueryWrapper().lambda()
+                                .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
+                                .eq(DemandInfo::getEmployerId, employerId)
+                                .eq(status != 0, DemandInfo::getStatus, status)));
     }
 
     @Override

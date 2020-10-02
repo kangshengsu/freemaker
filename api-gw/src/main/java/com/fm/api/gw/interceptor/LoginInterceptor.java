@@ -45,9 +45,9 @@ public class LoginInterceptor implements HandlerInterceptor {
                 .map(bucket -> bucket.get())
                 .map(currUser -> {
                     //此处频繁set也不好，因此仅缺值时更新
-                    if (Context.getCurrUserId() != null
-                            && Context.getCurrEmployerId() != null
-                            && Context.getCurrFreelancerId() != null) {
+                    if (Context.getCurrUserId() == null
+                            || Context.getCurrEmployerId() == null
+                            || Context.getCurrFreelancerId() == null) {
                         Context.setCurrUser(currUser.getId());
                         Context.setCurrEmployerId(currUser.getEmployerId());
                         Context.setCurrFreelancerId(currUser.getFreeLancerId());
