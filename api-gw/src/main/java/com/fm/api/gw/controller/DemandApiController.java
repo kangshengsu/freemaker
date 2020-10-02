@@ -23,13 +23,11 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author zhangleqi
@@ -86,7 +84,6 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         return ApiResponse.ofSuccess(groupCount);
     }
 
-
     @ApiOperation(value = "根据需求编码更新需求状态")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "demandCode", value = "需求编码", dataType = "String", paramType = "query"),
@@ -100,7 +97,7 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
     @ApiOperation(value = "根据需求编码获取需求明细信息")
     @ApiImplicitParam(name = "demandCode", value = "需求编码", required = true, dataType = "String", paramType = "query")
     @RequestMapping(value = "getByCode", method = RequestMethod.GET)
-    public ApiResponse<DemandInfoVO> getByCode(String demandCode) {
+    public ApiResponse<DemandInfoVO> getByCode(@RequestParam("demandCode") String demandCode) {
         if (StringUtils.isEmpty(demandCode)) {
             return ApiResponse.ofFailed("需求编号不能为空");
         }
@@ -110,10 +107,11 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
 
     @ApiOperation(value = "发布新需求")
     @RequestMapping(value = "publish", method = RequestMethod.POST)
-    public ApiResponse<String> publish(DemandInfoVO form) {
+    public ApiResponse<String> publish(@RequestBody DemandInfoVO form) {
         form.setCode(CodeUtil.generateNewCode());
+        form.setEmployerId(Context.getCurrEmployerId());
         ApiResponse<Boolean> booleanApiResponse = super.create(form);
-        if (ApiStatus.SUCCESS.equals(booleanApiResponse.getCode())) {
+        if (ApiStatus.SUCCESS.getCode() == booleanApiResponse.getCode()) {
             return ApiResponse.ofSuccess(form.getCode());
         }
         return ApiResponse.ofFailed(booleanApiResponse.getMessage());
@@ -139,6 +137,9 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
 
     @Override
     protected DemandInfoVO convert(DemandInfo model) {
+        if(Objects.isNull(model)){
+            return null;
+        }
         DemandInfoVO form = super.convert(model);
         //转换枚举值
         form.setStatusName(DemandStatus.get(model.getStatus()).getName());

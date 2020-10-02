@@ -53,7 +53,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/v1/orderApi")
-@Api(value = "订单接口", tags={"作品操作相关接口"})
+@Api(value = "订单接口", tags={"订单操作相关接口"})
 public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
     @Autowired
@@ -79,11 +79,12 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "currentPage", value = "当前页", dataType = "String",paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "页大小", dataType = "Integer",paramType = "query")})
-    public ApiResponse<Page<OrderInfoVO>> getOrderListByStakeholder(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize) {
+    public ApiResponse<Page<OrderInfoVO>> getOrderListByStakeholder(@RequestParam("currentPage") Integer currentPage
+            , @RequestParam("pageSize") Integer pageSize, @RequestParam("orderType") Integer orderType) {
         Long currEmployerId = Context.getCurrEmployerId();
         Long currFreelancerId = Context.getCurrFreelancerId();
 
-        Page<OrderInfo> orderInfoPage = orderInfoService.queryOrderInfoByPage(currEmployerId, currFreelancerId, currentPage, pageSize);
+        Page<OrderInfo> orderInfoPage = orderInfoService.queryOrderInfoByPage(currEmployerId, currFreelancerId, currentPage, pageSize,orderType);
         Page<OrderInfoVO> orderInfoVOPage = convert(orderInfoPage);
 
         fillStatusName(orderInfoVOPage.getData());

@@ -24,5 +24,5 @@ public interface IOrderInfoService extends Service<OrderInfo> {
 
     int getOrderCountByDemandId(Long demandId);
 
-    Page<OrderInfo> queryOrderInfoByPage(Long employerId, Long freelancerId, long currPage, long pageSize);
+    Page<OrderInfo> queryOrderInfoByPage(Long employerId, Long freelancerId, long currPage, long pageSize,Integer orderType);
 }
