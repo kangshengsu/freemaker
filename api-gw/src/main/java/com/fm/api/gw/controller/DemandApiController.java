@@ -64,7 +64,7 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         if (demandInfoPage.getData().size() == 0) {
             return ApiResponse.ofSuccess(result);
         }
-        return ApiResponse.ofSuccess(this.convert(demandInfoPage));
+        return success(this.convert(demandInfoPage));
     }
 
 
@@ -81,7 +81,7 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         groupCount.put("opened", openedCount);
         groupCount.put("closed", closedCount);
 
-        return ApiResponse.ofSuccess(groupCount);
+        return success(groupCount);
     }
 
     @ApiOperation(value = "根据需求编码更新需求状态")
@@ -91,7 +91,7 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
     @RequestMapping(value = "updateStatus", method = RequestMethod.GET)
     public ApiResponse<Boolean> updateStatus(@RequestParam("demandCode") String demandCode, @RequestParam("status") Integer status) {
         demandInfoService.updateStatusByCode(demandCode, status);
-        return ApiResponse.ofSuccess(Boolean.TRUE);
+        return success(Boolean.TRUE);
     }
 
     @ApiOperation(value = "根据需求编码获取需求明细信息")
@@ -102,7 +102,7 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
             return ApiResponse.ofFailed("需求编号不能为空");
         }
         DemandInfo demandInfo = demandInfoService.getByCode(demandCode);
-        return ApiResponse.ofSuccess(this.convert(demandInfo));
+        return success(this.convert(demandInfo));
     }
 
     @ApiOperation(value = "发布新需求")
@@ -114,19 +114,19 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         if (ApiStatus.SUCCESS.getCode() == booleanApiResponse.getCode()) {
             return ApiResponse.ofSuccess(form.getCode());
         }
-        return ApiResponse.ofFailed(booleanApiResponse.getMessage());
+        return success(booleanApiResponse.getMessage());
 
     }
 
     @ApiOperation(value = "根据需求编码更新需求")
     @RequestMapping(value = "updateByCode", method = RequestMethod.POST)
-    public ApiResponse<Boolean> updateByCode(DemandInfoVO demandInfoVO) {
+    public ApiResponse<Boolean> updateByCode(@RequestBody DemandInfoVO demandInfoVO) {
         if (StringUtils.isEmpty(demandInfoVO.getCode())) {
             return ApiResponse.ofFailed("需求编号不能为空");
         }
         DemandInfo demandInfo = this.convert(demandInfoVO);
         demandInfoService.updateByCode(demandInfo);
-        return ApiResponse.ofSuccess(Boolean.TRUE);
+        return success(Boolean.TRUE);
     }
 
 
