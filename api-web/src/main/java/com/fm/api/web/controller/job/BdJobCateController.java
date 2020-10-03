@@ -109,9 +109,10 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
             treeNode.setEnglishName(bdJobSkillVO.getEnglishName());
             treeNode.setIcon(bdJobSkillVO.getIcon());
             treeNode.setLabel(bdJobSkillVO.getSkillName());
-            treeNode.setTreeCode(bdJobSkillVO.getCateTreeCode());
+            treeNode.setTreeCode(bdJobSkillVO.getTreeCode());
             treeNode.setCateType(JobNodeType.SKILL.getType());
             treeNode.setParentId(bdJobSkillVO.getJobCateId());
+            treeNode.setParentCode(bdJobSkillVO.getCateTreeCode());
 
             treeNodeList.add(treeNode);
         }
@@ -157,7 +158,8 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
             jobSkill.setEnglishName(newNode.getEnglishName());
             jobSkill.setIcon(newNode.getIcon());
             jobSkill.setJobCateId(newNode.getParentId());
-            jobSkill.setCateTreeCode(newNode.getTreeCode());
+            jobSkill.setTreeCode(newNode.getTreeCode());
+            jobSkill.setCateTreeCode(newNode.getParentCode());
             if (isAdd) {
                 result = super.success(bdJobSkillService.save(jobSkill));
             } else {
@@ -181,7 +183,7 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
     }
 
     private JobNodeVO transferTree( List<JobNodeVO> treeNodeList) {
-        TreeNode<JobNodeVO> treeNodes = TreeUtil.buildTree(treeNodeList);
+        TreeNode<JobNodeVO> treeNodes = TreeUtil.buildCodeTree(treeNodeList);
         JobNodeVO root = new JobNodeVO();
         root.setLabel("ROOT");
         root.setLabel("岗位技能树");
@@ -234,6 +236,7 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
             treeNode.setEnglishName(bdJobCateVO.getEnglishName());
             treeNode.setIcon(bdJobCateVO.getIcon());
             treeNode.setParentId(bdJobCateVO.getParentId());
+            treeNode.setParentCode(bdJobCateVO.getParentCode());
 
             treeNodeList.add(treeNode);
         }
