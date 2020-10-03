@@ -49,6 +49,11 @@ public class OrderInfoVO extends VO implements Serializable {
     **/
 	private Integer status;
 
+	/**
+	 * 订单状态（10-初始态 20-已拒单 30-已接单 40-已支付 50-制作中 60-待验收 70-已完成 80-已评价）
+	 **/
+	private String statusName;
+
 
     /**
     * 订单金额
@@ -68,6 +73,7 @@ public class OrderInfoVO extends VO implements Serializable {
     /**
     * 期望交付时间
     **/
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 	private Date expectDeliveryTime;
 
 
@@ -78,25 +84,36 @@ public class OrderInfoVO extends VO implements Serializable {
 	private Date actDeliverTime;
 
 
-    /**
-    * 需求编码
-    **/
+	/**
+	 * 需求编码
+	 **/
 	private Long demandId;
 
+	/**
+	 * 需求描述
+	 **/
+	private String demandSummarize;
 
-    /**
-    * 需求执行人
-    **/
+	/**
+	 * 需求执行人
+	 **/
 	private Long freelancerId;
+	/**
+	 * 需求执行人
+	 **/
+	private String freelancerName;
 
 
-    /**
-    * 需求提出人
-    **/
+	/**
+	 * 需求提出人
+	 **/
 	private Long employerId;
+	/**
+	 * 需求提出人
+	 **/
+	private String employerName;
 
-
-    /**
+	/**
     * 创建时间
     **/
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
