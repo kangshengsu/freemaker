@@ -4,6 +4,7 @@ import com.fm.framework.core.model.OssTmpSecret;
 import com.fm.framework.core.service.FileService;
 import com.fm.framework.web.response.ApiResponse;
 import com.fm.framework.web.response.ApiStatus;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +22,9 @@ public class FileOperationController {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private RedissonClient redissonClient;
 
 
     /**
