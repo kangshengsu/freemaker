@@ -34,6 +34,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +42,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static javax.swing.UIManager.get;
 
 /**
 *
@@ -89,8 +92,38 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
         fillStatusName(orderInfoVOPage.getData());
         fillUserType(orderInfoVOPage.getData(), currEmployerId, currFreelancerId);
+        fillOrderDetailInfo(orderInfoVOPage.getData());
 
         return ApiResponse.ofSuccess(orderInfoVOPage);
+    }
+
+    private void fillOrderDetailInfo(List<OrderInfoVO> orderInfoVOS) {
+        List<Long> orderIds = new ArrayList<>();
+        for (OrderInfoVO orderInfoVO : orderInfoVOS) {
+            orderIds.add(orderInfoVO.getId());
+        }
+
+        List<QueryItem> queryItems = new ArrayList<>();
+        QueryItem queryItem = new QueryItem();
+        queryItem.setQueryField("orderId");
+        queryItem.setType(QueryType.in);
+        queryItem.setValue(orderIds);
+        queryItems.add(queryItem);
+        List<OrderInfoDetail> orderInfoDetails = orderInfoDetailService.get(queryItems);
+        Map<Long, OrderInfoDetail> detailsMap = new HashedMap();
+        for (OrderInfoDetail orderInfoDetail : orderInfoDetails) {
+            detailsMap.put(orderInfoDetail.getOrderId(), orderInfoDetail);
+        }
+
+        OrderInfoDetail detail;
+        for (OrderInfoVO orderInfoVO : orderInfoVOS) {
+            if (detailsMap.containsKey(orderInfoVO.getId())) {
+                detail = detailsMap.get(orderInfoVO.getId());
+                orderInfoVO.setSummarize(detail.getSummarize());
+                orderInfoVO.setDescription(detail.getDescription());
+            }
+        }
+
     }
 
     private void fillUserType(List<OrderInfoVO> data, Long currEmployerId, Long currFreelancerId) {
