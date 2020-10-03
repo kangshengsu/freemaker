@@ -12,6 +12,8 @@ public class Context {
     private static ThreadLocal<String> loginUserCodeThreadLocal = new ThreadLocal<>();
     private static ThreadLocal<String> loginUserNameThreadLocal = new ThreadLocal<>();
     private static ThreadLocal<String> loginUserTokenThreadLocal = new ThreadLocal<>();
+    private static ThreadLocal<Long> loginFreelancerIdThreadLocal = new ThreadLocal<>();
+    private static ThreadLocal<Long> loginEmployerIdThreadLocal = new ThreadLocal<>();
 
 
     public static void setCurrUser(Long user) {
@@ -38,8 +40,27 @@ public class Context {
         }
     }
 
-    public static Long getCurrUser() {
+    public static Long getCurrUserId() {
         return loginUserThreadLocal.get();
+    }
+
+    public static void setCurrFreelancerId(Long freelancerId) {
+        if(freelancerId != null) {
+            loginFreelancerIdThreadLocal.set(freelancerId);
+        }
+    }
+    public static void setCurrEmployerId(Long employerId) {
+        if(employerId != null) {
+            loginEmployerIdThreadLocal.set(employerId);
+        }
+    }
+
+    public static Long getCurrFreelancerId() {
+        return loginFreelancerIdThreadLocal.get();
+    }
+
+    public static Long getCurrEmployerId() {
+        return loginEmployerIdThreadLocal.get();
     }
 
     public static String getCurrUserCode() {

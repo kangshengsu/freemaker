@@ -16,6 +16,7 @@ import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.model.production.ProductionSkillRelation;
 import com.fm.business.base.service.IBdJobSkillService;
 import com.fm.business.base.service.production.IProductionSkillRelationService;
+import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.AuditBaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,7 +68,32 @@ public class ProductionSkillRelationServiceImpl extends AuditBaseService<IProduc
                 }));
     }
 
+    /**
+     * 根据作品删除
+     *
+     * @param productionId
+     * @return
+     */
+    @Override
+    public boolean deleteByProductionId(Long productionId) {
+        return getBaseMapper().delete(Wrappers.lambdaQuery(ProductionSkillRelation.class)
+                .eq(ProductionSkillRelation::getProductionId,productionId))>0;
 
+    }
+
+    /**
+     * 根据技能ID分页获取技能和作品关系
+     *
+     * @param currentPage
+     * @param pageSize
+     * @param cateSkill   技能ID
+     * @return
+     */
+    @Override
+    public Page<ProductionSkillRelation> findByCateSkill(Integer currentPage, Integer pageSize, Long cateSkill) {
+        return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage,pageSize),
+                Wrappers.lambdaQuery(ProductionSkillRelation.class).eq(ProductionSkillRelation::getJobSkillId,cateSkill)));
+    }
 
 
     /**

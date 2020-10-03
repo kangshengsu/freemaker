@@ -21,10 +21,10 @@ import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.config.YamlProcessor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
 *
@@ -73,6 +73,11 @@ public class DemandInfoController extends BaseController<DemandInfo, DemandInfoV
     public ApiResponse<Page<DemandInfoVO>> list(@RequestBody QueryRequest queryRequest) {
 
         return super.list(queryRequest);
+    }
+
+    @RequestMapping(value="getDemandInfoLikeNameOrCode", method = RequestMethod.GET)
+    public ApiResponse<List<DemandInfoVO>> getDemandInfoLikeNameOrCode(@RequestParam("keyword") String keyword) {
+        return super.success(this.convert(this.demandInfoService.findDemandInfoLikeNameOrCode(keyword)));
     }
 
     @Override

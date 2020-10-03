@@ -32,6 +32,8 @@ public class ProductionInfoVO extends VO implements Serializable {
 
     private static final long serialVersionUID = 1600497555102L;
 
+    private List<Long> ids;
+
     /**
      * 作品编码
      **/
@@ -77,12 +79,12 @@ public class ProductionInfoVO extends VO implements Serializable {
     private String statusName;
 
     /**
-     * 所属领域
+     * 所属岗位
      **/
     private Long jobCateId;
 
     /**
-     * 所属领域 + 岗位数据路径
+     * 所属岗位名称
      **/
     private String jobCateName;
 
@@ -101,6 +103,11 @@ public class ProductionInfoVO extends VO implements Serializable {
      * 附件列表
      */
     private List<AttachmentInfo> attachmentInfos;
+
+    /**
+     * 附件路径
+     */
+    private List<String> attachmentInfoPaths;
 
     /**
      * 技能列表
@@ -124,5 +131,15 @@ public class ProductionInfoVO extends VO implements Serializable {
      * 修改人
      **/
     private Long updateUser;
+
+    /**
+     * 创建 修改 时的 领域-岗位-技能数据
+     */
+    private List<List<Long>> jobs;
+
+    /**
+     * 是否需求审核
+     */
+    private Boolean needReview;
 
 }

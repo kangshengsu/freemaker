@@ -134,6 +134,12 @@ public class CosServiceImpl implements FileService {
         ossTmpSecret.setTmpSecretId((String) credentials.get(TMP_SECRET_ID));
         ossTmpSecret.setTmpSecretKey((String) credentials.get(TMP_SECRET_KEY));
         ossTmpSecret.setSessionToken((String) credentials.get(SESSION_TOKEN));
+        ossTmpSecret.setBucketName(cosProperties.getBucketName());
+        ossTmpSecret.setRegion(cosProperties.getRegion());
+        Long startTime = (Long) jsonObject.get("startTime");
+        Long expiredTime = Long.valueOf((Integer)jsonObject.get("expiredTime"));
+        ossTmpSecret.setStartTime(startTime);
+        ossTmpSecret.setExpiredTime(expiredTime);
         return ossTmpSecret;
     }
 }

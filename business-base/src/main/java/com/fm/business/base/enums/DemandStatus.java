@@ -13,21 +13,21 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum DemandStatus {
     /**
-     * 10-未发布
+     * 10-未发布-暂未使用
      */
     NOT_RELEASE(10, "未发布"),
     /**
-     * 20-已发布
+     * 20-启用中（已发布）
      */
-    RELEASE(20, "已发布"),
+    RELEASE(20, "启用中"),
     /**
-     * 30-已取消
+     * 30-待接单（已下单）
      */
-    CANCEL(30, "已取消"),
+    ORDERED(30, "待接单"),
     /**
-     * 40-已下单
+     * 40-已停用（已取消）
      */
-    ORDERED(40, "已下单");
+    CANCEL(40, "已停用");
     /**
      * 编码
      */

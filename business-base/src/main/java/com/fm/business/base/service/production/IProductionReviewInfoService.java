@@ -19,7 +19,7 @@ import com.fm.framework.core.service.Service;
 public interface IProductionReviewInfoService extends Service<ProductionReviewInfo> {
 
     /**
-     * 作品审核服务 只允许操作【审核中】的作品
+     * 作品审核服务 只允许操作【审核中】【审核未通过】的作品
      *
      * 更新作品状态
      * 保存审核记录

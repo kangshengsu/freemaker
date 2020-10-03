@@ -6,6 +6,8 @@
  */
 package com.fm.business.base.model;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
 import lombok.Data;
@@ -102,7 +104,15 @@ public class EmployerInfo extends BaseModel implements Serializable,IAudit {
 	private Long updateUser;
 
 
+    /**
+     * 关联SysUser的ID
+     **/
+    private Long userId;
 
+    /**
+     * 头像
+     **/
+    private String headImg;
 
     /**
      * 获取主键方法，主键整体平台定义成Long数据类型，方便数据的整体插入性能

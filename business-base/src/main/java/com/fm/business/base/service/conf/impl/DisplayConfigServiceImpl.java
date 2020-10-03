@@ -59,7 +59,14 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
     @Override
     @Cacheable(value = "recommendProductInfoConfig")
     public List<ProductionInfo> getRecommendProductInfoConfig() {
-        return getProductInfo(get(DisplayType.r_product_info));
+
+        List<ProductionInfo> productionInfos = getProductInfo(get(DisplayType.r_product_info));
+
+        productionInfos.forEach(productionInfo -> {
+            productionInfo.setProductionSkillRelations(null);
+        });
+
+        return productionInfos;
     }
 
     /**
@@ -75,12 +82,12 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
 
         log.info("getJobCate displayConfigs: {}", displayConfigs);
 
-        Set<String> jobCateCodes = displayConfigs
+        Set<Long> jobCateIds = displayConfigs
                 .stream()
-                .map(DisplayConfig::getDisplayCode)
+                .map(DisplayConfig::getDisplayId)
                 .collect(Collectors.toSet());
 
-        return bdJobCateService.get(jobCateCodes);
+        return bdJobCateService.getByIds(jobCateIds);
 
     }
 
@@ -98,12 +105,12 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
         log.info("getProductInfo displayConfigs: {}", displayConfigs);
 
 
-        Set<String> jobCateCodes = displayConfigs
+        Set<Long> jobProductIds = displayConfigs
                 .stream()
-                .map(DisplayConfig::getDisplayCode)
+                .map(DisplayConfig::getDisplayId)
                 .collect(Collectors.toSet());
 
-        return productionInfoService.get(jobCateCodes);
+        return productionInfoService.getFullInfo(jobProductIds);
 
     }
 

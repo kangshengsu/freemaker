@@ -4,9 +4,12 @@
 * Copyright(c) 2020 LiuDuo Co. Ltd.
 * All right reserved.
 */
-package com.fm.api.web.controller;
+package com.fm.api.web.controller.employer;
 
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.fm.api.web.vo.freelancer.FreelancerInfoVO;
 import com.fm.business.base.model.EmployerInfo;
+import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.framework.core.query.Page;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.framework.core.service.Service;
@@ -17,10 +20,10 @@ import com.fm.api.web.vo.EmployerInfoVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 *
@@ -37,6 +40,29 @@ public class EmployerInfoController extends BaseController<EmployerInfo, Employe
 
     @Autowired
     private IEmployerInfoService employerInfoService;
+
+
+    /**
+     * 根据名字和电话模糊查找数据最多返回10条
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/findLikeNameOrPhone",method = RequestMethod.GET)
+    public ApiResponse<List<EmployerInfoVO>> findLikeNameOrPhone(@RequestParam("keyWord") String keyWord) {
+
+        List<EmployerInfo> employerInfos = employerInfoService.findLikeNameOrPhone(keyWord);
+
+        return success(convert(employerInfos));
+
+    }
+
+    /**
+     * 根据id获取信息
+     */
+    @RequestMapping(value = "/getById",method = RequestMethod.POST)
+    public ApiResponse<EmployerInfoVO> list(@RequestParam("id") Long id) {
+        return success(convert(employerInfoService.get(id)));
+    }
 
     @RequestMapping(value = "create",method = RequestMethod.POST)
     public ApiResponse<Boolean> create(@RequestBody EmployerInfoVO form) {
@@ -65,6 +91,19 @@ public class EmployerInfoController extends BaseController<EmployerInfo, Employe
         return super.list(queryRequest);
     }
 
+    @RequestMapping(value = "/deleteByIds",method = RequestMethod.POST)
+    public ApiResponse<Boolean> deleteByIds(@RequestBody EmployerInfoVO form) {
+        //转换批量ID
+        if(CollectionUtils.isEmpty(form.getIds())){
+            return failed("请选择要删除的雇佣者信息");
+        }
+        return success(service().delete( form.getIds().stream().map(id -> {
+            EmployerInfo employerInfo = new EmployerInfo();
+            employerInfo.setId(id);
+            return employerInfo;
+        }).collect(Collectors.toList())));
+
+    }
 
     @Override
     protected Service<EmployerInfo> service() {

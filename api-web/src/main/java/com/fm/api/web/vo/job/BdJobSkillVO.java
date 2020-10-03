@@ -37,6 +37,10 @@ public class BdJobSkillVO extends VO implements Serializable {
     **/
 	private String skillCode;
 
+	private String englishName;
+
+	private String icon;
+
 
     /**
     * 
@@ -44,9 +48,13 @@ public class BdJobSkillVO extends VO implements Serializable {
 	private Long jobCateId;
 
 
-    /**
-    * 
-    **/
+	/**
+	 *
+	 **/
+	private String treeCode;
+	/**
+	 *
+	 **/
 	private String cateTreeCode;
 
 

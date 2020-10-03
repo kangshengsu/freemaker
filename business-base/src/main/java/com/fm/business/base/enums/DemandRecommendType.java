@@ -1,4 +1,4 @@
-package com.fm.api.gw.enums;
+package com.fm.business.base.enums;
 
 public enum DemandRecommendType {
     INIT(10, "推荐"),

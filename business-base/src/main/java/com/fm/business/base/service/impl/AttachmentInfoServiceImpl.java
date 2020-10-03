@@ -14,7 +14,9 @@ import com.fm.business.base.enums.AttachmentBusinessType;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.service.IAttachmentInfoService;
 import com.fm.framework.core.service.AuditBaseService;
+import com.fm.framework.core.service.FileService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -33,13 +35,26 @@ import java.util.List;
 @Service("attachmentInfoService")
 public class AttachmentInfoServiceImpl extends AuditBaseService<IAttachmentInfoMapper, AttachmentInfo> implements IAttachmentInfoService {
 
+    @Autowired
+    private FileService fileService;
+
     @Override
     public List<AttachmentInfo> getByCodeAndType(String businessCode, AttachmentBusinessType type) {
         if (StringUtils.isBlank(businessCode) || type == null) {
             return Collections.emptyList();
         }
-        return getBaseMapper().selectList(Wrappers.lambdaQuery(AttachmentInfo.class).eq(AttachmentInfo::getBusinessCode, businessCode)
+
+        List<AttachmentInfo> attachmentInfos = getBaseMapper().selectList(Wrappers.lambdaQuery(AttachmentInfo.class).eq(AttachmentInfo::getBusinessCode, businessCode)
                 .eq(AttachmentInfo::getBusinessType, type.getCode()));
+
+        attachmentInfos.forEach(attachmentInfo -> {
+            if(StringUtils.isNotBlank(attachmentInfo.getPath())) {
+                attachmentInfo.setPath(getFullPath(attachmentInfo.getPath()));
+                attachmentInfo.setOtherPath(getFullPath(attachmentInfo.getOtherPath()));
+            }
+        });
+
+        return attachmentInfos;
     }
 
     @Override
@@ -47,8 +62,37 @@ public class AttachmentInfoServiceImpl extends AuditBaseService<IAttachmentInfoM
         if (CollectionUtils.isEmpty(businessCodes) || type == null) {
             return Collections.emptyList();
         }
-        return getBaseMapper().selectList(Wrappers.lambdaQuery(AttachmentInfo.class).in(AttachmentInfo::getBusinessCode, businessCodes)
+
+        List<AttachmentInfo> attachmentInfos = list(Wrappers.lambdaQuery(AttachmentInfo.class).in(AttachmentInfo::getBusinessCode, businessCodes)
                 .eq(AttachmentInfo::getBusinessType, type.getCode()));
+
+        attachmentInfos.forEach(attachmentInfo -> {
+            if(StringUtils.isNotBlank(attachmentInfo.getPath())) {
+                attachmentInfo.setPath(getFullPath(attachmentInfo.getPath()));
+                attachmentInfo.setOtherPath(getFullPath(attachmentInfo.getOtherPath()));
+            }
+        });
+
+        return attachmentInfos;
+    }
+
+    private String getFullPath(String path) {
+        if(StringUtils.isNotBlank(path)) {
+            return fileService.getBaseUrl() + path;
+        }
+        return path;
+    }
+
+    /**
+     * 业务编码
+     *
+     * @param businessCode
+     * @return
+     */
+    @Override
+    public boolean deleteByBusinessCode(String businessCode) {
+        return getBaseMapper().delete(Wrappers.lambdaQuery(AttachmentInfo.class)
+                .eq(AttachmentInfo::getBusinessCode,businessCode))>0;
     }
 
 }

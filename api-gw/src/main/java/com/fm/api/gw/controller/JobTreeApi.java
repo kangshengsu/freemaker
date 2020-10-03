@@ -8,6 +8,7 @@ package com.fm.api.gw.controller;
 
 import com.fm.api.gw.vo.JobCateVO;
 import com.fm.api.gw.vo.JobSkillVO;
+import com.fm.business.base.enums.JobNodeType;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.job.BdJobSkill;
 import com.fm.business.base.service.IBdJobCateService;
@@ -41,7 +42,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/jobTree")
-public class JobTreeController extends BaseController<BdJobCate, JobCateVO> {
+public class JobTreeApi extends BaseController<BdJobCate, JobCateVO> {
 
     @Autowired
     private IBdJobCateService bdJobCateService;
@@ -84,6 +85,20 @@ public class JobTreeController extends BaseController<BdJobCate, JobCateVO> {
         BeanUtils.copyProperties(bdJobSkill,jobSkillVO);
         return jobSkillVO;
     }
+
+    @RequestMapping(value = "getJobList",method = RequestMethod.GET)
+    public ApiResponse<List<JobCateVO>> getJobList(Integer jobType) {
+        List<QueryItem> queryItems = new ArrayList<>();
+        QueryItem item = new QueryItem();
+        item.setQueryField("cateType");
+        item.setType(QueryType.eq);
+        item.setValue(jobType);
+        queryItems.add(item);
+        List<JobCateVO> jobCateVOS = this.convert(bdJobCateService.get(queryItems));
+        return ApiResponse.ofSuccess(jobCateVOS);
+    }
+
+
 
     @Override
     protected Service<BdJobCate> service() {

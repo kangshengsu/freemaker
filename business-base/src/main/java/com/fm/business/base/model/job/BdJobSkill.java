@@ -41,6 +41,10 @@ public class BdJobSkill extends BaseModel implements Serializable,IAudit {
     **/
 	private String skillCode;
 
+    private String englishName;
+
+    private String icon;
+
 
     /**
     * 
@@ -49,9 +53,14 @@ public class BdJobSkill extends BaseModel implements Serializable,IAudit {
 
 
     /**
-    * 
-    **/
-	private String cateTreeCode;
+     *
+     **/
+    private String treeCode;
+
+    /**
+     *
+     **/
+    private String cateTreeCode;
 
 
     /**

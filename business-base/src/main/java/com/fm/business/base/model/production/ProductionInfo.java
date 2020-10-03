@@ -87,7 +87,12 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
     /**
      * 领域-岗位
      */
-	private transient BdJobCate bdJobCate;
+    private transient BdJobCate domainCate;
+
+    /**
+     * 领域-岗位
+     */
+	private transient BdJobCate postCate;
 
 
     /**
@@ -119,9 +124,8 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
      */
     private transient List<AttachmentInfo> attachmentInfos;
 
-
     /**
-     * 技能
+     * 技能关系
      */
     private transient List<ProductionSkillRelation> productionSkillRelations;
 

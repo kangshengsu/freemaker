@@ -6,7 +6,10 @@
 */
 package com.fm.api.web.controller.freelancer;
 
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.fm.api.web.vo.production.ProductionInfoVO;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
+import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.framework.core.query.Page;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.framework.core.service.Service;
@@ -19,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 *
@@ -79,6 +83,25 @@ public class FreelancerInfoController extends BaseController<FreelancerInfo, Fre
         return super.list(queryRequest);
     }
 
+    @RequestMapping(value = "/getById",method = RequestMethod.POST)
+    public ApiResponse<FreelancerInfoVO> list(@RequestBody FreelancerInfoVO form) {
+        return success(convert(freelancerInfoService.get(form.getId())));
+    }
+
+    @RequestMapping(value = "/deleteByIds",method = RequestMethod.POST)
+    public ApiResponse<Boolean> deleteByIds(@RequestBody FreelancerInfoVO form) {
+        //转换批量ID
+        if(CollectionUtils.isEmpty(form.getIds())){
+            return failed("无删除数据");
+        }
+
+        return success(service().delete( form.getIds().stream().map(id -> {
+            FreelancerInfo freelancerInfo = new FreelancerInfo();
+            freelancerInfo.setId(id);
+            return freelancerInfo;
+        }).collect(Collectors.toList())));
+
+    }
 
     @Override
     protected Service<FreelancerInfo> service() {

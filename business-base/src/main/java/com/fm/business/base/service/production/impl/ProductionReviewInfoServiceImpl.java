@@ -19,7 +19,6 @@ import com.fm.framework.core.exception.BusinessException;
 import com.fm.framework.core.service.AuditBaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.fm.framework.core.service.BaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,11 +53,12 @@ public class ProductionReviewInfoServiceImpl extends AuditBaseService<IProductio
         ProductionInfo productionInfo = productionInfoService.get(productionReviewInfo.getProductionId());
         if(productionInfo == null){
             throw new BusinessException("作品不存在！");
-        }else if(!ProductionStatus.REVIEW.getCode().equals(productionInfo.getStatus())){
-            throw new BusinessException("不允许审核非【审核中】状态的作品！");
+        }else if(!ProductionStatus.REVIEW.getCode().equals(productionInfo.getStatus())
+                &&!ProductionStatus.REVIEW_NOT_PASS.getCode().equals(productionInfo.getStatus())){
+            throw new BusinessException("不允许审核非【审核中】或【审核未通过】状态的作品！");
         }
         //设置审核人
-        productionReviewInfo.setReviewerId(Context.getCurrUser());
+        productionReviewInfo.setReviewerId(Context.getCurrUserId());
         //设置审核状态
         productionReviewInfo.setStatus(productionReviewStatus.getCode());
         //保存审核结果
@@ -74,7 +74,7 @@ public class ProductionReviewInfoServiceImpl extends AuditBaseService<IProductio
         }else if(ProductionReviewStatus.REVIEW_NOT_PASS.equals(productionReviewStatus)){
             updateProductionInfo.setStatus(ProductionStatus.REVIEW_NOT_PASS.getCode());
         }
-        if(!productionInfoService.update(updateProductionInfo)){
+        if(!productionInfoService.updateStatus(updateProductionInfo)){
             //更新作品失败 抛出异常回滚审核记录数据
             throw new BusinessException("审核作品时更新作品状态失败！");
         }

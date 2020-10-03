@@ -24,7 +24,8 @@ import java.util.Date;
 public class OrderInfoVO extends VO implements Serializable {
 
 	private static final long serialVersionUID = 1600497555102L;
-	
+
+	private Long id;
 
 
     /**
@@ -43,6 +44,11 @@ public class OrderInfoVO extends VO implements Serializable {
 	 */
 	private String jobCateName;
 
+	/**
+	 * 需求分类
+	 */
+	private String jobCatePath;
+
 
     /**
     * 需求类型
@@ -55,11 +61,22 @@ public class OrderInfoVO extends VO implements Serializable {
     **/
 	private Integer status;
 
+	private String statusName;
 
-    /**
-    * 订单金额
-    **/
+	private Integer statusStep;
+
+	/**
+	 * 订单金额
+	 **/
 	private Double orderMny;
+	/**
+	 * 订单单价
+	 **/
+	private Double orderPrice;
+	/**
+	 * 订单数量
+	 **/
+	private Double orderTimes;
 
 	/**
 	 * 流水描述
@@ -69,6 +86,7 @@ public class OrderInfoVO extends VO implements Serializable {
     /**
     * 期望交付时间
     **/
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 	private Date expectDeliveryTime;
 
 
@@ -131,11 +149,19 @@ public class OrderInfoVO extends VO implements Serializable {
     **/
 	private Long updateUser;
 
+	/**
+	 * 用户类型，区分需求提出人还是开发者
+	 */
+	private Integer userType;
 
 
+	/**
+	 * 订单概括
+	 **/
+	private String summarize;
 
-
-
-
-
+	/**
+	 * 订单详细描述
+	 **/
+	private String description;
 }
