@@ -6,6 +6,7 @@
 */
 package com.fm.api.web.controller.employer;
 
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.fm.api.web.vo.freelancer.FreelancerInfoVO;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 *
@@ -89,6 +91,19 @@ public class EmployerInfoController extends BaseController<EmployerInfo, Employe
         return super.list(queryRequest);
     }
 
+    @RequestMapping(value = "/deleteByIds",method = RequestMethod.POST)
+    public ApiResponse<Boolean> deleteByIds(@RequestBody EmployerInfoVO form) {
+        //转换批量ID
+        if(CollectionUtils.isEmpty(form.getIds())){
+            return failed("请选择要删除的雇佣者信息");
+        }
+        return success(service().delete( form.getIds().stream().map(id -> {
+            EmployerInfo employerInfo = new EmployerInfo();
+            employerInfo.setId(id);
+            return employerInfo;
+        }).collect(Collectors.toList())));
+
+    }
 
     @Override
     protected Service<EmployerInfo> service() {
