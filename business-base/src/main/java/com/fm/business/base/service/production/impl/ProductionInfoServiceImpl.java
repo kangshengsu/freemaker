@@ -10,12 +10,14 @@ package com.fm.business.base.service.production.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.production.IProductionInfoMapper;
 import com.fm.business.base.enums.AttachmentBusinessType;
 import com.fm.business.base.enums.AttachmentType;
 import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.AttachmentInfo;
+import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.production.ProductionInfo;
@@ -238,11 +240,9 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
     public Page<ProductionInfo> findByFreelancer(Integer currentPage, Integer pageSize, Long freelancerId ,Collection<Integer> statuses) {
         //根据岗位获取作品数据
         LambdaQueryWrapper<ProductionInfo> queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class)
-                .eq(ProductionInfo::getFreelancerId, freelancerId);
-
-        if(statuses != null){
-            queryWrapper.in(ProductionInfo::getStatus,statuses);
-        }
+                .eq(ProductionInfo::getFreelancerId, freelancerId)
+                .ne(ProductionInfo::getStatus,ProductionStatus.DELETED.getCode())
+                .in(!CollectionUtils.isEmpty(statuses), ProductionInfo::getStatus, statuses);
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
     }
@@ -391,6 +391,13 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
             return attachmentInfoService.save(attachmentInfos);
         }
         return true;
+    }
+
+    @Override
+    public int updateByCode(ProductionInfo model) {
+        UpdateWrapper<ProductionInfo> updateWrapper = Wrappers.update();
+        updateWrapper.eq("code", model.getCode());
+        return this.getBaseMapper().update(model, updateWrapper);
     }
 
 }

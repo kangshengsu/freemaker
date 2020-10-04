@@ -6,7 +6,6 @@
  */
 package com.fm.business.base.service.production;
 
-import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
@@ -82,6 +81,7 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
      */
     Page<ProductionInfo> findByFreelancer(Integer currentPage, Integer pageSize, Long freelancerId, Collection<Integer> statuses);
 
+    int updateByCode(ProductionInfo productionInfo);
 
 
 

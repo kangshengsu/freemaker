@@ -3,21 +3,21 @@ package com.fm.business.base.enums;
 public enum OrderStatus {
 
 
-    INIT_10(10,"下单", 1),
+    INIT_10(10,"下单", 0),
 
-    REJECT_20(20,"已拒单", 2),
+    REJECT_20(20,"已拒单", 7),
 
-    TAKING_30(30,"已接单", 2),
+    TAKING_30(30,"已接单", 1),
 
-    PAID_40(40,"已支付", 3),
+    PAID_40(40,"已支付", 2),
 
-    MAKING_50(50,"制作中", 4),
+    MAKING_50(50,"制作中", 3),
 
-    CHECKING_60(60,"待验收", 5),
+    CHECKING_60(60,"待验收", 4),
 
-    FINISHED_70(70,"已完成", 6),
+    FINISHED_70(70,"已完成", 5),
 
-    EVALUATED_80(80,"已评价", 7);
+    EVALUATED_80(80,"已评价", 6);
 
 
     private Integer code;
