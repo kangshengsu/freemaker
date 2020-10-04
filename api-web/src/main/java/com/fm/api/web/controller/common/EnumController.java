@@ -4,10 +4,7 @@ import com.fm.api.web.vo.common.EnumVO;
 import com.fm.framework.web.response.ApiResponse;
 import com.fm.framework.web.response.ApiStatus;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -32,7 +29,7 @@ public class EnumController {
      * @return
      */
     @RequestMapping(value = "/values",method = RequestMethod.GET)
-    public ApiResponse<List<EnumVO>> get(@RequestBody String enumName){
+    public ApiResponse<List<EnumVO>> get(@RequestParam("enumName") String enumName){
         List<EnumVO> data = new ArrayList<>();
         String className = ENUM_PACKAGE_PATH + enumName;
         try{
