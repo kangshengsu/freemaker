@@ -6,28 +6,31 @@
 */
 package com.fm.api.gw.controller.production;
 
-import com.fm.api.gw.vo.production.list.ProductionListVO;
+import com.fm.api.gw.vo.production.relation.AttachmentVO;
 import com.fm.api.gw.vo.production.req.ProductionApiVO;
 import com.fm.business.base.enums.ProductionStatus;
+import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.model.production.ProductionSkillRelation;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.Context;
-import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.core.utils.JsonUtil;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
 *
@@ -78,8 +81,10 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
     @ApiOperation(value="修改作品")
     @ApiImplicitParam(name = "apiVO", value = "作品相关属性", dataType = "ProductionApiVO",paramType = "body")
     public ApiResponse<Boolean> modify(@RequestBody @Validated(value = {ProductionApiVO.Modify.class}) ProductionApiVO apiVO){
-
-        productionInfoService.update(convert(apiVO));
+        if (StringUtils.isEmpty(apiVO.getCode())) {
+            return ApiResponse.ofFailed("作品编号不能为空");
+        }
+        productionInfoService.updateByCode(convert(apiVO));
 
         return ApiResponse.ofSuccess(Boolean.TRUE);
     }
@@ -92,7 +97,7 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
         ProductionInfo updateParam = new ProductionInfo();
         updateParam.setCode(apiVO.getCode());
         updateParam.setStatus(ProductionStatus.DELETED.getCode());
-        if(productionInfoService.updateStatus(updateParam)){
+        if(!productionInfoService.updateStatus(updateParam)){
             return failed(String.format("删除%s作品失败",apiVO.getCode()));
         }
         return success(Boolean.TRUE);
@@ -126,6 +131,17 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
         };
         productionInfo.setJobCateId(jobCateId);
 
+
+        List<AttachmentInfo> attachmentInfos = new ArrayList<>();
+        for(AttachmentVO item: form.getAttachmentInfos()){
+            AttachmentInfo attachmentInfo = new  AttachmentInfo();
+            attachmentInfo.setName(item.getName());
+            attachmentInfo.setOtherPath(item.getOtherPath());
+            attachmentInfo.setPath(item.getPath());
+            attachmentInfo.setType(item.getType());
+            attachmentInfos.add(attachmentInfo);
+        }
+        productionInfo.setAttachmentInfos(attachmentInfos);
 
         return productionInfo;
     }

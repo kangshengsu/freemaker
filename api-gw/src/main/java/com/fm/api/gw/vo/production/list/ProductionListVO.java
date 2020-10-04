@@ -19,6 +19,10 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class ProductionListVO extends VO implements Serializable {
+    /**
+     * 作品编码
+     */
+    private String code;
 
     /**
      * 标题

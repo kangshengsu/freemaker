@@ -34,8 +34,8 @@ public class LoginInterceptor implements HandlerInterceptor {
         log.info("小程序网关拦截器进入，token：{}", userToken);
 
         //region todo zyc mockData to be delete
-        this.fillMockUser();
-        userToken = mockToken;
+//        this.fillMockUser();
+//        userToken = mockToken;
         //endregion
 
         RBucket<MiniAppUserVO> rBucket = redissonClient.getBucket(userToken);
