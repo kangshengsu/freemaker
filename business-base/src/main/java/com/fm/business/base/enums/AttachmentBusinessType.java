@@ -25,7 +25,19 @@ public enum AttachmentBusinessType {
     /**
      * 30-订单
      */
-    ORDER(30,"订单");
+    ORDER(30,"订单"),
+    /**
+     * 41-技能树头像
+     */
+    JOB_PROFILE_PHOTO(40,"技能树"),
+    /**
+     * 41-自由职业者头像
+     */
+    FREELANCER_PROFILE_PHOTO(41,"自由职业者"),
+    /**
+     * 42-雇佣者
+     */
+    EMPLOYER_PROFILE_PHOTO(42,"雇佣者");
 
     /**
      * 编码

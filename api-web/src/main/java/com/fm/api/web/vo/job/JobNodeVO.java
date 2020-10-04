@@ -63,7 +63,7 @@ public class JobNodeVO implements ITreeNode, Serializable {
 
 	@Override
 	public String getIncode() {
-		return null;
+		return treeCode;
 	}
 
 	@Override
