@@ -59,7 +59,7 @@ public class EmployerInfoController extends BaseController<EmployerInfo, Employe
     /**
      * 根据id获取信息
      */
-    @RequestMapping(value = "/getById",method = RequestMethod.POST)
+    @RequestMapping(value = "/getById",method = RequestMethod.GET)
     public ApiResponse<EmployerInfoVO> list(@RequestParam("id") Long id) {
         return success(convert(employerInfoService.get(id)));
     }
