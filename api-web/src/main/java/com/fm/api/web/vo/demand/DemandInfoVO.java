@@ -38,10 +38,6 @@ public class DemandInfoVO extends VO implements Serializable {
 	 **/
 	private Long employerId;
 
-	/**
-	 * 发布者名称
-	 */
-	private String employerName;
 
 	/**
 	 * 需求状态（10-未发布，20-已发布，30-已取消，40-已下单）
@@ -58,10 +54,6 @@ public class DemandInfoVO extends VO implements Serializable {
 	 **/
 	private Long jobCateId;
 
-	/**
-	 * 需求名称
-	 */
-	private String jobCateIdName;
 
 	/**
 	 * 需求类型
@@ -150,6 +142,15 @@ public class DemandInfoVO extends VO implements Serializable {
 	private Long updateUser;
 
 
+	/**
+	 * 发布者信息
+	 */
+	private  EmployerInfo employerInfo;
+
+	/**
+	 * 需求名称
+	 */
+	private  BdJobCate bdJobCate;
 
 
 

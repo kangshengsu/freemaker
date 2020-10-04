@@ -92,23 +92,5 @@ public class DemandInfoController extends BaseController<DemandInfo, DemandInfoV
         return model;
     }
 
-    @Override
-    protected DemandInfoVO convert(DemandInfo model) {
-        DemandInfoVO form = super.convert(model);
-        //转换枚举值
-        form.setStatusName(DemandStatus.get(model.getStatus()).getName());
-        //获取作者数据
-        EmployerInfo employerInfo = iEmployerInfoService.get(model.getEmployerId());
-        if (employerInfo != null) {
-            form.setEmployerName(employerInfo.getName());
-        }
-
-        //获取需求信息
-        BdJobCate bdJobCate = iBdJobCateService.get(model.getJobCateId());
-        if (bdJobCate != null) {
-            form.setJobCateIdName(bdJobCate.getCateName());
-        }
-        return form;
-    }
 
 }

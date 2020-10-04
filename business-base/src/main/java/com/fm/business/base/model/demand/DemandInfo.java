@@ -6,142 +6,152 @@
  */
 package com.fm.business.base.model.demand;
 
+import com.fm.business.base.model.EmployerInfo;
+import com.fm.business.base.model.job.BdJobCate;
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
 import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @Description:(需求实体类)
- *
  * @version: V1.0
  * @author: LiuDuo
- *
  */
 @Data
-public class DemandInfo extends BaseModel implements Serializable,IAudit {
+public class DemandInfo extends BaseModel implements Serializable, IAudit {
 
-	private static final long serialVersionUID = 1600497555102L;
-
-    /**
-    * 逻辑主键
-    **/
-	private Long id;
-
+    private static final long serialVersionUID = 1600497555102L;
 
     /**
-    * 需求编码
-    **/
-	private String code;
+     * 逻辑主键
+     **/
+    private Long id;
 
 
     /**
-    * 发布用户编码
-    **/
-	private Long employerId;
+     * 需求编码
+     **/
+    private String code;
 
 
     /**
-    * 需求状态（10-未发布，20-已发布，30-已取消，40-已下单）
-    **/
-	private Integer status;
+     * 发布用户编码
+     **/
+    private Long employerId;
 
 
     /**
-    * 需求类型
-    **/
-	private Long jobCateId;
+     * 需求状态（10-未发布，20-已发布，30-已取消，40-已下单）
+     **/
+    private Integer status;
 
 
     /**
-    * 需求类型
-    **/
-	private String cateTreeCode;
+     * 需求类型
+     **/
+    private Long jobCateId;
 
 
     /**
-    * 期望交付时间
-    **/
-	private Date expectDeliveryTime;
+     * 需求类型
+     **/
+    private String cateTreeCode;
 
 
     /**
-    * 预算
-    **/
-	private Double budget;
+     * 期望交付时间
+     **/
+    private Date expectDeliveryTime;
 
 
     /**
-    * 推荐人数
-    **/
-	private Integer recommendCount;
+     * 预算
+     **/
+    private Double budget;
 
 
     /**
-    * 需求省份编码
-    **/
-	private String provinceCode;
+     * 推荐人数
+     **/
+    private Integer recommendCount;
 
 
     /**
-    * 需求城市编码
-    **/
-	private String cityCode;
+     * 需求省份编码
+     **/
+    private String provinceCode;
 
 
     /**
-    * 需求区编码
-    **/
-	private String districtCode;
+     * 需求城市编码
+     **/
+    private String cityCode;
 
 
     /**
-    * 需求县编码
-    **/
-	private String countyCode;
+     * 需求区编码
+     **/
+    private String districtCode;
 
 
     /**
-    * 需求概括
-    **/
-	private String summarize;
+     * 需求县编码
+     **/
+    private String countyCode;
 
 
     /**
-    * 需求详细描述
-    **/
-	private String description;
+     * 需求概括
+     **/
+    private String summarize;
 
 
     /**
-    * 创建时间
-    **/
-	private Date createTime;
+     * 需求详细描述
+     **/
+    private String description;
 
 
     /**
-    * 修改时间
-    **/
-	private Date updateTime;
+     * 创建时间
+     **/
+    private Date createTime;
 
 
     /**
-    * 创建人
-    **/
-	private Long createUser;
+     * 修改时间
+     **/
+    private Date updateTime;
 
 
     /**
-    * 修改人
-    **/
-	private Long updateUser;
+     * 创建人
+     **/
+    private Long createUser;
 
 
+    /**
+     * 修改人
+     **/
+    private Long updateUser;
 
+    /**
+     * 状态名称
+     */
+    private transient String statusName;
 
+    /**
+     * 发布者信息
+     */
+    private transient EmployerInfo employerInfo;
 
-
+    /**
+     * 需求名称
+     */
+    private transient BdJobCate bdJobCate;
 
     /**
      * 获取主键方法，主键整体平台定义成Long数据类型，方便数据的整体插入性能
