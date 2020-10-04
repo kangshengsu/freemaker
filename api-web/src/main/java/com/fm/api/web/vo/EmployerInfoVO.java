@@ -39,6 +39,10 @@ public class EmployerInfoVO extends VO implements Serializable {
 	 **/
 	private String name;
 
+	/**
+	 * 头像
+	 */
+	private String headImg;
 
 	/**
 	 * 关联账户(微信登录认证)
