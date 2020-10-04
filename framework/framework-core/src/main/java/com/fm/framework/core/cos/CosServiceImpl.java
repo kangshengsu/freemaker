@@ -1,5 +1,6 @@
 package com.fm.framework.core.cos;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.fm.framework.core.constants.SymbolConstants;
 import com.fm.framework.core.exception.OssException;
 import com.fm.framework.core.model.OssTmpSecret;
@@ -117,6 +118,13 @@ public class CosServiceImpl implements FileService {
                 .append(cosProperties.getSuffix()).append(SymbolConstants.SLASH);
 
         return fileUrlBuilder.toString();
+    }
+    @Override
+    public String getFullPath(String path) {
+        if(StringUtils.isNotBlank(path)) {
+            return getBaseUrl() + path;
+        }
+        return path;
     }
 
     /**

@@ -31,4 +31,6 @@ public interface FileService {
      * @return 临时秘钥
      */
     OssTmpSecret getTmpSecret();
+
+    String getFullPath(String path);
 }

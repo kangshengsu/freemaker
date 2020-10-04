@@ -35,9 +35,6 @@ import java.util.List;
 @Service("attachmentInfoService")
 public class AttachmentInfoServiceImpl extends AuditBaseService<IAttachmentInfoMapper, AttachmentInfo> implements IAttachmentInfoService {
 
-    @Autowired
-    private FileService fileService;
-
     @Override
     public List<AttachmentInfo> getByCodeAndType(String businessCode, AttachmentBusinessType type) {
         if (StringUtils.isBlank(businessCode) || type == null) {
@@ -46,13 +43,6 @@ public class AttachmentInfoServiceImpl extends AuditBaseService<IAttachmentInfoM
 
         List<AttachmentInfo> attachmentInfos = getBaseMapper().selectList(Wrappers.lambdaQuery(AttachmentInfo.class).eq(AttachmentInfo::getBusinessCode, businessCode)
                 .eq(AttachmentInfo::getBusinessType, type.getCode()));
-
-        attachmentInfos.forEach(attachmentInfo -> {
-            if(StringUtils.isNotBlank(attachmentInfo.getPath())) {
-                attachmentInfo.setPath(getFullPath(attachmentInfo.getPath()));
-                attachmentInfo.setOtherPath(getFullPath(attachmentInfo.getOtherPath()));
-            }
-        });
 
         return attachmentInfos;
     }
@@ -66,22 +56,11 @@ public class AttachmentInfoServiceImpl extends AuditBaseService<IAttachmentInfoM
         List<AttachmentInfo> attachmentInfos = list(Wrappers.lambdaQuery(AttachmentInfo.class).in(AttachmentInfo::getBusinessCode, businessCodes)
                 .eq(AttachmentInfo::getBusinessType, type.getCode()));
 
-        attachmentInfos.forEach(attachmentInfo -> {
-            if(StringUtils.isNotBlank(attachmentInfo.getPath())) {
-                attachmentInfo.setPath(getFullPath(attachmentInfo.getPath()));
-                attachmentInfo.setOtherPath(getFullPath(attachmentInfo.getOtherPath()));
-            }
-        });
 
         return attachmentInfos;
     }
 
-    private String getFullPath(String path) {
-        if(StringUtils.isNotBlank(path)) {
-            return fileService.getBaseUrl() + path;
-        }
-        return path;
-    }
+
 
     /**
      * 业务编码
