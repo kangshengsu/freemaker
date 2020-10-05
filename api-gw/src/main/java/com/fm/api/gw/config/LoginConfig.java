@@ -29,6 +29,10 @@ public class LoginConfig implements WebMvcConfigurer {
         //添加不拦截路径
         registration.excludePathPatterns(
                 "/v1/miniApp/syncUserInfo",
+                "/swagger-resources/configuration/ui",
+                "/swagger-resources",
+                "/swagger-resources/configuration/security",
+                "/v2/api-docs",
                 "/**/*.html",
                 "/**/*.js",
                 "/**/*.css",

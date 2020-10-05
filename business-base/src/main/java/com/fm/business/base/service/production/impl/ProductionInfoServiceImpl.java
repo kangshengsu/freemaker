@@ -191,7 +191,8 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         //根据岗位获取作品数据
         Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class)
                 .eq(ProductionInfo::getStatus,ProductionStatus.RELEASE.getCode())
-                .eq(ProductionInfo::getJobCateId, catePost);
+                //todo zyc 验证入参 是否有"null"
+                .eq(Objects.nonNull(catePost),ProductionInfo::getJobCateId, catePost);
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
     }

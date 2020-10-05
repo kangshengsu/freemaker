@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 public class MiniAppController {
 
     @Resource
-    private WxRpcService wxService;
+    private WxRpcService wxRpcService;
 
     @Autowired
     private RedissonClient redissonClient;
@@ -70,10 +70,11 @@ public class MiniAppController {
     public ApiResponse getSessionKey(@RequestBody WeChatLoginVO weChatLoginVO) {
 
         //获取sessionkey openId unionId
-        WeChatDecryptVO weChatDecryptVO = wxService.getSessionInfo(weChatLoginVO);
+        WeChatDecryptVO weChatDecryptVO = wxRpcService.getSessionInfo(weChatLoginVO);
 
         String openId = weChatDecryptVO.getOpenId();
         SysUser sysUser = iSysUserService.findByCode(openId);
+        String phoneNumber = wxRpcService.getPhoneNumber(weChatDecryptVO.getSessionKey(), weChatLoginVO.getEncryptedData(), weChatLoginVO.getIv());
 
         //缓存用户信息，供拦截器使用
         String userToken = JwtUtil.generateToken(openId);
@@ -82,7 +83,8 @@ public class MiniAppController {
         if (sysUser == null) {
             sysUser = new SysUser();
             //构建各类用户信息 todo 1，code和name一样 2. 四级地址只有二级，和我们的四级地址库是否匹配 3.语言编码目前只存了一种，
-            convertSysUser(sysUser, weChatLoginVO, openId);
+
+            convertSysUser(sysUser, weChatLoginVO, openId, phoneNumber);
             //同步howwork账号、自由职业者、雇主信息
             iSysUserService.save(sysUser);
             //获取新增的用户ID
@@ -90,10 +92,10 @@ public class MiniAppController {
             Long userId = queryResult.getId();
 
             FreelancerInfo freelancerInfo = new FreelancerInfo();
-            convertFreelancerInfo(freelancerInfo, weChatLoginVO, userId);
+            convertFreelancerInfo(freelancerInfo, weChatLoginVO, userId, phoneNumber);
 
             EmployerInfo employerInfo = new EmployerInfo();
-            convertEmployerInfo(employerInfo, weChatLoginVO, userId);
+            convertEmployerInfo(employerInfo, weChatLoginVO, userId, phoneNumber);
 
             iAccountInfoService.createAccount(freelancerInfo, employerInfo);
             List<QueryItem> queryItems = getQueryItemsForUserId(userId);
@@ -113,7 +115,7 @@ public class MiniAppController {
 
         } else {
             //构建各类用户信息 todo 1，code和name一样 2. 四级地址只有二级，和我们的四级地址库是否匹配 3.语言编码目前只存了一种，
-            convertSysUser(sysUser, weChatLoginVO, openId);
+            convertSysUser(sysUser, weChatLoginVO, openId, phoneNumber);
             //同步howwork账号、自由职业者、雇主信息
             iSysUserService.update(sysUser);
             Long userId = sysUser.getId();
@@ -122,10 +124,10 @@ public class MiniAppController {
             List<QueryItem> queryItems = getQueryItemsForUserId(userId);
 
             FreelancerInfo freelancerInfo = iFreelancerInfoService.getOne(queryItems);
-            convertFreelancerInfo(freelancerInfo, weChatLoginVO, userId);
+            convertFreelancerInfo(freelancerInfo, weChatLoginVO, userId, phoneNumber);
 
             EmployerInfo employerInfo = iEmployerInfoService.getOne(queryItems);
-            convertEmployerInfo(employerInfo, weChatLoginVO, userId);
+            convertEmployerInfo(employerInfo, weChatLoginVO, userId, phoneNumber);
 
             iAccountInfoService.updateAccount(freelancerInfo, employerInfo);
 
@@ -161,7 +163,7 @@ public class MiniAppController {
     public ApiResponse phoneLogin(@RequestBody WeChatLoginVO weChatLoginDTO) {
         WeChatDecryptVO userInfo = null;
         try {
-//            userInfoDTO = wxService.getPhoneNumber(weChatLoginDTO);
+//            String phoneNumber = wxRpcService.getPhoneNumber(getSessionKey(), dto.getEncryptedData(), dto.getIv())
         } catch (Exception e) {
             log.info("获取用户手机号异常", e);
             return ApiResponse.ofFailed(e.getMessage());
@@ -170,16 +172,16 @@ public class MiniAppController {
         return ApiResponse.of(ApiStatus.SUCCESS, userInfo);
     }
 
-    private void convertSysUser(SysUser sysUser, WeChatLoginVO weChatLoginVO, String openId) {
+    private void convertSysUser(SysUser sysUser, WeChatLoginVO weChatLoginVO, String openId, String phoneNumber) {
         sysUser.setName(weChatLoginVO.getNickName());
-        sysUser.setPhone(weChatLoginVO.getNickName());
+        sysUser.setPhone(phoneNumber);
         sysUser.setCode(openId);
     }
 
-    private void convertEmployerInfo(EmployerInfo employerInfo, WeChatLoginVO weChatLoginVO, Long userId) {
+    private void convertEmployerInfo(EmployerInfo employerInfo, WeChatLoginVO weChatLoginVO, Long userId, String phoneNumber) {
         employerInfo.setName(weChatLoginVO.getNickName());
         employerInfo.setCode(weChatLoginVO.getNickName());
-        employerInfo.setPhone(weChatLoginVO.getPhoneNumber());
+        employerInfo.setPhone(phoneNumber);
         employerInfo.setProvinceCode(weChatLoginVO.getProvince());
         employerInfo.setCityCode(weChatLoginVO.getCity());
         //todo zyc 下三个为空
@@ -190,10 +192,10 @@ public class MiniAppController {
         employerInfo.setHeadImg(weChatLoginVO.getAvatarUrl());
     }
 
-    private void convertFreelancerInfo(FreelancerInfo freelancerInfo, WeChatLoginVO weChatLoginVO, Long userId) {
+    private void convertFreelancerInfo(FreelancerInfo freelancerInfo, WeChatLoginVO weChatLoginVO, Long userId, String phoneNumber) {
         freelancerInfo.setName(weChatLoginVO.getNickName());
         freelancerInfo.setCode(weChatLoginVO.getNickName());
-        freelancerInfo.setPhone(weChatLoginVO.getPhoneNumber());
+        freelancerInfo.setPhone(phoneNumber);
         //todo zyc 下面四个没值
         freelancerInfo.setCateTreeCode("");
         freelancerInfo.setJobCateId(0L);
