@@ -70,7 +70,10 @@ public class OrderFollowVO extends VO implements Serializable {
 	private Long updateUser;
 
 
-
+	/**
+	 * 操作人
+	 **/
+	private Long operateUser;
 
 
 
