@@ -69,7 +69,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         super.beforeSave(model);
         //生成code
         model.setCode(CodeUtil.generateNewCode());
-        if(model.getStatus() == null){
+        if (model.getStatus() == null) {
             model.setStatus(ProductionStatus.REVIEW.getCode());
         }
     }
@@ -88,27 +88,27 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
     protected void afterUpdate(ProductionInfo model) {
         super.afterUpdate(model);
         //移除所有技能和附件并重新保存
-        if(productionSkillRelationService.deleteByProductionId(model.getId())){
+        if (productionSkillRelationService.deleteByProductionId(model.getId())) {
             //保存 作品技能关系数据
             saveSkills(model);
         }
 
-        if(attachmentInfoService.deleteByBusinessCode(model.getCode())){
-            //保存 附件数据
-            saveAttachments(model);
-        }
+        attachmentInfoService.deleteByBusinessCode(model.getCode());
+
+        //保存 附件数据
+        saveAttachments(model);
+
 
     }
 
     /**
-     *
      * @param codes 作品编码集合
      * @return
      */
     @Override
     public List<ProductionInfo> get(Collection<String> codes) {
 
-        if(CollectionUtils.isEmpty(codes)) {
+        if (CollectionUtils.isEmpty(codes)) {
             return Collections.emptyList();
         }
 
@@ -122,7 +122,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
     @Override
     public List<ProductionInfo> getFullInfo(Collection<Long> ids) {
 
-        if(CollectionUtils.isEmpty(ids)) {
+        if (CollectionUtils.isEmpty(ids)) {
             return Collections.emptyList();
         }
 
@@ -141,18 +141,18 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
      */
     @Override
     public boolean updateStatus(ProductionInfo productionInfo) {
-        if(productionInfo.getId() == null && productionInfo.getCode() == null){
+        if (productionInfo.getId() == null && productionInfo.getCode() == null) {
             return false;
         }
         LambdaUpdateWrapper<ProductionInfo> wrapper = Wrappers.lambdaUpdate(ProductionInfo.class)
-                .set(ProductionInfo::getStatus,productionInfo.getStatus());
-        if(productionInfo.getId() != null){
-            wrapper.eq(ProductionInfo::getId,productionInfo.getId());
+                .set(ProductionInfo::getStatus, productionInfo.getStatus());
+        if (productionInfo.getId() != null) {
+            wrapper.eq(ProductionInfo::getId, productionInfo.getId());
         }
-        if(productionInfo.getCode() != null){
-            wrapper.eq(ProductionInfo::getCode,productionInfo.getCode());
+        if (productionInfo.getCode() != null) {
+            wrapper.eq(ProductionInfo::getCode, productionInfo.getCode());
         }
-        return getBaseMapper().update(productionInfo,wrapper) > 0;
+        return getBaseMapper().update(productionInfo, wrapper) > 0;
     }
 
     /**
@@ -160,19 +160,19 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
      *
      * @param currentPage
      * @param pageSize
-     * @param cateDomain 领域ID
+     * @param cateDomain  领域ID
      * @return 只返回已发布作品
      */
     @Override
     public Page<ProductionInfo> findByCateDomain(Integer currentPage, Integer pageSize, Long cateDomain) {
         //获取领域下所有岗位
-        List<BdJobCate> catePosts = bdJobCateService.findJobCatePost(cateDomain,null);
-        if(CollectionUtils.isEmpty(catePosts)){
+        List<BdJobCate> catePosts = bdJobCateService.findJobCatePost(cateDomain, null);
+        if (CollectionUtils.isEmpty(catePosts)) {
             return new PageInfo<>();
         }
 
         //根据岗位获取作品数据
-        Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getStatus,ProductionStatus.RELEASE.getCode())
+        Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getStatus, ProductionStatus.RELEASE.getCode())
                 .in(ProductionInfo::getJobCateId, catePosts.stream().map(bdJobCate -> bdJobCate.getId()).collect(Collectors.toSet()));
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
@@ -183,14 +183,14 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
      *
      * @param currentPage
      * @param pageSize
-     * @param catePost 岗位ID
+     * @param catePost    岗位ID
      * @return 只返回已发布作品
      */
     @Override
     public Page<ProductionInfo> findByCatePost(Integer currentPage, Integer pageSize, Long catePost) {
         //根据岗位获取作品数据
         Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class)
-                .eq(ProductionInfo::getStatus,ProductionStatus.RELEASE.getCode())
+                .eq(ProductionInfo::getStatus, ProductionStatus.RELEASE.getCode())
                 .eq(ProductionInfo::getJobCateId, catePost);
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
@@ -207,8 +207,8 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
     @Override
     public Page<ProductionInfo> findByCateSkill(Integer currentPage, Integer pageSize, Long cateSkill) {
         //获取技能下的分页作品ID
-        Page<ProductionSkillRelation> productionSkillRelationPage = productionSkillRelationService.findByCateSkill(currentPage,pageSize,cateSkill);
-        if(CollectionUtils.isEmpty(productionSkillRelationPage.getData())){
+        Page<ProductionSkillRelation> productionSkillRelationPage = productionSkillRelationService.findByCateSkill(currentPage, pageSize, cateSkill);
+        if (CollectionUtils.isEmpty(productionSkillRelationPage.getData())) {
             return new PageInfo<>();
         }
         //获取作品id集合
@@ -222,7 +222,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
         //组装新的分页对象
         PageInfo<ProductionInfo> result = new PageInfo<>();
-        BeanUtils.copyProperties(productionSkillRelationPage,result);
+        BeanUtils.copyProperties(productionSkillRelationPage, result);
         result.setData(productionInfos);
 
         return result;
@@ -237,11 +237,11 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
      * @return
      */
     @Override
-    public Page<ProductionInfo> findByFreelancer(Integer currentPage, Integer pageSize, Long freelancerId ,Collection<Integer> statuses) {
+    public Page<ProductionInfo> findByFreelancer(Integer currentPage, Integer pageSize, Long freelancerId, Collection<Integer> statuses) {
         //根据岗位获取作品数据
         LambdaQueryWrapper<ProductionInfo> queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class)
                 .eq(ProductionInfo::getFreelancerId, freelancerId)
-                .ne(ProductionInfo::getStatus,ProductionStatus.DELETED.getCode())
+                .ne(ProductionInfo::getStatus, ProductionStatus.DELETED.getCode())
                 .in(!CollectionUtils.isEmpty(statuses), ProductionInfo::getStatus, statuses);
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
@@ -249,15 +249,16 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
     /**
      * 分页查询
-     *
+     * <p>
      * 完善补全信息
+     *
      * @param mybatisPlusPage
      * @return
      */
     @Override
     protected Page<ProductionInfo> toPage(com.baomidou.mybatisplus.extension.plugins.pagination.Page<ProductionInfo> mybatisPlusPage) {
         Page<ProductionInfo> productionInfoPage = super.toPage(mybatisPlusPage);
-        if(productionInfoPage.getData()!=null && !productionInfoPage.getData().isEmpty()){
+        if (productionInfoPage.getData() != null && !productionInfoPage.getData().isEmpty()) {
             //补全信息
             fillProductInfoRelation(productionInfoPage.getData());
         }
@@ -267,6 +268,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
     /**
      * 补全数据
+     *
      * @param productionInfos
      */
     private void fillProductInfoRelation(Collection<ProductionInfo> productionInfos) {
@@ -315,24 +317,24 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
         productionInfos.forEach(productionInfo -> {
 
-            if(freelancerInfoMap.containsKey(productionInfo.getFreelancerId())) {
+            if (freelancerInfoMap.containsKey(productionInfo.getFreelancerId())) {
                 productionInfo.setFreelancerInfo(freelancerInfoMap.get(productionInfo.getFreelancerId()));
             }
 
-            if(postCateMap.containsKey(productionInfo.getJobCateId())) {
+            if (postCateMap.containsKey(productionInfo.getJobCateId())) {
                 productionInfo.setPostCate(postCateMap.get(productionInfo.getJobCateId()));
 
-                if(domainCateMap.containsKey(productionInfo.getPostCate().getParentId())) {
+                if (domainCateMap.containsKey(productionInfo.getPostCate().getParentId())) {
                     productionInfo.setDomainCate(domainCateMap.get(productionInfo.getPostCate().getParentId()));
                 }
 
             }
 
-            if(attachmentMap.containsKey(productionInfo.getCode())) {
+            if (attachmentMap.containsKey(productionInfo.getCode())) {
                 productionInfo.setAttachmentInfos(attachmentMap.get(productionInfo.getCode()));
             }
 
-            if(proSkillRMap.containsKey(productionInfo.getId())) {
+            if (proSkillRMap.containsKey(productionInfo.getId())) {
                 productionInfo.setProductionSkillRelations(proSkillRMap.get(productionInfo.getId()));
             }
 
@@ -359,14 +361,15 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
     /**
      * 保存关联技能
+     *
      * @param model
      * @return
      */
-    private boolean saveSkills(ProductionInfo model){
+    private boolean saveSkills(ProductionInfo model) {
         List<ProductionSkillRelation> productionSkillRelations = model.getProductionSkillRelations();
 
-        if(!CollectionUtils.isEmpty(productionSkillRelations)){
-            for(ProductionSkillRelation productionSkillRelation : productionSkillRelations){
+        if (!CollectionUtils.isEmpty(productionSkillRelations)) {
+            for (ProductionSkillRelation productionSkillRelation : productionSkillRelations) {
                 productionSkillRelation.setProductionId(model.getId());
             }
             return productionSkillRelationService.save(productionSkillRelations);
@@ -377,13 +380,14 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
     /**
      * 保存附件
+     *
      * @param model
      * @return
      */
-    private boolean saveAttachments(ProductionInfo model){
+    private boolean saveAttachments(ProductionInfo model) {
         List<AttachmentInfo> attachmentInfos = model.getAttachmentInfos();
-        if(!CollectionUtils.isEmpty(attachmentInfos)){
-            for(AttachmentInfo attachmentInfo : attachmentInfos){
+        if (!CollectionUtils.isEmpty(attachmentInfos)) {
+            for (AttachmentInfo attachmentInfo : attachmentInfos) {
                 attachmentInfo.setBusinessCode(model.getCode());
                 attachmentInfo.setBusinessType(AttachmentBusinessType.PRODUCTION.getCode());
                 attachmentInfo.setType(AttachmentType.PICTURE.getCode());
