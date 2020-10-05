@@ -1,22 +1,21 @@
 /**
-* @filename:ProductionInfoController 2020年09月11日
-* @project HowWork  V1.0
-* Copyright(c) 2020 LiuDuo Co. Ltd.
-* All right reserved.
-*/
+ * @filename:ProductionInfoController 2020年09月11日
+ * @project HowWork  V1.0
+ * Copyright(c) 2020 LiuDuo Co. Ltd.
+ * All right reserved.
+ */
 package com.fm.api.gw.controller.production;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.fm.api.gw.vo.production.list.ProductionListVO;
 import com.fm.api.gw.vo.production.mapper.ProductionMapper;
-import com.fm.api.gw.vo.production.req.ProductionApiVO;
 import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.production.ProductionInfo;
-import com.fm.business.base.model.production.ProductionSkillRelation;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.query.Page;
+import com.fm.framework.core.service.FileService;
 import com.fm.framework.core.service.Service;
-import com.fm.framework.core.utils.JsonUtil;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
 import io.swagger.annotations.Api;
@@ -24,20 +23,22 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.Arrays;
 
 /**
-*
-* <p>说明： 作品API接口层</p>
-* @version: V1.0
-* @author: LiuDuo
-* @time    2020年09月11日
-*
-*/
+ *
+ * <p>说明： 作品API接口层</p>
+ * @version: V1.0
+ * @author: LiuDuo
+ * @time    2020年09月11日
+ *
+ */
 @Api(value = "/v1/productionListApi",description ="作品列表相关接口")
 @RestController
 @RequestMapping("/v1/productionListApi")
@@ -49,6 +50,8 @@ public class ProductionListApi extends BaseController<ProductionInfo,ProductionL
 
     @Autowired
     private ProductionMapper productionMapper;
+    @Autowired
+    private FileService fileService;
 
 
     @GetMapping("/getByCateDomain")
@@ -73,8 +76,8 @@ public class ProductionListApi extends BaseController<ProductionInfo,ProductionL
             @ApiImplicitParam(name="currentPage",value="当前页码",dataType="Integer",paramType = "query"),
             @ApiImplicitParam(name="pageSize",value="每页数量",dataType="Integer",paramType = "query")})
     public ApiResponse<Page<ProductionListVO>> getByCatePost(@RequestParam("currentPage") Integer currentPage,
-                                                              @RequestParam("pageSize") Integer pageSize,
-                                                              @RequestParam("catePost") Long catePost){
+                                                             @RequestParam("pageSize") Integer pageSize,
+                                                             @RequestParam("catePost") Long catePost){
 
         return success(convert(productionInfoService.findByCatePost(currentPage,pageSize,catePost)));
 
@@ -88,8 +91,8 @@ public class ProductionListApi extends BaseController<ProductionInfo,ProductionL
             @ApiImplicitParam(name="pageSize",value="每页数量",dataType="Integer",paramType = "query")})
     @Deprecated
     public ApiResponse<Page<ProductionListVO>> getByCateSkill(@RequestParam("currentPage") Integer currentPage,
-                                                            @RequestParam("pageSize") Integer pageSize,
-                                                            @RequestParam("cateSkill") Long cateSkill){
+                                                              @RequestParam("pageSize") Integer pageSize,
+                                                              @RequestParam("cateSkill") Long cateSkill){
 
         return success(convert(productionInfoService.findByCateSkill(currentPage,pageSize,cateSkill)));
 
@@ -116,8 +119,14 @@ public class ProductionListApi extends BaseController<ProductionInfo,ProductionL
 
     @Override
     protected ProductionListVO convert(ProductionInfo model) {
-
-        return productionMapper.toProductionListVO(model);
+        ProductionListVO productionListVO = productionMapper.toProductionListVO(model);
+        productionListVO.getImages().forEach(attachmentInfo -> {
+            if(StringUtils.isNotBlank(attachmentInfo.getPath())) {
+                attachmentInfo.setPath(fileService.getFullPath(attachmentInfo.getPath()));
+                attachmentInfo.setOtherPath(fileService.getFullPath(attachmentInfo.getOtherPath()));
+            }
+        });
+        return productionListVO;
 
     }
 }

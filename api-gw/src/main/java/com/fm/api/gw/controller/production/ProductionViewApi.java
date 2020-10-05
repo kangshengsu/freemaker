@@ -6,12 +6,14 @@
 */
 package com.fm.api.gw.controller.production;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.fm.api.gw.vo.production.mapper.ProductionMapper;
 import com.fm.api.gw.vo.production.view.ProductionViewVO;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.query.Page;
+import com.fm.framework.core.service.FileService;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
@@ -45,7 +47,8 @@ public class ProductionViewApi extends BaseController<ProductionInfo, Production
 
     @Autowired
     private ProductionMapper productionMapper;
-
+    @Autowired
+    private FileService fileService;
     @GetMapping("/getByCode")
     @ApiOperation(value="根据作品编码查看作品详情")
     @ApiImplicitParam(name = "code", value = "作品编码", dataType = "String",paramType = "query")
@@ -81,8 +84,14 @@ public class ProductionViewApi extends BaseController<ProductionInfo, Production
 
     @Override
     protected ProductionViewVO convert(ProductionInfo model) {
-
-        return productionMapper.toProductionViewVO(model);
+        ProductionViewVO productionViewVO = productionMapper.toProductionViewVO(model);
+        productionViewVO.getImages().forEach(attachmentInfo -> {
+            if(StringUtils.isNotBlank(attachmentInfo.getPath())) {
+                attachmentInfo.setPath(fileService.getFullPath(attachmentInfo.getPath()));
+                attachmentInfo.setOtherPath(fileService.getFullPath(attachmentInfo.getOtherPath()));
+            }
+        });
+        return productionViewVO;
 
     }
 
