@@ -17,27 +17,32 @@ public class BdJobTag extends BaseModel implements Serializable, IAudit {
     /**
      * 主键
      */
-    public Long id;
+    private Long id;
+
+    /**
+     * 标签名称
+     */
+    private String tagName;
 
     /**
      * 岗位分类id
      */
-    public Long jobCateId;
+    private Long jobCateId;
 
     /**
      * 技能id
      */
-    public Long skillId;
+    private Long skillId;
 
     /**
-     * 标签主键
+     * 启用状态
      */
-    public String tagName;
+    private Integer status;
 
     /**
      * 雇佣者id
      */
-    public Long employerId;
+    private Long employerId;
 
     /**
      * 创建时间

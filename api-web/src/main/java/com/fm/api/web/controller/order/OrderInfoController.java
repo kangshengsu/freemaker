@@ -6,6 +6,7 @@
 */
 package com.fm.api.web.controller.order;
 
+import com.fm.api.web.vo.job.BdJobTagVO;
 import com.fm.api.web.vo.order.OrderInfoVO;
 import com.fm.business.base.enums.OrderStatus;
 import com.fm.business.base.model.EmployerInfo;
@@ -23,10 +24,7 @@ import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,6 +86,13 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
         fillDetailInfo(result.getData().getData());
 
         return result;
+    }
+
+    @RequestMapping(value = "getOrderById",method = RequestMethod.GET)
+    public ApiResponse<OrderInfoVO> getOrderById(Long id) {
+        OrderInfoVO orderInfoVO = this.convert(orderInfoService.get(id));
+
+        return this.success(orderInfoVO);
     }
 
     private void fillDetailInfo(List<OrderInfoVO> orderInfoVOS) {
