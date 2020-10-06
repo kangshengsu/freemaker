@@ -14,7 +14,17 @@ public class Context {
     private static ThreadLocal<String> loginUserTokenThreadLocal = new ThreadLocal<>();
     private static ThreadLocal<Long> loginFreelancerIdThreadLocal = new ThreadLocal<>();
     private static ThreadLocal<Long> loginEmployerIdThreadLocal = new ThreadLocal<>();
+    private static ThreadLocal<String> loginMiniAppSecretKeyThreadLocal = new ThreadLocal<>();
 
+    public static void setMiniAppSecretKey(String secreteKey) {
+        if(secreteKey != null) {
+            loginMiniAppSecretKeyThreadLocal.set(secreteKey);
+        }
+    }
+
+    public static String getMiniAppSecretKey() {
+        return loginMiniAppSecretKeyThreadLocal.get();
+    }
 
     public static void setCurrUser(Long user) {
         if(user != null) {
