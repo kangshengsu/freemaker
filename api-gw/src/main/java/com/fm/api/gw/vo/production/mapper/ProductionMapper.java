@@ -1,6 +1,7 @@
 package com.fm.api.gw.vo.production.mapper;
 
 import com.fm.api.gw.vo.production.list.ProductionListVO;
+import com.fm.api.gw.vo.production.req.ProductionApiVO;
 import com.fm.api.gw.vo.production.view.ProductionViewVO;
 import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.production.ProductionInfo;
@@ -26,6 +27,12 @@ public interface ProductionMapper {
             @Mapping(target = "skills", source = "productionSkillRelations")
     })
     ProductionViewVO toProductionViewVO(ProductionInfo productionInfo);
+
+    @Mappings({
+            @Mapping(source = "images", target = "attachmentInfos"),
+            @Mapping(source = "skills", target = "productionSkillRelations")
+    })
+    ProductionInfo toProduction(ProductionApiVO productionApiVO);
 
     default String statusConvert(Integer status) {
         if (ProductionStatus.get(status) != null) {

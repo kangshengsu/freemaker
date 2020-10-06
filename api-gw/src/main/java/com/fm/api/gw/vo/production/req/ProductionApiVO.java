@@ -1,6 +1,7 @@
 package com.fm.api.gw.vo.production.req;
 
 import com.fm.api.gw.vo.production.relation.AttachmentVO;
+import com.fm.api.gw.vo.production.relation.SkillRelationVO;
 import com.fm.framework.web.VO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -70,15 +71,18 @@ public class ProductionApiVO extends VO implements Serializable {
      * 附件列表
      */
     @NotEmpty(message = "附件路径列表不能为空",groups = {Release.class, Modify.class})
-    private List<AttachmentVO> attachmentInfos;
-
+    private List<AttachmentVO> images;
 
     /**
-     * 创建 修改 时的 领域-岗位-技能数据
+     * 技能列表
      */
-    //作品可以没有技能类型，只有领域和岗位也ok
-    @NotEmpty(message = "技能树列表不能为空",groups = {Release.class, Modify.class})
-    private List<List<Long>> jobs;
+    private List<SkillRelationVO> skills;
+
+    /**
+     * 岗位
+     */
+    @NotNull(message = "岗位不能为空",groups = {Release.class, Modify.class})
+    private Long jobCateId;
 
 
 

@@ -19,11 +19,11 @@ import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -87,8 +87,8 @@ public class BdJobTagController extends BaseController<BdJobTag, BdJobTagVO> {
 
         List<BdJobCate> jobCates = jobCateService.getByIds(cateIds);
         List<BdJobSkill> jobSkills = jobSkillService.getByIds(skillIds);
-        Map<Long, BdJobCate> cateMap = new HashedMap();
-        Map<Long, BdJobSkill> skillMap = new HashedMap();
+        Map<Long, BdJobCate> cateMap = new HashMap();
+        Map<Long, BdJobSkill> skillMap = new HashMap();
         for (BdJobCate jobCate : jobCates) {
            cateMap.put(jobCate.getId(), jobCate);
         }

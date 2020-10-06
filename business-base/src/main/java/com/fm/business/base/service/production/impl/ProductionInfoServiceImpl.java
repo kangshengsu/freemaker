@@ -88,10 +88,9 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
     protected void afterUpdate(ProductionInfo model) {
         super.afterUpdate(model);
         //移除所有技能和附件并重新保存
-        if (productionSkillRelationService.deleteByProductionId(model.getId())) {
-            //保存 作品技能关系数据
-            saveSkills(model);
-        }
+        productionSkillRelationService.deleteByProductionId(model.getId());
+        //保存 作品技能关系数据
+        saveSkills(model);
 
         attachmentInfoService.deleteByBusinessCode(model.getCode());
 

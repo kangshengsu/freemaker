@@ -33,11 +33,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -111,7 +111,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         queryItem.setValue(orderIds);
         queryItems.add(queryItem);
         List<OrderInfoDetail> orderInfoDetails = orderInfoDetailService.get(queryItems);
-        Map<Long, OrderInfoDetail> detailsMap = new HashedMap();
+        Map<Long, OrderInfoDetail> detailsMap = new HashMap();
         for (OrderInfoDetail orderInfoDetail : orderInfoDetails) {
             detailsMap.put(orderInfoDetail.getOrderId(), orderInfoDetail);
         }
