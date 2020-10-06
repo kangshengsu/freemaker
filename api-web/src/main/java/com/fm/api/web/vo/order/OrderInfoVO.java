@@ -1,29 +1,30 @@
 /**
  * @filename:OrderInfo 2020年09月11日
  * @project HowWork  V1.0
- * Copyright(c) 2020 LiuDuo Co. Ltd. 
- * All right reserved. 
+ * Copyright(c) 2020 LiuDuo Co. Ltd.
+ * All right reserved.
  */
 package com.fm.api.web.vo.order;
 
+import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.framework.web.VO;
 import lombok.Data;
 import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 
-/**   
+/**
  * @Description:(订单信息请求实体类)
- * 
+ *
  * @version: V1.0
  * @author: LiuDuo
- * 
+ *
  */
 @Data
 public class OrderInfoVO extends VO implements Serializable {
 
 	private static final long serialVersionUID = 1600497555102L;
-	
+
 
 
     /**
@@ -36,7 +37,10 @@ public class OrderInfoVO extends VO implements Serializable {
     * 需求类型
     **/
 	private Long jobCateId;
-
+	/**
+	 * 需求类型
+	 **/
+	private String jobCateName;
 
     /**
     * 需求类型
@@ -126,6 +130,10 @@ public class OrderInfoVO extends VO implements Serializable {
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 	private Date updateTime;
 
+	/**
+	 * 订单详情信息
+	 */
+	private OrderInfoDetail orderInfoDetail;
 
     /**
     * 创建人
