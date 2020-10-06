@@ -160,7 +160,7 @@ public class MiniAppController {
     }
 
     @ApiOperation("小程序获取手机号")
-    @PostMapping(value = "/updatePhone", consumes = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/updatePhone", method = {RequestMethod.POST})
     public ApiResponse updatePhone(@RequestBody WeChatLoginVO weChatLoginVO) {
         WeChatDecryptVO userInfo = null;
 
