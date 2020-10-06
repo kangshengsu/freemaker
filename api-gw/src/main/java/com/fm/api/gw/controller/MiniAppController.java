@@ -19,6 +19,7 @@ import com.fm.framework.core.utils.JwtUtil;
 import com.fm.framework.web.response.ApiResponse;
 import com.fm.framework.web.response.ApiStatus;
 import io.swagger.annotations.ApiOperation;
+import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
@@ -165,23 +166,28 @@ public class MiniAppController {
         WeChatDecryptVO userInfo = null;
 
         try {
-            String phoneNumber = wxRpcService.getPhoneNumber(Context.getMiniAppSecretKey(), weChatLoginVO.getEncryptedData(), weChatLoginVO.getIv());
+            String phoneNumber = null;
+            if (StringUtil.isNotBlank(Context.getMiniAppSecretKey())) {
+                phoneNumber = wxRpcService.getPhoneNumber(Context.getMiniAppSecretKey(), weChatLoginVO.getEncryptedData(), weChatLoginVO.getIv());
+            }
 
-            EmployerInfo employerInfo = new EmployerInfo();
-            employerInfo.setId(Context.getCurrEmployerId());
-            employerInfo.setPhone(phoneNumber);
+            if (StringUtil.isNotBlank(phoneNumber)) {
+                EmployerInfo employerInfo = new EmployerInfo();
+                employerInfo.setId(Context.getCurrEmployerId());
+                employerInfo.setPhone(phoneNumber);
 
-            FreelancerInfo freelancerInfo = new FreelancerInfo();
-            freelancerInfo.setId(Context.getCurrFreelancerId());
-            freelancerInfo.setPhone(phoneNumber);
+                FreelancerInfo freelancerInfo = new FreelancerInfo();
+                freelancerInfo.setId(Context.getCurrFreelancerId());
+                freelancerInfo.setPhone(phoneNumber);
 
-            SysUser sysUser = new SysUser();
-            sysUser.setId(Context.getCurrUserId());
-            sysUser.setPhone(phoneNumber);
+                SysUser sysUser = new SysUser();
+                sysUser.setId(Context.getCurrUserId());
+                sysUser.setPhone(phoneNumber);
 
-            iFreelancerInfoService.update(freelancerInfo);
-            iEmployerInfoService.update(employerInfo);
-            iSysUserService.update(sysUser);
+                iFreelancerInfoService.update(freelancerInfo);
+                iEmployerInfoService.update(employerInfo);
+                iSysUserService.update(sysUser);
+            }
         } catch (Exception e) {
             log.info("获取用户手机号异常", e);
             return ApiResponse.ofFailed(e.getMessage());
