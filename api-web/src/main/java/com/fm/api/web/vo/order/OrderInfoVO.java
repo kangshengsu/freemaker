@@ -6,11 +6,13 @@
  */
 package com.fm.api.web.vo.order;
 
+import com.fm.business.base.model.order.OrderOperateInfo;
 import com.fm.framework.web.VO;
 import lombok.Data;
 import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
+import java.util.List;
 
 /**   
  * @Description:(订单信息请求实体类)
@@ -83,6 +85,16 @@ public class OrderInfoVO extends VO implements Serializable {
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 	private Date actDeliverTime;
 
+	/**
+	 * 订单概括
+	 **/
+	private String summarize;
+
+
+	/**
+	 * 订单详细描述
+	 **/
+	private String description;
 
 	/**
 	 * 需求编码
@@ -138,11 +150,6 @@ public class OrderInfoVO extends VO implements Serializable {
     **/
 	private Long updateUser;
 
-
-
-
-
-
-
+	private List<OrderOperateInfoVO> orderOperateInfos;
 
 }
