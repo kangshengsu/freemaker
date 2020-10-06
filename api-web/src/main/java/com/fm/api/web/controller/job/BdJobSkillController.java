@@ -7,6 +7,7 @@
 package com.fm.api.web.controller.job;
 
 import com.fm.api.web.vo.common.SelectItemVO;
+import com.fm.api.web.vo.job.BdJobCateVO;
 import com.fm.business.base.model.job.BdJobSkill;
 import com.fm.framework.core.query.Page;
 import com.fm.business.base.service.IBdJobSkillService;
@@ -42,6 +43,16 @@ public class BdJobSkillController extends BaseController<BdJobSkill, BdJobSkillV
 
     @Autowired
     private IBdJobSkillService bdJobSkillService;
+
+    /**
+     * 获取岗位下所有技能数据
+     * @param form
+     * @return
+     */
+    @RequestMapping(value = "/findByCatePost",method = RequestMethod.POST)
+    public ApiResponse<List<BdJobSkillVO>> findJobCatePost(@RequestBody BdJobSkillVO form) {
+        return success(convert(bdJobSkillService.findByCateId(form.getJobCateId())));
+    }
 
     @RequestMapping(value = "create",method = RequestMethod.POST)
     public ApiResponse<Boolean> create(@RequestBody BdJobSkillVO form) {

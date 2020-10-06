@@ -9,6 +9,8 @@ package com.fm.business.base.service;
 import com.fm.business.base.model.job.BdJobSkill;
 import com.fm.framework.core.service.Service;
 
+import java.util.List;
+
 /**
  * @Description:(岗位技能服务层)
  * @version: V1.0
@@ -16,5 +18,11 @@ import com.fm.framework.core.service.Service;
  * 
  */
 public interface IBdJobSkillService extends Service<BdJobSkill> {
-	
+
+    /**
+     * 获取岗位下所有技能
+     * @param cateId
+     * @return
+     */
+    List<BdJobSkill> findByCateId(Long cateId);
 }
