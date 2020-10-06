@@ -58,6 +58,9 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
     private IOrderInfoService orderInfoService;
 
     @Autowired
+    private IOrderInfoDetailService orderInfoDetailService;
+
+    @Autowired
     private IOrderFollowService orderFollowService;
 
     @Autowired
@@ -71,6 +74,9 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
 
     @Autowired
     private IDemandInfoService demandInfoService;
+
+    @Autowired
+    private IBdJobCateService iBdJobCateService;
 
     @RequestMapping(value = "create",method = RequestMethod.POST)
     public ApiResponse<Boolean> create(@RequestBody OrderInfoVO form) {
