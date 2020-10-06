@@ -47,10 +47,12 @@ public class LoginInterceptor implements HandlerInterceptor {
                     //此处频繁set也不好，因此仅缺值时更新
                     if (Context.getCurrUserId() == null
                             || Context.getCurrEmployerId() == null
-                            || Context.getCurrFreelancerId() == null) {
+                            || Context.getCurrFreelancerId() == null
+                            || Context.getMiniAppSecretKey() == null) {
                         Context.setCurrUser(currUser.getId());
                         Context.setCurrEmployerId(currUser.getEmployerId());
                         Context.setCurrFreelancerId(currUser.getFreeLancerId());
+                        Context.setMiniAppSecretKey(currUser.getSessionKey());
                     }
                     return true;
                 })

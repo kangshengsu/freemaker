@@ -12,6 +12,7 @@ import com.fm.business.base.service.IAccountInfoService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.sys.ISysUserService;
+import com.fm.framework.core.Context;
 import com.fm.framework.core.query.QueryItem;
 import com.fm.framework.core.query.QueryType;
 import com.fm.framework.core.utils.JwtUtil;
@@ -74,7 +75,7 @@ public class MiniAppController {
 
         String openId = weChatDecryptVO.getOpenId();
         SysUser sysUser = iSysUserService.findByCode(openId);
-        String phoneNumber = wxRpcService.getPhoneNumber(weChatDecryptVO.getSessionKey(), weChatLoginVO.getEncryptedData(), weChatLoginVO.getIv());
+        String phoneNumber = "";
 
         //缓存用户信息，供拦截器使用
         String userToken = JwtUtil.generateToken(openId);
@@ -111,7 +112,7 @@ public class MiniAppController {
             miniAppUserVO.setId(userId);
             miniAppUserVO.setSessionKey(weChatDecryptVO.getSessionKey());
 
-            currUser.set(queryResult, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
+            currUser.set(miniAppUserVO, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
 
         } else {
             //构建各类用户信息 todo 1，code和name一样 2. 四级地址只有二级，和我们的四级地址库是否匹配 3.语言编码目前只存了一种，
@@ -159,11 +160,28 @@ public class MiniAppController {
     }
 
     @ApiOperation("小程序获取手机号")
-    @PostMapping(value = "/phoneLogin", consumes = "application/json;charset=UTF-8")
-    public ApiResponse phoneLogin(@RequestBody WeChatLoginVO weChatLoginDTO) {
+    @PostMapping(value = "/updatePhone", consumes = "application/json;charset=UTF-8")
+    public ApiResponse updatePhone(@RequestBody WeChatLoginVO weChatLoginVO) {
         WeChatDecryptVO userInfo = null;
+
         try {
-//            String phoneNumber = wxRpcService.getPhoneNumber(getSessionKey(), dto.getEncryptedData(), dto.getIv())
+            String phoneNumber = wxRpcService.getPhoneNumber(Context.getMiniAppSecretKey(), weChatLoginVO.getEncryptedData(), weChatLoginVO.getIv());
+
+            EmployerInfo employerInfo = new EmployerInfo();
+            employerInfo.setId(Context.getCurrEmployerId());
+            employerInfo.setPhone(phoneNumber);
+
+            FreelancerInfo freelancerInfo = new FreelancerInfo();
+            freelancerInfo.setId(Context.getCurrFreelancerId());
+            freelancerInfo.setPhone(phoneNumber);
+
+            SysUser sysUser = new SysUser();
+            sysUser.setId(Context.getCurrUserId());
+            sysUser.setPhone(phoneNumber);
+
+            iFreelancerInfoService.update(freelancerInfo);
+            iEmployerInfoService.update(employerInfo);
+            iSysUserService.update(sysUser);
         } catch (Exception e) {
             log.info("获取用户手机号异常", e);
             return ApiResponse.ofFailed(e.getMessage());
