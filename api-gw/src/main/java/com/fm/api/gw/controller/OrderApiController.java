@@ -228,14 +228,14 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     @ApiImplicitParam(paramType="body", name = "orderInfoVO", value = "订单信息变更", required = true, dataType = "OrderInfoVO")
     @RequestMapping(value = "updateOrderInfo",method = RequestMethod.POST)
     public ApiResponse<Boolean> updateOrderInfo(OrderInfoVO orderInfoVO) {
+        // 写流水
+        saveFollow(orderInfoVO);
+
         return this.update(orderInfoVO);
     }
 
     private void fillJobInfo(OrderInfoVO orderInfoVO) {
         orderInfoVO.setJobCateName(bdJobCateService.getFullTreePathById(orderInfoVO.getJobCateId()));
-
-        // 写流水
-        saveFollow(orderInfoVO);
     }
 
     private OrderInfoVO fillUserInfo(OrderInfo orderInfo) {
