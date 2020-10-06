@@ -9,15 +9,18 @@ package com.fm.api.web.controller.order;
 import com.fm.api.web.vo.job.BdJobTagVO;
 import com.fm.api.web.vo.order.OrderInfoVO;
 import com.fm.api.web.vo.order.OrderOperateInfoVO;
+import com.fm.business.base.enums.AttachmentBusinessType;
 import com.fm.business.base.enums.OrderOperateType;
 import com.fm.business.base.enums.OrderStatus;
 import com.fm.business.base.enums.TagStatus;
+import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.model.order.OrderInfoDetail;
+import com.fm.business.base.service.IAttachmentInfoService;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.business.base.model.order.OrderOperateInfo;
@@ -78,6 +81,9 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
     @Autowired
     private IBdJobCateService iBdJobCateService;
 
+    @Autowired
+    private IAttachmentInfoService attachmentInfoService;
+
     @RequestMapping(value = "create",method = RequestMethod.POST)
     public ApiResponse<Boolean> create(@RequestBody OrderInfoVO form) {
 
@@ -129,7 +135,9 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
         OrderOperateInfoVO temp;
         List<Long> employerIds = new ArrayList<>();
         List<Long> freelancerIds = new ArrayList<>();
+        List<String> businessCodes = new ArrayList<>();
         for (OrderOperateInfo orderOperateInfo : orderOperateInfos) {
+            businessCodes.add(orderOperateInfo.getId().toString());
             temp = new OrderOperateInfoVO();
             BeanUtils.copyProperties(orderOperateInfo, temp);
             orderInfoVO.getOrderOperateInfos().add(temp);
@@ -140,7 +148,17 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
                 employerIds.add(orderOperateInfo.getOperateUser());
             }
 
-            orderOperateInfo.setOperateTypeName(OrderOperateType.get(orderOperateInfo.getOperateType()).getName());
+            temp.setOperateTypeName(OrderOperateType.get(orderOperateInfo.getOperateType()).getName());
+        }
+
+        List<AttachmentInfo> attachmentInfos = attachmentInfoService.getByCodeAndType(businessCodes, AttachmentBusinessType.ORDER_OPERATE);
+        Map<String, List<AttachmentInfo>> attachmentInfoMap = new HashMap<>();
+        for (AttachmentInfo attachmentInfo : attachmentInfos) {
+            if (!attachmentInfoMap.containsKey(attachmentInfo.getBusinessCode())) {
+                attachmentInfoMap.put(attachmentInfo.getBusinessCode(), new ArrayList<>());
+            }
+
+            attachmentInfoMap.get(attachmentInfo.getBusinessCode()).add(attachmentInfo);
         }
 
         List<FreelancerInfo> freelancerInfos = freelancerInfoService.getByIds(freelancerIds);
@@ -155,16 +173,22 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
             employerInfoMap.put(employerInfo.getId(), employerInfo);
         }
 
-        for (OrderOperateInfo orderOperateInfo : orderOperateInfos) {
-            if (OrderOperateType.SUBMIT.getCode().equals(orderOperateInfo.getOperateType())) {
-                if (freelancerInfoMap.containsKey(orderOperateInfo.getOperateUser())) {
-                    orderOperateInfo.setOperateUserName(freelancerInfoMap.get(orderOperateInfo.getOperateUser()).getName());
+        for (OrderOperateInfoVO orderOperateInfoVO : orderInfoVO.getOrderOperateInfos()) {
+            if (OrderOperateType.SUBMIT.getCode().equals(orderOperateInfoVO.getOperateType())) {
+                if (freelancerInfoMap.containsKey(orderOperateInfoVO.getOperateUser())) {
+                    orderOperateInfoVO.setOperateUserName(freelancerInfoMap.get(orderOperateInfoVO.getOperateUser()).getName());
                 }
 
             } else {
-                if (employerInfoMap.containsKey(orderOperateInfo.getOperateUser())) {
-                    orderOperateInfo.setOperateUserName(employerInfoMap.get(orderOperateInfo.getOperateUser()).getName());
+                if (employerInfoMap.containsKey(orderOperateInfoVO.getOperateUser())) {
+                    orderOperateInfoVO.setOperateUserName(employerInfoMap.get(orderOperateInfoVO.getOperateUser()).getName());
                 }
+            }
+
+            if (attachmentInfoMap.containsKey(orderOperateInfoVO.getId().toString())) {
+                orderOperateInfoVO.setAttachmentInfos(attachmentInfoMap.get(orderOperateInfoVO.getId().toString()));
+            } else {
+                orderOperateInfoVO.setAttachmentInfos(new ArrayList<>());
             }
         }
 

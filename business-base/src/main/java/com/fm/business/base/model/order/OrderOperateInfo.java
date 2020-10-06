@@ -40,20 +40,17 @@ public class OrderOperateInfo extends BaseModel implements Serializable,IAudit {
      * 操作类型
      **/
     private Integer operateType;
-    private String operateTypeName;
 
     /**
      * 操作人
      **/
     private Long operateUser;
-    private String operateUserName;
 
 
     /**
      * 接收人
      **/
     private Long receiveUser;
-    private String receiveUserName;
 
     /**
     * 创建时间

@@ -7,6 +7,7 @@
 package com.fm.api.web.vo.order;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.order.OrderOperateInfo;
 import com.fm.framework.web.VO;
 import lombok.Data;
@@ -42,17 +43,20 @@ public class OrderOperateInfoVO extends VO implements Serializable {
 	 * 操作类型
 	 **/
 	private Integer operateType;
+	private String operateTypeName;
 
 	/**
 	 * 操作人
 	 **/
 	private Long operateUser;
+	private String operateUserName;
 
 
 	/**
 	 * 接收人
 	 **/
 	private Long receiveUser;
+	private String receiveUserName;
 
 	/**
 	 * 创建时间
@@ -82,5 +86,5 @@ public class OrderOperateInfoVO extends VO implements Serializable {
 	 */
 	private String description;
 
-	private List<String> attachmentInfos;
+	private List<AttachmentInfo> attachmentInfos;
 }
