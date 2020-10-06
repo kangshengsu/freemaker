@@ -6,6 +6,7 @@
  */
 package com.fm.api.gw.controller.production;
 
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.fm.api.gw.vo.production.list.ProductionListVO;
 import com.fm.api.gw.vo.production.mapper.ProductionMapper;
@@ -120,12 +121,14 @@ public class ProductionListApi extends BaseController<ProductionInfo,ProductionL
     @Override
     protected ProductionListVO convert(ProductionInfo model) {
         ProductionListVO productionListVO = productionMapper.toProductionListVO(model);
-        productionListVO.getImages().forEach(attachmentInfo -> {
-            if(StringUtils.isNotBlank(attachmentInfo.getPath())) {
-                attachmentInfo.setPath(fileService.getFullPath(attachmentInfo.getPath()));
-                attachmentInfo.setOtherPath(fileService.getFullPath(attachmentInfo.getOtherPath()));
-            }
-        });
+        if (CollectionUtils.isNotEmpty(productionListVO.getImages())) {
+            productionListVO.getImages().forEach(attachmentInfo -> {
+                if(StringUtils.isNotBlank(attachmentInfo.getPath())) {
+                    attachmentInfo.setPath(fileService.getFullPath(attachmentInfo.getPath()));
+                    attachmentInfo.setOtherPath(fileService.getFullPath(attachmentInfo.getOtherPath()));
+                }
+            });
+        }
         return productionListVO;
 
     }
