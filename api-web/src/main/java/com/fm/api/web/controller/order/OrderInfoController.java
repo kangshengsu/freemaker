@@ -12,11 +12,15 @@ import com.fm.business.base.enums.OrderStatus;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
+import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.order.OrderInfo;
+import com.fm.business.base.model.order.OrderInfoDetail;
+import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.order.IOrderFollowService;
+import com.fm.business.base.service.order.IOrderInfoDetailService;
 import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
@@ -48,6 +52,9 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
     private IOrderInfoService orderInfoService;
 
     @Autowired
+    private IOrderInfoDetailService orderInfoDetailService;
+
+    @Autowired
     private IOrderFollowService orderFollowService;
 
     @Autowired
@@ -58,6 +65,9 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
 
     @Autowired
     private IDemandInfoService demandInfoService;
+
+    @Autowired
+    private IBdJobCateService iBdJobCateService;
 
     @RequestMapping(value = "create",method = RequestMethod.POST)
     public ApiResponse<Boolean> create(@RequestBody OrderInfoVO form) {
@@ -96,25 +106,38 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
     }
 
     private void fillDetailInfo(List<OrderInfoVO> orderInfoVOS) {
+        List<Long> orderIds = new ArrayList<>();
         List<Long> freelancerIds = new ArrayList<>();
         List<Long> employerIds = new ArrayList<>();
         List<Long> demandIds = new ArrayList<>();
+        List<Long> jobCateIds = new ArrayList<>();
         for (OrderInfoVO orderInfoVO : orderInfoVOS) {
+            orderIds.add(orderInfoVO.getId());
             demandIds.add(orderInfoVO.getDemandId());
             freelancerIds.add(orderInfoVO.getFreelancerId());
             employerIds.add(orderInfoVO.getEmployerId());
+            jobCateIds.add(orderInfoVO.getJobCateId());
         }
 
         List<DemandInfo> demandInfos = demandInfoService.getByIds(demandIds);
+        List<OrderInfoDetail> orderDetails = orderInfoDetailService.getOrderDetailByOrderIds(orderIds);
+        List<FreelancerInfo> freelancerInfos = freelancerInfoService.getByIds(freelancerIds);
+        List<EmployerInfo> employerInfos = employerInfoService.getByIds(employerIds);
+        List<BdJobCate> bdJobCates = iBdJobCateService.getByIds(jobCateIds);
+        Map<Long, BdJobCate> bdJobCateMap = new HashMap<>();
         Map<Long, DemandInfo> demandInfoMap = new HashMap<>();
+        Map<Long, OrderInfoDetail> orderInfoDetailMap = new HashMap<>();
+        Map<Long, FreelancerInfo> freelancerInfoMap = new HashMap<>();
+        Map<Long, EmployerInfo> employerInfoMap = new HashMap<>();
+        for (BdJobCate bdJobCate : bdJobCates) {
+            bdJobCateMap.put(bdJobCate.getId(), bdJobCate);
+        }
         for (DemandInfo demandInfo : demandInfos) {
             demandInfoMap.put(demandInfo.getId(), demandInfo);
         }
-
-        List<FreelancerInfo> freelancerInfos = freelancerInfoService.getByIds(freelancerIds);
-        List<EmployerInfo> employerInfos = employerInfoService.getByIds(employerIds);
-        Map<Long, FreelancerInfo> freelancerInfoMap = new HashMap<>();
-        Map<Long, EmployerInfo> employerInfoMap = new HashMap<>();
+        for (OrderInfoDetail orderInfoDetail : orderDetails) {
+            orderInfoDetailMap.put(orderInfoDetail.getOrderId(),orderInfoDetail);
+        }
         for (FreelancerInfo freelancerInfo : freelancerInfos) {
             freelancerInfoMap.put(freelancerInfo.getId(), freelancerInfo);
         }
@@ -124,6 +147,12 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
 
 
         for (OrderInfoVO orderInfoVO : orderInfoVOS) {
+            if (bdJobCateMap.containsKey(orderInfoVO.getJobCateId())) {
+                orderInfoVO.setJobCateName(bdJobCateMap.get(orderInfoVO.getJobCateId()).getCateName());
+            }
+            if(orderInfoDetailMap.containsKey(orderInfoVO.getId())){
+                orderInfoVO.setOrderInfoDetail(orderInfoDetailMap.get(orderInfoVO.getId()));
+            }
             if (demandInfoMap.containsKey(orderInfoVO.getDemandId())) {
                 orderInfoVO.setDemandSummarize(demandInfoMap.get(orderInfoVO.getDemandId()).getSummarize());
             }
