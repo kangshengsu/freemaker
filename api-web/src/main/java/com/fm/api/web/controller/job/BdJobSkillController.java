@@ -6,9 +6,12 @@
 */
 package com.fm.api.web.controller.job;
 
+import com.fm.api.web.vo.common.SelectItemVO;
 import com.fm.business.base.model.job.BdJobSkill;
 import com.fm.framework.core.query.Page;
 import com.fm.business.base.service.IBdJobSkillService;
+import com.fm.framework.core.query.QueryItem;
+import com.fm.framework.core.query.QueryType;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
@@ -21,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
 *
 * <p>说明： 岗位技能API接口层</p>
@@ -31,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 */
 
 @RestController
-@RequestMapping("/bdJobSkill")
+@RequestMapping("/job/bdJobSkill")
 public class BdJobSkillController extends BaseController<BdJobSkill, BdJobSkillVO> {
 
     @Autowired
@@ -62,6 +68,23 @@ public class BdJobSkillController extends BaseController<BdJobSkill, BdJobSkillV
     public ApiResponse<Page<BdJobSkillVO>> list(@RequestBody QueryRequest queryRequest) {
 
         return super.list(queryRequest);
+    }
+
+    @RequestMapping(value = "getSkillByCateId",method = RequestMethod.GET)
+    public ApiResponse<List<SelectItemVO>> getSkillByCateId(String jobCateId) {
+        QueryItem item = new QueryItem();
+        item.setQueryField("jobCateId");
+        item.setValue(jobCateId);
+        item.setType(QueryType.eq);
+        ArrayList<QueryItem> queryList = new ArrayList();
+        queryList.add(item);
+        List<BdJobSkill> jobSkills = bdJobSkillService.get(queryList);
+        List<SelectItemVO> selItems = new ArrayList<>();
+        for (BdJobSkill jobSkill : jobSkills) {
+            selItems.add(new SelectItemVO(jobSkill.getId(), jobSkill.getSkillName()));
+        }
+
+        return this.success(selItems);
     }
 
 
