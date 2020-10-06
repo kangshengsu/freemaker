@@ -7,6 +7,7 @@
 package com.fm.business.base.service.order;
 
 import com.fm.business.base.model.order.OrderFollow;
+import com.fm.business.base.model.order.OrderInfo;
 import com.fm.framework.core.service.Service;
 
 /**
@@ -16,5 +17,5 @@ import com.fm.framework.core.service.Service;
  * 
  */
 public interface IOrderFollowService extends Service<OrderFollow> {
-	
+	void saveOperateFollow(OrderInfo orderInfo);
 }

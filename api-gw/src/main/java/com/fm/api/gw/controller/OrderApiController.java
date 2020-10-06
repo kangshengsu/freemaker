@@ -7,22 +7,21 @@
 package com.fm.api.gw.controller;
 
 import com.fm.api.gw.vo.OrderInfoVO;
+import com.fm.business.base.enums.OrderOperateRoleType;
 import com.fm.business.base.enums.OrderStatus;
 import com.fm.business.base.enums.UserType;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
-import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.order.OrderFollow;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.model.order.OrderInfoDetail;
-import com.fm.business.base.model.sys.SysUser;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.order.IOrderFollowService;
 import com.fm.business.base.service.order.IOrderInfoDetailService;
 import com.fm.business.base.service.order.IOrderInfoService;
-import com.fm.business.base.service.sys.ISysUserService;
+import com.fm.business.base.service.order.IOrderOperateInfoService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.query.QueryItem;
@@ -39,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +74,9 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
     @Autowired
     private IOrderFollowService orderFollowService;
+
+    @Autowired
+    private IOrderOperateInfoService orderOperateInfoService;
 
     @RequestMapping(value = "getOrderListByStakeholder",method = RequestMethod.GET)
     @ApiOperation(value="根据订单参与者ID获取订单（订单参与者：雇主/自由职业者）")
@@ -159,6 +160,13 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
         fillOrderDetailInfo(orderInfoVO);
 
+        // belong to
+        if (Context.getCurrEmployerId().equals(orderInfoVO.getEmployerId())) {
+            orderInfoVO.setOrderBelongType(OrderOperateRoleType.EMPLOYER.getCode());
+        } else if (Context.getCurrFreelancerId().equals(orderInfoVO.getFreelancerId())) {
+            orderInfoVO.setOrderBelongType(OrderOperateRoleType.FREELANCER.getCode());
+        }
+
         return ApiResponse.ofSuccess(orderInfoVO);
     }
 
@@ -196,7 +204,15 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
         // 写流水
         saveFollow(orderInfoVO);
+
+        // 写操作表
+        saveOperateInfo(orderInfoVO);
+
         return ApiResponse.ofSuccess(true);
+    }
+
+    private void saveOperateInfo(OrderInfoVO orderInfoVO) {
+        orderOperateInfoService.saveOperateInfo(orderInfoVO.getId(), orderInfoVO.getStatus(), orderInfoVO.getDescription(), orderInfoVO.getAttachmentList());
     }
 
     private void saveFollow(OrderInfoVO orderInfoVO) {

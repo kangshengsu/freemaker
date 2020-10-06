@@ -12,6 +12,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**   
  * @Description:(订单信息请求实体类)
@@ -164,4 +165,8 @@ public class OrderInfoVO extends VO implements Serializable {
 	 * 订单详细描述
 	 **/
 	private String description;
+
+	private Integer orderBelongType;
+
+	private List<String> attachmentList;
 }

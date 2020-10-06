@@ -1,5 +1,5 @@
 /**
- * @filename:OrderFollow 2020年09月11日
+ * @filename:OrderInfo 2020年09月11日
  * @project HowWork  V1.0
  * Copyright(c) 2020 LiuDuo Co. Ltd. 
  * All right reserved. 
@@ -9,18 +9,19 @@ package com.fm.business.base.model.order;
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
 import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 
 /**   
- * @Description:(订单流水实体类)
+ * @Description:(订单操作信息实体类)
  * 
  * @version: V1.0
  * @author: LiuDuo
  * 
  */
 @Data
-public class OrderFollow extends BaseModel implements Serializable,IAudit {
+public class OrderOperateInfo extends BaseModel implements Serializable,IAudit {
 
 	private static final long serialVersionUID = 1600497555102L;
 	
@@ -31,22 +32,25 @@ public class OrderFollow extends BaseModel implements Serializable,IAudit {
 
 
     /**
-    * 订单号
-    **/
-	private Long orderId;
+     * 订单编码
+     **/
+    private Long orderId;
+
+    /**
+     * 操作类型
+     **/
+    private Integer operateType;
+
+    /**
+     * 操作人
+     **/
+    private Long operateUser;
 
 
     /**
-    * 操作类型
-    **/
-	private Integer operateType;
-
-
-    /**
-    * 流水描述
-    **/
-	private String memo;
-
+     * 接收人
+     **/
+    private Long receiveUser;
 
     /**
     * 创建时间
@@ -71,13 +75,10 @@ public class OrderFollow extends BaseModel implements Serializable,IAudit {
     **/
 	private Long updateUser;
 
-
     /**
-     * 操作人
-     **/
-    private Long operateUser;
-
-
+     * 操作描述
+     */
+	private String description;
 
 
     /**

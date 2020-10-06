@@ -15,6 +15,7 @@ import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
+import com.fm.business.base.service.order.IOrderFollowService;
 import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
@@ -49,6 +50,9 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
     private IOrderInfoService orderInfoService;
 
     @Autowired
+    private IOrderFollowService orderFollowService;
+
+    @Autowired
     private IFreelancerInfoService freelancerInfoService;
 
     @Autowired
@@ -73,9 +77,9 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
 
     @RequestMapping(value = "update",method = RequestMethod.POST)
     public ApiResponse<Boolean> update(@RequestBody OrderInfoVO form) {
-
-        return super.update(form);
-
+        ApiResponse<Boolean> result = super.update(form);
+        orderFollowService.saveOperateFollow(this.convert(form));
+        return result;
     }
 
     @RequestMapping(value = "list",method = RequestMethod.POST)
