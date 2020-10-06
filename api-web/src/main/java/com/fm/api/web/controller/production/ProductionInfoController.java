@@ -81,9 +81,10 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
 
     @RequestMapping(value = "/update",method = RequestMethod.POST)
     public ApiResponse<Boolean> update(@RequestBody ProductionInfoVO form) {
-
+        if(form.getNeedReview()){
+            form.setStatus(ProductionStatus.REVIEW.getCode());
+        }
         return super.update(form);
-
     }
 
     @RequestMapping(value = "/list",method = RequestMethod.POST)
