@@ -108,10 +108,9 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
     public Integer getDemandCountByStatus(Long employerId, Integer status) {
         return getBaseMapper().selectCount(
                 getQueryWrapper().lambda()
-                        .groupBy()
                         .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
                         .eq(DemandInfo::getEmployerId, employerId)
-                        .eq(status != null, DemandInfo::getStatus, status));
+                        .eq(DemandInfo::getStatus, status));
     }
 
     @Override

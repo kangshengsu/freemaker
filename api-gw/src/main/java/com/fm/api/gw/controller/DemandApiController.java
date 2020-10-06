@@ -70,14 +70,13 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
 
     @ApiOperation(value = "获取不同状态下的需求总数")
     @RequestMapping(value = "getDemandGroupCount", method = RequestMethod.GET)
-    public ApiResponse<Map<String,Integer>> getDemandGroupCount() {
+    public ApiResponse<Map<String, Integer>> getDemandGroupCount() {
         Long currEmployerId = Context.getCurrEmployerId();
-        Integer totalCount = demandInfoService.getDemandCountByStatus(currEmployerId, null);
         Integer openedCount = demandInfoService.getDemandCountByStatus(currEmployerId, DemandStatus.RELEASE.getCode());
         Integer closedCount = demandInfoService.getDemandCountByStatus(currEmployerId, DemandStatus.CANCEL.getCode());
 
         Map<String, Integer> groupCount = new HashMap<>();
-        groupCount.put("total", totalCount);
+        groupCount.put("total", openedCount + closedCount);
         groupCount.put("opened", openedCount);
         groupCount.put("closed", closedCount);
 
@@ -137,7 +136,7 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
 
     @Override
     protected DemandInfoVO convert(DemandInfo model) {
-        if(Objects.isNull(model)){
+        if (Objects.isNull(model)) {
             return null;
         }
         DemandInfoVO form = super.convert(model);

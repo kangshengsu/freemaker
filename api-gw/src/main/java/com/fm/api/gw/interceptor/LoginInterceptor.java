@@ -33,7 +33,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         String userToken = request.getHeader("userToken");
         Boolean isNeedValid = Boolean.valueOf(request.getHeader("isNeedValid"));
-        if(!isNeedValid){
+        if (!isNeedValid) {
             return true;
         }
         log.info("小程序网关拦截器进入，token：{}", userToken);
@@ -49,16 +49,10 @@ public class LoginInterceptor implements HandlerInterceptor {
         return Optional.ofNullable(rBucket)
                 .map(bucket -> bucket.get())
                 .map(currUser -> {
-                    //此处频繁set也不好，因此仅缺值时更新
-                    if (Context.getCurrUserId() == null
-                            || Context.getCurrEmployerId() == null
-                            || Context.getCurrFreelancerId() == null
-                            || Context.getMiniAppSecretKey() == null) {
-                        Context.setCurrUser(currUser.getId());
-                        Context.setCurrEmployerId(currUser.getEmployerId());
-                        Context.setCurrFreelancerId(currUser.getFreeLancerId());
-                        Context.setMiniAppSecretKey(currUser.getSessionKey());
-                    }
+                    Context.setCurrUser(currUser.getId());
+                    Context.setCurrEmployerId(currUser.getEmployerId());
+                    Context.setCurrFreelancerId(currUser.getFreeLancerId());
+                    Context.setMiniAppSecretKey(currUser.getSessionKey());
                     return true;
                 })
                 .orElseGet(() -> {
