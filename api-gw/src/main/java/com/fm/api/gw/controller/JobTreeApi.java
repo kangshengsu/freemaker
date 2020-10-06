@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 */
 
 @RestController
-@RequestMapping("/jobTree")
+@RequestMapping("/v1/jobTree")
 public class JobTreeApi extends BaseController<BdJobCate, JobCateVO> {
 
     @Autowired
