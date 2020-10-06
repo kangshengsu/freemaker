@@ -81,9 +81,10 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
 
     @RequestMapping(value = "/update",method = RequestMethod.POST)
     public ApiResponse<Boolean> update(@RequestBody ProductionInfoVO form) {
-
+        if(form.getNeedReview()){
+            form.setStatus(ProductionStatus.REVIEW.getCode());
+        }
         return super.update(form);
-
     }
 
     @RequestMapping(value = "/list",method = RequestMethod.POST)
@@ -109,12 +110,6 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         if (bdJobCate != null) {
             form.setJobCateName(bdJobCate.getCateName());
         }
-        //技能标签 树路径
-        if(!CollectionUtils.isEmpty(model.getProductionSkillRelations())){
-            form.setJobs(model.getProductionSkillRelations().stream().map(productionSkillRelation ->
-                    JsonUtil.string2Obj(productionSkillRelation.getSkillTreePath(),new TypeReference<List<Long>>(){}))
-                    .collect(Collectors.toList()));
-        }
 
         return form;
     }
@@ -122,23 +117,7 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
     @Override
     protected ProductionInfo convert(ProductionInfoVO form) {
         ProductionInfo productionInfo = super.convert(form);
-        //现场景只允许选择同一个岗位下的技能
-        List<List<Long>> jobs = form.getJobs();
-        //获取岗位id
-        Long jobCateId = 0L;
-        //获取技能
-        List<ProductionSkillRelation> productionSkillRelations = new ArrayList<>();
-        productionInfo.setProductionSkillRelations(productionSkillRelations);
-        for( List<Long> job : jobs ){
 
-            ProductionSkillRelation productionSkillRelation = new ProductionSkillRelation();
-            productionSkillRelation.setJobSkillId(job.get(job.size() - 1));
-            productionSkillRelation.setSkillTreePath(JsonUtil.obj2String(job));
-            productionSkillRelations.add(productionSkillRelation);
-            //现阶段只支持 一个岗位下的技能数据
-            jobCateId = job.get(job.size() - 2);
-        };
-        productionInfo.setJobCateId(jobCateId);
         //不需要审核时直接发布状态
         if(!form.getNeedReview()){
             productionInfo.setStatus(ProductionStatus.RELEASE.getCode());

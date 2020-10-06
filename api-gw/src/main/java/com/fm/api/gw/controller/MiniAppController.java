@@ -190,7 +190,7 @@ public class MiniAppController {
             }
         } catch (Exception e) {
             log.info("获取用户手机号异常", e);
-            return ApiResponse.ofFailed(e.getMessage());
+            return ApiResponse.of(ApiStatus.SUCCESS,e.getMessage());
         }
         //更新用户表电话
         return ApiResponse.of(ApiStatus.SUCCESS, userInfo);

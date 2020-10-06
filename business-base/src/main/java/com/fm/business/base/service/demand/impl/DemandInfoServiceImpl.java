@@ -93,7 +93,6 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
         });
 
 
-
     }
 
 
@@ -150,6 +149,15 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
     }
 
     @Override
+    protected void beforeUpdate(DemandInfo model) {
+        super.beforeUpdate(model);
+        if (model.getJobCateId() != null) {
+            BdJobCate bdJobCate = bdJobCateService.get(model.getJobCateId());
+            model.setCateTreeCode(bdJobCate != null ? bdJobCate.getTreeCode() : "");
+        }
+    }
+
+    @Override
     protected void beforeSave(DemandInfo model) {
         super.beforeSave(model);
         if (StringUtils.isEmpty(model.getCode())) {
@@ -159,7 +167,10 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
         if (model.getStatus() == null) {
             model.setStatus(DemandStatus.RELEASE.getCode());
         }
-        model.setCateTreeCode("");
+        if (model.getJobCateId() != null) {
+            BdJobCate bdJobCate = bdJobCateService.get(model.getJobCateId());
+            model.setCateTreeCode(bdJobCate != null ? bdJobCate.getTreeCode() : "");
+        }
     }
 
     /**

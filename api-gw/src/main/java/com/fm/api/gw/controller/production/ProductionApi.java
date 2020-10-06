@@ -6,6 +6,7 @@
 */
 package com.fm.api.gw.controller.production;
 
+import com.fm.api.gw.vo.production.mapper.ProductionMapper;
 import com.fm.api.gw.vo.production.relation.AttachmentVO;
 import com.fm.api.gw.vo.production.req.ProductionApiVO;
 import com.fm.business.base.enums.ProductionStatus;
@@ -49,11 +50,12 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
     @Autowired
     private IProductionInfoService productionInfoService;
 
+    @Autowired
+    private ProductionMapper productionMapper;
     /**
      * 发布作品
      *
-     * 样例报文：{"id":"","code":"","title":"","summarize":"样例描述","hourlyWage":998,"freelancerId":3,"needReview":true,"jobs":[[8000,8001,16002],[8000,8001,18000],[8000,8001,20007]],"attachmentInfos":[{"name":"test1","path":"test/00001.jpg","otherPath":"test/00001.jpg"},{"name":"test2","path":"test/00001.jpg","otherPath":"test/00001.jpg"}]}
-     *
+     * {"id":null,"code":null,"title":"刘铎测试8","summarize":"阿斯达","hourlyWage":2312,"freelancerId":10000,"jobCateId":10006,"images":[{"name":"test1","path":"test/00001.jpg","otherPath":"test/00001.jpg"},{"name":"test2","path":"test/00001.jpg","otherPath":"test/00001.jpg"}],"skills":[{"jobSkillId":22006},{"jobSkillId":44001}]}
      * @param apiVO
      * @return
      */
@@ -63,7 +65,7 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
     public ApiResponse<Boolean> release(@RequestBody @Validated(value = {ProductionApiVO.Release.class}) ProductionApiVO apiVO){
         ProductionInfo productionInfo = convert(apiVO);
         //获取发布作者
-        productionInfo.setFreelancerId(Context.getCurrUserId());
+        productionInfo.setFreelancerId(Context.getCurrFreelancerId());
 
         productionInfoService.save(productionInfo);
 
@@ -73,7 +75,7 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
     /**
      * 修改作品
      *
-     * {"id":"1","code":"","title":"","summarize":"样例描述","hourlyWage":998,"freelancerId":3,"needReview":true,"jobs":[[8000,8001,16002],[8000,8001,18000],[8000,8001,20007]],"attachmentInfos":[{"name":"test1","path":"test/00001.jpg","otherPath":"test/00001.jpg"},{"name":"test2","path":"test/00001.jpg","otherPath":"test/00001.jpg"}]}
+     * {"id":1,"code":null,"title":"刘铎测试8","summarize":"阿斯达","hourlyWage":2312,"freelancerId":10000,"jobCateId":10006,"images":[{"name":"test1","path":"test/00001.jpg","otherPath":"test/00001.jpg"},{"name":"test2","path":"test/00001.jpg","otherPath":"test/00001.jpg"}],"skills":[{"jobSkillId":22006},{"jobSkillId":44001}]}
      * @param apiVO
      * @return
      */
@@ -81,12 +83,12 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
     @ApiOperation(value="修改作品")
     @ApiImplicitParam(name = "apiVO", value = "作品相关属性", dataType = "ProductionApiVO",paramType = "body")
     public ApiResponse<Boolean> modify(@RequestBody @Validated(value = {ProductionApiVO.Modify.class}) ProductionApiVO apiVO){
-        if (StringUtils.isEmpty(apiVO.getCode())) {
-            return ApiResponse.ofFailed("作品编号不能为空");
-        }
-        productionInfoService.updateByCode(convert(apiVO));
 
-        return ApiResponse.ofSuccess(Boolean.TRUE);
+        if(productionInfoService.update(convert(apiVO))){
+            return ApiResponse.ofSuccess(Boolean.TRUE);
+        }
+        return ApiResponse.ofSuccess(Boolean.FALSE);
+
     }
 
 
@@ -112,38 +114,7 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
 
     @Override
     protected ProductionInfo convert(ProductionApiVO form) {
-        ProductionInfo productionInfo = super.convert(form);
-        //现场景只允许选择同一个岗位下的技能
-        List<List<Long>> jobs = form.getJobs();
-        //获取岗位id
-        Long jobCateId = 0L;
-        //获取技能
-        List<ProductionSkillRelation> productionSkillRelations = new ArrayList<>();
-        productionInfo.setProductionSkillRelations(productionSkillRelations);
-        for( List<Long> job : jobs ){
-
-            ProductionSkillRelation productionSkillRelation = new ProductionSkillRelation();
-            productionSkillRelation.setJobSkillId(job.get(job.size() - 1));
-            productionSkillRelation.setSkillTreePath(JsonUtil.obj2String(job));
-            productionSkillRelations.add(productionSkillRelation);
-            //现阶段只支持 一个岗位下的技能数据
-            jobCateId = job.get(job.size() - 2);
-        };
-        productionInfo.setJobCateId(jobCateId);
-
-
-        List<AttachmentInfo> attachmentInfos = new ArrayList<>();
-        for(AttachmentVO item: form.getAttachmentInfos()){
-            AttachmentInfo attachmentInfo = new  AttachmentInfo();
-            attachmentInfo.setName(item.getName());
-            attachmentInfo.setOtherPath(item.getOtherPath());
-            attachmentInfo.setPath(item.getPath());
-            attachmentInfo.setType(item.getType());
-            attachmentInfos.add(attachmentInfo);
-        }
-        productionInfo.setAttachmentInfos(attachmentInfos);
-
-        return productionInfo;
+        return productionMapper.toProduction(form);
     }
 }
 
