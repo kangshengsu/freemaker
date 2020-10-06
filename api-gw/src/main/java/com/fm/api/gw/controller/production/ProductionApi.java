@@ -63,7 +63,7 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
     public ApiResponse<Boolean> release(@RequestBody @Validated(value = {ProductionApiVO.Release.class}) ProductionApiVO apiVO){
         ProductionInfo productionInfo = convert(apiVO);
         //获取发布作者
-        productionInfo.setFreelancerId(Context.getCurrUserId());
+        productionInfo.setFreelancerId(Context.getCurrFreelancerId());
 
         productionInfoService.save(productionInfo);
 
