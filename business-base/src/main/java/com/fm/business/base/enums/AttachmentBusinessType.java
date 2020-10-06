@@ -26,6 +26,7 @@ public enum AttachmentBusinessType {
      * 30-订单
      */
     ORDER(30,"订单"),
+    ORDER_OPERATE(31,"订单操作"),
     /**
      * 41-技能树头像
      */

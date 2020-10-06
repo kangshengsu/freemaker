@@ -16,6 +16,8 @@ import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IBdJobSkillService;
 import com.fm.framework.core.model.TreeNode;
 import com.fm.framework.core.query.Page;
+import com.fm.framework.core.query.QueryItem;
+import com.fm.framework.core.query.QueryType;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.core.utils.CodeUtil;
 import com.fm.framework.core.utils.TreeIncodeUtil;
@@ -173,6 +175,10 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
     @RequestMapping(value = "delJob",method = RequestMethod.POST)
     public ApiResponse<Boolean> delJob(@RequestBody JobNodeVO jobNodeVO) {
         ApiResponse<Boolean> result;
+        if (hasChildNode(jobNodeVO.getJobId())) {
+            return ApiResponse.ofFailed("非末级节点，不能删除！");
+        }
+
         if (JobNodeType.SKILL.getType().equals(jobNodeVO.getCateType())) {
             result = super.success(this.bdJobSkillService.delete(jobNodeVO.getJobId()));
         } else {
@@ -180,6 +186,18 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
         }
 
         return result;
+    }
+
+    private boolean hasChildNode(Long jobId) {
+        QueryItem item = new QueryItem();
+        item.setQueryField("parentId");
+        item.setValue(jobId);
+        item.setType(QueryType.eq);
+        ArrayList<QueryItem> queryList = new ArrayList();
+        queryList.add(item);
+        List<BdJobCate> bdJobSkills = bdJobCateService.get(queryList);
+
+        return bdJobSkills != null && bdJobSkills.size() > 0;
     }
 
     private JobNodeVO transferTree( List<JobNodeVO> treeNodeList) {

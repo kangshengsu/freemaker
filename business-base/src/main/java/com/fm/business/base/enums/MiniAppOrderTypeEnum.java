@@ -1,25 +1,38 @@
 package com.fm.business.base.enums;
 
+import lombok.Getter;
+
 /**
- * @author zhangleqi
- * @date 2020-10-02 6:41 下午
+ * 小程序订单视图层的订单分类（非真实订单分类）
  */
+@Getter
 public enum MiniAppOrderTypeEnum {
 
-    ALL(0,""),
-    RECEIVED(1, ""),
-    INITIATE(2,"");
+    /**
+     * 10 全部
+     */
+    ALL(10, "全部订单"),
+    /**
+     * 20-我发起的
+     */
+    INITIATE(20, "我发起的"),
+    /**
+     * 30-我收到的
+     */
+    RECEIVED(30, "我收到的");
 
+    /**
+     * 类型编码
+     */
     private Integer index;
 
-    private String name;
+    /**
+     * 名称
+     */
+    private String desc;
 
-    MiniAppOrderTypeEnum(Integer index, String name) {
+    MiniAppOrderTypeEnum(Integer index, String desc) {
         this.index = index;
-        this.name = name;
-    }
-
-    public Integer getIndex() {
-        return index;
+        this.desc = desc;
     }
 }

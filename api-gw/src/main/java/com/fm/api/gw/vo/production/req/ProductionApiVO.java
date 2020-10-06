@@ -76,6 +76,7 @@ public class ProductionApiVO extends VO implements Serializable {
     /**
      * 创建 修改 时的 领域-岗位-技能数据
      */
+    //作品可以没有技能类型，只有领域和岗位也ok
     @NotEmpty(message = "技能树列表不能为空",groups = {Release.class, Modify.class})
     private List<List<Long>> jobs;
 

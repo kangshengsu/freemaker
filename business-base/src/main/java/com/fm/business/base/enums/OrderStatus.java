@@ -1,32 +1,36 @@
 package com.fm.business.base.enums;
 
 public enum OrderStatus {
+    INIT_10(10,"下单", 0, OrderOperateRoleType.FREELANCER.getCode()),
 
+    REJECT_20(20,"已拒单", 7, OrderOperateRoleType.FREELANCER.getCode()),
 
-    INIT_10(10,"下单", 1),
+    TAKING_30(30,"已接单", 1, OrderOperateRoleType.EMPLOYER.getCode()),
 
-    REJECT_20(20,"已拒单", 2),
+    MAKING_40(40,"制作中", 2, OrderOperateRoleType.FREELANCER.getCode()),
 
-    TAKING_30(30,"已接单", 2),
+    CHECKING_50(50,"待验收", 3, OrderOperateRoleType.EMPLOYER.getCode()),
 
-    PAID_40(40,"已支付", 3),
+    CHECK_FAIL_60(60,"验收不通过", 4, OrderOperateRoleType.EMPLOYER.getCode()),
 
-    MAKING_50(50,"制作中", 4),
+    FINISHED_70(70,"已完成", 5, OrderOperateRoleType.EMPLOYER.getCode()),
 
-    CHECKING_60(60,"待验收", 5),
-
-    FINISHED_70(70,"已完成", 6),
-
-    EVALUATED_80(80,"已评价", 7);
+    EVALUATED_80(80,"已评价", 6, OrderOperateRoleType.EMPLOYER.getCode());
 
 
     private Integer code;
     private String name;
     private Integer step;
-    OrderStatus(int type, String name, Integer step) {
+
+    /**
+     * 操作类型（10：雇佣者操作; 20：自由职业者操作）
+     */
+    private Integer operateType;
+    OrderStatus(int type, String name, Integer step, Integer operateType) {
         this.code = type;
         this.name = name;
         this.step = step;
+        this.operateType = operateType;
     }
 
     public Integer getCode() {
@@ -38,6 +42,8 @@ public enum OrderStatus {
     }
 
     public String getName() { return this.name; }
+
+    public Integer getOperateType() { return this.operateType; }
 
     /**
      * 根据code获取枚举
