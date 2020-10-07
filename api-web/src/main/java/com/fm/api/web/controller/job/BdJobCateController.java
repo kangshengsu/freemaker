@@ -236,6 +236,13 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
         return model;
     }
 
+    @Override
+    protected BdJobCateVO convert(BdJobCate model) {
+        BdJobCateVO bdJobCateVO = new BdJobCateVO();
+        BeanUtils.copyProperties(model,bdJobCateVO);
+        return bdJobCateVO;
+    }
+
     /**
      * 组装 List<BdJobCateVO> 2 List<JobNodeVO>
      * @param bdJobCateVOs

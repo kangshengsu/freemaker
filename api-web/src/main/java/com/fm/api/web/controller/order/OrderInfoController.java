@@ -40,6 +40,7 @@ import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -275,6 +276,9 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
     }
 
     private List<OrderInfoDetail> getOrderDetailByOrderIds(List<Long> orderIds) {
+        if (CollectionUtils.isEmpty(orderIds)) {
+            return Collections.EMPTY_LIST;
+        }
         QueryItem item = new QueryItem();
         item.setQueryField("orderId");
         item.setValue(orderIds);
