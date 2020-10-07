@@ -54,6 +54,19 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
         return getBaseMapper().selectList(wrapper);
     }
 
+    @Override
+    public List<BdJobCate> findJobCatePost(String keyword) {
+        LambdaQueryWrapper<BdJobCate> wrapper = Wrappers.lambdaQuery(BdJobCate.class)
+                .eq(BdJobCate::getCateType, JobNodeType.POST.getType());
+
+        if(!StringUtils.isEmpty(keyword)){
+            wrapper.like(BdJobCate::getCateName, keyword)
+                    .or()
+                    .like(BdJobCate::getCateCode, keyword);
+        }
+        return getBaseMapper().selectList(wrapper);
+    }
+
     /**
      * 获取领域下岗位
      * @param DomainId 所属领域
@@ -73,6 +86,9 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
         }
         return getBaseMapper().selectList(wrapper);
     }
+
+
+
 
     @Override
     public List<BdJobCate> get(Collection<String> codes) {
@@ -104,6 +120,14 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
 
         return treePath.length() > 0 ? treePath.substring(1) : "";
 
+    }
+
+    @Override
+    public List<BdJobCate> findAllJobCatePost() {
+        LambdaQueryWrapper<BdJobCate> wrapper = Wrappers.lambdaQuery(BdJobCate.class)
+                .eq(BdJobCate::getCateType, JobNodeType.POST.getType());
+
+        return getBaseMapper().selectList(wrapper);
     }
 
     private List<BdJobCate> getJobNodes(List<String> treeCodes) {

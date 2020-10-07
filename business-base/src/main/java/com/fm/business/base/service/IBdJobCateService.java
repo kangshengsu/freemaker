@@ -27,6 +27,13 @@ public interface IBdJobCateService extends Service<BdJobCate> {
      */
     List<BdJobCate> findJobCateDomain(String keyword);
 
+    /**
+     * 获取全部领域
+     * @param keyword 名称或编码
+     * @return
+     */
+    List<BdJobCate> findJobCatePost(String keyword);
+
 
     /**
      * 获取领域下岗位
@@ -44,4 +51,10 @@ public interface IBdJobCateService extends Service<BdJobCate> {
     List<BdJobCate> get(Collection<String> codes);
 
     String getFullTreePathById(Long id);
+
+    /**
+     * 获取全部岗位
+     * @return 岗位集合
+     */
+    List<BdJobCate> findAllJobCatePost();
 }

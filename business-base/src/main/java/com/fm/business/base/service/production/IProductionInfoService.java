@@ -83,7 +83,10 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
 
     int updateByCode(ProductionInfo productionInfo);
 
-
-
-
+    /**
+     * 根据作品名称查询作品
+     * @param title 作品名称
+     * @return 作品集合
+     */
+    List<ProductionInfo> query(String title);
 }

@@ -159,10 +159,10 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
             jobSkill.setSkillName(newNode.getCateName());
             jobSkill.setEnglishName(newNode.getEnglishName());
             jobSkill.setIcon(newNode.getIcon());
-            jobSkill.setJobCateId(newNode.getParentId());
-            jobSkill.setTreeCode(newNode.getTreeCode());
-            jobSkill.setCateTreeCode(newNode.getParentCode());
             if (isAdd) {
+                jobSkill.setJobCateId(newNode.getParentId());
+                jobSkill.setTreeCode(newNode.getTreeCode());
+                jobSkill.setCateTreeCode(newNode.getParentCode());
                 result = super.success(bdJobSkillService.save(jobSkill));
             } else {
                 result = super.success(bdJobSkillService.update(jobSkill));
@@ -234,6 +234,13 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
         BdJobSkillVO model = new BdJobSkillVO();
         BeanUtils.copyProperties(form,model);
         return model;
+    }
+
+    @Override
+    protected BdJobCateVO convert(BdJobCate model) {
+        BdJobCateVO bdJobCateVO = new BdJobCateVO();
+        BeanUtils.copyProperties(model,bdJobCateVO);
+        return bdJobCateVO;
     }
 
     /**
