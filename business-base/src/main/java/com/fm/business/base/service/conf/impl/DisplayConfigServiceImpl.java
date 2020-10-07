@@ -1,5 +1,6 @@
 package com.fm.business.base.service.conf.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.conf.DisplayConfigMapper;
 import com.fm.business.base.model.conf.DisplayConfig;
@@ -10,10 +11,12 @@ import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.conf.IDisplayConfigService;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.service.AuditBaseService;
+import com.fm.framework.core.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,10 +41,16 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
      */
     private final IProductionInfoService productionInfoService;
 
+    /**
+     * 文件服务
+     */
+    private final FileService fileService;
+
     @Autowired
-    public DisplayConfigServiceImpl(IBdJobCateService bdJobCateService, IProductionInfoService productionInfoService) {
+    public DisplayConfigServiceImpl(IBdJobCateService bdJobCateService, IProductionInfoService productionInfoService, FileService fileService) {
         this.bdJobCateService = bdJobCateService;
         this.productionInfoService = productionInfoService;
+        this.fileService = fileService;
     }
 
     @Override
@@ -64,9 +73,25 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
 
         productionInfos.forEach(productionInfo -> {
             productionInfo.setProductionSkillRelations(null);
+            if(!CollectionUtils.isEmpty(productionInfo.getAttachmentInfos())) {
+                productionInfo.getAttachmentInfos().forEach(attachmentInfo -> {
+                    if(StringUtils.isNotBlank(attachmentInfo.getPath())) {
+                        attachmentInfo.setPath(getFullPath(attachmentInfo.getPath()));
+                        attachmentInfo.setOtherPath(getFullPath(attachmentInfo.getOtherPath()));
+                    }
+                });
+            }
         });
 
         return productionInfos;
+    }
+
+
+    private String getFullPath(String path) {
+        if(StringUtils.isNotBlank(path)) {
+            return fileService.getBaseUrl() + path;
+        }
+        return path;
     }
 
     /**
@@ -129,5 +154,23 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
         return this.list(Wrappers.lambdaQuery(DisplayConfig.class)
                 .eq(DisplayConfig::getDisplayType, displayType.getCode())
                 .ge(DisplayConfig::getExpiredTime, new Date()));
+    }
+
+    @Override
+    public boolean exist(Long displayId, DisplayType displayType) {
+        return count(displayId, displayType) > 0;
+    }
+
+    @Override
+    public int count(Long displayId, DisplayType displayType) {
+
+        if (Objects.isNull(displayId) || Objects.isNull(displayType) || displayType.getCode() <= 0) {
+            return 0;
+        }
+
+        return this.count(Wrappers.lambdaQuery(DisplayConfig.class)
+                .eq(DisplayConfig::getDisplayType, displayType.getCode())
+                .eq(DisplayConfig::getDisplayId, displayId));
+
     }
 }
