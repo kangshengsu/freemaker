@@ -410,6 +410,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
         LambdaQueryWrapper<ProductionInfo> queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class);
         queryWrapper.like(ProductionInfo::getTitle, title);
+        queryWrapper.eq(ProductionInfo::getStatus, ProductionStatus.RELEASE.getCode());
 
         return this.getBaseMapper()
                 .selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(1, 100), queryWrapper).getRecords();
