@@ -192,4 +192,5 @@ public class OrderInfoVO extends VO implements Serializable {
 
 	private List<String> attachmentList;
 
+	private Boolean canChargeback;
 }

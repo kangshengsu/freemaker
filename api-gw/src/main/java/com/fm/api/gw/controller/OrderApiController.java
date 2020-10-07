@@ -35,10 +35,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static javax.swing.UIManager.get;
 
@@ -169,7 +166,16 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
             orderInfoVO.setOrderBelongType(OrderOperateRoleType.FREELANCER.getCode());
         }
 
+        orderInfoVO.setCanChargeback(isHour48Ago(orderInfoVO.getCreateTime()));
         return ApiResponse.ofSuccess(orderInfoVO);
+    }
+
+    private boolean isHour48Ago(Date createTime) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.HOUR, -20);
+        Date Hour48Ago = cal.getTime();
+
+        return createTime.before(Hour48Ago);
     }
 
     private void fillOrderDetailInfo(OrderInfoVO orderInfoVO) {
