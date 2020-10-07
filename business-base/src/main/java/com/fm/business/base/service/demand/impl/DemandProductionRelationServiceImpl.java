@@ -48,6 +48,7 @@ public class DemandProductionRelationServiceImpl extends AuditBaseService<IDeman
         return getBaseMapper().selectList(Wrappers.lambdaQuery(DemandProductionRelation.class).eq(DemandProductionRelation::getDemandId, demandId));
     }
 
+
     @Override
     @Transactional
     public void recommend(Long demandId,List<Long> productionIds) {
