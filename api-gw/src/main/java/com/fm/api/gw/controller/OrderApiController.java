@@ -83,12 +83,15 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "currentPage", value = "当前页", dataType = "String",paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "页大小", dataType = "Integer",paramType = "query")})
-    public ApiResponse<Page<OrderInfoVO>> getOrderListByStakeholder(@RequestParam("currentPage") Integer currentPage
-            , @RequestParam("pageSize") Integer pageSize, @RequestParam("orderType") Integer orderType) {
+    public ApiResponse<Page<OrderInfoVO>> getOrderListByStakeholder(
+            @RequestParam("currentPage") Integer currentPage
+            , @RequestParam("pageSize") Integer pageSize
+            , @RequestParam("orderType") Integer orderType
+            , @RequestParam("status") Integer status) {
         Long currEmployerId = Context.getCurrEmployerId();
         Long currFreelancerId = Context.getCurrFreelancerId();
 
-        Page<OrderInfo> orderInfoPage = orderInfoService.queryOrderInfoByPage(currEmployerId, currFreelancerId, currentPage, pageSize,orderType);
+        Page<OrderInfo> orderInfoPage = orderInfoService.queryOrderInfoByPage(currEmployerId, currFreelancerId, currentPage, pageSize,orderType, status);
         Page<OrderInfoVO> orderInfoVOPage = convert(orderInfoPage);
 
         fillStatusName(orderInfoVOPage.getData());
@@ -190,12 +193,29 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         orderInfoVO.setEmployerId(Context.getCurrEmployerId());
         orderInfoVO.setStatus(OrderStatus.INIT_10.getCode());
         // search order info
-        orderInfoService.save(this.convert(orderInfoVO));
+        OrderInfo orderInfo = this.convert(orderInfoVO);
+        orderInfoService.save(orderInfo);
+
+        OrderInfoDetail orderInfoDetail = createDetailInfo(orderInfoVO, orderInfo.getId());
+        orderInfoDetailService.save(orderInfoDetail);
 
         // 写流水
         saveFollow(orderInfoVO);
 
         return ApiResponse.ofSuccess(true);
+    }
+
+    private OrderInfoDetail createDetailInfo(OrderInfoVO orderInfoVO, Long orderId) {
+        OrderInfoDetail orderInfoDetail = new OrderInfoDetail();
+        orderInfoDetail.setOrderId(orderId);
+        orderInfoDetail.setProvinceCode(orderInfoVO.getProvinceCode());
+        orderInfoDetail.setCityCode(orderInfoVO.getCityCode());
+        orderInfoDetail.setDistrictCode(orderInfoVO.getDistrictCode());
+        orderInfoDetail.setCountyCode(orderInfoVO.getCountyCode());
+        orderInfoDetail.setSummarize(orderInfoVO.getSummarize());
+        orderInfoDetail.setDescription(orderInfoVO.getDescription());
+
+        return orderInfoDetail;
     }
 
     @ApiOperation(value="订单状态变更")

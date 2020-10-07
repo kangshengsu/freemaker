@@ -47,11 +47,14 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
     }
 
     @Override
-    public Page<OrderInfo> queryOrderInfoByPage(Long employerId, Long freelancerId, long currPage, long pageSize,Integer orderType) {
+    public Page<OrderInfo> queryOrderInfoByPage(Long employerId, Long freelancerId, long currPage, long pageSize,Integer orderType, Integer status) {
         LambdaQueryWrapper<OrderInfo> wrapper = Wrappers.<OrderInfo>lambdaQuery()
-                .eq(!MiniAppOrderTypeEnum.RECEIVED.getIndex().equals(orderType),OrderInfo::getEmployerId, employerId)
-                .or(!MiniAppOrderTypeEnum.ALL.equals(orderType))
-                .eq(!MiniAppOrderTypeEnum.INITIATE.getIndex().equals(orderType),OrderInfo::getFreelancerId, freelancerId);
+                .eq(status > 0, OrderInfo::getStatus, status)
+                .and(wrapper1 -> wrapper1
+                        .eq(!MiniAppOrderTypeEnum.RECEIVED.getIndex().equals(orderType),OrderInfo::getEmployerId, employerId)
+                        .or(!MiniAppOrderTypeEnum.ALL.equals(orderType))
+                        .eq(!MiniAppOrderTypeEnum.INITIATE.getIndex().equals(orderType),OrderInfo::getFreelancerId, freelancerId));
+
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currPage, pageSize), wrapper));
     }
 }

@@ -155,6 +155,28 @@ public class OrderInfoVO extends VO implements Serializable {
 	 */
 	private Integer userType;
 
+	/**
+	 * 需求省份编码
+	 **/
+	private String provinceCode;
+
+
+	/**
+	 * 需求城市编码
+	 **/
+	private String cityCode;
+
+
+	/**
+	 * 需求区编码
+	 **/
+	private String districtCode;
+
+
+	/**
+	 * 需求县编码
+	 **/
+	private String countyCode;
 
 	/**
 	 * 订单概括
@@ -169,4 +191,5 @@ public class OrderInfoVO extends VO implements Serializable {
 	private Integer orderBelongType;
 
 	private List<String> attachmentList;
+
 }
