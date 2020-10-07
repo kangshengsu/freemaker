@@ -56,10 +56,9 @@ public class RecommendController extends BaseController<DemandProductionRelation
     private IProductionInfoService productionInfoService;
 
 
-    @RequestMapping(value = "getRecommendProductionInfoDemandId", method = RequestMethod.GET)
+    @RequestMapping(value = "getRecommendProductionInfoByDemandId", method = RequestMethod.GET)
     @ApiOperation(value = "根据需求id获取推荐的作品信息")
-    @ApiImplicitParam(paramType = "form", name = "recommendQueryRequest", value = "查询条件", required = true, dataType = "RecommendQueryRequest")
-    public ApiResponse<List<ProductionInfo>> getRecommendProductionInfoDemandId(@RequestParam("demandId") Long demandId) {
+    public ApiResponse<List<ProductionInfo>> getRecommendProductionInfoByDemandId(@RequestParam("demandId") Long demandId) {
         List<DemandProductionRelation> demandProductionRelations = demandProductionRelationService.getByDemandId(demandId);
         List<Long> productionIds = demandProductionRelations.stream().map(DemandProductionRelation::getProductionId).collect(Collectors.toList());
         List<ProductionInfo> productionInfos = productionInfoService.getFullInfo(productionIds);
