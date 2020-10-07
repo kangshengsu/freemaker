@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.conf.DisplayConfigMapper;
 import com.fm.business.base.model.conf.DisplayConfig;
+import com.fm.business.base.model.conf.DisplayConfigItemConvert;
+import com.fm.business.base.model.conf.DisplayConfigItem;
 import com.fm.business.base.model.conf.DisplayType;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.production.ProductionInfo;
@@ -56,19 +58,33 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
     @Override
     @Cacheable(value = "firstLevelJobCateConfig")
     public List<BdJobCate> getFirstLevelJobCateConfig() {
+        return getFirstLevelJobCateConfigNoCache();
+    }
+
+    @Override
+    public List<BdJobCate> getFirstLevelJobCateConfigNoCache() {
         return getJobCate(get(DisplayType.job_cate_1));
     }
 
     @Override
     @Cacheable(value = "secondLevelJobCateConfig")
     public List<BdJobCate> getSecondLevelJobCateConfig() {
+        return getSecondLevelJobCateConfigNoCache();
+    }
+
+    @Override
+    public List<BdJobCate> getSecondLevelJobCateConfigNoCache() {
         return getJobCate(get(DisplayType.job_cate_2));
     }
 
     @Override
     @Cacheable(value = "recommendProductInfoConfig")
     public List<ProductionInfo> getRecommendProductInfoConfig() {
+        return getRecommendProductInfoConfigNoCache();
+    }
 
+    @Override
+    public List<ProductionInfo> getRecommendProductInfoConfigNoCache() {
         List<ProductionInfo> productionInfos = getProductInfo(get(DisplayType.r_product_info));
 
         productionInfos.forEach(productionInfo -> {
@@ -89,7 +105,7 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
 
     private String getFullPath(String path) {
         if(StringUtils.isNotBlank(path)) {
-            return fileService.getBaseUrl() + path;
+            return fileService.getFullPath(path);
         }
         return path;
     }
@@ -172,5 +188,42 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
                 .eq(DisplayConfig::getDisplayType, displayType.getCode())
                 .eq(DisplayConfig::getDisplayId, displayId));
 
+    }
+
+    @Override
+    public List<DisplayConfigItem> getDisplayConfigItem(DisplayType displayType) {
+
+        switch (displayType) {
+            case job_cate_1:
+                List<BdJobCate> domainJobCateList = bdJobCateService.findJobCateDomain(null);
+                return domainJobCateList.stream().map(DisplayConfigItemConvert.INSTANCE::to).collect(Collectors.toList());
+            case job_cate_2:
+                List<BdJobCate> postJobCateList = bdJobCateService.findAllJobCatePost();
+                return postJobCateList.stream().map(DisplayConfigItemConvert.INSTANCE::to).collect(Collectors.toList());
+
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<DisplayConfigItem> getDisplayConfigItem(String title, DisplayType displayType) {
+        switch (displayType) {
+            case r_product_info:
+                return productionInfoService.query(title).stream().map(DisplayConfigItemConvert.INSTANCE::to).collect(Collectors.toList());
+        }
+
+        return null;
+    }
+
+    @Override
+    public DisplayConfigItem getDisplayConfigItem(Long displayId, DisplayType displayType) {
+
+        switch (displayType) {
+            case r_product_info:
+                return DisplayConfigItemConvert.INSTANCE.to(productionInfoService.get(displayId));
+        }
+
+        return null;
     }
 }

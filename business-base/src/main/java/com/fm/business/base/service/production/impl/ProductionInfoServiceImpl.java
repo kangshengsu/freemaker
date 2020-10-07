@@ -9,6 +9,7 @@ package com.fm.business.base.service.production.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -402,6 +403,16 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         UpdateWrapper<ProductionInfo> updateWrapper = Wrappers.update();
         updateWrapper.eq("code", model.getCode());
         return this.getBaseMapper().update(model, updateWrapper);
+    }
+
+    @Override
+    public List<ProductionInfo> query(String title) {
+
+        LambdaQueryWrapper<ProductionInfo> queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class);
+        queryWrapper.like(ProductionInfo::getTitle, title);
+
+        return this.getBaseMapper()
+                .selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(1, 100), queryWrapper).getRecords();
     }
 
 }
