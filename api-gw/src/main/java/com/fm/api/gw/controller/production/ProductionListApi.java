@@ -121,14 +121,6 @@ public class ProductionListApi extends BaseController<ProductionInfo,ProductionL
     @Override
     protected ProductionListVO convert(ProductionInfo model) {
         ProductionListVO productionListVO = productionMapper.toProductionListVO(model);
-        if (CollectionUtils.isNotEmpty(productionListVO.getImages())) {
-            productionListVO.getImages().forEach(attachmentInfo -> {
-                if(StringUtils.isNotBlank(attachmentInfo.getPath())) {
-                    attachmentInfo.setPath(fileService.getFullPath(attachmentInfo.getPath()));
-                    attachmentInfo.setOtherPath(fileService.getFullPath(attachmentInfo.getOtherPath()));
-                }
-            });
-        }
         return productionListVO;
 
     }

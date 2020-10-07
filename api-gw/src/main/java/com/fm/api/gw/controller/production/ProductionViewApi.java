@@ -85,12 +85,6 @@ public class ProductionViewApi extends BaseController<ProductionInfo, Production
     @Override
     protected ProductionViewVO convert(ProductionInfo model) {
         ProductionViewVO productionViewVO = productionMapper.toProductionViewVO(model);
-        productionViewVO.getImages().forEach(attachmentInfo -> {
-            if(StringUtils.isNotBlank(attachmentInfo.getPath())) {
-                attachmentInfo.setPath(fileService.getFullPath(attachmentInfo.getPath()));
-                attachmentInfo.setOtherPath(fileService.getFullPath(attachmentInfo.getOtherPath()));
-            }
-        });
         return productionViewVO;
 
     }
