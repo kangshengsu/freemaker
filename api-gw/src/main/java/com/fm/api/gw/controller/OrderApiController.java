@@ -187,6 +187,8 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     @ApiImplicitParam(paramType="query", name = "code", value = "订单信息", required = true, dataType = "String")
     @RequestMapping(value = "save",method = RequestMethod.POST)
     public ApiResponse<Boolean> save(@RequestBody OrderInfoVO orderInfoVO) {
+        orderInfoVO.setEmployerId(Context.getCurrEmployerId());
+        orderInfoVO.setStatus(OrderStatus.INIT_10.getCode());
         // search order info
         orderInfoService.save(this.convert(orderInfoVO));
 
@@ -220,6 +222,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         OrderFollow orderFollow = new OrderFollow();
         orderFollow.setOrderId(orderInfoVO.getId());
         orderFollow.setOperateType(orderInfoVO.getStatus());
+        orderFollow.setOperateUser(Context.getCurrUserId());
         orderFollow.setMemo(orderInfoVO.getMemo());
         orderFollowService.save(orderFollow);
     }
