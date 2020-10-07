@@ -1,5 +1,9 @@
 package com.fm.business.base.model.conf;
 
+import com.fm.framework.core.exception.BusinessException;
+
+import java.util.Arrays;
+
 /**
  * 展现类型
  * @author hubo
@@ -28,6 +32,12 @@ public enum DisplayType {
 
     public int getCode() {
         return code;
+    }
+
+    public static DisplayType resolver(int type) {
+        return Arrays.stream(values())
+                .filter(displayType -> displayType.getCode() == type)
+                .findFirst().orElseThrow(()-> new BusinessException("类型解析错误"));
     }
 
 
