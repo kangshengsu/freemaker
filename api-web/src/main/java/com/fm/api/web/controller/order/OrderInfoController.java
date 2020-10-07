@@ -118,8 +118,13 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
         OrderInfoVO orderInfoVO = this.convert(orderInfoService.get(id));
         fillDetailInfo(Arrays.asList(orderInfoVO));
         fillOperateInfo(orderInfoVO);
+        fillEvaluationInfo(orderInfoVO);
 
         return this.success(orderInfoVO);
+    }
+
+    private void fillEvaluationInfo(OrderInfoVO orderInfoVO) {
+
     }
 
     private void fillOperateInfo(OrderInfoVO orderInfoVO) {
