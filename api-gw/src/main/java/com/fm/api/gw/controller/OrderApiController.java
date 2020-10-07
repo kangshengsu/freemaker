@@ -166,16 +166,36 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
             orderInfoVO.setOrderBelongType(OrderOperateRoleType.FREELANCER.getCode());
         }
 
-        orderInfoVO.setCanChargeback(isHour48Ago(orderInfoVO.getCreateTime()));
+        orderInfoVO.setCanChargeback(isHour48Ago(orderInfoVO.getId()));
         return ApiResponse.ofSuccess(orderInfoVO);
     }
 
-    private boolean isHour48Ago(Date createTime) {
+    private boolean isHour48Ago(Long orderId) {
+        List<QueryItem> queryItems = new ArrayList<>();
+        QueryItem queryItem = new QueryItem();
+        queryItem.setQueryField("orderId");
+        queryItem.setType(QueryType.eq);
+        queryItem.setValue(orderId);
+        queryItems.add(queryItem);
+
+        queryItem = new QueryItem();
+        queryItem.setQueryField("operateType");
+        queryItem.setType(QueryType.eq);
+        queryItem.setValue(OrderStatus.TAKING_30.getCode());
+        queryItems.add(queryItem);
+
+        List<OrderFollow> ororderFollows = orderFollowService.get(queryItems);
+
+        Date createTime = null;
+        if (ororderFollows != null && ororderFollows.size() > 0) {
+            createTime = ororderFollows.get(0).getCreateTime();
+        }
+
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.HOUR, -20);
         Date Hour48Ago = cal.getTime();
 
-        return createTime.before(Hour48Ago);
+        return createTime != null && createTime.before(Hour48Ago);
     }
 
     private void fillOrderDetailInfo(OrderInfoVO orderInfoVO) {
