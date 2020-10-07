@@ -9,7 +9,6 @@ package com.fm.api.gw.controller;
 import com.fm.api.gw.vo.OrderInfoVO;
 import com.fm.business.base.enums.OrderOperateRoleType;
 import com.fm.business.base.enums.OrderStatus;
-import com.fm.business.base.enums.UserType;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.order.OrderFollow;
@@ -95,7 +94,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         Page<OrderInfoVO> orderInfoVOPage = convert(orderInfoPage);
 
         fillStatusName(orderInfoVOPage.getData());
-        fillUserType(orderInfoVOPage.getData(), currEmployerId, currFreelancerId);
+        fillBelongType(orderInfoVOPage.getData(), currEmployerId, currFreelancerId);
         fillOrderDetailInfo(orderInfoVOPage.getData());
 
         return ApiResponse.ofSuccess(orderInfoVOPage);
@@ -130,12 +129,12 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
     }
 
-    private void fillUserType(List<OrderInfoVO> data, Long currEmployerId, Long currFreelancerId) {
+    private void fillBelongType(List<OrderInfoVO> data, Long currEmployerId, Long currFreelancerId) {
         for (OrderInfoVO datum : data) {
             if (currEmployerId.equals(datum.getEmployerId())) {
-                datum.setUserType(UserType.EMPLOYER.getCode());
+                datum.setOrderBelongType(OrderOperateRoleType.EMPLOYER.getCode());
             } else if (currFreelancerId.equals(datum.getFreelancerId())) {
-                datum.setUserType(UserType.FREELANCER.getCode());
+                datum.setOrderBelongType(OrderOperateRoleType.FREELANCER.getCode());
             }
         }
     }
