@@ -3,7 +3,7 @@ spring:
   application:
     name: api-web
   profiles:
-    active: dev
+    active: ${profiles.active}
   cache:
     type: caffeine
     caffeine:
