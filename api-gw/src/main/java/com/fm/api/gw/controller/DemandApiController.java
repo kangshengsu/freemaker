@@ -107,7 +107,7 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
     @ApiOperation(value = "发布新需求")
     @RequestMapping(value = "publish", method = RequestMethod.POST)
     public ApiResponse<String> publish(@RequestBody DemandInfoVO form) {
-        form.setCode(CodeUtil.generateNewCode());
+        form.setCode(CodeUtil.generateNewCode2yyMMddHH());
         form.setEmployerId(Context.getCurrEmployerId());
         ApiResponse<Boolean> booleanApiResponse = super.create(form);
         if (ApiStatus.SUCCESS.getCode() == booleanApiResponse.getCode()) {

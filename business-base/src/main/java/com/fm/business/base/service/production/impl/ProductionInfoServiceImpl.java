@@ -69,7 +69,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
     protected void beforeSave(ProductionInfo model) {
         super.beforeSave(model);
         //生成code
-        model.setCode(CodeUtil.generateNewCode());
+        model.setCode(CodeUtil.generateNewCode2yyMMddHH());
         if (model.getStatus() == null) {
             model.setStatus(ProductionStatus.REVIEW.getCode());
         }

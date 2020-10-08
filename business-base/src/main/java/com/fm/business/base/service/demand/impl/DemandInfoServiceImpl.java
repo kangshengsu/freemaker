@@ -161,7 +161,7 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
         super.beforeSave(model);
         if (StringUtils.isEmpty(model.getCode())) {
             //生成code
-            model.setCode(CodeUtil.generateNewCode());
+            model.setCode(CodeUtil.generateNewCode2yyMMddHH());
         }
         if (model.getStatus() == null) {
             model.setStatus(DemandStatus.RELEASE.getCode());

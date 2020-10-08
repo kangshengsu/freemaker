@@ -139,7 +139,7 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
 
     private ApiResponse<Boolean> saveJob(BdJobCateVO newNode, boolean isAdd) {
         if (StringUtils.isBlank(newNode.getCateCode())) {
-            newNode.setCateCode(CodeUtil.generateNewCode());
+            newNode.setCateCode(CodeUtil.generateNewCode2yyMMddHH());
         }
 
         newNode.setTreeCode(TreeIncodeUtil.create(newNode.getParentCode()));
