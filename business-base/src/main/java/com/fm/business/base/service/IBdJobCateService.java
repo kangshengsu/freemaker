@@ -11,6 +11,7 @@ import com.fm.framework.core.service.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description:(岗位服务层)

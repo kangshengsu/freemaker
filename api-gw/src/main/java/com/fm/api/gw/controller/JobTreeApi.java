@@ -60,11 +60,11 @@ public class JobTreeApi extends BaseController<BdJobCate, JobCateVO> {
         return ApiResponse.ofSuccess(treeRoot.getChilds());
     }
 
-    @RequestMapping(value = "skill",method = RequestMethod.GET)
-    public ApiResponse<List<JobSkillVO>> skill(@RequestParam(value="jobId") Long jobId) {
+    @RequestMapping(value = "getSkillList",method = RequestMethod.GET)
+    public ApiResponse<List<JobSkillVO>> getSkillList(@RequestParam(value="jobCateId") Long jobCateId) {
         QueryItem item = new QueryItem();
         item.setQueryField("jobCateId");
-        item.setValue(jobId);
+        item.setValue(jobCateId);
         item.setType(QueryType.eq);
         ArrayList<QueryItem> queryList = new ArrayList();
         queryList.add(item);

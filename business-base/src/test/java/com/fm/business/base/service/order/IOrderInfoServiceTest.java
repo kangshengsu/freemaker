@@ -21,7 +21,7 @@ public class IOrderInfoServiceTest {
     @Test
     public void queryOrderInfoByPage() {
 
-        Page<OrderInfo> orderInfoPage =  orderInfoService.queryOrderInfoByPage(null, null, 1, 50, 10, 10);
+        Page<OrderInfo> orderInfoPage =  orderInfoService.queryOrderInfoByPage(22L, 33L, 1, 50, 10, 80);
         log.info("{}", orderInfoPage.getData());
     }
 }

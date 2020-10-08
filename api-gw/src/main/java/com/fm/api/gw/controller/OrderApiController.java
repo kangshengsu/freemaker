@@ -7,15 +7,22 @@
 package com.fm.api.gw.controller;
 
 import com.fm.api.gw.vo.OrderInfoVO;
+import com.fm.api.gw.vo.evaluation.EvaluationInfoVO;
+import com.fm.business.base.enums.AttachmentBusinessType;
 import com.fm.business.base.enums.OrderOperateRoleType;
 import com.fm.business.base.enums.OrderStatus;
+import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.EmployerInfo;
+import com.fm.business.base.model.evaluation.EvaluationInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
+import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.order.OrderFollow;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.model.order.OrderInfoDetail;
+import com.fm.business.base.service.IAttachmentInfoService;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
+import com.fm.business.base.service.IEvaluationInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.order.IOrderFollowService;
 import com.fm.business.base.service.order.IOrderInfoDetailService;
@@ -26,18 +33,19 @@ import com.fm.framework.core.query.Page;
 import com.fm.framework.core.query.QueryItem;
 import com.fm.framework.core.query.QueryType;
 import com.fm.framework.core.service.Service;
+import com.fm.framework.core.utils.CodeUtil;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-
-import static javax.swing.UIManager.get;
 
 /**
 *
@@ -74,6 +82,12 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     @Autowired
     private IOrderOperateInfoService orderOperateInfoService;
 
+    @Autowired
+    private IEvaluationInfoService evaluationInfoService;
+
+    @Autowired
+    private IAttachmentInfoService attachmentInfoService;
+
     @RequestMapping(value = "getOrderListByStakeholder",method = RequestMethod.GET)
     @ApiOperation(value="根据订单参与者ID获取订单（订单参与者：雇主/自由职业者）")
     @ApiImplicitParams({
@@ -91,8 +105,11 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         Page<OrderInfoVO> orderInfoVOPage = convert(orderInfoPage);
 
         fillStatusName(orderInfoVOPage.getData());
+        fillJobInfos(orderInfoVOPage.getData());
         fillBelongType(orderInfoVOPage.getData(), currEmployerId, currFreelancerId);
-        fillOrderDetailInfo(orderInfoVOPage.getData());
+        if (orderInfoVOPage.getData() != null && orderInfoVOPage.getData().size() > 0) {
+            fillOrderDetailInfo(orderInfoVOPage.getData());
+        }
 
         return ApiResponse.ofSuccess(orderInfoVOPage);
     }
@@ -167,7 +184,29 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         }
 
         orderInfoVO.setCanChargeback(isHour48Ago(orderInfoVO.getId()));
+
+        fillEvaluationInfo(orderInfoVO);
         return ApiResponse.ofSuccess(orderInfoVO);
+    }
+
+    private void fillEvaluationInfo(OrderInfoVO orderInfoVO) {
+        List<QueryItem> queryItems = new ArrayList<>();
+        QueryItem queryItem = new QueryItem();
+        queryItem.setQueryField("orderId");
+        queryItem.setType(QueryType.eq);
+        queryItem.setValue(orderInfoVO.getId());
+        queryItems.add(queryItem);
+        EvaluationInfo evaluationInfo = evaluationInfoService.getOne(queryItems);
+        EvaluationInfoVO evaluationInfoVO = new EvaluationInfoVO();
+        BeanUtils.copyProperties(evaluationInfo, evaluationInfoVO);
+
+        evaluationInfoVO.setAttachments(new ArrayList<>());
+        List<AttachmentInfo> attachmentInfos = attachmentInfoService.getByCodeAndType(evaluationInfoVO.getId().toString(), AttachmentBusinessType.ORDER_EVALUATION);
+        for (AttachmentInfo attachmentInfo : attachmentInfos) {
+            evaluationInfoVO.getAttachments().add(attachmentInfo.getPath());
+        }
+
+        orderInfoVO.setEvaluationInfoVO(evaluationInfoVO);
     }
 
     private boolean isHour48Ago(Long orderId) {
@@ -219,6 +258,10 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         orderInfoVO.setStatus(OrderStatus.INIT_10.getCode());
         // search order info
         OrderInfo orderInfo = this.convert(orderInfoVO);
+        if (StringUtils.isEmpty(orderInfo.getCode())) {
+            orderInfo.setCode(CodeUtil.generateNewCode());
+        }
+
         orderInfoService.save(orderInfo);
 
         OrderInfoDetail orderInfoDetail = createDetailInfo(orderInfoVO, orderInfo.getId());
@@ -284,6 +327,25 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
     private void fillJobInfo(OrderInfoVO orderInfoVO) {
         orderInfoVO.setJobCateName(bdJobCateService.getFullTreePathById(orderInfoVO.getJobCateId()));
+    }
+
+    private void fillJobInfos(List<OrderInfoVO> orderInfoVOs) {
+        List<Long> cateIds = new ArrayList<>();
+        for (OrderInfoVO orderInfoVO : orderInfoVOs) {
+            cateIds.add(orderInfoVO.getJobCateId());
+        }
+
+        Map<Long, BdJobCate> jobCateMap = new HashMap<>();
+        List<BdJobCate> bdJobCates = bdJobCateService.getByIds(cateIds);
+        for (BdJobCate bdJobCate : bdJobCates) {
+            jobCateMap.put(bdJobCate.getId(), bdJobCate);
+        }
+
+        for (OrderInfoVO orderInfoVO : orderInfoVOs) {
+            if (jobCateMap.containsKey(orderInfoVO.getJobCateId())) {
+                orderInfoVO.setJobCateName(jobCateMap.get(orderInfoVO.getJobCateId()).getCateName());
+            }
+        }
     }
 
     private OrderInfoVO fillUserInfo(OrderInfo orderInfo) {

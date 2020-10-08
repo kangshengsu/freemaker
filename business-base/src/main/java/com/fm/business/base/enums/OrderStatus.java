@@ -7,9 +7,9 @@ public enum OrderStatus {
 
     TAKING_30(30,"已接单", 1, OrderOperateRoleType.EMPLOYER.getCode()),
 
-    MAKING_40(40,"制作中", 2, OrderOperateRoleType.FREELANCER.getCode()),
+    MAKING_40(40,"制作中", 3, OrderOperateRoleType.FREELANCER.getCode()),
 
-    CHECKING_50(50,"待验收", 3, OrderOperateRoleType.EMPLOYER.getCode()),
+    CHECKING_50(50,"待验收", 4, OrderOperateRoleType.EMPLOYER.getCode()),
 
     CHECK_FAIL_60(60,"验收不通过", 4, OrderOperateRoleType.EMPLOYER.getCode()),
 
