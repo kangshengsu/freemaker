@@ -83,7 +83,7 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
                 wrapper.eq(OrderInfo::getEmployerId, _employerId);
                 break;
             case ALL:
-                wrapper.and(w-> wrapper.eq(OrderInfo::getFreelancerId, _freelancerId).or().eq(OrderInfo::getEmployerId, _employerId));
+                wrapper.and(w-> w.eq(OrderInfo::getFreelancerId, _freelancerId).or().eq(OrderInfo::getEmployerId, _employerId));
 
         }
 

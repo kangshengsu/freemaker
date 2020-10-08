@@ -16,9 +16,9 @@ import org.springframework.context.annotation.Bean;
 @EnableCaching
 public class TestStarter {
 
-    @Bean
-    public PaginationInterceptor paginationInterceptor() {
-        return new PaginationInterceptor();
-    }
+//    @Bean
+//    public PaginationInterceptor paginationInterceptor() {
+//        return new PaginationInterceptor();
+//    }
 
 }
