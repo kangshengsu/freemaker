@@ -73,7 +73,7 @@ public class ProductionViewApi extends BaseController<ProductionInfo, Production
     }
 
     @GetMapping("/getById")
-    @ApiOperation(value="根据作品编码查看作品详情")
+    @ApiOperation(value="根据作品ID查看作品详情")
     @ApiImplicitParam(name = "id", value = "作品ID", dataType = "Long",paramType = "query")
     public ApiResponse<ProductionViewVO> getById(@RequestParam("id") Long productionId){
 
