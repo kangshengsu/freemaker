@@ -22,7 +22,7 @@ import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.business.base.service.IAttachmentInfoService;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
-import com.fm.business.base.service.IEvaluationInfoService;
+import com.fm.business.base.service.evaluation.IEvaluationInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.order.IOrderFollowService;
 import com.fm.business.base.service.order.IOrderInfoDetailService;
@@ -204,10 +204,12 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         EvaluationInfoVO evaluationInfoVO = new EvaluationInfoVO();
         BeanUtils.copyProperties(evaluationInfo, evaluationInfoVO);
 
-        evaluationInfoVO.setAttachments(new ArrayList<>());
+        evaluationInfoVO.setImages(new ArrayList<>());
         List<AttachmentInfo> attachmentInfos = attachmentInfoService.getByCodeAndType(evaluationInfoVO.getId().toString(), AttachmentBusinessType.ORDER_EVALUATION);
         for (AttachmentInfo attachmentInfo : attachmentInfos) {
+/*
             evaluationInfoVO.getAttachments().add(attachmentInfo.getPath());
+*/
         }
 
         orderInfoVO.setEvaluationInfoVO(evaluationInfoVO);

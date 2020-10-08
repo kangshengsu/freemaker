@@ -1,11 +1,20 @@
 package com.fm.business.base.model.evaluation;
 
+import com.fm.business.base.model.AttachmentInfo;
+import com.fm.business.base.model.EmployerInfo;
+import com.fm.business.base.model.freelancer.FreelancerInfo;
+import com.fm.business.base.model.job.BdJobCate;
+import com.fm.business.base.model.job.BdJobTag;
+import com.fm.business.base.model.order.OrderInfo;
+import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+
 /**
  * @Description:(评价信息实体)
  * @version: V1.0
@@ -99,4 +108,21 @@ public class EvaluationInfo extends BaseModel implements Serializable, IAudit {
     public void setId(Long id) {
         this.id = id;
     }
+
+
+    private transient FreelancerInfo freelancerInfo;
+
+    private transient EmployerInfo employerInfo;
+
+    private transient OrderInfo orderInfo;
+
+    private transient OrderInfoDetail orderInfoDetail;
+
+    private transient BdJobCate bdJobCate;
+
+    private transient List<BdJobTag> bdJobTags;
+
+
+    private transient List<AttachmentInfo> attachmentInfos;
+
 }
