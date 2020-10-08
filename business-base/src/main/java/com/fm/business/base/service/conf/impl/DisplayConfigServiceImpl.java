@@ -155,8 +155,8 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
         }
 
         return this.list(Wrappers.lambdaQuery(DisplayConfig.class)
-                .eq(DisplayConfig::getDisplayType, displayType.getCode())
-                .ge(DisplayConfig::getExpiredTime, new Date()));
+                .eq(DisplayConfig::getDisplayType, displayType.getCode()));
+//                .ge(DisplayConfig::getExpiredTime, new Date()));
     }
 
     @Override
