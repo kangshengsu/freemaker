@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Description:(订单信息服务实现)
@@ -60,15 +61,30 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
         LambdaQueryWrapper<OrderInfo> wrapper = Wrappers.<OrderInfo>lambdaQuery()
                 .eq(status > 0, OrderInfo::getStatus, status);
 
+        log.info("queryOrderInfoByPage employerId: {}, freelancerId: {}, status: {}, orderType: {}", employerId, freelancerId, status, orderType);
+
+        if(Objects.isNull(employerId)) {
+            employerId = -1L;
+        }
+
+        if(Objects.isNull(freelancerId)) {
+            freelancerId = -1L;
+        }
+
+        final Long _employerId = employerId;
+        final Long _freelancerId = freelancerId;
+
         MiniAppOrderTypeEnum orderTypeEnum = MiniAppOrderTypeEnum.resolve(orderType);
         switch (orderTypeEnum) {
             case RECEIVED:
-                wrapper.eq(OrderInfo::getFreelancerId, freelancerId);
+                wrapper.eq(OrderInfo::getFreelancerId, _freelancerId);
                 break;
             case INITIATE:
-                wrapper.eq(OrderInfo::getEmployerId, employerId);
+                wrapper.eq(OrderInfo::getEmployerId, _employerId);
                 break;
             case ALL:
+                wrapper.and(w-> wrapper.eq(OrderInfo::getFreelancerId, _freelancerId).or().eq(OrderInfo::getEmployerId, _employerId));
+
         }
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currPage, pageSize), wrapper));
