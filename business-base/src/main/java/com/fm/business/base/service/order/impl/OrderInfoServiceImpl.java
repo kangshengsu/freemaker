@@ -12,10 +12,13 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.order.IOrderInfoMapper;
 import com.fm.business.base.enums.MiniAppOrderTypeEnum;
 import com.fm.business.base.enums.OrderStatus;
+import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.order.OrderInfo;
+import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.AuditBaseService;
+import com.fm.framework.core.utils.CodeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +34,12 @@ import java.util.List;
 @Slf4j
 @Service("orderInfoService")
 public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, OrderInfo> implements IOrderInfoService {
+
+    @Override
+    protected void beforeSave(OrderInfo model) {
+        super.beforeSave(model);
+        model.setCode(CodeUtil.generateNewCode());
+    }
 
     @Override
     public List<OrderInfo> queryFinishedOrderByFreelancer(Long freelancerId) {
