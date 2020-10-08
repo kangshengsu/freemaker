@@ -21,6 +21,22 @@ public class EvaluationInfoVO extends VO implements Serializable {
      */
     public Long orderId;
     /**
+     * 所属领域
+     **/
+    private Long jobCateId;
+    /**
+     * 技能全路径
+     **/
+    private String cateTreeCode;
+    /**
+     * 评价者主键
+     */
+    private Long employerId;
+    /**
+     * 被评价主键
+     **/
+    private Long freelancerId;
+    /**
      * 总体评价
      */
     public Double totalScore;

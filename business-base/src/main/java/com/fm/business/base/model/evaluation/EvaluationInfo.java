@@ -23,6 +23,22 @@ public class EvaluationInfo extends BaseModel implements Serializable, IAudit {
      */
     public Long orderId;
     /**
+     * 所属领域
+     **/
+    private Long jobCateId;
+    /**
+     * 技能全路径
+     **/
+    private String cateTreeCode;
+    /**
+     * 评价者主键
+     */
+    private Long employerId;
+    /**
+     * 被评价主键
+     **/
+    private Long freelancerId;
+    /**
      * 总体评价
      */
     public Double totalScore;
@@ -47,7 +63,6 @@ public class EvaluationInfo extends BaseModel implements Serializable, IAudit {
      **/
     private Date createTime;
 
-
     /**
      * 修改时间
      **/
@@ -65,4 +80,23 @@ public class EvaluationInfo extends BaseModel implements Serializable, IAudit {
      **/
     private Long updateUser;
 
+    /**
+     * 获取主键方法，主键整体平台定义成Long数据类型，方便数据的整体插入性能
+     *
+     * @return 主键
+     */
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * 设置模型主键
+     *
+     * @param id 主键
+     */
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
