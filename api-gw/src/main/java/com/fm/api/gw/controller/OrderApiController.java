@@ -197,6 +197,10 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         queryItem.setValue(orderInfoVO.getId());
         queryItems.add(queryItem);
         EvaluationInfo evaluationInfo = evaluationInfoService.getOne(queryItems);
+        if (evaluationInfo == null) {
+            return;
+        }
+
         EvaluationInfoVO evaluationInfoVO = new EvaluationInfoVO();
         BeanUtils.copyProperties(evaluationInfo, evaluationInfoVO);
 
