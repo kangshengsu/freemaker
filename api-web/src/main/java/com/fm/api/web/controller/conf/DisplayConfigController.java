@@ -106,7 +106,9 @@ public class DisplayConfigController extends BaseController<DisplayConfig, Displ
                         .stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
                 return modes.stream().map(displayConfig -> {
                     DisplayConfigVO configVO = DisplayConfigConvert.INSTANCE.to(displayConfig);
-                    configVO.setResourceName(bdJobMap1.get(configVO.getDisplayId()).getCateName());
+                    if(bdJobMap1.containsKey(configVO.getDisplayId())) {
+                        configVO.setResourceName(bdJobMap1.get(configVO.getDisplayId()).getCateName());
+                    }
                     return configVO;
                 }).collect(Collectors.toList());
             case job_cate_2:
@@ -114,7 +116,9 @@ public class DisplayConfigController extends BaseController<DisplayConfig, Displ
                         .stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
                 return modes.stream().map(displayConfig -> {
                     DisplayConfigVO configVO = DisplayConfigConvert.INSTANCE.to(displayConfig);
-                    configVO.setResourceName(bdJobMap2.get(configVO.getDisplayId()).getCateName());
+                    if(bdJobMap2.containsKey(configVO.getDisplayId())) {
+                        configVO.setResourceName(bdJobMap2.get(configVO.getDisplayId()).getCateName());
+                    }
                     return configVO;
                 }).collect(Collectors.toList());
             case r_product_info:
@@ -123,7 +127,9 @@ public class DisplayConfigController extends BaseController<DisplayConfig, Displ
 
                 return modes.stream().map(displayConfig -> {
                     DisplayConfigVO configVO = DisplayConfigConvert.INSTANCE.to(displayConfig);
-                    configVO.setResourceName(productionInfoMap.get(configVO.getDisplayId()).getTitle());
+                    if(productionInfoMap.containsKey(configVO.getDisplayId())) {
+                        configVO.setResourceName(productionInfoMap.get(configVO.getDisplayId()).getTitle());
+                    }
                     return configVO;
                 }).collect(Collectors.toList());
 
