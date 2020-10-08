@@ -1,6 +1,9 @@
 package com.fm.business.base.enums;
 
+import com.fm.framework.core.exception.BusinessException;
 import lombok.Getter;
+
+import java.util.Arrays;
 
 /**
  * 小程序订单视图层的订单分类（非真实订单分类）
@@ -35,4 +38,10 @@ public enum MiniAppOrderTypeEnum {
         this.index = index;
         this.desc = desc;
     }
+
+    public static MiniAppOrderTypeEnum resolve(Integer index) {
+        return Arrays.stream(values()).filter(v -> v.getIndex().equals(index)).findFirst().orElseThrow(()-> new BusinessException("MiniAppOrderTypeEnum type error"));
+
+    }
+
 }
