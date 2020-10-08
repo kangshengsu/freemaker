@@ -9,7 +9,6 @@ package com.fm.api.gw.controller;
 import com.fm.api.gw.vo.OrderInfoVO;
 import com.fm.business.base.enums.OrderOperateRoleType;
 import com.fm.business.base.enums.OrderStatus;
-import com.fm.business.base.enums.UserType;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.order.OrderFollow;
@@ -36,10 +35,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static javax.swing.UIManager.get;
 
@@ -83,16 +79,19 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "currentPage", value = "当前页", dataType = "String",paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "页大小", dataType = "Integer",paramType = "query")})
-    public ApiResponse<Page<OrderInfoVO>> getOrderListByStakeholder(@RequestParam("currentPage") Integer currentPage
-            , @RequestParam("pageSize") Integer pageSize, @RequestParam("orderType") Integer orderType) {
+    public ApiResponse<Page<OrderInfoVO>> getOrderListByStakeholder(
+            @RequestParam("currentPage") Integer currentPage
+            , @RequestParam("pageSize") Integer pageSize
+            , @RequestParam("orderType") Integer orderType
+            , @RequestParam("status") Integer status) {
         Long currEmployerId = Context.getCurrEmployerId();
         Long currFreelancerId = Context.getCurrFreelancerId();
 
-        Page<OrderInfo> orderInfoPage = orderInfoService.queryOrderInfoByPage(currEmployerId, currFreelancerId, currentPage, pageSize,orderType);
+        Page<OrderInfo> orderInfoPage = orderInfoService.queryOrderInfoByPage(currEmployerId, currFreelancerId, currentPage, pageSize,orderType, status);
         Page<OrderInfoVO> orderInfoVOPage = convert(orderInfoPage);
 
         fillStatusName(orderInfoVOPage.getData());
-        fillUserType(orderInfoVOPage.getData(), currEmployerId, currFreelancerId);
+        fillBelongType(orderInfoVOPage.getData(), currEmployerId, currFreelancerId);
         fillOrderDetailInfo(orderInfoVOPage.getData());
 
         return ApiResponse.ofSuccess(orderInfoVOPage);
@@ -127,12 +126,12 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
     }
 
-    private void fillUserType(List<OrderInfoVO> data, Long currEmployerId, Long currFreelancerId) {
+    private void fillBelongType(List<OrderInfoVO> data, Long currEmployerId, Long currFreelancerId) {
         for (OrderInfoVO datum : data) {
             if (currEmployerId.equals(datum.getEmployerId())) {
-                datum.setUserType(UserType.EMPLOYER.getCode());
+                datum.setOrderBelongType(OrderOperateRoleType.EMPLOYER.getCode());
             } else if (currFreelancerId.equals(datum.getFreelancerId())) {
-                datum.setUserType(UserType.FREELANCER.getCode());
+                datum.setOrderBelongType(OrderOperateRoleType.FREELANCER.getCode());
             }
         }
     }
@@ -167,7 +166,36 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
             orderInfoVO.setOrderBelongType(OrderOperateRoleType.FREELANCER.getCode());
         }
 
+        orderInfoVO.setCanChargeback(isHour48Ago(orderInfoVO.getId()));
         return ApiResponse.ofSuccess(orderInfoVO);
+    }
+
+    private boolean isHour48Ago(Long orderId) {
+        List<QueryItem> queryItems = new ArrayList<>();
+        QueryItem queryItem = new QueryItem();
+        queryItem.setQueryField("orderId");
+        queryItem.setType(QueryType.eq);
+        queryItem.setValue(orderId);
+        queryItems.add(queryItem);
+
+        queryItem = new QueryItem();
+        queryItem.setQueryField("operateType");
+        queryItem.setType(QueryType.eq);
+        queryItem.setValue(OrderStatus.TAKING_30.getCode());
+        queryItems.add(queryItem);
+
+        List<OrderFollow> ororderFollows = orderFollowService.get(queryItems);
+
+        Date createTime = null;
+        if (ororderFollows != null && ororderFollows.size() > 0) {
+            createTime = ororderFollows.get(0).getCreateTime();
+        }
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.HOUR, -20);
+        Date Hour48Ago = cal.getTime();
+
+        return createTime != null && createTime.before(Hour48Ago);
     }
 
     private void fillOrderDetailInfo(OrderInfoVO orderInfoVO) {
@@ -187,13 +215,32 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     @ApiImplicitParam(paramType="query", name = "code", value = "订单信息", required = true, dataType = "String")
     @RequestMapping(value = "save",method = RequestMethod.POST)
     public ApiResponse<Boolean> save(@RequestBody OrderInfoVO orderInfoVO) {
+        orderInfoVO.setEmployerId(Context.getCurrEmployerId());
+        orderInfoVO.setStatus(OrderStatus.INIT_10.getCode());
         // search order info
-        orderInfoService.save(this.convert(orderInfoVO));
+        OrderInfo orderInfo = this.convert(orderInfoVO);
+        orderInfoService.save(orderInfo);
+
+        OrderInfoDetail orderInfoDetail = createDetailInfo(orderInfoVO, orderInfo.getId());
+        orderInfoDetailService.save(orderInfoDetail);
 
         // 写流水
         saveFollow(orderInfoVO);
 
         return ApiResponse.ofSuccess(true);
+    }
+
+    private OrderInfoDetail createDetailInfo(OrderInfoVO orderInfoVO, Long orderId) {
+        OrderInfoDetail orderInfoDetail = new OrderInfoDetail();
+        orderInfoDetail.setOrderId(orderId);
+        orderInfoDetail.setProvinceCode(orderInfoVO.getProvinceCode());
+        orderInfoDetail.setCityCode(orderInfoVO.getCityCode());
+        orderInfoDetail.setDistrictCode(orderInfoVO.getDistrictCode());
+        orderInfoDetail.setCountyCode(orderInfoVO.getCountyCode());
+        orderInfoDetail.setSummarize(orderInfoVO.getSummarize());
+        orderInfoDetail.setDescription(orderInfoVO.getDescription());
+
+        return orderInfoDetail;
     }
 
     @ApiOperation(value="订单状态变更")
@@ -220,6 +267,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         OrderFollow orderFollow = new OrderFollow();
         orderFollow.setOrderId(orderInfoVO.getId());
         orderFollow.setOperateType(orderInfoVO.getStatus());
+        orderFollow.setOperateUser(Context.getCurrUserId());
         orderFollow.setMemo(orderInfoVO.getMemo());
         orderFollowService.save(orderFollow);
     }
