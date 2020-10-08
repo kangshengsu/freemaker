@@ -1,5 +1,7 @@
 package com.fm.framework.core.utils;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
 /**
@@ -115,6 +117,10 @@ public class CodeUtil {
         return generateNewCode(DEFAULT_CODE_LEN, DEFAULT_FLAG, DEFAULT_FLAG_LEN, DEFAULT_CHECK_LEN);   //生成码9位
     }
 
+    public static String generateNewCode2yyMMddHH() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHH")) + generateNewCode();   //yyMMddHH + 9位码
+    }
+
 
     /**
      * 校验序列号是否合法
@@ -159,6 +165,7 @@ public class CodeUtil {
 
     public static void main(String[] args) {
         System.out.println(generateNewCode());
+        System.out.println(generateNewCode2yyMMddHH());
     }
 
 

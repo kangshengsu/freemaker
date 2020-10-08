@@ -39,7 +39,7 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
     @Override
     protected void beforeSave(OrderInfo model) {
         super.beforeSave(model);
-        model.setCode(CodeUtil.generateNewCode());
+        model.setCode(CodeUtil.generateNewCode2yyMMddHH());
     }
 
     @Override

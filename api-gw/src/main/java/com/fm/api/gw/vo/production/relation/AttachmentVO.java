@@ -48,4 +48,14 @@ public class AttachmentVO extends VO implements Serializable {
 	private String otherPath;
 
 
+	/**
+	 * 存放路径
+	 **/
+	private String fullPath;
+
+
+	/**
+	 * 其他路径（图片时存放压缩图片）
+	 **/
+	private String fullOtherPath;
 }

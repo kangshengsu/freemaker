@@ -86,19 +86,6 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
     @Override
     public List<ProductionInfo> getRecommendProductInfoConfigNoCache() {
         List<ProductionInfo> productionInfos = getProductInfo(get(DisplayType.r_product_info));
-
-        productionInfos.forEach(productionInfo -> {
-            productionInfo.setProductionSkillRelations(null);
-            if(!CollectionUtils.isEmpty(productionInfo.getAttachmentInfos())) {
-                productionInfo.getAttachmentInfos().forEach(attachmentInfo -> {
-                    if(StringUtils.isNotBlank(attachmentInfo.getPath())) {
-                        attachmentInfo.setPath(getFullPath(attachmentInfo.getPath()));
-                        attachmentInfo.setOtherPath(getFullPath(attachmentInfo.getOtherPath()));
-                    }
-                });
-            }
-        });
-
         return productionInfos;
     }
 
