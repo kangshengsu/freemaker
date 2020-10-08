@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.validation.ConstraintViolationException;
+
 
 /**
  * 统一异常处理
@@ -21,6 +23,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @ResponseBody
 @Slf4j
 public class ExceptionHandlerAdvice {
+
+    @ExceptionHandler
+    public ApiResponse<?> handleConstraintViolationException(ConstraintViolationException ex) {
+        return ApiResponse.ofFailed(ex.getMessage());
+    }
 
     @ExceptionHandler
     public ApiResponse<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {

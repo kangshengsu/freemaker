@@ -7,8 +7,11 @@
 package com.fm.business.base.service.production;
 
 import com.fm.business.base.enums.ProductionReviewStatus;
+import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.production.ProductionReviewInfo;
 import com.fm.framework.core.service.Service;
+
+import java.util.List;
 
 /**
  * @Description:(作品审核服务层)
@@ -29,5 +32,14 @@ public interface IProductionReviewInfoService extends Service<ProductionReviewIn
      * @return
      */
     boolean review(ProductionReviewInfo productionReviewInfo, ProductionReviewStatus productionReviewStatus);
+
+
+    /**
+     * 获取作品审核意见
+     * @param productionId
+     * @param statuses 为空时可获取全部状态数据
+     * @return
+     */
+    List<ProductionReviewInfo> getByProductionId(Long productionId, ProductionReviewStatus... statuses);
 
 }

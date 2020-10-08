@@ -61,6 +61,14 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
      */
     Page<ProductionInfo> findByCatePost(Integer currentPage,Integer pageSize,Long catePost);
 
+    /**
+     * 分页該作品崗位下的其他作品
+     * @param currentPage
+     * @param pageSize
+     * @param productionId 作品ID
+     * @return
+     */
+    Page<ProductionInfo> findByCatePostOther(Integer currentPage,Integer pageSize,Long productionId);
 
     /**
      * 分页获取技能下的所有作品
@@ -79,9 +87,8 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
      * @param freelancerId 自由职业者ID
      * @return
      */
-    Page<ProductionInfo> findByFreelancer(Integer currentPage, Integer pageSize, Long freelancerId, Collection<Integer> statuses);
+    Page<ProductionInfo> findByFreelancer(Integer currentPage, Integer pageSize, Long freelancerId, Integer... statuses);
 
-    int updateByCode(ProductionInfo productionInfo);
 
     /**
      * 根据作品名称查询作品

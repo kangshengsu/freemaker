@@ -173,7 +173,8 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
         //根据岗位获取作品数据
         Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getStatus, ProductionStatus.RELEASE.getCode())
-                .in(ProductionInfo::getJobCateId, catePosts.stream().map(bdJobCate -> bdJobCate.getId()).collect(Collectors.toSet()));
+                .in(ProductionInfo::getJobCateId, catePosts.stream().map(bdJobCate -> bdJobCate.getId()).collect(Collectors.toSet()))
+                .orderByDesc(ProductionInfo::getCreateTime);
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
     }
@@ -191,8 +192,34 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         //根据岗位获取作品数据
         Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class)
                 .eq(ProductionInfo::getStatus, ProductionStatus.RELEASE.getCode())
-                //todo zyc 验证入参 是否有"null"
-                .eq(Objects.nonNull(catePost),ProductionInfo::getJobCateId, catePost);
+                .eq(ProductionInfo::getJobCateId, catePost)
+                .orderByDesc(ProductionInfo::getCreateTime);
+
+        return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
+    }
+
+    /**
+     * 分页該作品崗位下的其他作品
+     *
+     * @param currentPage
+     * @param pageSize
+     * @param productionId 作品ID
+     * @return
+     */
+    @Override
+    public Page<ProductionInfo> findByCatePostOther(Integer currentPage, Integer pageSize, Long productionId) {
+
+        //获取作品下的岗位
+        ProductionInfo productionInfo = get(productionId);
+        if(productionInfo == null || productionInfo.getJobCateId() == null){
+            return new PageInfo();
+        }
+        //获取岗位下其他作品
+        Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class)
+                .eq(ProductionInfo::getStatus, ProductionStatus.RELEASE.getCode())
+                .eq(ProductionInfo::getJobCateId, productionInfo.getJobCateId())
+                .ne(ProductionInfo::getId, productionId)
+                .orderByDesc(ProductionInfo::getCreateTime);
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
     }
@@ -238,12 +265,13 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
      * @return
      */
     @Override
-    public Page<ProductionInfo> findByFreelancer(Integer currentPage, Integer pageSize, Long freelancerId, Collection<Integer> statuses) {
+    public Page<ProductionInfo> findByFreelancer(Integer currentPage, Integer pageSize, Long freelancerId, Integer... statuses) {
         //根据岗位获取作品数据
         LambdaQueryWrapper<ProductionInfo> queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class)
                 .eq(ProductionInfo::getFreelancerId, freelancerId)
-                .ne(ProductionInfo::getStatus, ProductionStatus.DELETED.getCode())
-                .in(!CollectionUtils.isEmpty(statuses), ProductionInfo::getStatus, statuses);
+                //.ne(ProductionInfo::getStatus, ProductionStatus.DELETED.getCode())
+                .in(statuses != null, ProductionInfo::getStatus, statuses)
+                .orderByDesc(ProductionInfo::getCreateTime);
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
     }
@@ -398,12 +426,6 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         return true;
     }
 
-    @Override
-    public int updateByCode(ProductionInfo model) {
-        UpdateWrapper<ProductionInfo> updateWrapper = Wrappers.update();
-        updateWrapper.eq("code", model.getCode());
-        return this.getBaseMapper().update(model, updateWrapper);
-    }
 
     @Override
     public List<ProductionInfo> query(String title) {

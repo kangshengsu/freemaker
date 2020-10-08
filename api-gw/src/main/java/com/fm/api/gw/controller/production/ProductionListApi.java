@@ -30,7 +30,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -51,8 +56,6 @@ public class ProductionListApi extends BaseController<ProductionInfo,ProductionL
 
     @Autowired
     private ProductionMapper productionMapper;
-    @Autowired
-    private FileService fileService;
 
 
     @GetMapping("/getByCateDomain")
@@ -84,6 +87,28 @@ public class ProductionListApi extends BaseController<ProductionInfo,ProductionL
 
     }
 
+    @GetMapping("/getByCatePostOther")
+    @ApiOperation(value="获取本作品相关的其他相同岗位作品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="productionId",value="作品ID",dataType="Long",paramType = "query"),
+            @ApiImplicitParam(name="limit",value="取前几条（最多10个,不传默认6个）",dataType="Integer",paramType = "query")})
+    public ApiResponse<List<ProductionListVO>> getByCatePostOther(@RequestParam("productionId") @NotNull(message = "作品ID不能为空") Long productionId,
+                                                                  @RequestParam("limit") @Max(value = 10,message = "最多10个") Integer limit){
+
+        if(limit == null){
+            limit = 6;
+        }
+        Page<ProductionInfo> productionInfoPage = productionInfoService.findByCatePostOther(1,limit,productionId);
+        if(productionInfoPage != null && productionInfoPage.getData() != null){
+
+            return success(productionInfoPage.getData().stream().map(productionInfo ->
+                    productionMapper.toProductionListVO(productionInfo)).collect(Collectors.toList()));
+        }
+
+        return success(Collections.EMPTY_LIST);
+
+    }
+
     @GetMapping("/getByCateSkill")
     @ApiOperation(value="根据技能获取作品（暂时作废，小程序无此诉求，如继续需使用请处理主子表依赖子表状态分页问题）")
     @ApiImplicitParams({
@@ -107,9 +132,8 @@ public class ProductionListApi extends BaseController<ProductionInfo,ProductionL
             @ApiImplicitParam(name="pageSize",value="每页数量",dataType="Integer",paramType = "query")})
     public ApiResponse<Page<ProductionListVO>> getByFreelancer(@RequestParam("currentPage") Integer currentPage,
                                                               @RequestParam("pageSize") Integer pageSize){
-        //所有状态都要查出来 注释了先
-//        Integer[] statues = {ProductionStatus.RELEASE.getCode()};
-        return success(convert(productionInfoService.findByFreelancer(currentPage,pageSize,Context.getCurrFreelancerId(),null)));
+        //只获取已发布状态数据
+        return success(convert(productionInfoService.findByFreelancer(currentPage,pageSize,Context.getCurrFreelancerId(),ProductionStatus.RELEASE.getCode())));
 
     }
 

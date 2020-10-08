@@ -7,6 +7,8 @@
 package com.fm.business.base.service.production.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.production.IProductionReviewInfoMapper;
 import com.fm.business.base.enums.ProductionReviewStatus;
 import com.fm.business.base.enums.ProductionStatus;
@@ -21,6 +23,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**   
  * @Description:(作品审核服务实现)
@@ -81,5 +89,26 @@ public class ProductionReviewInfoServiceImpl extends AuditBaseService<IProductio
 
 
         return true;
+    }
+
+    /**
+     * 获取作品审核意见
+     *
+     * @param productionId
+     * @param statuses     为空时可获取全部状态数据
+     * @return
+     */
+    @Override
+    public List<ProductionReviewInfo> getByProductionId(Long productionId, ProductionReviewStatus... statuses) {
+
+        if(productionId == null){
+            return Collections.EMPTY_LIST;
+        }
+        LambdaQueryWrapper<ProductionReviewInfo> lambdaQueryWrapper =
+                Wrappers.lambdaQuery(ProductionReviewInfo.class).eq(ProductionReviewInfo::getProductionId,productionId)
+                        .in(statuses != null,ProductionReviewInfo::getStatus,
+                                Arrays.stream(statuses).map(status -> status.getCode()).collect(Collectors.toList()).toArray());
+
+        return getBaseMapper().selectList(lambdaQueryWrapper);
     }
 }
