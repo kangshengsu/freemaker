@@ -14,6 +14,7 @@ import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.evaluation.EvaluationInfo;
 import com.fm.business.base.model.evaluation.EvaluationInfoTag;
+import com.fm.business.base.model.evaluation.OverallEvaluation;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.job.BdJobTag;
@@ -66,6 +67,11 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
         //补其他字段信息
         fillEvaluationInfo(evaluationInfos);
         return evaluationInfos;
+    }
+
+    @Override
+    public OverallEvaluation findOverallEvaluationByCateAndFreelancer(Long jobCateId, Long freelancerId) {
+        return this.getBaseMapper().findOverallEvaluationByCateAndFreelancer(jobCateId, freelancerId);
     }
 
     /**

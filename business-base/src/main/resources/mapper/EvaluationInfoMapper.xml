@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fm.business.base.dao.evaluationinfo.IEvaluationInfoMapper">
+
+    <resultMap id="overallEvaluationResultMap" type="com.fm.business.base.model.evaluation.OverallEvaluation">
+        <result column="freelancer_id" property="freelancerId"/>
+        <result column="total_score" property="totalScore"/>
+        <result column="result_score" property="resultScore"/>
+        <result column="process_score" property="processScore"/>
+        <result column="recommend_score" property="recommendScore"/>
+    </resultMap>
+
+    <select id="findOverallEvaluationByCateAndFreelancer" resultMap="overallEvaluationResultMap">
+        select freelancer_id
+             , round(avg(total_score), 1)     as total_score
+             , round(avg(result_score), 1)    as
+                                                 result_score
+             , round(avg(process_score), 1)   as process_score
+             , round(avg(recommend_score), 1) as recommend_score
+        from evaluation_info
+        where freelancer_id = #{freelancerId}
+          and job_cate_id = #{jobCateId}
+        group by freelancer_id
+    </select>
+
+</mapper>

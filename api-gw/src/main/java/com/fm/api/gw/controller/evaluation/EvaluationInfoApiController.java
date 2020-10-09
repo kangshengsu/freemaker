@@ -1,6 +1,7 @@
 package com.fm.api.gw.controller.evaluation;
 
 import com.fm.api.gw.vo.evaluation.EvaluationInfoVO;
+import com.fm.api.gw.vo.evaluation.OverallEvaluationVO;
 import com.fm.api.gw.vo.evaluation.mapper.EvaluationMapper;
 import com.fm.business.base.model.evaluation.EvaluationInfo;
 import com.fm.business.base.service.evaluation.IEvaluationInfoService;
@@ -44,6 +45,18 @@ public class EvaluationInfoApiController extends BaseController<EvaluationInfo, 
         List<EvaluationInfo> evaluationInfos = evaluationInfoService.findByCateAndFreelancer(jobCateId, freelancerId);
         return success(evaluationInfos.stream().map(evaluationInfo ->
                 evaluationMapper.toEvaluationListVO(evaluationInfo)).collect(Collectors.toList()));
+    }
+
+    @RequestMapping(value = "/findOverallEvaluationByCateAndFreelancer", method = RequestMethod.GET)
+    public ApiResponse<OverallEvaluationVO> findOverallEvaluationByCateAndFreelancer(@RequestParam("jobCateId") Long jobCateId,
+                                                                                     @RequestParam("freelancerId") Long freelancerId) {
+        if (jobCateId == null) {
+            return failed("请选择岗位信息");
+        }
+        if (freelancerId == null) {
+            return failed("请选择作者");
+        }
+        return success(evaluationMapper.toOverallEvaluationVO(evaluationInfoService.findOverallEvaluationByCateAndFreelancer(jobCateId, freelancerId)));
     }
 
 
