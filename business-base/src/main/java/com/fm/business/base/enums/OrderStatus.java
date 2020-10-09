@@ -1,13 +1,13 @@
 package com.fm.business.base.enums;
 
 public enum OrderStatus {
-    INIT_10(10, "已下单", 0, OrderOperateRoleType.FREELANCER.getCode()),
+    INIT_10(10, "已下单", 0, OrderOperateRoleType.EMPLOYER.getCode()),
 
-    WAITING_20(20, "待接单", 1, OrderOperateRoleType.FREELANCER.getCode()),
+    WAITING_20(20, "待接单", 1, OrderOperateRoleType.FREELANCER.getCode()),//已下单
 
     REJECT_30(30, "已拒单", 1, OrderOperateRoleType.FREELANCER.getCode()),
 
-    TAKING_40(40, "已接单", 2, OrderOperateRoleType.FREELANCER.getCode()), // = 待支付
+    TAKING_40(40, "待支付", 2, OrderOperateRoleType.FREELANCER.getCode()), // = 待支付
 
     PAID_50(50, "制作中", 3, OrderOperateRoleType.EMPLOYER.getCode()), // = 已支付
 
