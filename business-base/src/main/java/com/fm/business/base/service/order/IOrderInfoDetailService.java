@@ -9,6 +9,7 @@ package com.fm.business.base.service.order;
 import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.framework.core.service.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ public interface IOrderInfoDetailService extends Service<OrderInfoDetail> {
      * @param orderIds 订单主键
      * @return
      */
-    List<OrderInfoDetail> getOrderDetailByOrderIds(List<Long> orderIds);
+    List<OrderInfoDetail> getOrderDetailByOrderIds(Collection<Long> orderIds);
 
 
 }

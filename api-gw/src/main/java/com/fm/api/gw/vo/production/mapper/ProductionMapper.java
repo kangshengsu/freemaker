@@ -11,7 +11,6 @@ import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.model.production.ProductionReviewInfo;
 import com.fm.framework.core.service.FileService;
-import com.fm.framework.core.utils.SpringUtil;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -25,38 +24,41 @@ import org.springframework.util.StringUtils;
  * 作品相关映射
  */
 @Mapper(componentModel = "spring")
-public interface ProductionMapper {
+public abstract class ProductionMapper {
+
+    @Autowired
+    private FileService fileService;
 
     @Mapping(target = "images", source = "attachmentInfos")
     @Mapping(target = "statusName", source = "status", qualifiedByName = "statusConvert")
-    ProductionListVO toProductionListVO(ProductionInfo productionInfo);
+    public abstract  ProductionListVO toProductionListVO(ProductionInfo productionInfo);
 
     @Mappings({
             @Mapping(target = "images", source = "attachmentInfos"),
             @Mapping(target = "statusName", source = "status", qualifiedByName = "statusConvert"),
             @Mapping(target = "skills", source = "productionSkillRelations")
     })
-    ProductionViewVO toProductionViewVO(ProductionInfo productionInfo);
+    public abstract  ProductionViewVO toProductionViewVO(ProductionInfo productionInfo);
 
     @Mappings({
             @Mapping(source = "images", target = "attachmentInfos"),
             @Mapping(source = "skills", target = "productionSkillRelations")
     })
-    ProductionInfo toProduction(ProductionApiVO productionApiVO);
+    public abstract  ProductionInfo toProduction(ProductionApiVO productionApiVO);
 
     @Mappings({
             @Mapping(source = "path", target = "fullPath", qualifiedByName="fullPath"),
             @Mapping(source = "otherPath", target = "fullOtherPath", qualifiedByName="fullPath")
     })
-    AttachmentVO toAttachmentVO(AttachmentInfo attachmentInfo);
+    public abstract  AttachmentVO toAttachmentVO(AttachmentInfo attachmentInfo);
 
     @Mappings({
             @Mapping(target = "statusName", source = "status", qualifiedByName = "reviewStatusConvert")
     })
-    ReviewInfoVO toReviewInfoVO(ProductionReviewInfo productionReviewInfo);
+    public abstract  ReviewInfoVO toReviewInfoVO(ProductionReviewInfo productionReviewInfo);
 
     @Named("statusConvert")
-    default String statusConvert(Integer status) {
+    String statusConvert(Integer status) {
         if (ProductionStatus.get(status) != null) {
             return ProductionStatus.get(status).getName();
         }
@@ -64,7 +66,7 @@ public interface ProductionMapper {
     }
 
     @Named("reviewStatusConvert")
-    default String reviewStatusConvert(Integer status) {
+    String reviewStatusConvert(Integer status) {
         if (ProductionStatus.get(status) != null) {
             return ProductionReviewStatus.get(status).getName();
         }
@@ -77,9 +79,9 @@ public interface ProductionMapper {
      * @return
      */
     @Named("fullPath")
-    default String fullPath(String path) {
+     String fullPath(String path) {
         if (!StringUtils.isEmpty(path)) {
-            return SpringUtil.getBean(FileService.class).getFullPath(path);
+            return fileService.getFullPath(path);
         }
         return null;
     }
