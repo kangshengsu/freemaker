@@ -139,7 +139,7 @@ public class MiniAppController {
 
             currUser.set(miniAppUserVO, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
         }
-        loginReturnVO.setExistPhone(isExistPhone);
+        loginReturnVO.setHasPhone(isExistPhone);
         loginReturnVO.setUserToken(userToken);
 
         return ApiResponse.of(ApiStatus.SUCCESS.getCode(), ApiStatus.SUCCESS.getMessage(), loginReturnVO);
