@@ -65,9 +65,6 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
     private IOrderInfoDetailService orderInfoDetailService;
 
     @Autowired
-    private IOrderFollowService orderFollowService;
-
-    @Autowired
     private IOrderOperateInfoService orderOperateInfoService;
 
     @Autowired
@@ -102,7 +99,6 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
     @RequestMapping(value = "update",method = RequestMethod.POST)
     public ApiResponse<Boolean> update(@RequestBody OrderInfoVO form) {
         ApiResponse<Boolean> result = super.update(form);
-        orderFollowService.saveOperateFollow(this.convert(form));
         return result;
     }
 
