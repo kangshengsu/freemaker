@@ -41,4 +41,5 @@ public interface IEvaluationInfoService extends Service<EvaluationInfo> {
      * @return
      */
     EvaluationInfo findByOrderId(Long orderId);
+
 }

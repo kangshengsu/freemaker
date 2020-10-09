@@ -10,6 +10,7 @@ package com.fm.business.base.service.evaluation.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.evaluationinfo.IEvaluationInfoMapper;
 import com.fm.business.base.enums.AttachmentBusinessType;
+import com.fm.business.base.enums.AttachmentType;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.evaluation.EvaluationInfo;
@@ -20,11 +21,13 @@ import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.job.BdJobTag;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.model.order.OrderInfoDetail;
+import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.service.*;
 import com.fm.business.base.service.evaluation.IEvaluationInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.order.IOrderInfoDetailService;
 import com.fm.business.base.service.order.IOrderInfoService;
+import com.fm.framework.core.exception.BusinessException;
 import com.fm.framework.core.service.AuditBaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +87,62 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
         fillEvaluationInfo(Arrays.asList(evaluationInfo));
         return evaluationInfo;
     }
+
+
+    @Override
+    protected void beforeSave(EvaluationInfo evaluationInfo) {
+        super.beforeSave(evaluationInfo);
+        OrderInfo orderInfo = orderInfoService.get(evaluationInfo.getOrderId());
+        if (orderInfo == null) {
+            throw new BusinessException("评价失败,订单信息不存在");
+        }
+        evaluationInfo.setJobCateId(orderInfo.getJobCateId());
+        evaluationInfo.setCateTreeCode(orderInfo.getCateTreeCode());
+        evaluationInfo.setEmployerId(orderInfo.getEmployerId());
+        evaluationInfo.setFreelancerId(orderInfo.getFreelancerId());
+    }
+
+    @Override
+    protected void afterSave(EvaluationInfo evaluationInfo) {
+        super.afterSave(evaluationInfo);
+        saveTags(evaluationInfo);
+        saveAttachments(evaluationInfo);
+    }
+
+    /**
+     * 保存标签
+     * @param evaluationInfo
+     */
+    private void saveTags(EvaluationInfo evaluationInfo) {
+        List<BdJobTag> bdJobTags = evaluationInfo.getBdJobTags();
+        List<EvaluationInfoTag> evaluationInfoTags = new ArrayList<>(bdJobTags.size());
+        if (!CollectionUtils.isEmpty(bdJobTags)) {
+            for (BdJobTag bdJobTag : bdJobTags) {
+                EvaluationInfoTag evaluationInfoTag = new EvaluationInfoTag();
+                evaluationInfoTag.setEvaluationInfoId(evaluationInfo.getId());
+                evaluationInfoTag.setTagId(bdJobTag.getId());
+                evaluationInfoTags.add(evaluationInfoTag);
+            }
+            evaluationInfoTagService.save(evaluationInfoTags);
+        }
+    }
+
+    /**
+     * 保存附件
+     * @param evaluationInfo
+     */
+    private void saveAttachments(EvaluationInfo evaluationInfo) {
+        List<AttachmentInfo> attachmentInfos = evaluationInfo.getAttachmentInfos();
+        if (!CollectionUtils.isEmpty(attachmentInfos)) {
+            for (AttachmentInfo attachmentInfo : attachmentInfos) {
+                attachmentInfo.setBusinessCode(String.valueOf(evaluationInfo.getId()));
+                attachmentInfo.setBusinessType(AttachmentBusinessType.ORDER_EVALUATION.getCode());
+                attachmentInfo.setType(AttachmentType.PICTURE.getCode());
+            }
+           attachmentInfoService.save(attachmentInfos);
+        }
+    }
+
 
     /**
      * 补充评价信息

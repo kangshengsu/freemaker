@@ -34,6 +34,12 @@ public abstract class EvaluationMapper {
     })
     public abstract OverallEvaluationVO toOverallEvaluationVO(OverallEvaluation overallEvaluation);
 
+    @Mappings({
+            @Mapping(source = "images", target = "attachmentInfos")
+    })
+    public abstract EvaluationInfo toEvaluation(EvaluationInfoVO evaluationInfoVO);
+
+
 
     @Mappings({
             @Mapping(source = "path", target = "fullPath", qualifiedByName="fullPath"),

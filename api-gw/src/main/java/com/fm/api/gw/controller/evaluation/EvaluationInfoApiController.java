@@ -4,15 +4,14 @@ import com.fm.api.gw.vo.evaluation.EvaluationInfoVO;
 import com.fm.api.gw.vo.evaluation.OverallEvaluationVO;
 import com.fm.api.gw.vo.evaluation.mapper.EvaluationMapper;
 import com.fm.business.base.model.evaluation.EvaluationInfo;
+import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.service.evaluation.IEvaluationInfoService;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +31,13 @@ public class EvaluationInfoApiController extends BaseController<EvaluationInfo, 
 
     @Autowired
     private EvaluationMapper evaluationMapper;
+
+    @RequestMapping(value = "/evaluate", method = RequestMethod.POST)
+    public ApiResponse<Boolean> evaluate(@RequestBody EvaluationInfoVO evaluationInfoVO) {
+        EvaluationInfo evaluationInfo = convert(evaluationInfoVO);
+        evaluationInfoService.save(evaluationInfo);
+        return success(Boolean.TRUE);
+    }
 
     @RequestMapping(value = "/findByOrderId", method = RequestMethod.GET)
     public ApiResponse<EvaluationInfoVO> findByOrderId(@RequestParam("orderId") Long orderId) {
@@ -68,6 +74,10 @@ public class EvaluationInfoApiController extends BaseController<EvaluationInfo, 
         return success(evaluationMapper.toOverallEvaluationVO(evaluationInfoService.findOverallEvaluationByCateAndFreelancer(jobCateId, freelancerId)));
     }
 
+    @Override
+    protected EvaluationInfo convert(EvaluationInfoVO form) {
+        return evaluationMapper.toEvaluation(form);
+    }
 
     @Override
     protected Service<EvaluationInfo> service() {

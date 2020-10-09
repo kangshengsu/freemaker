@@ -18,6 +18,9 @@ import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.framework.web.VO;
 import lombok.Data;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +35,7 @@ public class EvaluationInfoVO extends VO implements Serializable {
     /**
      * 订单主键
      */
+    @NotNull(message = "订单不能为空")
     public Long orderId;
     /**
      * 所属领域
@@ -52,18 +56,26 @@ public class EvaluationInfoVO extends VO implements Serializable {
     /**
      * 总体评价
      */
+    @Min(value = 0,message = "总分不能小于0分")
+    @Max(value = 5,message = "总分不能大于5分")
     public Double totalScore;
     /**
      * 结果打分
      */
+    @Min(value = 0,message = "结果分不能小于0分")
+    @Max(value = 5,message = "结果分不能大于5分")
     public Double resultScore;
     /**
      * 过程打分
      */
+    @Min(value = 0,message = "过程分不能小于0分")
+    @Max(value = 5,message = "过程分不能大于5分")
     public Double processScore;
     /**
      * 推荐意向
      */
+    @Min(value = 0,message = "推荐分不能小于0分")
+    @Max(value = 5,message = "推荐分不能大于5分")
     public Double recommendScore;
     /**
      * 评价描述
