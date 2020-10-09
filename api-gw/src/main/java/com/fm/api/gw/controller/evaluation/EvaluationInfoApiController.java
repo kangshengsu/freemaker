@@ -32,8 +32,8 @@ public class EvaluationInfoApiController extends BaseController<EvaluationInfo, 
     @Autowired
     private EvaluationMapper evaluationMapper;
 
-    @RequestMapping(value = "/evaluate", method = RequestMethod.POST)
-    public ApiResponse<Boolean> evaluate(@RequestBody EvaluationInfoVO evaluationInfoVO) {
+    @RequestMapping(value = "/publish", method = RequestMethod.POST)
+    public ApiResponse<Boolean> publish(@RequestBody EvaluationInfoVO evaluationInfoVO) {
         EvaluationInfo evaluationInfo = convert(evaluationInfoVO);
         evaluationInfoService.save(evaluationInfo);
         return success(Boolean.TRUE);
