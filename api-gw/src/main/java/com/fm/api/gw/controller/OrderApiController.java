@@ -224,7 +224,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         queryItem = new QueryItem();
         queryItem.setQueryField("operateType");
         queryItem.setType(QueryType.eq);
-        queryItem.setValue(OrderStatus.TAKING_30.getCode());
+        queryItem.setValue(OrderStatus.TAKING_40.getCode());
         queryItems.add(queryItem);
 
         List<OrderFollow> ororderFollows = orderFollowService.get(queryItems);
