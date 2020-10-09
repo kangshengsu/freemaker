@@ -33,7 +33,6 @@ public interface EvaluationMapper {
 
 
 
-/*
     @Named("fullPath")
     default String fullPath(String path) {
         if (!StringUtils.isEmpty(path)) {
@@ -41,6 +40,5 @@ public interface EvaluationMapper {
         }
         return null;
     }
-*/
 
 }
