@@ -108,7 +108,7 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
         Map<Long, BdJobCate> bdJobCateMap = bdJobCateService.getByIds(jobCateIds)
                 .stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
 
-        List<EvaluationInfoTag>  evaluationInfoTags= evaluationInfoTagService.getByIds(evaluationIds);
+        List<EvaluationInfoTag>  evaluationInfoTags= evaluationInfoTagService.getTagsByEvaluationIds(evaluationIds);
 
         List<Long> tagIds = evaluationInfoTags.stream().map(EvaluationInfoTag::getTagId).collect(Collectors.toList());
         Map<Long, BdJobTag> bdJobTagMap = bdJobTagService.getByIds(tagIds)
