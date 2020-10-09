@@ -74,6 +74,17 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
         return this.getBaseMapper().findOverallEvaluationByCateAndFreelancer(jobCateId, freelancerId);
     }
 
+    @Override
+    public EvaluationInfo findByOrderId(Long orderId) {
+        EvaluationInfo evaluationInfo = getBaseMapper().selectOne(Wrappers.lambdaQuery(EvaluationInfo.class).eq(EvaluationInfo::getOrderId,
+                orderId));
+        if (evaluationInfo == null) {
+            return evaluationInfo;
+        }
+        fillEvaluationInfo(Arrays.asList(evaluationInfo));
+        return evaluationInfo;
+    }
+
     /**
      * 补充评价信息
      *

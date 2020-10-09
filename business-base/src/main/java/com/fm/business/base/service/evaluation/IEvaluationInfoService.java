@@ -34,4 +34,11 @@ public interface IEvaluationInfoService extends Service<EvaluationInfo> {
      * @return
      */
     OverallEvaluation findOverallEvaluationByCateAndFreelancer(Long jobCateId, Long freelancerId);
+
+    /**
+     * 根据作品ID获取评价信息
+     * @param orderId
+     * @return
+     */
+    EvaluationInfo findByOrderId(Long orderId);
 }

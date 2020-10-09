@@ -33,9 +33,18 @@ public class EvaluationInfoApiController extends BaseController<EvaluationInfo, 
     @Autowired
     private EvaluationMapper evaluationMapper;
 
+    @RequestMapping(value = "/findByOrderId", method = RequestMethod.GET)
+    public ApiResponse<EvaluationInfoVO> findByOrderId(@RequestParam("orderId") Long orderId) {
+        if (orderId == null) {
+            return failed("请选择订单");
+        }
+        EvaluationInfo evaluationInfo = evaluationInfoService.findByOrderId(orderId);
+        return success(evaluationMapper.toEvaluationListVO(evaluationInfo));
+    }
+
     @RequestMapping(value = "/findByCateAndFreelancer", method = RequestMethod.GET)
     public ApiResponse<List<EvaluationInfoVO>> findByCateAndFreelancer(@RequestParam("jobCateId") Long jobCateId,
-                                                                   @RequestParam("freelancerId") Long freelancerId) {
+                                                                       @RequestParam("freelancerId") Long freelancerId) {
         if (jobCateId == null) {
             return failed("请选择岗位信息");
         }
