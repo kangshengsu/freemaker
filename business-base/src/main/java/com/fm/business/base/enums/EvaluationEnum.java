@@ -9,7 +9,7 @@ public enum EvaluationEnum {
     POOR("非常差", 1D, 2D),
     COMMON("一般", 2D, 3D),
     GOOD("满意", 3D, 4D),
-    VERY_GOOD("超级棒", 4D, 4D);
+    VERY_GOOD("超级棒", 4D, 5D);
 
 
     EvaluationEnum(String desc, Double minimum, Double maximum) {
@@ -36,7 +36,7 @@ public enum EvaluationEnum {
             return "";
         }
         for (EvaluationEnum value : EvaluationEnum.values()) {
-            if (score >= value.getMinimum() && score < value.getMaximum()) {
+            if (score > value.getMinimum() && score <= value.getMaximum()) {
                 return value.getDesc();
             }
         }
