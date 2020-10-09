@@ -192,6 +192,11 @@ public class OrderInfoVO extends VO implements Serializable {
 
 	private Integer orderBelongType;
 
+	/**
+	 * 流水描述
+	 */
+	private String followDesc;
+
 	private List<String> attachmentList;
 
 	private Boolean canChargeback;

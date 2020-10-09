@@ -117,21 +117,9 @@ public class MiniAppController {
 
         } else {
             //构建各类用户信息 todo 1，code和name一样 2. 四级地址只有二级，和我们的四级地址库是否匹配 3.语言编码目前只存了一种，
-            convertSysUser(sysUser, weChatLoginVO, openId, phoneNumber);
-            //同步howwork账号、自由职业者、雇主信息
-            iSysUserService.update(sysUser);
             Long userId = sysUser.getId();
 
-
             List<QueryItem> queryItems = getQueryItemsForUserId(userId);
-
-            FreelancerInfo freelancerInfo = iFreelancerInfoService.getOne(queryItems);
-            convertFreelancerInfo(freelancerInfo, weChatLoginVO, userId, phoneNumber);
-
-            EmployerInfo employerInfo = iEmployerInfoService.getOne(queryItems);
-            convertEmployerInfo(employerInfo, weChatLoginVO, userId, phoneNumber);
-
-            iAccountInfoService.updateAccount(freelancerInfo, employerInfo);
 
             //塞入缓存
             MiniAppUserVO miniAppUserVO = new MiniAppUserVO();

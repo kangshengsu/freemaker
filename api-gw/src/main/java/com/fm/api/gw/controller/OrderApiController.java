@@ -22,7 +22,7 @@ import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.business.base.service.IAttachmentInfoService;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
-import com.fm.business.base.service.evaluation.IEvaluationInfoService;
+import com.fm.business.base.service.IEvaluationInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.order.IOrderFollowService;
 import com.fm.business.base.service.order.IOrderInfoDetailService;
@@ -81,12 +81,6 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
     @Autowired
     private IOrderOperateInfoService orderOperateInfoService;
-
-    @Autowired
-    private IEvaluationInfoService evaluationInfoService;
-
-    @Autowired
-    private IAttachmentInfoService attachmentInfoService;
 
     @RequestMapping(value = "getOrderListByStakeholder",method = RequestMethod.GET)
     @ApiOperation(value="根据订单参与者ID获取订单（订单参与者：雇主/自由职业者）")
@@ -185,34 +179,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
         orderInfoVO.setCanChargeback(isHour48Ago(orderInfoVO.getId()));
 
-        fillEvaluationInfo(orderInfoVO);
         return ApiResponse.ofSuccess(orderInfoVO);
-    }
-
-    private void fillEvaluationInfo(OrderInfoVO orderInfoVO) {
-        List<QueryItem> queryItems = new ArrayList<>();
-        QueryItem queryItem = new QueryItem();
-        queryItem.setQueryField("orderId");
-        queryItem.setType(QueryType.eq);
-        queryItem.setValue(orderInfoVO.getId());
-        queryItems.add(queryItem);
-        EvaluationInfo evaluationInfo = evaluationInfoService.getOne(queryItems);
-        if (evaluationInfo == null) {
-            return;
-        }
-
-        EvaluationInfoVO evaluationInfoVO = new EvaluationInfoVO();
-        BeanUtils.copyProperties(evaluationInfo, evaluationInfoVO);
-
-        evaluationInfoVO.setImages(new ArrayList<>());
-        List<AttachmentInfo> attachmentInfos = attachmentInfoService.getByCodeAndType(evaluationInfoVO.getId().toString(), AttachmentBusinessType.ORDER_EVALUATION);
-        for (AttachmentInfo attachmentInfo : attachmentInfos) {
-/*
-            evaluationInfoVO.getAttachments().add(attachmentInfo.getPath());
-*/
-        }
-
-        orderInfoVO.setEvaluationInfoVO(evaluationInfoVO);
     }
 
     private boolean isHour48Ago(Long orderId) {
@@ -226,7 +193,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         queryItem = new QueryItem();
         queryItem.setQueryField("operateType");
         queryItem.setType(QueryType.eq);
-        queryItem.setValue(OrderStatus.TAKING_30.getCode());
+        queryItem.setValue(OrderStatus.TAKING_40.getCode());
         queryItems.add(queryItem);
 
         List<OrderFollow> ororderFollows = orderFollowService.get(queryItems);
