@@ -83,6 +83,8 @@ public class JobTreeApi extends BaseController<BdJobCate, JobCateVO> {
     private JobSkillVO bdJobSill2JobSkillVO(BdJobSkill bdJobSkill){
         JobSkillVO jobSkillVO = new JobSkillVO();
         BeanUtils.copyProperties(bdJobSkill,jobSkillVO);
+        //todo 为甚copy失败
+        jobSkillVO.setId(bdJobSkill.getId());
         return jobSkillVO;
     }
 
