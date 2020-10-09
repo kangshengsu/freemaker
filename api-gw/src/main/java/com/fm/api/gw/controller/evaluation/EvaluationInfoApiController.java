@@ -7,12 +7,11 @@ import com.fm.business.base.service.evaluation.IEvaluationInfoService;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +32,7 @@ public class EvaluationInfoApiController extends BaseController<EvaluationInfo, 
     @Autowired
     private EvaluationMapper evaluationMapper;
 
-    @RequestMapping(value = "getEvaluationByCate", method = RequestMethod.GET)
+    @RequestMapping(value = "/getEvaluationByCate", method = RequestMethod.GET)
     public ApiResponse<List<EvaluationInfoVO>> getEvaluationByCate(@RequestParam("jobCateId") Long jobCateId,
                                                                    @RequestParam("freelancerId") Long freelancerId) {
         if (jobCateId == null) {

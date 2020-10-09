@@ -73,7 +73,7 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
     /**
      * 补充评价信息
      *
-     * @param productionInfos
+     * @param
      */
     private void fillEvaluationInfo(Collection<EvaluationInfo> evaluationInfos) {
 
@@ -103,7 +103,7 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
                 .stream().collect(Collectors.toMap(EmployerInfo::getId, Function.identity(), (v1, v2) -> v2));
         Map<Long, OrderInfo> orderInfoMap = orderInfoService.getByIds(orderIds)
                 .stream().collect(Collectors.toMap(OrderInfo::getId, Function.identity(), (v1, v2) -> v2));
-        Map<Long, OrderInfoDetail> orderDetailInfoMap = orderInfoDetailService.getByIds(orderIds)
+        Map<Long, OrderInfoDetail> orderDetailInfoMap = orderInfoDetailService.getOrderDetailByOrderIds(orderIds)
                 .stream().collect(Collectors.toMap(OrderInfoDetail::getOrderId, Function.identity(), (v1, v2) -> v2));
         Map<Long, BdJobCate> bdJobCateMap = bdJobCateService.getByIds(jobCateIds)
                 .stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
@@ -143,9 +143,6 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
             }
             if (employerInfoMap.containsKey(evaluationInfo.getEmployerId())) {
                 evaluationInfo.setEmployerInfo(employerInfoMap.get(evaluationInfo.getEmployerId()));
-            }
-            if (orderInfoMap.containsKey(evaluationInfo.getOrderId())) {
-                evaluationInfo.setOrderInfo(orderInfoMap.get(evaluationInfo.getOrderId()));
             }
             if (orderDetailInfoMap.containsKey(evaluationInfo.getOrderId())) {
                 evaluationInfo.setOrderInfoDetail(orderDetailInfoMap.get(evaluationInfo.getOrderId()));

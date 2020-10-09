@@ -32,11 +32,7 @@ public interface EvaluationMapper {
     AttachmentVO toAttachmentVO(AttachmentInfo attachmentInfo);
 
 
-    /**
-     * 补全路径
-     * @param path
-     * @return
-     */
+
     @Named("fullPath")
     default String fullPath(String path) {
         if (!StringUtils.isEmpty(path)) {
