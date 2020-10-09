@@ -18,5 +18,5 @@ public class LoginReturnVO {
     /**
      * 是否存在手机号
      */
-    private boolean isExistPhone;
+    private boolean hasPhone;
 }
