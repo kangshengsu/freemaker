@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.evaluationinfo.IEvaluationInfoMapper;
 import com.fm.business.base.enums.AttachmentBusinessType;
 import com.fm.business.base.enums.AttachmentType;
+import com.fm.business.base.enums.OrderStatus;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.evaluation.EvaluationInfo;
@@ -26,6 +27,7 @@ import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.service.*;
 import com.fm.business.base.service.evaluation.IEvaluationInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
+import com.fm.business.base.service.order.IOrderFollowService;
 import com.fm.business.base.service.order.IOrderInfoDetailService;
 import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.framework.core.exception.BusinessException;
@@ -114,6 +116,14 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
         super.afterSave(evaluationInfo);
         saveTags(evaluationInfo);
         saveAttachments(evaluationInfo);
+        updateOrderStatus(evaluationInfo);
+    }
+
+    private void updateOrderStatus(EvaluationInfo evaluationInfo) {
+        OrderInfo orderInfo = new OrderInfo();
+        orderInfo.setId(evaluationInfo.getOrderId());
+        orderInfo.setStatus(OrderStatus.EVALUATED_90.getCode());
+        orderInfoService.update(orderInfo);
     }
 
     /**

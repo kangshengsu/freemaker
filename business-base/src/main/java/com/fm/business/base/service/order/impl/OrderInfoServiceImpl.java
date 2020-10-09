@@ -12,11 +12,13 @@ import com.fm.business.base.dao.order.IOrderInfoMapper;
 import com.fm.business.base.enums.MiniAppOrderTypeEnum;
 import com.fm.business.base.enums.OrderStatus;
 import com.fm.business.base.model.order.OrderInfo;
+import com.fm.business.base.service.order.IOrderFollowService;
 import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.AuditBaseService;
 import com.fm.framework.core.utils.CodeUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,6 +34,8 @@ import java.util.Objects;
 @Slf4j
 @Service("orderInfoService")
 public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, OrderInfo> implements IOrderInfoService {
+    @Autowired
+    private IOrderFollowService orderFollowService;
 
     @Override
     protected void beforeSave(OrderInfo model) {
@@ -85,5 +89,11 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
         }
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currPage, pageSize), wrapper));
+    }
+
+    @Override
+    protected void afterSave(OrderInfo model) {
+        super.afterSave(model);
+        orderFollowService.saveOperateFollow(model);
     }
 }

@@ -85,17 +85,6 @@ public abstract class BaseController<M extends BaseModel, V extends VO> {
 
     protected abstract Service<M> service();
 
-    protected M convert(V form) {
-        M model = null;
-        try {
-            model = getMInstance();
-        } catch (IllegalAccessException e) {
-        } catch (InstantiationException e) {
-        }
-        BeanUtils.copyProperties(form, model);
-        return model;
-    }
-
     protected V convert(M model) {
         V form = null;
         try {
@@ -105,6 +94,17 @@ public abstract class BaseController<M extends BaseModel, V extends VO> {
         }
         BeanUtils.copyProperties(model, form);
         return form;
+    }
+
+    protected M convert(V form) {
+        M model = null;
+        try {
+            model = getMInstance();
+        } catch (IllegalAccessException e) {
+        } catch (InstantiationException e) {
+        }
+        BeanUtils.copyProperties(form, model);
+        return model;
     }
 
     protected List<V> convert(List<M> model) {

@@ -8,6 +8,7 @@ import java.util.Date;
 
 @Data
 public class JobSkillVO implements Serializable {
+    private Long id;
 
     /**
      *
