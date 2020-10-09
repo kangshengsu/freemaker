@@ -107,7 +107,8 @@ public class ProductionReviewInfoServiceImpl extends AuditBaseService<IProductio
         LambdaQueryWrapper<ProductionReviewInfo> lambdaQueryWrapper =
                 Wrappers.lambdaQuery(ProductionReviewInfo.class).eq(ProductionReviewInfo::getProductionId,productionId)
                         .in(statuses != null,ProductionReviewInfo::getStatus,
-                                Arrays.stream(statuses).map(status -> status.getCode()).collect(Collectors.toList()).toArray());
+                                Arrays.stream(statuses).map(status -> status.getCode()).collect(Collectors.toList()).toArray())
+                        .orderByDesc(ProductionReviewInfo::getCreateTime);
 
         return getBaseMapper().selectList(lambdaQueryWrapper);
     }
