@@ -52,9 +52,16 @@ public class ProductionViewVO extends ProductionListVO implements Serializable {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date createTime;
 
+    private Long jobCateId;
+
     /**
      * 技能
      */
     private List<SkillRelationVO> skills;
+
+    /**
+     * 发布用户编码
+     **/
+    private Long freelancerId;
 
 }

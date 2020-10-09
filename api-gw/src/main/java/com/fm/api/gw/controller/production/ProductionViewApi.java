@@ -69,7 +69,9 @@ public class ProductionViewApi extends BaseController<ProductionInfo, Production
         }else if(productionInfos.size() > 1){
             return failed(String.format("获取到多个%s作品数据",productionCode));
         }
-        return success(convert(productionInfos.get(0)));
+
+        ProductionViewVO productionViewVO = convert(productionInfos.get(0));
+        return success(productionViewVO);
     }
 
     @GetMapping("/getById")

@@ -8,7 +8,6 @@ package com.fm.api.gw.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.api.gw.vo.evaluation.EvaluationInfoVO;
-import com.fm.business.base.model.evaluation.EvaluationInfo;
 import com.fm.framework.web.VO;
 import lombok.Data;
 
@@ -112,9 +111,9 @@ public class OrderInfoVO extends VO implements Serializable {
 	private Long freelancerId;
 
 	/**
-	 * 需求执行人姓名
+	 * 需求执行人
 	 */
-	private String freelancerName;
+	private FreelancerInfoAppVO freelancer;
 
 
     /**
