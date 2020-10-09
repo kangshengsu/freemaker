@@ -6,8 +6,11 @@
 */
 package com.fm.api.gw.controller;
 
+import com.fm.api.gw.vo.FreelancerInfoAppVO;
 import com.fm.api.gw.vo.OrderInfoVO;
 import com.fm.api.gw.vo.evaluation.EvaluationInfoVO;
+import com.fm.api.gw.vo.freelancer.FreelancerInfoApiVO;
+import com.fm.business.base.dao.freelancer.IFreelancerInfoMapper;
 import com.fm.business.base.enums.AttachmentBusinessType;
 import com.fm.business.base.enums.OrderOperateRoleType;
 import com.fm.business.base.enums.OrderStatus;
@@ -80,6 +83,9 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
     @Autowired
     private IOrderOperateInfoService orderOperateInfoService;
+
+    @Autowired
+    private IFreelancerInfoMapper freelancerInfoMapper;
 
     @RequestMapping(value = "getOrderListByStakeholder",method = RequestMethod.GET)
     @ApiOperation(value="根据订单参与者ID获取订单（订单参与者：雇主/自由职业者）")
@@ -328,7 +334,11 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         // fill userInfo
         OrderInfoVO orderInfoVO = super.convert(orderInfo);
         if (freelancerInfo != null) {
-            orderInfoVO.setFreelancerName(freelancerInfo.getName());
+            FreelancerInfoAppVO freelancerInfoAppVO = new FreelancerInfoAppVO();
+            freelancerInfoAppVO.setName(freelancerInfo.getName());
+            freelancerInfoAppVO.setPhone(freelancerInfo.getPhone());
+
+            orderInfoVO.setFreelancer(freelancerInfoAppVO);
         }
 
         if (employerInfo != null) {
