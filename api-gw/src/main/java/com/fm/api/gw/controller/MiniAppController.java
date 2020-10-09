@@ -1,6 +1,7 @@
 package com.fm.api.gw.controller;
 
 import com.fm.api.gw.rpc.WxRpcService;
+import com.fm.api.gw.vo.LoginReturnVO;
 import com.fm.api.gw.vo.MiniAppUserVO;
 import com.fm.api.gw.vo.WeChatDecryptVO;
 import com.fm.api.gw.vo.WeChatLoginVO;
@@ -21,6 +22,7 @@ import com.fm.framework.web.response.ApiStatus;
 import io.swagger.annotations.ApiOperation;
 import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
@@ -69,14 +71,17 @@ public class MiniAppController {
      * @return
      */
     @RequestMapping(value = "/syncUserInfo", method = {RequestMethod.POST})
-    public ApiResponse getSessionKey(@RequestBody WeChatLoginVO weChatLoginVO) {
-
+    public ApiResponse<LoginReturnVO> getSessionKey(@RequestBody WeChatLoginVO weChatLoginVO) {
+        LoginReturnVO loginReturnVO = new LoginReturnVO();
         //获取sessionkey openId unionId
         WeChatDecryptVO weChatDecryptVO = wxRpcService.getSessionInfo(weChatLoginVO);
 
         String openId = weChatDecryptVO.getOpenId();
         SysUser sysUser = iSysUserService.findByCode(openId);
         String phoneNumber = "";
+        boolean isExistPhone = Optional.ofNullable(sysUser)
+                .map(u -> StringUtils.isNotBlank(u.getPhone()))
+                .orElse(false);
 
         //缓存用户信息，供拦截器使用
         String userToken = JwtUtil.generateToken(openId);
@@ -134,8 +139,10 @@ public class MiniAppController {
 
             currUser.set(miniAppUserVO, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
         }
+        loginReturnVO.setExistPhone(isExistPhone);
+        loginReturnVO.setUserToken(userToken);
 
-        return ApiResponse.of(ApiStatus.SUCCESS.getCode(), ApiStatus.SUCCESS.getMessage(), userToken);
+        return ApiResponse.of(ApiStatus.SUCCESS.getCode(), ApiStatus.SUCCESS.getMessage(), loginReturnVO);
     }
 
     private List<QueryItem> getQueryItemsForUserId(Long userId) {
@@ -158,7 +165,7 @@ public class MiniAppController {
             if (StringUtil.isNotBlank(Context.getMiniAppSecretKey())) {
                 phoneNumber = wxRpcService.getPhoneNumber(Context.getMiniAppSecretKey(), weChatLoginVO.getEncryptedData(), weChatLoginVO.getIv());
             }
-
+            log.info("手机号：{}", phoneNumber);
             if (StringUtil.isNotBlank(phoneNumber)) {
                 EmployerInfo employerInfo = new EmployerInfo();
                 employerInfo.setId(Context.getCurrEmployerId());
@@ -178,7 +185,7 @@ public class MiniAppController {
             }
         } catch (Exception e) {
             log.info("获取用户手机号异常", e);
-            return ApiResponse.of(ApiStatus.SUCCESS,e.getMessage());
+            return ApiResponse.of(ApiStatus.SUCCESS, e.getMessage());
         }
         //更新用户表电话
         return ApiResponse.of(ApiStatus.SUCCESS, userInfo);
