@@ -18,6 +18,7 @@ import com.fm.framework.core.service.BaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class OrderInfoDetailServiceImpl extends AuditBaseService<IOrderInfoDetai
 
 
     @Override
-    public List<OrderInfoDetail> getOrderDetailByOrderIds(List<Long> orderIds) {
+    public List<OrderInfoDetail> getOrderDetailByOrderIds(Collection<Long> orderIds) {
         if (CollectionUtils.isEmpty(orderIds)) {
             return Collections.EMPTY_LIST;
         }

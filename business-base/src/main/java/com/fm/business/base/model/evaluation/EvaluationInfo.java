@@ -114,8 +114,6 @@ public class EvaluationInfo extends BaseModel implements Serializable, IAudit {
 
     private transient EmployerInfo employerInfo;
 
-    private transient OrderInfo orderInfo;
-
     private transient OrderInfoDetail orderInfoDetail;
 
     private transient BdJobCate bdJobCate;
