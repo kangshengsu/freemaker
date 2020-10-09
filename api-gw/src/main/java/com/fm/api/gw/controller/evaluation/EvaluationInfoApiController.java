@@ -32,8 +32,8 @@ public class EvaluationInfoApiController extends BaseController<EvaluationInfo, 
     @Autowired
     private EvaluationMapper evaluationMapper;
 
-    @RequestMapping(value = "/getEvaluationByCate", method = RequestMethod.GET)
-    public ApiResponse<List<EvaluationInfoVO>> getEvaluationByCate(@RequestParam("jobCateId") Long jobCateId,
+    @RequestMapping(value = "/findByCateAndFreelancer", method = RequestMethod.GET)
+    public ApiResponse<List<EvaluationInfoVO>> findByCateAndFreelancer(@RequestParam("jobCateId") Long jobCateId,
                                                                    @RequestParam("freelancerId") Long freelancerId) {
         if (jobCateId == null) {
             return failed("请选择岗位信息");
