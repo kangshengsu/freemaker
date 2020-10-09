@@ -59,7 +59,7 @@ public class ProductionListApi extends BaseController<ProductionInfo,ProductionL
 
 
     @GetMapping("/getByCateDomain")
-    @ApiOperation(value="根据领域获取作品")
+    @ApiOperation(value="根据领域获取作品(只获取已发布作品)")
     @ApiImplicitParams({
             @ApiImplicitParam(name="cateDomain",value="领域ID",dataType="Long",paramType = "query"),
             @ApiImplicitParam(name="currentPage",value="当前页码",dataType="Integer",paramType = "query"),
@@ -74,7 +74,7 @@ public class ProductionListApi extends BaseController<ProductionInfo,ProductionL
     }
 
     @GetMapping("/getByCatePost")
-    @ApiOperation(value="根据岗位获取作品")
+    @ApiOperation(value="根据岗位获取作品(只获取已发布作品)")
     @ApiImplicitParams({
             @ApiImplicitParam(name="catePost",value="岗位ID",dataType="Long",paramType = "query"),
             @ApiImplicitParam(name="currentPage",value="当前页码",dataType="Integer",paramType = "query"),
@@ -88,7 +88,7 @@ public class ProductionListApi extends BaseController<ProductionInfo,ProductionL
     }
 
     @GetMapping("/getByCatePostOther")
-    @ApiOperation(value="获取本作品相关的其他相同岗位作品")
+    @ApiOperation(value="获取本作品相关的其他相同岗位作品(只获取已发布作品)")
     @ApiImplicitParams({
             @ApiImplicitParam(name="productionId",value="作品ID",dataType="Long",paramType = "query"),
             @ApiImplicitParam(name="limit",value="取前几条（最多10个,不传默认6个）",dataType="Integer",paramType = "query")})
@@ -125,15 +125,16 @@ public class ProductionListApi extends BaseController<ProductionInfo,ProductionL
     }
 
     @GetMapping("/getByFreelancer")
-    @ApiOperation(value="根据作者获取作品")
+    @ApiOperation(value="根据作者获取作品(只获取该作者已发布的作品)")
     @ApiImplicitParams({
             @ApiImplicitParam(name="freelancerId",value="自由职业者ID",dataType="Long",paramType = "query"),
             @ApiImplicitParam(name="currentPage",value="当前页码",dataType="Integer",paramType = "query"),
             @ApiImplicitParam(name="pageSize",value="每页数量",dataType="Integer",paramType = "query")})
     public ApiResponse<Page<ProductionListVO>> getByFreelancer(@RequestParam("currentPage") Integer currentPage,
-                                                              @RequestParam("pageSize") Integer pageSize){
+                                                              @RequestParam("pageSize") Integer pageSize,
+                                                               @RequestParam("freelancerId") Long freelancerId){
         //只获取已发布状态数据
-        return success(convert(productionInfoService.findByFreelancer(currentPage,pageSize,Context.getCurrFreelancerId(),ProductionStatus.RELEASE.getCode())));
+        return success(convert(productionInfoService.findByFreelancer(currentPage,pageSize,freelancerId,ProductionStatus.RELEASE.getCode())));
 
     }
 

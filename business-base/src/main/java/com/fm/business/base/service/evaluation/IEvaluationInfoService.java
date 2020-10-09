@@ -27,7 +27,7 @@ public interface IEvaluationInfoService extends Service<EvaluationInfo> {
      * @param str
      * @return
      */
-    List<EvaluationInfo> findByCateAndFreelancer( Long jobCateId, Long freelancerId);
+    List<EvaluationInfo> findByCateAndFreelancer( Long jobCateId, Long freelancerId,Integer limit);
     /**
      * 根据作者和岗位获取总体评价信息
      * @param str

@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,6 +63,16 @@ public class JobTagApi extends BaseController<BdJobTag, JobTagVO> {
 
         return ApiResponse.ofSuccess(this.convert(bdJobTagService.get(queryList)));
     }
+
+
+    @RequestMapping(value = "getTagByJobCateId",method = RequestMethod.GET)
+    public ApiResponse<List<JobTagVO>> getTagByJobCateId(@RequestParam("jobCateId") Long jobCateId) {
+        if (jobCateId == null) {
+            return ApiResponse.ofSuccess(Collections.emptyList());
+        }
+        return ApiResponse.ofSuccess(this.convert(bdJobTagService.getTagByJobCateId(jobCateId)));
+    }
+
 
     @Override
     protected Service<BdJobTag> service() {

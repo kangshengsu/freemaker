@@ -7,6 +7,7 @@
 package com.fm.business.base.service.evaluation.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.evaluationinfo.IEvaluationInfoMapper;
 import com.fm.business.base.enums.AttachmentBusinessType;
@@ -64,9 +65,15 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
     @Autowired
     private IBdJobTagService bdJobTagService;
     @Override
-    public List<EvaluationInfo> findByCateAndFreelancer(Long jobCateId, Long freelancerId) {
-        List<EvaluationInfo> evaluationInfos = getBaseMapper().selectList(Wrappers.lambdaQuery(EvaluationInfo.class).eq(EvaluationInfo::getJobCateId,
-                jobCateId).eq(EvaluationInfo::getFreelancerId, freelancerId));
+    public List<EvaluationInfo> findByCateAndFreelancer(Long jobCateId, Long freelancerId,Integer limit) {
+        LambdaQueryWrapper<EvaluationInfo> queryWrapper =
+                Wrappers.lambdaQuery(EvaluationInfo.class).eq(EvaluationInfo::getJobCateId,
+                jobCateId).eq(EvaluationInfo::getFreelancerId, freelancerId).orderByDesc(EvaluationInfo::getId);
+        if (limit != null) {
+            queryWrapper = queryWrapper.last(" limit " + limit);
+        }
+
+        List<EvaluationInfo> evaluationInfos = getBaseMapper().selectList(queryWrapper);
         //补其他字段信息
         fillEvaluationInfo(evaluationInfos);
         return evaluationInfos;
@@ -80,7 +87,7 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
     @Override
     public EvaluationInfo findByOrderId(Long orderId) {
         EvaluationInfo evaluationInfo = getBaseMapper().selectOne(Wrappers.lambdaQuery(EvaluationInfo.class).eq(EvaluationInfo::getOrderId,
-                orderId));
+                orderId).orderByDesc(EvaluationInfo::getId).last("limit 1"));
         if (evaluationInfo == null) {
             return evaluationInfo;
         }

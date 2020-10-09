@@ -87,6 +87,11 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         return super.update(form);
     }
 
+    @RequestMapping(value = "/updateStatus",method = RequestMethod.POST)
+    public ApiResponse<Boolean> updateStatus(@RequestBody ProductionInfoVO form) {
+        return success(productionInfoService.updateStatus(convert(form)));
+    }
+
     @RequestMapping(value = "/list",method = RequestMethod.POST)
     public ApiResponse<Page<ProductionInfoVO>> list(@RequestBody QueryRequest queryRequest) {
 
@@ -119,7 +124,7 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         ProductionInfo productionInfo = super.convert(form);
 
         //不需要审核时直接发布状态
-        if(!form.getNeedReview()){
+        if(form.getNeedReview() != null && !form.getNeedReview()){
             productionInfo.setStatus(ProductionStatus.RELEASE.getCode());
         }
 

@@ -18,9 +18,7 @@ import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.framework.web.VO;
 import lombok.Data;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -56,26 +54,32 @@ public class EvaluationInfoVO extends VO implements Serializable {
     /**
      * 总体评价
      */
-    @Min(value = 0,message = "总分不能小于0分")
-    @Max(value = 5,message = "总分不能大于5分")
+    @DecimalMin(value = "0.0",message = "总分不能小于0分")
+    @DecimalMax(value = "5.0",message = "总分不能大于5分")
+    @Digits(integer = 1, fraction = 1,message = "总分不合法,只能有一位小数")
+    @Digits(integer = 1, fraction = 1)
     public Double totalScore;
     /**
      * 结果打分
      */
-    @Min(value = 0,message = "结果分不能小于0分")
-    @Max(value = 5,message = "结果分不能大于5分")
+    @DecimalMin(value = "0.0",message = "结果分不能小于0分")
+    @DecimalMax(value = "5.0",message = "结果分不能大于5分")
+    @Digits(integer = 1, fraction = 1,message = "结果分数不合法,只能有一位小数")
+    @Digits(integer = 1, fraction = 1)
     public Double resultScore;
     /**
      * 过程打分
      */
-    @Min(value = 0,message = "过程分不能小于0分")
-    @Max(value = 5,message = "过程分不能大于5分")
+    @DecimalMin(value = "0.0",message = "过程分不能小于0分")
+    @DecimalMax(value = "5.0",message = "过程分不能大于5分")
+    @Digits(integer = 1, fraction = 1,message = "过程分数不合法,只能有一位小数")
     public Double processScore;
     /**
      * 推荐意向
      */
-    @Min(value = 0,message = "推荐分不能小于0分")
-    @Max(value = 5,message = "推荐分不能大于5分")
+    @DecimalMin(value = "0.0",message = "推荐分不能小于0分")
+    @DecimalMax(value = "5.0",message = "推荐分不能大于5分")
+    @Digits(integer = 1, fraction = 1,message = "推荐分数不合法,只能有一位小数")
     public Double recommendScore;
     /**
      * 评价描述
