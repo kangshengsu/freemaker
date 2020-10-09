@@ -50,14 +50,18 @@ public class EvaluationInfoApiController extends BaseController<EvaluationInfo, 
 
     @RequestMapping(value = "/findByCateAndFreelancer", method = RequestMethod.GET)
     public ApiResponse<List<EvaluationInfoVO>> findByCateAndFreelancer(@RequestParam("jobCateId") Long jobCateId,
-                                                                       @RequestParam("freelancerId") Long freelancerId) {
+                                                                       @RequestParam("freelancerId") Long freelancerId,
+                                                                       @RequestParam(value = "recent", required = false) Integer recent) {
         if (jobCateId == null) {
             return failed("请选择岗位信息");
         }
         if (freelancerId == null) {
             return failed("请选择作者");
         }
-        List<EvaluationInfo> evaluationInfos = evaluationInfoService.findByCateAndFreelancer(jobCateId, freelancerId);
+        if (recent != null && (recent <= 0 || recent > 10)) {
+            return failed("最近查看数范围为1到10");
+        }
+        List<EvaluationInfo> evaluationInfos = evaluationInfoService.findByCateAndFreelancer(jobCateId, freelancerId, recent);
         return success(evaluationInfos.stream().map(evaluationInfo ->
                 evaluationMapper.toEvaluationListVO(evaluationInfo)).collect(Collectors.toList()));
     }
