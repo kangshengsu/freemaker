@@ -25,11 +25,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -71,76 +74,56 @@ public class MiniAppController {
      * @return
      */
     @RequestMapping(value = "/syncUserInfo", method = {RequestMethod.POST})
-    public ApiResponse<LoginReturnVO> getSessionKey(@RequestBody WeChatLoginVO weChatLoginVO) {
+    public ApiResponse<LoginReturnVO> getSessionKey(HttpServletRequest request, @RequestBody WeChatLoginVO weChatLoginVO) {
         LoginReturnVO loginReturnVO = new LoginReturnVO();
         //获取sessionkey openId unionId
         WeChatDecryptVO weChatDecryptVO = wxRpcService.getSessionInfo(weChatLoginVO);
-
         String openId = weChatDecryptVO.getOpenId();
         SysUser sysUser = iSysUserService.findByCode(openId);
-        String phoneNumber = "";
+        //token处理
+        RBucket<String> cacheToken = redissonClient.getBucket(openId);
+        //缓存用户token信息，供拦截器使用
+        if (!cacheToken.isExists()) {
+            cacheToken.set(JwtUtil.generateToken(openId), DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
+        }
+
+        Long userId = null;
+        if (sysUser == null) {
+            sysUser = new SysUser();
+            convertSysUser(sysUser, weChatLoginVO, openId);
+            //同步howwork账号、自由职业者、雇主信息
+            iSysUserService.save(sysUser);
+            //获取新增的用户ID
+            sysUser = iSysUserService.findByCode(openId);
+
+            FreelancerInfo freelancerInfo = new FreelancerInfo();
+            convertFreelancerInfo(freelancerInfo, weChatLoginVO, sysUser.getId());
+
+            EmployerInfo employerInfo = new EmployerInfo();
+            convertEmployerInfo(employerInfo, weChatLoginVO, sysUser.getId());
+
+            iAccountInfoService.createAccount(freelancerInfo, employerInfo);
+        }
+        userId = sysUser.getId();
+        RBucket<MiniAppUserVO> currUser = redissonClient.getBucket(cacheToken.get());
+
+        List<QueryItem> queryItems = getQueryItemsForUserId(userId);
+        EmployerInfo employerInfoResult = iEmployerInfoService.getOne(queryItems);
+        FreelancerInfo freelancerInfoResult = iFreelancerInfoService.getOne(queryItems);
+
+        MiniAppUserVO miniAppUserVO = new MiniAppUserVO();
+        miniAppUserVO.setEmployerId(employerInfoResult.getId());
+        miniAppUserVO.setFreeLancerId(freelancerInfoResult.getId());
+        miniAppUserVO.setUserId(userId);
+        miniAppUserVO.setSessionKey(weChatDecryptVO.getSessionKey());
+        currUser.set(miniAppUserVO, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
+
         boolean isExistPhone = Optional.ofNullable(sysUser)
                 .map(u -> StringUtils.isNotBlank(u.getPhone()))
                 .orElse(false);
 
-        //缓存用户信息，供拦截器使用
-        String userToken = JwtUtil.generateToken(openId);
-        RBucket<SysUser> currUser = redissonClient.getBucket(userToken);
-
-        if (sysUser == null) {
-            sysUser = new SysUser();
-            //构建各类用户信息 todo 1，code和name一样 2. 四级地址只有二级，和我们的四级地址库是否匹配 3.语言编码目前只存了一种，
-
-            convertSysUser(sysUser, weChatLoginVO, openId, phoneNumber);
-            //同步howwork账号、自由职业者、雇主信息
-            iSysUserService.save(sysUser);
-            //获取新增的用户ID
-            SysUser queryResult = iSysUserService.findByCode(openId);
-            Long userId = queryResult.getId();
-
-            FreelancerInfo freelancerInfo = new FreelancerInfo();
-            convertFreelancerInfo(freelancerInfo, weChatLoginVO, userId, phoneNumber);
-
-            EmployerInfo employerInfo = new EmployerInfo();
-            convertEmployerInfo(employerInfo, weChatLoginVO, userId, phoneNumber);
-
-            iAccountInfoService.createAccount(freelancerInfo, employerInfo);
-            List<QueryItem> queryItems = getQueryItemsForUserId(userId);
-
-            EmployerInfo employerInfoResult = iEmployerInfoService.getOne(queryItems);
-            FreelancerInfo freelancerInfoResult = iFreelancerInfoService.getOne(queryItems);
-
-            //塞入缓存
-            MiniAppUserVO miniAppUserVO = new MiniAppUserVO();
-            BeanUtils.copyProperties(queryResult, miniAppUserVO);
-            miniAppUserVO.setEmployerId(employerInfoResult.getId());
-            miniAppUserVO.setFreeLancerId(freelancerInfoResult.getId());
-            miniAppUserVO.setId(userId);
-            miniAppUserVO.setSessionKey(weChatDecryptVO.getSessionKey());
-
-            currUser.set(miniAppUserVO, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
-
-        } else {
-            //构建各类用户信息 todo 1，code和name一样 2. 四级地址只有二级，和我们的四级地址库是否匹配 3.语言编码目前只存了一种，
-            Long userId = sysUser.getId();
-
-            List<QueryItem> queryItems = getQueryItemsForUserId(userId);
-
-            //塞入缓存
-            MiniAppUserVO miniAppUserVO = new MiniAppUserVO();
-
-            EmployerInfo employerInfoResult = iEmployerInfoService.getOne(queryItems);
-            FreelancerInfo freelancerInfoResult = iFreelancerInfoService.getOne(queryItems);
-
-            miniAppUserVO.setEmployerId(employerInfoResult.getId());
-            miniAppUserVO.setFreeLancerId(freelancerInfoResult.getId());
-            miniAppUserVO.setId(userId);
-            miniAppUserVO.setSessionKey(weChatDecryptVO.getSessionKey());
-
-            currUser.set(miniAppUserVO, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
-        }
         loginReturnVO.setHasPhone(isExistPhone);
-        loginReturnVO.setUserToken(userToken);
+        loginReturnVO.setUserToken(cacheToken.get());
 
         return ApiResponse.of(ApiStatus.SUCCESS.getCode(), ApiStatus.SUCCESS.getMessage(), loginReturnVO);
     }
@@ -164,8 +147,8 @@ public class MiniAppController {
             String phoneNumber = null;
             if (StringUtil.isNotBlank(Context.getMiniAppSecretKey())) {
                 phoneNumber = wxRpcService.getPhoneNumber(Context.getMiniAppSecretKey(), weChatLoginVO.getEncryptedData(), weChatLoginVO.getIv());
+                log.info("解析手机号成功：{}mix", phoneNumber);
             }
-            log.info("手机号：{}", phoneNumber);
             if (StringUtil.isNotBlank(phoneNumber)) {
                 EmployerInfo employerInfo = new EmployerInfo();
                 employerInfo.setId(Context.getCurrEmployerId());
@@ -191,16 +174,16 @@ public class MiniAppController {
         return ApiResponse.of(ApiStatus.SUCCESS, userInfo);
     }
 
-    private void convertSysUser(SysUser sysUser, WeChatLoginVO weChatLoginVO, String openId, String phoneNumber) {
+    private void convertSysUser(SysUser sysUser, WeChatLoginVO weChatLoginVO, String openId) {
         sysUser.setName(weChatLoginVO.getNickName());
-        sysUser.setPhone(phoneNumber);
+//        sysUser.setPhone(phoneNumber);
         sysUser.setCode(openId);
     }
 
-    private void convertEmployerInfo(EmployerInfo employerInfo, WeChatLoginVO weChatLoginVO, Long userId, String phoneNumber) {
+    private void convertEmployerInfo(EmployerInfo employerInfo, WeChatLoginVO weChatLoginVO, Long userId) {
         employerInfo.setName(weChatLoginVO.getNickName());
         employerInfo.setCode(weChatLoginVO.getNickName());
-        employerInfo.setPhone(phoneNumber);
+//        employerInfo.setPhone(phoneNumber);
         employerInfo.setProvinceCode(weChatLoginVO.getProvince());
         employerInfo.setCityCode(weChatLoginVO.getCity());
         //todo zyc 下三个为空
@@ -211,10 +194,10 @@ public class MiniAppController {
         employerInfo.setHeadImg(weChatLoginVO.getAvatarUrl());
     }
 
-    private void convertFreelancerInfo(FreelancerInfo freelancerInfo, WeChatLoginVO weChatLoginVO, Long userId, String phoneNumber) {
+    private void convertFreelancerInfo(FreelancerInfo freelancerInfo, WeChatLoginVO weChatLoginVO, Long userId) {
         freelancerInfo.setName(weChatLoginVO.getNickName());
         freelancerInfo.setCode(weChatLoginVO.getNickName());
-        freelancerInfo.setPhone(phoneNumber);
+//        freelancerInfo.setPhone(phoneNumber);
         //todo zyc 下面四个没值
         freelancerInfo.setCateTreeCode("");
         freelancerInfo.setJobCateId(0L);

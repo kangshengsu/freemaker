@@ -48,7 +48,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         return Optional.ofNullable(rBucket)
                 .map(bucket -> bucket.get())
                 .map(currUser -> {
-                    Context.setCurrUser(currUser.getId());
+                    Context.setCurrUser(currUser.getUserId());
                     Context.setCurrEmployerId(currUser.getEmployerId());
                     Context.setCurrFreelancerId(currUser.getFreeLancerId());
                     Context.setMiniAppSecretKey(currUser.getSessionKey());
@@ -63,7 +63,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Deprecated
     private RBucket<MiniAppUserVO> fillMockUser() {
         MiniAppUserVO miniAppUserVO = new MiniAppUserVO();
-        miniAppUserVO.setId(11L);
+        miniAppUserVO.setUserId(11L);
         miniAppUserVO.setFreeLancerId(22L);
         miniAppUserVO.setEmployerId(33L);
 
