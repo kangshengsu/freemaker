@@ -9,6 +9,8 @@ package com.fm.business.base.service;
 import com.fm.business.base.model.job.BdJobTag;
 import com.fm.framework.core.service.Service;
 
+import java.util.List;
+
 /**
  * @Description:(岗位技能标签服务层)
  * @version: V1.0
@@ -16,5 +18,5 @@ import com.fm.framework.core.service.Service;
  *
  */
 public interface IBdJobTagService extends Service<BdJobTag> {
-
+    List<BdJobTag> getTagByJobCateId(Long jobCateId);
 }
