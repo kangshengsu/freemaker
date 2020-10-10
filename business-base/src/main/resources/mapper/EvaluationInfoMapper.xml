@@ -8,19 +8,36 @@
         <result column="result_score" property="resultScore"/>
         <result column="process_score" property="processScore"/>
         <result column="recommend_score" property="recommendScore"/>
+        <result column="total_score_sum" property="totalScoreSum"/>
+        <result column="result_score_sum" property="resultScoreSum"/>
+        <result column="process_score_sum" property="processScoreSum"/>
+        <result column="recommend_score_sum" property="recommendScoreSum"/>
+        <result column="evaluation_count" property="evaluationCount"/>
+
     </resultMap>
 
     <select id="findOverallEvaluationByCateAndFreelancer" resultMap="overallEvaluationResultMap">
         select freelancer_id
-             , round(avg(total_score), 1)     as total_score
-             , round(avg(result_score), 1)    as
-                                                 result_score
-             , round(avg(process_score), 1)   as process_score
-             , round(avg(recommend_score), 1) as recommend_score
-        from evaluation_info
-        where freelancer_id = #{freelancerId}
-          and job_cate_id = #{jobCateId}
-        group by freelancer_id
+                 , sum(total_score)     as total_score_sum
+                 , sum(result_score)    as result_score_sum
+                 , sum(process_score)   as process_score_sum
+                 , sum(recommend_score) as recommend_score_sum
+                 , count(freelancer_id) as evaluation_count
+        from (
+            select freelancer_id
+                 , total_score
+                 , result_score
+                 , process_score
+                 , recommend_score
+            from evaluation_info
+            where freelancer_id = #{freelancerId}
+              and job_cate_id = #{jobCateId}
+            order by create_time desc
+            limit #{maxCount}
+
+        ) as tmp group by freelancer_id
+
+
     </select>
 
 </mapper>

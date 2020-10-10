@@ -30,6 +30,28 @@ public class OverallEvaluation implements Serializable {
      * 推荐意向
      */
     public Double recommendScore;
+
+    /**
+     * 总体评价 总分
+     */
+    public Double totalScoreSum;
+    /**
+     * 结果打分 总分
+     */
+    public Double resultScoreSum;
+    /**
+     * 过程打分 总分
+     */
+    public Double processScoreSum;
+    /**
+     * 推荐意向 总分
+     */
+    public Double recommendScoreSum;
+
+    /**
+     * 评价数量
+     */
+    public Integer evaluationCount;
     /**
      * 总体评价描述
      */

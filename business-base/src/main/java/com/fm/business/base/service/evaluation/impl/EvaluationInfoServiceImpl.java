@@ -9,6 +9,7 @@ package com.fm.business.base.service.evaluation.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fm.business.base.constant.EvaluationConstants;
 import com.fm.business.base.dao.evaluationinfo.IEvaluationInfoMapper;
 import com.fm.business.base.enums.AttachmentBusinessType;
 import com.fm.business.base.enums.AttachmentType;
@@ -32,11 +33,13 @@ import com.fm.business.base.service.order.IOrderInfoDetailService;
 import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.framework.core.exception.BusinessException;
 import com.fm.framework.core.service.AuditBaseService;
+import com.fm.framework.core.utils.NumberUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -81,9 +84,52 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
         return evaluationInfos;
     }
 
+    /**
+     * 统计评价分数
+     *
+     * 如果评价数据样本小于一定数量 则 按一定比例稀释数据
+     *
+     * @param jobCateId
+     * @param freelancerId
+     * @return
+     */
     @Override
     public OverallEvaluation findOverallEvaluationByCateAndFreelancer(Long jobCateId, Long freelancerId) {
-        return this.getBaseMapper().findOverallEvaluationByCateAndFreelancer(jobCateId, freelancerId);
+
+        OverallEvaluation overallEvaluation = this.getBaseMapper().findOverallEvaluationByCateAndFreelancer(jobCateId, freelancerId,EvaluationConstants.EVALUATION_DEFAULT_COUNT);
+
+        // 取出评价总分 以及 评价数量  如果评价数量小于最低要求评价数量 则补充满分样本数据， 无评价数量则返回满分
+        Double totalScore ;
+        Double resultScore ;
+        Double processScore ;
+        Double recommendScore ;
+
+        if(overallEvaluation == null || overallEvaluation.getEvaluationCount().equals(Integer.valueOf(0))){
+            //无样本数据 返回满分
+            totalScore = EvaluationConstants.TOTAL_SCORE_MAX;
+            resultScore = EvaluationConstants.RESULT_SCORE_MAX;
+            processScore = EvaluationConstants.PROCESS_SCORE_MAX;
+            recommendScore = EvaluationConstants.RECOMMEND_SCORE_MAX;
+        }else if (EvaluationConstants.EVALUATION_DEFAULT_COUNT.compareTo(overallEvaluation.getEvaluationCount())>0){
+            //样本数据不足  补充满分样本数据
+            int diff = EvaluationConstants.EVALUATION_DEFAULT_COUNT - overallEvaluation.getEvaluationCount();
+            totalScore = (EvaluationConstants.TOTAL_SCORE_MAX * diff+overallEvaluation.getTotalScoreSum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
+            resultScore = (EvaluationConstants.RESULT_SCORE_MAX * diff+overallEvaluation.getResultScoreSum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
+            processScore = (EvaluationConstants.PROCESS_SCORE_MAX * diff+overallEvaluation.getProcessScoreSum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
+            recommendScore = (EvaluationConstants.RECOMMEND_SCORE_MAX * diff+overallEvaluation.getRecommendScoreSum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
+        }else {
+            totalScore = overallEvaluation.getTotalScoreSum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
+            resultScore = overallEvaluation.getResultScoreSum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
+            processScore = overallEvaluation.getProcessScoreSum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
+            recommendScore = overallEvaluation.getRecommendScoreSum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
+        }
+
+        overallEvaluation.setProcessScore(NumberUtil.formatDouble(processScore,1));
+        overallEvaluation.setRecommendScore(NumberUtil.formatDouble(recommendScore,1));
+        overallEvaluation.setTotalScore(NumberUtil.formatDouble(totalScore,1));
+        overallEvaluation.setResultScore(NumberUtil.formatDouble(resultScore,1));
+
+        return overallEvaluation;
     }
 
     @Override
