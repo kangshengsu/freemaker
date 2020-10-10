@@ -57,4 +57,18 @@ public enum ProductionStatus {
         return null;
     }
 
+    /**
+     * 根据code获取name
+     * @param code
+     * @return
+     */
+    public static String getNameByCode(Integer code) {
+        ProductionStatus productionStatus = get(code);
+        if (productionStatus==null) {
+            return "";
+        }
+        return productionStatus.getName();
+    }
+
+
 }

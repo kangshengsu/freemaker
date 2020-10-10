@@ -109,7 +109,7 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
     protected ProductionInfoVO convert(ProductionInfo model) {
         ProductionInfoVO form = super.convert(model);
         //转换枚举值
-        form.setStatusName(ProductionStatus.get(model.getStatus()).getName());
+        form.setStatusName(ProductionStatus.getNameByCode(model.getStatus()));
         //岗位名称
         BdJobCate bdJobCate = model.getPostCate();
         if (bdJobCate != null) {
