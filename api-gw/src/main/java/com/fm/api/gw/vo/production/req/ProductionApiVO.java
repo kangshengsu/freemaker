@@ -28,10 +28,16 @@ public class ProductionApiVO extends VO implements Serializable {
 
     public interface DelStatusByCode{ }
 
+    public interface DelStatusById{ }
+
+    public interface CancelReleaseById{ }
+
+    public interface ReReleaseById{ }
+
     /**
      * 作品编码
      **/
-    @NotNull(message = "作品ID不能为空",groups = {Modify.class})
+    @NotNull(message = "作品ID不能为空",groups = {Modify.class,DelStatusById.class,CancelReleaseById.class})
     private Long id;
 
 

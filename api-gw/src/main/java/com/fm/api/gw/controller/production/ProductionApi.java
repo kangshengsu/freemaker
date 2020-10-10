@@ -86,28 +86,62 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
     @ApiOperation(value="修改作品")
     @ApiImplicitParam(name = "apiVO", value = "作品相关属性", dataType = "ProductionApiVO",paramType = "body")
     public ApiResponse<Boolean> modify(@RequestBody @Validated(value = {ProductionApiVO.Modify.class}) ProductionApiVO apiVO){
-
-        if(productionInfoService.update(convert(apiVO))){
+        ProductionInfo productionInfo = convert(apiVO);
+        productionInfo.setStatus(ProductionStatus.REVIEW.getCode());
+        if(productionInfoService.update(productionInfo)){
             return ApiResponse.ofSuccess(Boolean.TRUE);
         }
         return ApiResponse.ofSuccess(Boolean.FALSE);
 
     }
 
-
-    @PostMapping("/delStatusByCode")
-    @ApiOperation(value="删除作品（变更作品状态为已删除）")
-    @ApiImplicitParam(paramType="body", name = "apiVO", value = "作品编码", required = true, dataType = "String")
-    public ApiResponse<Boolean> delStatusByCode(@RequestBody @Validated(value = {ProductionApiVO.DelStatusByCode.class}) ProductionApiVO apiVO){
-        ProductionInfo updateParam = new ProductionInfo();
-        updateParam.setCode(apiVO.getCode());
-        updateParam.setStatus(ProductionStatus.DELETED.getCode());
-        if(!productionInfoService.updateStatus(updateParam)){
+    @PostMapping("/delStatusById")
+    @ApiOperation(value="删除作品（彻底删除作品）")
+    @ApiImplicitParam(paramType="body", name = "apiVO", value = "作品", required = true, dataType = "String")
+    public ApiResponse<Boolean> delStatusById(@RequestBody @Validated(value = {ProductionApiVO.DelStatusById.class}) ProductionApiVO apiVO){
+        if(!productionInfoService.delete(apiVO.getId())){
             return failed(String.format("删除%s作品失败",apiVO.getCode()));
         }
         return success(Boolean.TRUE);
     }
 
+    @PostMapping("/cancelReleaseById")
+    @ApiOperation(value="取消发布作品（变更作品状态为未发布）")
+    @ApiImplicitParam(paramType="body", name = "apiVO", value = "作品", required = true, dataType = "String")
+    public ApiResponse<Boolean> cancelReleaseById(@RequestBody @Validated(value = {ProductionApiVO.CancelReleaseById.class}) ProductionApiVO apiVO){
+
+        ProductionInfo productionInfo = productionInfoService.get(apiVO.getId());
+        List<Integer> statuses = Arrays.asList(ProductionStatus.RELEASE.getCode());
+        if(!statuses.contains(productionInfo.getStatus())){
+            return failed(String.format("不允许取消发布此作品，只允许取消发布【%s】状态的作品",ProductionStatus.RELEASE,apiVO.getCode()));
+        }
+        ProductionInfo updateParam = new ProductionInfo();
+        updateParam.setId(apiVO.getId());
+        updateParam.setStatus(ProductionStatus.NOT_RELEASE.getCode());
+        if(!productionInfoService.updateStatus(updateParam)){
+            return failed(String.format("取消发布作品%s作品失败",apiVO.getCode()));
+        }
+        return success(Boolean.TRUE);
+    }
+
+    @PostMapping("/reReleaseById")
+    @ApiOperation(value="重新发布作品（变更作品状态为审核中）")
+    @ApiImplicitParam(paramType="body", name = "apiVO", value = "作品", required = true, dataType = "String")
+    public ApiResponse<Boolean> reReleaseById(@RequestBody @Validated(value = {ProductionApiVO.ReReleaseById.class}) ProductionApiVO apiVO){
+
+        ProductionInfo productionInfo = productionInfoService.get(apiVO.getId());
+        List<Integer> statuses = Arrays.asList(ProductionStatus.NOT_RELEASE.getCode());
+        if(!statuses.contains(productionInfo.getStatus())){
+            return failed(String.format("不允许重新发布此作品，只允许重新发布【%s】状态的作品",ProductionStatus.NOT_RELEASE,apiVO.getCode()));
+        }
+        ProductionInfo updateParam = new ProductionInfo();
+        updateParam.setId(apiVO.getId());
+        updateParam.setStatus(ProductionStatus.REVIEW.getCode());
+        if(!productionInfoService.updateStatus(updateParam)){
+            return failed(String.format("重新发布作品%s作品失败",apiVO.getCode()));
+        }
+        return success(Boolean.TRUE);
+    }
 
     @Override
     protected Service<ProductionInfo> service() {
