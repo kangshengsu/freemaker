@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2020-09-19 10:59 上午
  */
 @RestController
-@RequestMapping("/file")
+@RequestMapping("/v1//file")
 public class FileOperationController {
 
     @Autowired
