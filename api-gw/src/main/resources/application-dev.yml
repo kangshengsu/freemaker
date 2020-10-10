@@ -16,11 +16,11 @@ spring:
     prefix: https://
     midfix: cos
     suffix: myqcloud.com
+    cdnUrl: howwork-1301749332.file.myqcloud.com
   redis:
-      host: 172.21.16.17
-      password: HowWork!
-      database: 1
-
+    host: 172.21.16.17
+    password: HowWork!
+    database: 1
 mybatis-plus:
   configuration:
     #这个配置会将执行的sql打印出来，在开发或测试的时候可以用

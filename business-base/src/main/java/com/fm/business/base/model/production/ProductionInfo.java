@@ -1,12 +1,13 @@
 /**
  * @filename:ProductionInfo 2020年09月11日
  * @project HowWork  V1.0
- * Copyright(c) 2020 LiuDuo Co. Ltd. 
- * All right reserved. 
+ * Copyright(c) 2020 LiuDuo Co. Ltd.
+ * All right reserved.
  */
 package com.fm.business.base.model.production;
 
 import com.fm.business.base.model.AttachmentInfo;
+import com.fm.business.base.model.evaluation.OverallEvaluation;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.framework.core.model.BaseModel;
@@ -17,18 +18,18 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-/**   
+/**
  * @Description:(作品实体类)
- * 
+ *
  * @version: V1.0
  * @author: LiuDuo
- * 
+ *
  */
 @Data
 public class ProductionInfo extends BaseModel implements Serializable,IAudit {
 
 	private static final long serialVersionUID = 1600497555102L;
-	
+
     /**
     * 逻辑主键
     **/

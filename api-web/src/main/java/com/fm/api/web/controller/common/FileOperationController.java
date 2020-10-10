@@ -41,6 +41,6 @@ public class FileOperationController {
      */
     @RequestMapping(value = "/getBaseUrl",method = RequestMethod.GET)
     public ApiResponse<String> getBaseUrl(){
-        return ApiResponse.ofSuccess(fileService.getBaseUrl());
+        return ApiResponse.ofSuccess(fileService.getBaseUrlWithCDN());
     }
 }

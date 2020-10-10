@@ -105,6 +105,7 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
         Double recommendScore ;
 
         if(overallEvaluation == null || overallEvaluation.getEvaluationCount().equals(Integer.valueOf(0))){
+            overallEvaluation = new OverallEvaluation();
             //无样本数据 返回满分
             totalScore = EvaluationConstants.TOTAL_SCORE_MAX;
             resultScore = EvaluationConstants.RESULT_SCORE_MAX;

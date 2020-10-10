@@ -108,6 +108,12 @@ public class CosServiceImpl implements FileService {
         return null;
     }
 
+
+    public String getBaseUrlWithCDN() {
+        StringBuilder fileUrlBuilder = new StringBuilder();
+        fileUrlBuilder.append(cosProperties.getPrefix()).append(cosProperties.getCdnUrl()).append(SymbolConstants.SLASH);
+        return fileUrlBuilder.toString();
+    }
     @Override
     public String getBaseUrl() {
         StringBuilder fileUrlBuilder = new StringBuilder();
@@ -122,7 +128,7 @@ public class CosServiceImpl implements FileService {
     @Override
     public String getFullPath(String path) {
         if(StringUtils.isNotBlank(path)) {
-            return getBaseUrl() + path;
+            return getBaseUrlWithCDN() + path;
         }
         return path;
     }

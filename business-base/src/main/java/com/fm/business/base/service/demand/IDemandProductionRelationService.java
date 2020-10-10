@@ -7,6 +7,8 @@
 package com.fm.business.base.service.demand;
 
 import com.fm.business.base.model.demand.DemandProductionRelation;
+import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.business.base.model.production.RecommendProduction;
 import com.fm.framework.core.service.Service;
 
 import java.util.List;
@@ -25,6 +27,12 @@ public interface IDemandProductionRelationService extends Service<DemandProducti
      */
     List<DemandProductionRelation> getByDemandId(Long demandId);
 
+    /**
+     * 根据需求获取推荐作品信息
+     * @param demandId
+     * @return
+     */
+    List<RecommendProduction> getDemandProductionsByDemandId(Long demandId);
     /**
      * 推荐
      */

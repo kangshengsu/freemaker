@@ -45,4 +45,8 @@ public class CosProperties {
      */
     private String suffix;
 
+    /**
+     * cdn地址
+     */
+    private String cdnUrl;
 }

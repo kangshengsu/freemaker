@@ -9,18 +9,24 @@ package com.fm.business.base.service.demand.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.IDemandProductionRelationMapper;
 import com.fm.business.base.model.demand.DemandProductionRelation;
+import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.business.base.model.production.RecommendProduction;
 import com.fm.business.base.service.demand.IDemandInfoService;
 import com.fm.business.base.service.demand.IDemandProductionRelationService;
+import com.fm.business.base.service.evaluation.IEvaluationInfoService;
+import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.constants.SymbolConstants;
 import com.fm.framework.core.service.AuditBaseService;
 import com.fm.framework.core.utils.SubModelCompareResult;
 import com.fm.framework.core.utils.UpdateUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,10 +41,16 @@ import java.util.stream.Collectors;
 public class DemandProductionRelationServiceImpl extends AuditBaseService<IDemandProductionRelationMapper, DemandProductionRelation> implements IDemandProductionRelationService {
 
     @Autowired
-    private IDemandProductionRelationService iDemandProductionRelationService;
+    private IDemandProductionRelationService demandProductionRelationService;
 
     @Autowired
     private IDemandInfoService iDemandInfoService;
+
+    @Autowired
+    private IProductionInfoService productionInfoService;
+
+    @Autowired
+    private IEvaluationInfoService iEvaluationInfoService;
 
     @Override
     public List<DemandProductionRelation> getByDemandId(Long demandId) {
@@ -48,11 +60,37 @@ public class DemandProductionRelationServiceImpl extends AuditBaseService<IDeman
         return getBaseMapper().selectList(Wrappers.lambdaQuery(DemandProductionRelation.class).eq(DemandProductionRelation::getDemandId, demandId));
     }
 
+    @Override
+    public List<RecommendProduction> getDemandProductionsByDemandId(Long demandId) {
+        if (demandId == null) {
+            return Collections.EMPTY_LIST;
+        }
+
+        List<DemandProductionRelation> demandProductionRelations = demandProductionRelationService.getByDemandId(demandId);
+        if (CollectionUtils.isEmpty(demandProductionRelations)) {
+            return Collections.EMPTY_LIST;
+        }
+        List<Long> productionIds = demandProductionRelations.stream().map(DemandProductionRelation::getProductionId).collect(Collectors.toList());
+
+        List<ProductionInfo> productionInfos = productionInfoService.getFullInfo(productionIds);
+        List<RecommendProduction> recommendProductions = new ArrayList<>(productionInfos.size());
+        productionInfos.forEach(productionInfo -> {
+            RecommendProduction recommendProduction = new RecommendProduction();
+            BeanUtils.copyProperties(productionInfo,recommendProduction);
+            recommendProduction.setOverallEvaluation(iEvaluationInfoService.findOverallEvaluationByCateAndFreelancer(recommendProduction.getJobCateId(),
+                    recommendProduction.getFreelancerId()));
+            recommendProductions.add(recommendProduction);
+
+        });
+
+        return recommendProductions;
+    }
+
 
     @Override
     @Transactional
     public void recommend(Long demandId,List<Long> productionIds) {
-        List<DemandProductionRelation> oldRelations = iDemandProductionRelationService.getByDemandId(demandId);
+        List<DemandProductionRelation> oldRelations = demandProductionRelationService.getByDemandId(demandId);
         List<DemandProductionRelation> newRelations = productionIds.stream().map(productionId -> {
             DemandProductionRelation demandProductionRelation = new DemandProductionRelation();
             demandProductionRelation.setDemandId(demandId);
@@ -68,13 +106,13 @@ public class DemandProductionRelationServiceImpl extends AuditBaseService<IDeman
 
         //插入
         if (!CollectionUtils.isEmpty(newRelations)) {
-            iDemandProductionRelationService.save(newRelations);
+            demandProductionRelationService.save(newRelations);
         }
 
         //删除
         if (!CollectionUtils.isEmpty(oldRelations)) {
             List<Long> deleteIds = oldRelations.stream().map(DemandProductionRelation::getId).collect(Collectors.toList());
-            iDemandProductionRelationService.deleteByIds(deleteIds);
+            demandProductionRelationService.deleteByIds(deleteIds);
         }
 
         iDemandInfoService.updateRecommendCountById(demandId,productionIds.size());

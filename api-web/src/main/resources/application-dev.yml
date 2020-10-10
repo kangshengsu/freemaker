@@ -16,6 +16,7 @@ spring:
     prefix: https://
     midfix: cos
     suffix: myqcloud.com
+    cdnUrl: howwork-1301749332.file.myqcloud.com
 
   redis:
       host: 172.21.16.17

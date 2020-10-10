@@ -6,15 +6,15 @@
  */
 package com.fm.api.gw.controller;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.api.gw.query.RecommendQueryRequest;
 import com.fm.api.gw.vo.RecommendVO;
+import com.fm.api.gw.vo.recommend.RecommendProductionVO;
+import com.fm.api.gw.vo.recommend.mapper.RecommendMapper;
 import com.fm.business.base.enums.DemandRecommendType;
 import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.demand.DemandProductionRelation;
 import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.business.base.model.production.RecommendProduction;
 import com.fm.business.base.service.demand.IDemandProductionRelationService;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.query.Page;
@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,14 +54,19 @@ public class RecommendController extends BaseController<DemandProductionRelation
     @Autowired
     private IProductionInfoService productionInfoService;
 
+    @Autowired
+    private RecommendMapper recommendMapper;
 
     @RequestMapping(value = "getRecommendProductionInfoByDemandId", method = RequestMethod.GET)
     @ApiOperation(value = "根据需求id获取推荐的作品信息")
-    public ApiResponse<List<ProductionInfo>> getRecommendProductionInfoByDemandId(@RequestParam("demandId") Long demandId) {
-        List<DemandProductionRelation> demandProductionRelations = demandProductionRelationService.getByDemandId(demandId);
-        List<Long> productionIds = demandProductionRelations.stream().map(DemandProductionRelation::getProductionId).collect(Collectors.toList());
-        List<ProductionInfo> productionInfos = productionInfoService.getFullInfo(productionIds);
-        return ApiResponse.ofSuccess(productionInfos);
+    public ApiResponse<List<RecommendProductionVO>> getRecommendProductionInfoByDemandId(@RequestParam("demandId") Long demandId) {
+        if (demandId == null) {
+            return failed("请选择作品");
+        }
+        List<RecommendProduction> recommendProductions = demandProductionRelationService.getDemandProductionsByDemandId(demandId);
+
+        return success(recommendProductions.stream().map(productionInfo ->
+                recommendMapper.toRecommendProductionVO(productionInfo)).collect(Collectors.toList()));
     }
 
     @RequestMapping(value = "getRecommendInfoByDemandId", method = RequestMethod.GET)
