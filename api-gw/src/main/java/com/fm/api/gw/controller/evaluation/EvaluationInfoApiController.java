@@ -10,6 +10,7 @@ import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/v1/evaluation")
 public class EvaluationInfoApiController extends BaseController<EvaluationInfo, EvaluationInfoVO> {
+    private static String DEFAULT_DESCRIPTION = "没有评价描述";
 
     @Autowired
     private IEvaluationInfoService evaluationInfoService;
@@ -35,6 +37,10 @@ public class EvaluationInfoApiController extends BaseController<EvaluationInfo, 
     @RequestMapping(value = "/publish", method = RequestMethod.POST)
     public ApiResponse<Boolean> publish(@RequestBody @Validated EvaluationInfoVO evaluationInfoVO) {
         EvaluationInfo evaluationInfo = convert(evaluationInfoVO);
+        if (StringUtils.isEmpty(evaluationInfo.getDescription())) {
+            evaluationInfo.setDescription(DEFAULT_DESCRIPTION);
+        }
+
         evaluationInfoService.save(evaluationInfo);
         return success(Boolean.TRUE);
     }
