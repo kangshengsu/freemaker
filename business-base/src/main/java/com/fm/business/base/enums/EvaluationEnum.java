@@ -6,7 +6,7 @@ package com.fm.business.base.enums;
  */
 public enum EvaluationEnum {
     VERY_POOR("非常差", 0D, 1D),
-    POOR("非常差", 1D, 2D),
+    POOR("差", 1D, 2D),
     COMMON("一般", 2D, 3D),
     GOOD("满意", 3D, 4D),
     VERY_GOOD("超级棒", 4D, 5D);
