@@ -6,7 +6,6 @@
 */
 package com.fm.api.gw.controller;
 
-import com.fm.api.gw.vo.FreelancerInfoAppVO;
 import com.fm.api.gw.vo.OrderInfoVO;
 import com.fm.api.gw.vo.evaluation.EvaluationInfoVO;
 import com.fm.api.gw.vo.freelancer.FreelancerInfoApiVO;
@@ -334,7 +333,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         // fill userInfo
         OrderInfoVO orderInfoVO = super.convert(orderInfo);
         if (freelancerInfo != null) {
-            FreelancerInfoAppVO freelancerInfoAppVO = new FreelancerInfoAppVO();
+            FreelancerInfoApiVO freelancerInfoAppVO = new FreelancerInfoApiVO();
             freelancerInfoAppVO.setName(freelancerInfo.getName());
             freelancerInfoAppVO.setPhone(freelancerInfo.getPhone());
 

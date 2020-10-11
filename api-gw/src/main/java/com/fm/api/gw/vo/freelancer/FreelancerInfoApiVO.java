@@ -8,6 +8,7 @@ package com.fm.api.gw.vo.freelancer;
 
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
+import com.fm.framework.web.VO;
 import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
@@ -20,7 +21,7 @@ import java.util.Date;
  * 
  */
 @Data
-public class FreelancerInfoApiVO implements Serializable {
+public class FreelancerInfoApiVO extends VO implements Serializable {
 
 	private static final long serialVersionUID = 1600497555102L;
 	

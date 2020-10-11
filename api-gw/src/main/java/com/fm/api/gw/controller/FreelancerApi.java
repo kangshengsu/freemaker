@@ -7,21 +7,15 @@
 package com.fm.api.gw.controller;
 
 import com.fm.api.gw.vo.ContactInfoAppVO;
-import com.fm.api.gw.vo.FreelancerInfoAppVO;
 import com.fm.api.gw.vo.FreelancerOrderSummaryVO;
-import com.fm.api.gw.vo.JobCateVO;
+import com.fm.api.gw.vo.freelancer.FreelancerInfoApiVO;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
-import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.order.OrderInfo;
-import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.exception.BusinessException;
-import com.fm.framework.core.model.TreeNode;
-import com.fm.framework.core.query.QueryItem;
 import com.fm.framework.core.service.Service;
-import com.fm.framework.core.utils.TreeUtil;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
 import io.swagger.annotations.Api;
@@ -30,10 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,7 +40,7 @@ import java.util.List;
 @RestController
 @RequestMapping("v1/freelancer")
 @Api("自由职业者相关操作")
-public class FreelancerApi extends BaseController<FreelancerInfo, FreelancerInfoAppVO> {
+public class FreelancerApi extends BaseController<FreelancerInfo, FreelancerInfoApiVO> {
 
     @Autowired
     private IFreelancerInfoService iFreelancerInfoService;
