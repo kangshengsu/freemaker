@@ -3,9 +3,9 @@ package com.fm.business.base.enums;
 public enum OrderOperateType {
 
     SUBMIT(10,"提交验收"),
+    SUBMIT_AGAIN(11,"重新提交验收"),
     ACCEPT(20,"验收通过"),
-    UNACCEPT(30,"验收不通过"),
-    UNACCEPT_AGAIN(31,"验收仍不通过");
+    UNACCEPT(30,"验收不通过");
 
     private Integer code;
     private String name;

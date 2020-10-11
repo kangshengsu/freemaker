@@ -45,19 +45,23 @@ public class OrderOperateInfoServiceImpl extends AuditBaseService<IOrderOperateI
             orderOperateInfo.setOperateType(OrderOperateType.SUBMIT.getCode());
             orderOperateInfo.setOperateUser(Context.getCurrFreelancerId());
             orderOperateInfo.setReceiveUser(Context.getCurrEmployerId());
+        } else if (OrderStatus.CHECK_FAIL_61.getCode().equals(status)) {
+            orderOperateInfo.setOperateType(OrderOperateType.SUBMIT_AGAIN.getCode());
+            orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
+            orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
         } else if (OrderStatus.CHECK_FAIL_70.getCode().equals(status)) {
             orderOperateInfo.setOperateType(OrderOperateType.UNACCEPT.getCode());
             orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
             orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
-        } else if (OrderStatus.CHECK_FAIL_71.getCode().equals(status)) {
-            orderOperateInfo.setOperateType(OrderOperateType.UNACCEPT_AGAIN.getCode());
-            orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
-            orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
-        }else if (OrderStatus.FINISHED_80.getCode().equals(status)) {
+        } else if (OrderStatus.FINISHED_80.getCode().equals(status)) {
             orderOperateInfo.setOperateType(OrderOperateType.ACCEPT.getCode());
             orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
             orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
-        } else {
+        } else if (OrderStatus.FINISHED_81.getCode().equals(status)) {
+            orderOperateInfo.setOperateType(OrderOperateType.UNACCEPT.getCode());
+            orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
+            orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
+        }else {
             // 非此三种操作类型，不记录
             return;
         }
