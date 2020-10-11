@@ -1,12 +1,11 @@
 package com.fm.business.base.service.conf.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.conf.DisplayConfigMapper;
 import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.conf.DisplayConfig;
-import com.fm.business.base.model.conf.DisplayConfigItemConvert;
 import com.fm.business.base.model.conf.DisplayConfigItem;
+import com.fm.business.base.model.conf.DisplayConfigItemConvert;
 import com.fm.business.base.model.conf.DisplayType;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.production.ProductionInfo;
@@ -14,12 +13,10 @@ import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.conf.IDisplayConfigService;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.service.AuditBaseService;
-import com.fm.framework.core.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,16 +41,11 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
      */
     private final IProductionInfoService productionInfoService;
 
-    /**
-     * 文件服务
-     */
-    private final FileService fileService;
 
     @Autowired
-    public DisplayConfigServiceImpl(IBdJobCateService bdJobCateService, IProductionInfoService productionInfoService, FileService fileService) {
+    public DisplayConfigServiceImpl(IBdJobCateService bdJobCateService, IProductionInfoService productionInfoService) {
         this.bdJobCateService = bdJobCateService;
         this.productionInfoService = productionInfoService;
-        this.fileService = fileService;
     }
 
     @Override
@@ -86,17 +78,9 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
 
     @Override
     public List<ProductionInfo> getRecommendProductInfoConfigNoCache() {
-        List<ProductionInfo> productionInfos = getProductInfo(get(DisplayType.r_product_info));
-        return productionInfos;
+        return getProductInfo(get(DisplayType.r_product_info));
     }
 
-
-    private String getFullPath(String path) {
-        if(StringUtils.isNotBlank(path)) {
-            return fileService.getFullPath(path);
-        }
-        return path;
-    }
 
     /**
      * 更加展现配置获取领域、岗位
@@ -196,9 +180,8 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
 
     @Override
     public List<DisplayConfigItem> getDisplayConfigItem(String title, DisplayType displayType) {
-        switch (displayType) {
-            case r_product_info:
-                return productionInfoService.query(title).stream().map(DisplayConfigItemConvert.INSTANCE::to).collect(Collectors.toList());
+        if (displayType == DisplayType.r_product_info) {
+            return productionInfoService.query(title).stream().map(DisplayConfigItemConvert.INSTANCE::to).collect(Collectors.toList());
         }
 
         return null;
@@ -207,9 +190,8 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
     @Override
     public DisplayConfigItem getDisplayConfigItem(Long displayId, DisplayType displayType) {
 
-        switch (displayType) {
-            case r_product_info:
-                return DisplayConfigItemConvert.INSTANCE.to(productionInfoService.get(displayId));
+        if (displayType == DisplayType.r_product_info) {
+            return DisplayConfigItemConvert.INSTANCE.to(productionInfoService.get(displayId));
         }
 
         return null;
