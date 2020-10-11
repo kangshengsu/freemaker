@@ -7,6 +7,7 @@
 package com.fm.api.gw.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fm.api.gw.vo.attachment.AttachmentVO;
 import com.fm.api.gw.vo.employer.EmployerInfoApiVO;
 import com.fm.api.gw.vo.evaluation.EvaluationInfoVO;
 import com.fm.api.gw.vo.freelancer.FreelancerInfoApiVO;
@@ -198,7 +199,7 @@ public class OrderInfoVO extends VO implements Serializable {
 	 */
 	private String followDesc;
 
-	private List<String> attachmentList;
+	private List<AttachmentVO> attachmentList;
 
 	private Boolean canChargeback;
 

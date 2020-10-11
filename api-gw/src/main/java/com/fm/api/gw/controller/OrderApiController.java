@@ -7,10 +7,12 @@
 package com.fm.api.gw.controller;
 
 import com.fm.api.gw.vo.OrderInfoVO;
+import com.fm.api.gw.vo.attachment.mapper.AttachmentMapper;
 import com.fm.api.gw.vo.employer.mapper.EmployerInfoMapper;
 import com.fm.api.gw.vo.freelancer.mapper.FreelancerInfoMapper;
 import com.fm.business.base.enums.OrderOperateRoleType;
 import com.fm.business.base.enums.OrderStatus;
+import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
@@ -37,10 +39,12 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
 *
@@ -53,7 +57,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/v1/orderApi")
-@Api(value = "订单接口", tags={"订单操作相关接口"})
+@Api(value = "订单接口")
 public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
     @Autowired
@@ -82,6 +86,9 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
     @Autowired
     private EmployerInfoMapper employerInfoMapper;
+
+    @Autowired
+    private AttachmentMapper attachmentMapper;
 
     @RequestMapping(value = "getOrderListByStakeholder",method = RequestMethod.GET)
     @ApiOperation(value="根据订单参与者ID获取订单（订单参与者：雇主/自由职业者）")
@@ -276,7 +283,12 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     }
 
     private void saveOperateInfo(OrderInfoVO orderInfoVO) {
-        orderOperateInfoService.saveOperateInfo(orderInfoVO.getId(), orderInfoVO.getStatus(), orderInfoVO.getDescription(), orderInfoVO.getAttachmentList());
+        List<AttachmentInfo> attachmentInfos = new ArrayList<>();
+        if(!CollectionUtils.isEmpty(orderInfoVO.getAttachmentList())){
+            attachmentInfos.addAll(orderInfoVO.getAttachmentList()
+                    .stream().map(attachmentVO -> attachmentMapper.toAttachment(attachmentVO)).collect(Collectors.toList()));
+        }
+        orderOperateInfoService.saveOperateInfo(orderInfoVO.getId(), orderInfoVO.getStatus(), orderInfoVO.getFollowDesc(),attachmentInfos);
     }
 
     private void saveFollow(OrderInfoVO orderInfoVO) {

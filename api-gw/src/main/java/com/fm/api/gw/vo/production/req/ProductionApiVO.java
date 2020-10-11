@@ -1,6 +1,6 @@
 package com.fm.api.gw.vo.production.req;
 
-import com.fm.api.gw.vo.production.relation.AttachmentVO;
+import com.fm.api.gw.vo.attachment.AttachmentVO;
 import com.fm.api.gw.vo.production.relation.SkillRelationVO;
 import com.fm.framework.web.VO;
 import lombok.Data;

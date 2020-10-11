@@ -1,22 +1,22 @@
 /**
  * @filename:AttachmentInfo 2020年09月11日
  * @project HowWork  V1.0
- * Copyright(c) 2020 LiuDuo Co. Ltd.
- * All right reserved.
+ * Copyright(c) 2020 LiuDuo Co. Ltd. 
+ * All right reserved. 
  */
-package com.fm.api.gw.vo.evaluation.relation;
+package com.fm.api.gw.vo.attachment;
 
 import com.fm.framework.web.VO;
 import lombok.Data;
 
 import java.io.Serializable;
 
-/**
+/**   
  * @Description:(附件实体类)
- *
+ * 
  * @version: V1.0
  * @author: LiuDuo
- *
+ * 
  */
 @Data
 public class AttachmentVO extends VO implements Serializable {

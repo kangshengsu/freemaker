@@ -1,7 +1,7 @@
 package com.fm.api.gw.vo.production.list;
 
 import com.fm.api.gw.vo.freelancer.FreelancerInfoApiVO;
-import com.fm.api.gw.vo.production.relation.AttachmentVO;
+import com.fm.api.gw.vo.attachment.AttachmentVO;
 import com.fm.api.gw.vo.production.relation.JobCateVO;
 import com.fm.framework.web.VO;
 import lombok.Data;
