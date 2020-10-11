@@ -118,9 +118,6 @@ public class ProductionViewApi extends BaseController<ProductionInfo, Production
     @Override
     protected ProductionViewVO convert(ProductionInfo model) {
         ProductionViewVO productionViewVO = productionMapper.toProductionViewVO(model);
-        //todo 拷贝失败 手动赋值
-        productionViewVO.setJobCateId(model.getJobCateId());
-        productionViewVO.setFreelancerId(model.getFreelancerId());
         return productionViewVO;
 
     }

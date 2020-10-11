@@ -120,6 +120,13 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
     }
 
     @Override
+    public ProductionInfo get(Long id) {
+        ProductionInfo result =  getById(id);
+        fillProductInfoRelation(Arrays.asList(result));
+        return result;
+    }
+
+    @Override
     public List<ProductionInfo> getFullInfo(Collection<Long> ids) {
 
         if (CollectionUtils.isEmpty(ids)) {
