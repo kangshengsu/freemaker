@@ -121,7 +121,8 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
                         getQueryWrapper().lambda()
                                 .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
                                 .eq(DemandInfo::getEmployerId, employerId)
-                                .eq(status != 0, DemandInfo::getStatus, status)));
+                                .eq(status != 0, DemandInfo::getStatus, status)
+                                .orderByDesc(DemandInfo::getCreateTime)));
     }
 
     @Override

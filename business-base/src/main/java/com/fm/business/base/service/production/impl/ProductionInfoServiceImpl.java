@@ -127,6 +127,9 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
     }
 
     @Override
+    /**
+     * 获取作品 并按发布时间倒序排序
+     */
     public List<ProductionInfo> getFullInfo(Collection<Long> ids) {
 
         if (CollectionUtils.isEmpty(ids)) {
@@ -135,9 +138,13 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
         List<ProductionInfo> result = getByIds(ids);
 
+        if(CollectionUtils.isEmpty(result)){
+            return Collections.emptyList();
+        }
+
         fillProductInfoRelation(result);
 
-        return result;
+        return result.stream().sorted(Comparator.comparing(ProductionInfo::getCreateTime).reversed()).collect(Collectors.toList());
     }
 
     /**
