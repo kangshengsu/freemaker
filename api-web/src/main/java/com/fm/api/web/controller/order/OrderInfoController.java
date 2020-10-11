@@ -268,7 +268,7 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
                 orderInfoVO.setDescription(detailMap.get(orderInfoVO.getId()).getDescription());
             }
 
-            orderInfoVO.setStatusName(OrderStatus.get(orderInfoVO.getStatus()).getName());
+            orderInfoVO.setStatusName(OrderStatus.get(orderInfoVO.getStatus())!=null?OrderStatus.get(orderInfoVO.getStatus()).getName():"未知");
         }
     }
 
