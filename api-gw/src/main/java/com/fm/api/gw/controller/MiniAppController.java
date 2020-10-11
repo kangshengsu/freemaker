@@ -74,7 +74,7 @@ public class MiniAppController {
      * @return
      */
     @RequestMapping(value = "/syncUserInfo", method = {RequestMethod.POST})
-    public ApiResponse<LoginReturnVO> getSessionKey(HttpServletRequest request, @RequestBody WeChatLoginVO weChatLoginVO) {
+    public ApiResponse<LoginReturnVO> syncUserInfo(HttpServletRequest request, @RequestBody WeChatLoginVO weChatLoginVO) {
         LoginReturnVO loginReturnVO = new LoginReturnVO();
         //获取sessionkey openId unionId
         WeChatDecryptVO weChatDecryptVO = wxRpcService.getSessionInfo(weChatLoginVO);
@@ -204,7 +204,7 @@ public class MiniAppController {
         freelancerInfo.setSkillSummarize("");
         freelancerInfo.setAccountCode("");
 
-        freelancerInfo.setLanguage(LanguageEnum.getIndexByCode(weChatLoginVO.getLanguage()));
+        freelancerInfo.setLanguage(LanguageEnum.CHINESE.getCode());
         freelancerInfo.setProvinceCode(weChatLoginVO.getProvince());
         freelancerInfo.setCityCode(weChatLoginVO.getCity());
         freelancerInfo.setDistrictCode(Optional.ofNullable(weChatLoginVO.getDistrict()).orElse(""));

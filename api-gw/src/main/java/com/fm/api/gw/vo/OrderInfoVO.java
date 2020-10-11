@@ -7,6 +7,7 @@
 package com.fm.api.gw.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fm.api.gw.vo.employer.EmployerInfoApiVO;
 import com.fm.api.gw.vo.evaluation.EvaluationInfoVO;
 import com.fm.api.gw.vo.freelancer.FreelancerInfoApiVO;
 import com.fm.framework.web.VO;
@@ -123,9 +124,9 @@ public class OrderInfoVO extends VO implements Serializable {
 	private Long employerId;
 
 	/**
-	 * 需求提出人姓名
+	 * 需求提出人
 	 */
-	private String employerName;
+	private EmployerInfoApiVO employer;
 
     /**
     * 创建时间

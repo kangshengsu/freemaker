@@ -7,21 +7,16 @@
 package com.fm.api.gw.controller;
 
 import com.fm.api.gw.vo.OrderInfoVO;
-import com.fm.api.gw.vo.evaluation.EvaluationInfoVO;
-import com.fm.api.gw.vo.freelancer.FreelancerInfoApiVO;
-import com.fm.business.base.dao.freelancer.IFreelancerInfoMapper;
-import com.fm.business.base.enums.AttachmentBusinessType;
+import com.fm.api.gw.vo.employer.mapper.EmployerInfoMapper;
+import com.fm.api.gw.vo.freelancer.mapper.FreelancerInfoMapper;
 import com.fm.business.base.enums.OrderOperateRoleType;
 import com.fm.business.base.enums.OrderStatus;
-import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.EmployerInfo;
-import com.fm.business.base.model.evaluation.EvaluationInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.order.OrderFollow;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.model.order.OrderInfoDetail;
-import com.fm.business.base.service.IAttachmentInfoService;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
@@ -41,7 +36,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -84,7 +78,10 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     private IOrderOperateInfoService orderOperateInfoService;
 
     @Autowired
-    private IFreelancerInfoMapper freelancerInfoMapper;
+    private FreelancerInfoMapper freelancerInfoMapper;
+
+    @Autowired
+    private EmployerInfoMapper employerInfoMapper;
 
     @RequestMapping(value = "getOrderListByStakeholder",method = RequestMethod.GET)
     @ApiOperation(value="根据订单参与者ID获取订单（订单参与者：雇主/自由职业者）")
@@ -333,15 +330,11 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         // fill userInfo
         OrderInfoVO orderInfoVO = super.convert(orderInfo);
         if (freelancerInfo != null) {
-            FreelancerInfoApiVO freelancerInfoAppVO = new FreelancerInfoApiVO();
-            freelancerInfoAppVO.setName(freelancerInfo.getName());
-            freelancerInfoAppVO.setPhone(freelancerInfo.getPhone());
-
-            orderInfoVO.setFreelancer(freelancerInfoAppVO);
+            orderInfoVO.setFreelancer(freelancerInfoMapper.toFreelancerInfoApi(freelancerInfo));
         }
 
         if (employerInfo != null) {
-            orderInfoVO.setEmployerName(employerInfo.getName());
+            orderInfoVO.setEmployer(employerInfoMapper.toEmployerInfoApi(employerInfo));
         }
 
         return orderInfoVO;
