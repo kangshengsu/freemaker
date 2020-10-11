@@ -123,6 +123,26 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
     }
 
     @Override
+    public List<BdJobCate> getFullJobCateById(Long id) {
+        BdJobCate jobCate = this.get(id);
+        String treeCode = jobCate.getTreeCode();
+        List<String> treeCodes = splitTreeCode(treeCode);
+
+        List<BdJobCate> bdJobCates = getJobNodes(treeCodes);
+        Map<String, BdJobCate> jobCateMap = new HashMap<>();
+        for (BdJobCate bdJobCate : bdJobCates) {
+            jobCateMap.put(bdJobCate.getTreeCode(), bdJobCate);
+        }
+
+        List<BdJobCate> jobCates = new ArrayList<>();
+        for (String code : treeCodes) {
+            jobCates.add(jobCateMap.get(code));
+        }
+
+        return jobCates;
+    }
+
+    @Override
     public List<BdJobCate> findAllJobCatePost() {
         LambdaQueryWrapper<BdJobCate> wrapper = Wrappers.lambdaQuery(BdJobCate.class)
                 .eq(BdJobCate::getCateType, JobNodeType.POST.getType());

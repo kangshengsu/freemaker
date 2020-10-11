@@ -60,6 +60,18 @@ public class JobTreeApi extends BaseController<BdJobCate, JobCateVO> {
         return ApiResponse.ofSuccess(treeRoot.getChilds());
     }
 
+    @RequestMapping(value = "getCateLevelIds",method = RequestMethod.GET)
+    public ApiResponse<List<Long>> getCateLevelIds(@RequestParam(value="jobCateId") Long jobCateId) {
+        List<BdJobCate> bdJobCates = bdJobCateService.getFullJobCateById(jobCateId);
+
+        List<Long> jobCateIds = new ArrayList<>();
+        for (BdJobCate bdJobCate : bdJobCates) {
+            jobCateIds.add(bdJobCate.getId());
+        }
+
+        return success(jobCateIds);
+    }
+
     @RequestMapping(value = "getSkillList",method = RequestMethod.GET)
     public ApiResponse<List<JobSkillVO>> getSkillList(@RequestParam(value="jobCateId") Long jobCateId) {
         QueryItem item = new QueryItem();

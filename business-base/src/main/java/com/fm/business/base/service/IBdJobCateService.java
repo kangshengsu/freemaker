@@ -53,6 +53,8 @@ public interface IBdJobCateService extends Service<BdJobCate> {
 
     String getFullTreePathById(Long id);
 
+    List<BdJobCate> getFullJobCateById(Long id);
+
     /**
      * 获取全部岗位
      * @return 岗位集合
