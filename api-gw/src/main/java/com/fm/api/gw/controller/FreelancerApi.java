@@ -11,8 +11,10 @@ import com.fm.api.gw.vo.FreelancerOrderSummaryVO;
 import com.fm.api.gw.vo.freelancer.FreelancerInfoApiVO;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.order.OrderInfo;
+import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.order.IOrderInfoService;
+import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.exception.BusinessException;
 import com.fm.framework.core.service.Service;
@@ -20,6 +22,7 @@ import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,15 +51,41 @@ public class FreelancerApi extends BaseController<FreelancerInfo, FreelancerInfo
     @Autowired
     private IOrderInfoService iOrderInfoService;
 
+    @Autowired
+    private IProductionInfoService iProductionInfoService;
+
     @RequestMapping(value = "contactInfo",method = RequestMethod.GET)
     @ApiOperation("获取联系方式")
     public ApiResponse<ContactInfoAppVO> contactInfo() {
-        FreelancerInfo freelancerInfo = iFreelancerInfoService.getByUserId(Context.getCurrUserId());
+        ContactInfoAppVO contactInfoAppVO = getContactInfoAppVO(Context.getCurrUserId());
+        return ApiResponse.ofSuccess(contactInfoAppVO);
+    }
+
+    private ContactInfoAppVO getContactInfoAppVO(Long id) {
+        FreelancerInfo freelancerInfo = iFreelancerInfoService.getByUserId(id);
         if(freelancerInfo == null){
             throw new BusinessException("自由职业者信息有误");
         }
         ContactInfoAppVO contactInfoAppVO = new ContactInfoAppVO();
         contactInfoAppVO.setPhone(freelancerInfo.getPhone());
+        contactInfoAppVO.setWxCode(StringUtils.isEmpty(freelancerInfo.getAccountCode())?"":freelancerInfo.getAccountCode());
+        return contactInfoAppVO;
+    }
+
+
+    @RequestMapping(value = "order/contactInfo",method = RequestMethod.GET)
+    @ApiOperation("获取联系方式")
+    public ApiResponse<ContactInfoAppVO> contactInfoByOrderId(Long orderId) {
+        OrderInfo orderInfo = iOrderInfoService.get(orderId);
+        ContactInfoAppVO contactInfoAppVO = getContactInfoAppVO(orderInfo.getFreelancerId());
+        return ApiResponse.ofSuccess(contactInfoAppVO);
+    }
+
+    @RequestMapping(value = "production/contactInfo",method = RequestMethod.GET)
+    @ApiOperation("获取联系方式")
+    public ApiResponse<ContactInfoAppVO> contactInfoByProductionId(Long productionId) {
+        ProductionInfo productionInfo = iProductionInfoService.get(productionId);
+        ContactInfoAppVO contactInfoAppVO = getContactInfoAppVO(productionInfo.getFreelancerId());
         return ApiResponse.ofSuccess(contactInfoAppVO);
     }
 
