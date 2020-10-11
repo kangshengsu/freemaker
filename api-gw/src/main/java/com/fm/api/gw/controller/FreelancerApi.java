@@ -20,6 +20,7 @@ import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,6 +58,7 @@ public class FreelancerApi extends BaseController<FreelancerInfo, FreelancerInfo
         }
         ContactInfoAppVO contactInfoAppVO = new ContactInfoAppVO();
         contactInfoAppVO.setPhone(freelancerInfo.getPhone());
+        contactInfoAppVO.setWxCode(StringUtils.isEmpty(freelancerInfo.getAccountCode())?"":freelancerInfo.getAccountCode());
         return ApiResponse.ofSuccess(contactInfoAppVO);
     }
 
