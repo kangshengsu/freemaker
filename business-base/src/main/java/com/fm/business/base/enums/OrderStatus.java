@@ -7,7 +7,9 @@ public enum OrderStatus {
 
     REJECT_30(30, "已拒单", 1, OrderOperateRoleType.FREELANCER.getCode()),
 
-    TAKING_40(40, "待支付", 2, OrderOperateRoleType.FREELANCER.getCode()), // = 待支付
+    TAKING_40(40, "待支付", 2, OrderOperateRoleType.FREELANCER.getCode()),
+
+    CANCELD_100(100, "已取消", 2, OrderOperateRoleType.EMPLOYER.getCode()), // = 待支付
 
     PAID_50(50, "制作中", 3, OrderOperateRoleType.EMPLOYER.getCode()), // = 已支付
 
@@ -21,9 +23,7 @@ public enum OrderStatus {
 
     FINISHED_81(81, "终止交易", 5, OrderOperateRoleType.EMPLOYER.getCode()),
 
-    EVALUATED_90(90, "已评价", 6, OrderOperateRoleType.EMPLOYER.getCode()),
-
-    CANCELD_100(100, "已取消", 7, OrderOperateRoleType.EMPLOYER.getCode());
+    EVALUATED_90(90, "已评价", 6, OrderOperateRoleType.EMPLOYER.getCode());
 
 
 
