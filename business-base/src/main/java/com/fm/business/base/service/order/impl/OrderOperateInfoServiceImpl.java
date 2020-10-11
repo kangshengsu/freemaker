@@ -24,8 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Description:(订单信息服务实现)
@@ -76,8 +76,8 @@ public class OrderOperateInfoServiceImpl extends AuditBaseService<IOrderOperateI
         if (!CollectionUtils.isEmpty(attachmentList)) {
             for (AttachmentInfo attachmentInfo : attachmentList) {
                 attachmentInfo.setBusinessCode(orderOperateInfo.getId().toString());
-                attachmentInfo.setType(AttachmentBusinessType.ORDER_OPERATE.getCode());
-                attachmentInfo.setBusinessType(AttachmentType.PICTURE.getCode());
+                attachmentInfo.setType(AttachmentType.PICTURE.getCode());
+                attachmentInfo.setBusinessType(AttachmentBusinessType.ORDER_OPERATE.getCode());
             }
         }
 
@@ -87,11 +87,43 @@ public class OrderOperateInfoServiceImpl extends AuditBaseService<IOrderOperateI
     @Override
     public List<OrderOperateInfo> findByOrderId(Long orderId, Integer... orderOperateTypes) {
 
-        Wrapper<OrderOperateInfo> wrappers = Wrappers.lambdaQuery(OrderOperateInfo.class)
+        List<OrderOperateInfo> orderOperateInfos = getBaseMapper().selectList(Wrappers.lambdaQuery(OrderOperateInfo.class)
                 .eq(OrderOperateInfo::getOrderId,orderId)
                 .in(orderOperateTypes != null,OrderOperateInfo::getOperateType,orderOperateTypes)
-                .orderByDesc(OrderOperateInfo::getCreateTime);
+                .orderByDesc(OrderOperateInfo::getCreateTime));
+        fillProductInfoRelation(orderOperateInfos);
+        return orderOperateInfos;
+    }
 
-        return getBaseMapper().selectList(wrappers);
+    /**
+     * 补全数据
+     *
+     * @param orderOperateInfos
+     */
+    private void fillProductInfoRelation(Collection<OrderOperateInfo> orderOperateInfos) {
+
+        Set<String> attachmentCodes = new HashSet<>();
+
+        orderOperateInfos.forEach(orderOperateInfo -> {
+            attachmentCodes.add(String.valueOf(orderOperateInfo.getId()));
+        });
+
+        Map<String, List<AttachmentInfo>> attachmentMap = attachmentInfoService.getByCodeAndType(attachmentCodes, AttachmentBusinessType.ORDER_OPERATE)
+                .stream().collect(Collectors.toMap(AttachmentInfo::getBusinessCode, v -> {
+                    List<AttachmentInfo> list = new ArrayList<>();
+                    list.add(v);
+                    return list;
+                }, (v1, v2) -> {
+                    v1.addAll(v2);
+                    return v1;
+                }));
+
+        orderOperateInfos.forEach(orderOperateInfo -> {
+
+            if (attachmentMap.containsKey(orderOperateInfo.getId().toString())) {
+                orderOperateInfo.setAttachmentInfos(attachmentMap.get(orderOperateInfo.getId().toString()));
+            }
+
+        });
     }
 }
