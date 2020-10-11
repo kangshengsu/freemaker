@@ -7,10 +7,13 @@
 package com.fm.api.gw.controller;
 
 import com.fm.api.gw.vo.OrderInfoVO;
+import com.fm.api.gw.vo.order.OrderOperateInfoVO;
 import com.fm.api.gw.vo.attachment.mapper.AttachmentMapper;
 import com.fm.api.gw.vo.employer.mapper.EmployerInfoMapper;
 import com.fm.api.gw.vo.freelancer.mapper.FreelancerInfoMapper;
+import com.fm.api.gw.vo.order.mapper.OrderOperateMapper;
 import com.fm.business.base.enums.OrderOperateRoleType;
+import com.fm.business.base.enums.OrderOperateType;
 import com.fm.business.base.enums.OrderStatus;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.EmployerInfo;
@@ -19,6 +22,7 @@ import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.order.OrderFollow;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.model.order.OrderInfoDetail;
+import com.fm.business.base.model.order.OrderOperateInfo;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
@@ -89,6 +93,9 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
     @Autowired
     private AttachmentMapper attachmentMapper;
+
+    @Autowired
+    private OrderOperateMapper orderOperateMapper;
 
     @RequestMapping(value = "getOrderListByStakeholder",method = RequestMethod.GET)
     @ApiOperation(value="根据订单参与者ID获取订单（订单参与者：雇主/自由职业者）")
@@ -310,6 +317,19 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
         return this.update(orderInfoVO);
     }
+
+    @ApiOperation(value="获取订单验收不通过信息")
+    @ApiImplicitParam(paramType="query", name = "orderId", value = "获取订单验收不通过信息", required = true, dataType = "Long")
+    @GetMapping(value = "getOrderUnAcceptInfo")
+    public ApiResponse<List<OrderOperateInfoVO>> getOrderUnAcceptInfo(@RequestParam("orderId") Long orderId) {
+        List<OrderOperateInfo> orderOperateInfos =  orderOperateInfoService.findByOrderId(orderId, OrderOperateType.UNACCEPT.getCode());
+        if(CollectionUtils.isEmpty(orderOperateInfos)){
+            return success(Collections.EMPTY_LIST);
+        }
+        return success(orderOperateInfos.stream().map(orderOperateInfo ->
+                orderOperateMapper.toOrderOperateInfoVO(orderOperateInfo)).collect(Collectors.toList()));
+    }
+
 
     private void fillJobInfo(OrderInfoVO orderInfoVO) {
         orderInfoVO.setJobCateName(bdJobCateService.getFullTreePathById(orderInfoVO.getJobCateId()));

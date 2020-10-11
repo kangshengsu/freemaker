@@ -6,6 +6,8 @@
  */
 package com.fm.business.base.service.order.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.order.IOrderOperateInfoMapper;
 import com.fm.business.base.enums.AttachmentBusinessType;
 import com.fm.business.base.enums.AttachmentType;
@@ -80,5 +82,16 @@ public class OrderOperateInfoServiceImpl extends AuditBaseService<IOrderOperateI
         }
 
         attachmentInfoService.save(attachmentList);
+    }
+
+    @Override
+    public List<OrderOperateInfo> findByOrderId(Long orderId, Integer... orderOperateTypes) {
+
+        Wrapper<OrderOperateInfo> wrappers = Wrappers.lambdaQuery(OrderOperateInfo.class)
+                .eq(OrderOperateInfo::getOrderId,orderId)
+                .in(orderOperateTypes != null,OrderOperateInfo::getOperateType,orderOperateTypes)
+                .orderByDesc(OrderOperateInfo::getCreateTime);
+
+        return getBaseMapper().selectList(wrappers);
     }
 }

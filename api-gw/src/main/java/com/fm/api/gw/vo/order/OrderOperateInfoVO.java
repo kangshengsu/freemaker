@@ -4,7 +4,7 @@
  * Copyright(c) 2020 LiuDuo Co. Ltd. 
  * All right reserved. 
  */
-package com.fm.api.gw.vo;
+package com.fm.api.gw.vo.order;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.framework.web.VO;
@@ -25,8 +25,6 @@ public class OrderOperateInfoVO extends VO implements Serializable {
 
 	private static final long serialVersionUID = 1600497555102L;
 
-	private Long id;
-
 	/**
 	 * 订单编码
 	 **/
@@ -42,32 +40,12 @@ public class OrderOperateInfoVO extends VO implements Serializable {
 	 **/
 	private Long operateUser;
 
-
-	/**
-	 * 接收人
-	 **/
-	private Long receiveUser;
-
 	/**
 	 * 创建时间
 	 **/
 	private Date createTime;
 
 
-	/**
-	 * 修改时间
-	 **/
-	private Date updateTime;
 
-    /**
-    * 创建人
-    **/
-	private Long createUser;
-
-
-    /**
-    * 修改人
-    **/
-	private Long updateUser;
 
 }
