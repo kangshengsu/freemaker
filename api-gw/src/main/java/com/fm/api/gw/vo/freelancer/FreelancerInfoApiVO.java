@@ -68,6 +68,10 @@ public class FreelancerInfoApiVO implements Serializable {
     **/
 	private String cateTreeCode;
 
+	/**
+	 * 岗位全名称
+	 **/
+	private String cateTreeName;
 
     /**
     * 省份编码
