@@ -47,7 +47,8 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
     public List<OrderInfo> queryFinishedOrderByFreelancer(Long freelancerId) {
         LambdaQueryWrapper<OrderInfo> wrapper = Wrappers.<OrderInfo>lambdaQuery()
                 .eq(OrderInfo::getFreelancerId, freelancerId)
-                .in(OrderInfo::getStatus, new Integer[]{OrderStatus.FINISHED_80.getCode(), OrderStatus.EVALUATED_90.getCode()});
+                .in(OrderInfo::getStatus, new Integer[]{OrderStatus.FINISHED_80.getCode(), OrderStatus.EVALUATED_90.getCode()})
+                .orderByDesc(OrderInfo::getCreateTime);
         return getBaseMapper().selectList(wrapper);
     }
 
@@ -87,7 +88,7 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
                 wrapper.and(w-> w.eq(OrderInfo::getFreelancerId, _freelancerId).or().eq(OrderInfo::getEmployerId, _employerId));
 
         }
-
+        wrapper.orderByDesc(OrderInfo::getCreateTime);
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currPage, pageSize), wrapper));
     }
 
