@@ -5,35 +5,43 @@ import lombok.Getter;
 @Getter
 public enum LanguageEnum {
 
-    CHINESE(0, "zh_CN","汉语"),
-    ENGLISH(1, "en","英语"),
-    JAPANESE(2, "","日语");
+    CHINESE(10, "中文","zh_CN"),
+    ENGLISH(20, "英文","en");
 
-    LanguageEnum(Integer index,String code, String desc) {
-        this.index = index;
+    LanguageEnum(Integer code,String name, String keyword) {
         this.code = code;
-        this.desc = desc;
+        this.name = name;
+        this.keyword = keyword;
     }
 
     /**
      * 语言枚举值
      */
-    private Integer index;
+    private Integer code;
 
     /**
-     * 语言编码
+     * 语言
      */
-    private String code;
+    private String name;
 
     /**
-     * 语言描述
+     * 语言小程序关键字
      */
-    private String desc;
+    private String keyword;
 
-    public static Integer getIndexByCode(String code) {
-        for (LanguageEnum item : values()) {
-            if (item.getCode().equals(code)) {
-                return item.getIndex();
+    /**
+     * 根据code获取枚举
+     * @param code
+     * @return
+     */
+    public static LanguageEnum get(Integer code) {
+        if(code == null){
+            return null;
+        }
+        LanguageEnum[] _enums = values();
+        for (LanguageEnum _enum : _enums) {
+            if (_enum.getCode().equals(code)) {
+                return _enum;
             }
         }
         return null;
