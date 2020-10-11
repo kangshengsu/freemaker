@@ -15,6 +15,8 @@ public enum OrderStatus {
 
     CHECK_FAIL_70(70, "验收不通过", 4, OrderOperateRoleType.EMPLOYER.getCode()),
 
+    CHECK_FAIL_71(71, "验收仍不通过", 4, OrderOperateRoleType.EMPLOYER.getCode()),
+
     FINISHED_80(80, "已完成", 5, OrderOperateRoleType.EMPLOYER.getCode()),
 
     EVALUATED_90(90, "已评价", 6, OrderOperateRoleType.EMPLOYER.getCode()),
