@@ -39,7 +39,7 @@ public class OrderOperateInfoServiceImpl extends AuditBaseService<IOrderOperateI
     private IAttachmentInfoService attachmentInfoService;
 
     @Override
-    public void saveOperateInfo(Long orderId, Integer status, String description, List<String> attachmentList) {
+    public void saveOperateInfo(Long orderId, Integer status, String description, List<AttachmentInfo> attachmentList) {
         OrderOperateInfo orderOperateInfo = new OrderOperateInfo();
         if (OrderStatus.CHECKING_60.getCode().equals(status)) {
             orderOperateInfo.setOperateType(OrderOperateType.SUBMIT.getCode());
@@ -49,7 +49,11 @@ public class OrderOperateInfoServiceImpl extends AuditBaseService<IOrderOperateI
             orderOperateInfo.setOperateType(OrderOperateType.UNACCEPT.getCode());
             orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
             orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
-        } else if (OrderStatus.FINISHED_80.getCode().equals(status)) {
+        } else if (OrderStatus.CHECK_FAIL_71.getCode().equals(status)) {
+            orderOperateInfo.setOperateType(OrderOperateType.UNACCEPT_AGAIN.getCode());
+            orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
+            orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
+        }else if (OrderStatus.FINISHED_80.getCode().equals(status)) {
             orderOperateInfo.setOperateType(OrderOperateType.ACCEPT.getCode());
             orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
             orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
@@ -62,19 +66,15 @@ public class OrderOperateInfoServiceImpl extends AuditBaseService<IOrderOperateI
         orderOperateInfo.setDescription(description);
         this.save(orderOperateInfo);
 
-        List<AttachmentInfo> attachmentInfos = new ArrayList<>();
-        AttachmentInfo attachmentInfo;
+
         if (!CollectionUtils.isEmpty(attachmentList)) {
-            for (String attachment : attachmentList) {
-                attachmentInfo = new AttachmentInfo();
+            for (AttachmentInfo attachmentInfo : attachmentList) {
                 attachmentInfo.setBusinessCode(orderOperateInfo.getId().toString());
                 attachmentInfo.setType(AttachmentBusinessType.ORDER_OPERATE.getCode());
-                attachmentInfo.setPath(attachment);
                 attachmentInfo.setBusinessType(AttachmentType.PICTURE.getCode());
-                attachmentInfos.add(attachmentInfo);
             }
         }
 
-        attachmentInfoService.save(attachmentInfos);
+        attachmentInfoService.save(attachmentList);
     }
 }

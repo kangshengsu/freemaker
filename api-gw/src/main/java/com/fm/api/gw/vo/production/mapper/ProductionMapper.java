@@ -1,7 +1,7 @@
 package com.fm.api.gw.vo.production.mapper;
 
 import com.fm.api.gw.vo.production.list.ProductionListVO;
-import com.fm.api.gw.vo.production.relation.AttachmentVO;
+import com.fm.api.gw.vo.attachment.AttachmentVO;
 import com.fm.api.gw.vo.production.relation.ReviewInfoVO;
 import com.fm.api.gw.vo.production.req.ProductionApiVO;
 import com.fm.api.gw.vo.production.view.ProductionViewVO;

@@ -1,20 +1,12 @@
 package com.fm.api.gw.vo.evaluation;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fm.api.gw.vo.OrderInfoVO;
 import com.fm.api.gw.vo.employer.EmployerInfoApiVO;
 import com.fm.api.gw.vo.evaluation.relation.BdJobTagVO;
 import com.fm.api.gw.vo.evaluation.relation.OrderInfoDetailVO;
 import com.fm.api.gw.vo.freelancer.FreelancerInfoApiVO;
-import com.fm.api.gw.vo.production.relation.AttachmentVO;
+import com.fm.api.gw.vo.attachment.AttachmentVO;
 import com.fm.api.gw.vo.production.relation.JobCateVO;
-import com.fm.business.base.model.AttachmentInfo;
-import com.fm.business.base.model.EmployerInfo;
-import com.fm.business.base.model.evaluation.EvaluationInfoTag;
-import com.fm.business.base.model.freelancer.FreelancerInfo;
-import com.fm.business.base.model.job.BdJobCate;
-import com.fm.business.base.model.order.OrderInfo;
-import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.framework.web.VO;
 import lombok.Data;
 

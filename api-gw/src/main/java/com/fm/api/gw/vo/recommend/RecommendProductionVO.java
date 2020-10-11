@@ -2,7 +2,7 @@ package com.fm.api.gw.vo.recommend;
 
 import com.fm.api.gw.vo.evaluation.OverallEvaluationVO;
 import com.fm.api.gw.vo.freelancer.FreelancerInfoApiVO;
-import com.fm.api.gw.vo.production.relation.AttachmentVO;
+import com.fm.api.gw.vo.attachment.AttachmentVO;
 import com.fm.api.gw.vo.production.relation.JobCateVO;
 import com.fm.api.gw.vo.production.relation.SkillRelationVO;
 import com.fm.framework.web.VO;

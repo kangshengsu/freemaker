@@ -2,7 +2,7 @@ package com.fm.api.gw.vo.evaluation.mapper;
 
 import com.fm.api.gw.vo.evaluation.EvaluationInfoVO;
 import com.fm.api.gw.vo.evaluation.OverallEvaluationVO;
-import com.fm.api.gw.vo.production.relation.AttachmentVO;
+import com.fm.api.gw.vo.attachment.AttachmentVO;
 import com.fm.business.base.enums.EvaluationEnum;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.evaluation.EvaluationInfo;

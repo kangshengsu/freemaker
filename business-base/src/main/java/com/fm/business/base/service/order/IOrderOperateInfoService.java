@@ -6,6 +6,7 @@
  */
 package com.fm.business.base.service.order;
 
+import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.order.OrderOperateInfo;
 import com.fm.framework.core.service.Service;
 
@@ -18,5 +19,5 @@ import java.util.List;
  *
  */
 public interface IOrderOperateInfoService extends Service<OrderOperateInfo> {
-    void saveOperateInfo(Long orderId, Integer status, String description, List<String> attachmentList);
+    void saveOperateInfo(Long orderId, Integer status, String description, List<AttachmentInfo> attachmentList);
 }

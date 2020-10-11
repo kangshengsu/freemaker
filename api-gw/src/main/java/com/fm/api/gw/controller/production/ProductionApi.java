@@ -7,34 +7,22 @@
 package com.fm.api.gw.controller.production;
 
 import com.fm.api.gw.vo.production.mapper.ProductionMapper;
-import com.fm.api.gw.vo.production.relation.AttachmentVO;
-import com.fm.api.gw.vo.production.relation.ReviewInfoVO;
 import com.fm.api.gw.vo.production.req.ProductionApiVO;
-import com.fm.api.gw.vo.production.view.ProductionViewVO;
-import com.fm.business.base.enums.ProductionReviewStatus;
 import com.fm.business.base.enums.ProductionStatus;
-import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.production.ProductionInfo;
-import com.fm.business.base.model.production.ProductionReviewInfo;
-import com.fm.business.base.model.production.ProductionSkillRelation;
 import com.fm.business.base.service.production.IProductionInfoService;
-import com.fm.business.base.service.production.IProductionReviewInfoService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.service.Service;
-import com.fm.framework.core.utils.JsonUtil;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
 *
