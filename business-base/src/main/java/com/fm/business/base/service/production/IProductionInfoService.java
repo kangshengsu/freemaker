@@ -6,6 +6,7 @@
  */
 package com.fm.business.base.service.production;
 
+import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
@@ -34,6 +35,14 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
      * @return 作品信息
      */
     List<ProductionInfo> getFullInfo(Collection<Long> ids);
+
+
+    /**
+     * 根据作品ID获取作品信息(全部信息)
+     * @param ids 作品ID集合
+     * @return 作品信息
+     */
+    List<ProductionInfo> getFullInfo(Collection<Long> ids, ProductionStatus status);
 
     /**
      * 变更审核状态

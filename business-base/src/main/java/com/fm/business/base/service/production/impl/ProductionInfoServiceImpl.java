@@ -126,10 +126,11 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         return result;
     }
 
-    @Override
+
     /**
      * 获取作品 并按发布时间倒序排序
      */
+    @Override
     public List<ProductionInfo> getFullInfo(Collection<Long> ids) {
 
         if (CollectionUtils.isEmpty(ids)) {
@@ -145,6 +146,32 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         fillProductInfoRelation(result);
 
         return result.stream().sorted(Comparator.comparing(ProductionInfo::getCreateTime).reversed()).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductionInfo> getFullInfo(Collection<Long> ids, ProductionStatus status) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+
+        LambdaQueryWrapper<ProductionInfo> lambdaQueryWrapper = Wrappers.lambdaQuery(ProductionInfo.class);
+
+        lambdaQueryWrapper.in(ProductionInfo::getId, ids);
+
+        if(Objects.nonNull(status)) {
+            lambdaQueryWrapper.eq(ProductionInfo::getStatus, status.getCode());
+        }
+
+        List<ProductionInfo> result = list(lambdaQueryWrapper);
+
+        if(CollectionUtils.isEmpty(result)){
+            return Collections.emptyList();
+        }
+
+        fillProductInfoRelation(result);
+
+        return result.stream().sorted(Comparator.comparing(ProductionInfo::getCreateTime).reversed()).collect(Collectors.toList());
+
     }
 
     /**

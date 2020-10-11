@@ -3,6 +3,7 @@ package com.fm.business.base.service.conf.impl;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.conf.DisplayConfigMapper;
+import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.conf.DisplayConfig;
 import com.fm.business.base.model.conf.DisplayConfigItemConvert;
 import com.fm.business.base.model.conf.DisplayConfigItem;
@@ -138,7 +139,7 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
                 .map(DisplayConfig::getDisplayId)
                 .collect(Collectors.toSet());
 
-        return productionInfoService.getFullInfo(jobProductIds);
+        return productionInfoService.getFullInfo(jobProductIds, ProductionStatus.RELEASE);
 
     }
 
