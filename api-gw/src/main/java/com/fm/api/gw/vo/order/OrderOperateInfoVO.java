@@ -7,11 +7,13 @@
 package com.fm.api.gw.vo.order;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fm.api.gw.vo.attachment.AttachmentVO;
 import com.fm.framework.web.VO;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**   
  * @Description:(订单操作息请求实体类)
@@ -45,6 +47,10 @@ public class OrderOperateInfoVO extends VO implements Serializable {
 	 **/
 	private Date createTime;
 
+	/**
+	 * 附件
+	 */
+	private List<AttachmentVO> images;
 
 
 

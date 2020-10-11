@@ -44,7 +44,7 @@ public abstract class AttachmentMapper {
      * @return
      */
     @Named("fullPath")
-     String fullPath(String path) {
+    String fullPath(String path) {
         if (!StringUtils.isEmpty(path)) {
             return fileService.getFullPath(path);
         }

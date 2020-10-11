@@ -6,12 +6,14 @@
  */
 package com.fm.business.base.model.order;
 
+import com.fm.business.base.model.AttachmentInfo;
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**   
  * @Description:(订单操作信息实体类)
@@ -80,6 +82,10 @@ public class OrderOperateInfo extends BaseModel implements Serializable,IAudit {
      */
 	private String description;
 
+    /**
+     * 附件
+     */
+	private transient List<AttachmentInfo> attachmentInfos;
 
     /**
      * 获取主键方法，主键整体平台定义成Long数据类型，方便数据的整体插入性能
