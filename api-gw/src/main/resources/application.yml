@@ -25,6 +25,7 @@ wx:
     msgDataFormat: JSON
 #    token: 123456 #没用上
 #    aesKey: yyyy #没用上
+    messageToken: howWorkMessageToken
   pay:
     appId: wxebd3588df98ae1a7 #微信公众号或者小程序等的appid
     mchId: test #todo zyc 微信支付商户号
