@@ -530,7 +530,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
             }
 
             if (updList.size() > 0) {
-                saveFlag = attachmentInfoService.save(updList);
+                saveFlag = attachmentInfoService.update(updList);
             }
 
             if (delList.size() > 0) {
