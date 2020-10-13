@@ -25,3 +25,5 @@ wx:
     token: 123456
     aesKey: yyyy
     msgDataFormat: JSON
+    messageToken: howWorkMessageToken
+    accessUrl: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s
