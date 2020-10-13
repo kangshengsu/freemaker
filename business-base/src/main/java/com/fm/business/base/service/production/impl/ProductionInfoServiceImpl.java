@@ -96,7 +96,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         //保存 作品技能关系数据
         saveSkills(model);
 
-        attachmentInfoService.deleteByBusinessCode(model.getCode());
+//        attachmentInfoService.deleteByBusinessCode(model.getCode());
 
         //保存 附件数据
         saveAttachments(model);
