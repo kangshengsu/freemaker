@@ -475,7 +475,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
             }
 
             if (updList.size() > 0) {
-                saveFlag = productionSkillRelationService.save(updList);
+                saveFlag = productionSkillRelationService.update(updList);
             }
 
             if (delList.size() > 0) {
