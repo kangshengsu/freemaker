@@ -5,23 +5,23 @@ public enum OrderStatus {
 
     WAITING_20(20, "待接单", 1, OrderOperateRoleType.FREELANCER.getCode()),//已下单
 
-    REJECT_30(30, "已拒单", 1, OrderOperateRoleType.FREELANCER.getCode()),
+    REJECT_30(30, "已取消", 1, OrderOperateRoleType.FREELANCER.getCode()),//已拒单
 
     TAKING_40(40, "待支付", 2, OrderOperateRoleType.FREELANCER.getCode()),
 
-    CANCELD_100(100, "已取消", 2, OrderOperateRoleType.EMPLOYER.getCode()), // = 待支付
+    CANCELD_100(100, "已取消", 2, OrderOperateRoleType.EMPLOYER.getCode()),
 
     PAID_50(50, "制作中", 3, OrderOperateRoleType.EMPLOYER.getCode()), // = 已支付
 
     CHECKING_60(60, "待验收", 4, OrderOperateRoleType.EMPLOYER.getCode()),
 
-    CHECK_FAIL_61(61, "重新验收", 4, OrderOperateRoleType.EMPLOYER.getCode()),
+    CHECK_FAIL_61(61, "验收不通过", 4, OrderOperateRoleType.EMPLOYER.getCode()),//二次待验收
 
     CHECK_FAIL_70(70, "验收不通过", 4, OrderOperateRoleType.EMPLOYER.getCode()),
 
     FINISHED_80(80, "已完成", 5, OrderOperateRoleType.EMPLOYER.getCode()),
 
-    FINISHED_81(81, "终止交易", 5, OrderOperateRoleType.EMPLOYER.getCode()),
+    FINISHED_81(81, "验收不通过", 4, OrderOperateRoleType.EMPLOYER.getCode()),//二次验收不通过，终止交易
 
     EVALUATED_90(90, "已评价", 6, OrderOperateRoleType.EMPLOYER.getCode());
 
