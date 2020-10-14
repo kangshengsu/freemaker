@@ -4,7 +4,6 @@ import com.fm.business.base.enums.OrderStatus;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.service.wx.message.impl.OrderStatusChangeMessageSender;
 import com.fm.framework.core.event.OperationEvent;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
