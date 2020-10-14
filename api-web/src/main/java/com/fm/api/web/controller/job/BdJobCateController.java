@@ -195,9 +195,17 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
         item.setType(QueryType.eq);
         ArrayList<QueryItem> queryList = new ArrayList();
         queryList.add(item);
-        List<BdJobCate> bdJobSkills = bdJobCateService.get(queryList);
+        List<BdJobCate> bdJobCates = bdJobCateService.get(queryList);
 
-        return bdJobSkills != null && bdJobSkills.size() > 0;
+        item = new QueryItem();
+        item.setQueryField("jobCateId");
+        item.setValue(jobId);
+        item.setType(QueryType.eq);
+        ArrayList<QueryItem> queryList1 = new ArrayList();
+        queryList1.add(item);
+        List<BdJobSkill> bdJobSkills = bdJobSkillService.get(queryList1);
+
+        return (bdJobCates != null && bdJobCates.size() > 0) || (bdJobSkills != null && bdJobSkills.size() > 0);
     }
 
     private JobNodeVO transferTree( List<JobNodeVO> treeNodeList) {

@@ -9,6 +9,7 @@ package com.fm.business.base.service.production.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -30,6 +31,8 @@ import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.business.base.service.production.IProductionSkillRelationService;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.query.PageInfo;
+import com.fm.framework.core.query.QueryItem;
+import com.fm.framework.core.query.QueryType;
 import com.fm.framework.core.service.AuditBaseService;
 import com.fm.framework.core.utils.CodeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -93,7 +96,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         //保存 作品技能关系数据
         saveSkills(model);
 
-        attachmentInfoService.deleteByBusinessCode(model.getCode());
+//        attachmentInfoService.deleteByBusinessCode(model.getCode());
 
         //保存 附件数据
         saveAttachments(model);
@@ -439,10 +442,47 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         List<ProductionSkillRelation> productionSkillRelations = model.getProductionSkillRelations();
 
         if (!CollectionUtils.isEmpty(productionSkillRelations)) {
+            List<ProductionSkillRelation> insList = new ArrayList<>();
+            List<ProductionSkillRelation> updList = new ArrayList<>();
+            List<ProductionSkillRelation> delList = new ArrayList<>();
+
+            Set<Long> skillRelationSet = new HashSet<>();
             for (ProductionSkillRelation productionSkillRelation : productionSkillRelations) {
                 productionSkillRelation.setProductionId(model.getId());
+                if (productionSkillRelation.getId() == null) {
+                    insList.add(productionSkillRelation);
+                } else {
+                    skillRelationSet.add(productionSkillRelation.getId());
+                    updList.add(productionSkillRelation);
+                }
             }
-            return productionSkillRelationService.save(productionSkillRelations);
+
+            List<QueryItem> queryItems = new ArrayList<>();
+            QueryItem queryItem = new QueryItem();
+            queryItem.setQueryField("production_id");
+            queryItem.setType(QueryType.eq);
+            queryItem.setValue(model.getId());
+            List<ProductionSkillRelation> dbProductionSkillRelations = productionSkillRelationService.get(queryItems);
+            for (ProductionSkillRelation dbProductionSkillRelation : dbProductionSkillRelations) {
+                if (!skillRelationSet.contains(dbProductionSkillRelation.getId())) {
+                    delList.add(dbProductionSkillRelation);
+                }
+            }
+
+            boolean saveFlag = true;
+            if (insList.size() > 0) {
+                saveFlag = productionSkillRelationService.save(insList);
+            }
+
+            if (updList.size() > 0) {
+                saveFlag = productionSkillRelationService.update(updList);
+            }
+
+            if (delList.size() > 0) {
+                saveFlag = productionSkillRelationService.delete(delList);
+            }
+
+            return saveFlag;
 
         }
         return true;
@@ -462,7 +502,42 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
                 attachmentInfo.setBusinessType(AttachmentBusinessType.PRODUCTION.getCode());
                 attachmentInfo.setType(AttachmentType.PICTURE.getCode());
             }
-            return attachmentInfoService.save(attachmentInfos);
+
+            List<AttachmentInfo> insList = new ArrayList<>();
+            List<AttachmentInfo> updList = new ArrayList<>();
+            List<AttachmentInfo> delList = new ArrayList<>();
+
+            Set<Long> attachmentInfoSet = new HashSet<>();
+            for (AttachmentInfo attachmentInfo : attachmentInfos) {
+                if (attachmentInfo.getId() == null) {
+                    insList.add(attachmentInfo);
+                } else {
+                    attachmentInfoSet.add(attachmentInfo.getId());
+                    updList.add(attachmentInfo);
+                }
+            }
+
+            List<AttachmentInfo> dbAttachmentInfos = attachmentInfoService.getByCodeAndType(model.getCode(), AttachmentBusinessType.PRODUCTION);
+            for (AttachmentInfo dbAttachmentInfo : dbAttachmentInfos) {
+                if (!attachmentInfoSet.contains(dbAttachmentInfo.getId())) {
+                    delList.add(dbAttachmentInfo);
+                }
+            }
+
+            boolean saveFlag = true;
+            if (insList.size() > 0) {
+                saveFlag = attachmentInfoService.save(insList);
+            }
+
+            if (updList.size() > 0) {
+                saveFlag = attachmentInfoService.update(updList);
+            }
+
+            if (delList.size() > 0) {
+                saveFlag = attachmentInfoService.delete(delList);
+            }
+
+            return saveFlag;
         }
         return true;
     }
