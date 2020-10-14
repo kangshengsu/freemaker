@@ -2,9 +2,12 @@ package com.fm.business.base.listener;
 
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.framework.core.event.OperationEvent;
+import com.fm.framework.core.model.BaseModel;
 import org.springframework.context.ApplicationListener;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 /**
  * 订单状态 Listener
@@ -17,7 +20,7 @@ public class OrderStatusListener implements ApplicationListener<OperationEvent> 
 
     public void onApplicationEvent(@NonNull OperationEvent event) {
 
-        if(event.getBefore() instanceof OrderInfo || event.getAfter() instanceof OrderInfo) {
+        if(isOrderModel(event.getBefore()) || isOrderModel(event.getAfter())) {
 
             switch (event.getType()) {
                 case save:
@@ -30,11 +33,16 @@ public class OrderStatusListener implements ApplicationListener<OperationEvent> 
                     if(!o1.getStatus().equals(o2.getStatus())) {
                         changeStatus(o2);
                     }
+                    break;
 
             }
 
         }
 
+    }
+
+    private boolean isOrderModel(BaseModel model) {
+        return Objects.nonNull(model) && model instanceof OrderInfo;
     }
 
     private void changeStatus(OrderInfo newStatusOrder) {
