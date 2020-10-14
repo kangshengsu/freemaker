@@ -19,6 +19,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -76,6 +77,9 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
     public ApiResponse<Boolean> modify(@RequestBody @Validated(value = {ProductionApiVO.Modify.class}) ProductionApiVO apiVO){
         ProductionInfo productionInfo = convert(apiVO);
         productionInfo.setStatus(ProductionStatus.REVIEW.getCode());
+        //防止多传入字段 移除不关心字段
+        removeUpdateNoCareFiled(apiVO);
+
         if(productionInfoService.update(productionInfo)){
             return ApiResponse.ofSuccess(Boolean.TRUE);
         }
@@ -140,6 +144,23 @@ public class ProductionApi extends BaseController<ProductionInfo,ProductionApiVO
     @Override
     protected ProductionInfo convert(ProductionApiVO form) {
         return productionMapper.toProduction(form);
+    }
+
+    /**
+     * 移除修改时不关心字段
+     * @param form
+     */
+    protected void removeUpdateNoCareFiled(ProductionApiVO form){
+
+        form.setTs(null);
+
+        if(!CollectionUtils.isEmpty(form.getImages())){
+            form.getImages().stream().forEach(attachmentVO -> attachmentVO.setId(null));
+        }
+        if(!CollectionUtils.isEmpty(form.getSkills())){
+            form.getSkills().stream().forEach(skillRelationVO -> skillRelationVO.setId(null));
+        }
+
     }
 }
 

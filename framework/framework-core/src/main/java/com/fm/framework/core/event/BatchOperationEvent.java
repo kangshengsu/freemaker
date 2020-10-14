@@ -25,12 +25,14 @@ public class BatchOperationEvent extends OperationEvent {
 
     @Override
     public BaseModel getBefore() {
-        throw new UnsupportedOperationException();
+       // throw new UnsupportedOperationException();
+       return null;
     }
 
     @Override
     public BaseModel getAfter() {
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        return null;
     }
 
     public Collection<? extends BaseModel> getBefores() {

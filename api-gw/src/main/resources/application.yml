@@ -25,7 +25,10 @@ wx:
     msgDataFormat: JSON
 #    token: 123456 #没用上
 #    aesKey: yyyy #没用上
-    messageToken: howWorkMessageToken
+    message: howWorkMessageToken
+    accessUrl: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s
+    messageUrl: https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=%s
+
   pay:
     appId: wxebd3588df98ae1a7 #微信公众号或者小程序等的appid
     mchId: test #todo zyc 微信支付商户号
