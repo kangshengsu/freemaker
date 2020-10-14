@@ -34,32 +34,32 @@ public class ChinaDataChange {
         try {
             final Map<String,Map<String,String>> m = objectMapper.readValue(file, new TypeReference<Map<String, Map<String,String>>>(){});
             Map<String,String> pMap = m.get("86");
-            Map<String,Map<String,String>> changeMap = new HashMap<>();
+            Map<String,Map<Integer,String>> changeMap = new HashMap<>();
             pMap.forEach((k,v) -> {
                 System.out.println(v);
                 if(!changeMap.containsKey(pKey)){
                     changeMap.put(pKey,new HashMap<>());
                 }
-                changeMap.get(pKey).put(k,v);
+                changeMap.get(pKey).put(Integer.valueOf(k),v);
                 m.get(k).forEach((k2,v2) ->{
                     System.out.println(v2);
                     if(!changeMap.containsKey(cKey)){
                         changeMap.put(cKey,new HashMap<>());
                     }
-                    changeMap.get(cKey).put(k2,v2);
+                    changeMap.get(cKey).put(Integer.valueOf(k2),v2);
                     if(m.get(k2)!=null){
                         m.get(k2).forEach((k3,v3) ->{
                             System.out.println(v3);
                             if(!changeMap.containsKey(c2Key)){
                                 changeMap.put(c2Key,new HashMap<>());
                             }
-                            changeMap.get(c2Key).put(k3,v3);
+                            changeMap.get(c2Key).put(Integer.valueOf(k3),v3);
                         });
                     }
                 });
             });
 
-            System.out.println(JsonUtil.obj2String(changeMap));
+            System.out.println(JsonUtil.obj2String(changeMap).replaceAll("\"(\\w+)\"(\\s*:\\s*)", "$1$2"));
 
 
         } catch (IOException e) {
