@@ -27,8 +27,4 @@ public class MessageSendTest {
     @Autowired
     private MessageSenderService messageSenderService;
 
-    @Test
-    public void name() {
-        messageSenderService.sendMessage();
-    }
 }
