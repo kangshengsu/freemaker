@@ -175,7 +175,7 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
     @RequestMapping(value = "delJob",method = RequestMethod.POST)
     public ApiResponse<Boolean> delJob(@RequestBody JobNodeVO jobNodeVO) {
         ApiResponse<Boolean> result;
-        if (hasChildNode(jobNodeVO.getJobId())) {
+        if (!JobNodeType.JOB.equals(jobNodeVO.getCateType()) && hasChildNode(jobNodeVO.getJobId())) {
             return ApiResponse.ofFailed("非末级节点，不能删除！");
         }
 
