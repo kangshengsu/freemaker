@@ -90,13 +90,16 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
     @Override
     protected void afterUpdate(ProductionInfo model) {
+
         super.afterUpdate(model);
+
         //移除所有技能和附件并重新保存
         productionSkillRelationService.deleteByProductionId(model.getId());
+
         //保存 作品技能关系数据
         saveSkills(model);
 
-//        attachmentInfoService.deleteByBusinessCode(model.getCode());
+        attachmentInfoService.deleteByBusinessCode(model.getCode());
 
         //保存 附件数据
         saveAttachments(model);
@@ -442,47 +445,10 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         List<ProductionSkillRelation> productionSkillRelations = model.getProductionSkillRelations();
 
         if (!CollectionUtils.isEmpty(productionSkillRelations)) {
-            List<ProductionSkillRelation> insList = new ArrayList<>();
-            List<ProductionSkillRelation> updList = new ArrayList<>();
-            List<ProductionSkillRelation> delList = new ArrayList<>();
-
-            Set<Long> skillRelationSet = new HashSet<>();
             for (ProductionSkillRelation productionSkillRelation : productionSkillRelations) {
                 productionSkillRelation.setProductionId(model.getId());
-                if (productionSkillRelation.getId() == null) {
-                    insList.add(productionSkillRelation);
-                } else {
-                    skillRelationSet.add(productionSkillRelation.getId());
-                    updList.add(productionSkillRelation);
-                }
             }
-
-            List<QueryItem> queryItems = new ArrayList<>();
-            QueryItem queryItem = new QueryItem();
-            queryItem.setQueryField("production_id");
-            queryItem.setType(QueryType.eq);
-            queryItem.setValue(model.getId());
-            List<ProductionSkillRelation> dbProductionSkillRelations = productionSkillRelationService.get(queryItems);
-            for (ProductionSkillRelation dbProductionSkillRelation : dbProductionSkillRelations) {
-                if (!skillRelationSet.contains(dbProductionSkillRelation.getId())) {
-                    delList.add(dbProductionSkillRelation);
-                }
-            }
-
-            boolean saveFlag = true;
-            if (insList.size() > 0) {
-                saveFlag = productionSkillRelationService.save(insList);
-            }
-
-            if (updList.size() > 0) {
-                saveFlag = productionSkillRelationService.update(updList);
-            }
-
-            if (delList.size() > 0) {
-                saveFlag = productionSkillRelationService.delete(delList);
-            }
-
-            return saveFlag;
+            return productionSkillRelationService.save(productionSkillRelations);
 
         }
         return true;
@@ -502,42 +468,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
                 attachmentInfo.setBusinessType(AttachmentBusinessType.PRODUCTION.getCode());
                 attachmentInfo.setType(AttachmentType.PICTURE.getCode());
             }
-
-            List<AttachmentInfo> insList = new ArrayList<>();
-            List<AttachmentInfo> updList = new ArrayList<>();
-            List<AttachmentInfo> delList = new ArrayList<>();
-
-            Set<Long> attachmentInfoSet = new HashSet<>();
-            for (AttachmentInfo attachmentInfo : attachmentInfos) {
-                if (attachmentInfo.getId() == null) {
-                    insList.add(attachmentInfo);
-                } else {
-                    attachmentInfoSet.add(attachmentInfo.getId());
-                    updList.add(attachmentInfo);
-                }
-            }
-
-            List<AttachmentInfo> dbAttachmentInfos = attachmentInfoService.getByCodeAndType(model.getCode(), AttachmentBusinessType.PRODUCTION);
-            for (AttachmentInfo dbAttachmentInfo : dbAttachmentInfos) {
-                if (!attachmentInfoSet.contains(dbAttachmentInfo.getId())) {
-                    delList.add(dbAttachmentInfo);
-                }
-            }
-
-            boolean saveFlag = true;
-            if (insList.size() > 0) {
-                saveFlag = attachmentInfoService.save(insList);
-            }
-
-            if (updList.size() > 0) {
-                saveFlag = attachmentInfoService.update(updList);
-            }
-
-            if (delList.size() > 0) {
-                saveFlag = attachmentInfoService.delete(delList);
-            }
-
-            return saveFlag;
+            return attachmentInfoService.save(attachmentInfos);
         }
         return true;
     }
