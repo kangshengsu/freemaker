@@ -49,7 +49,7 @@ public class WxMessage {
             return this;
         }
 
-        public WxMessage.Builder page(String page) {
+        public WxMessage.Builder addPage(String page) {
             this.page = page;
             return this;
         }

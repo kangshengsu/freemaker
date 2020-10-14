@@ -51,7 +51,7 @@ public class RecommendMessageSender {
         }
         Long demandId = demandProductionRelation.iterator().next().getDemandId();
         DemandInfo demandInfo = demandInfoService.get(demandId);
-        if (demandInfo == null || demandInfo.getEmployerId()==null) {
+        if (demandInfo == null || demandInfo.getEmployerId() == null) {
             return;
         }
         EmployerInfo employerInfo = employerInfoService.get(demandInfo.getEmployerId());
@@ -68,11 +68,12 @@ public class RecommendMessageSender {
         String summarize = demandInfo.getSummarize();
         //获取作品名称
         String productionNames = productionInfos.stream().map(ProductionInfo::getTitle).collect(Collectors.joining(","));
-        String message = String.format("尊敬的【%s】，平台已根据需求【%s】向您推荐作品【%s】，请您尽快和人才沟通，向符合您要求的作品进行下单哦！",employerName,
+        String message = String.format("尊敬的【%s】，平台已根据需求【%s】向您推荐作品【%s】，请您尽快和人才沟通，向符合您要求的作品进行下单哦！", employerName,
                 summarize, productionNames);
 
-        WxMessage wxMessage = WxMessage.builder().addToUser(sysUser.getCode()).addTemplate(WxMessageTemplate.RECOMMEND_MESSAGE)
-                .addData("number1",String.valueOf(productionInfos.size())).addData("thing2",message).build();
+        WxMessage wxMessage = WxMessage.builder().addToUser(sysUser.getCode()).addPage("index")
+                .addTemplate(WxMessageTemplate.RECOMMEND_MESSAGE)
+                .addData("number1", String.valueOf(productionInfos.size())).addData("thing2", message).build();
 
         messageSenderService.sendMessage(wxMessage);
 
