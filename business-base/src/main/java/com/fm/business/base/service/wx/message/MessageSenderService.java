@@ -10,5 +10,5 @@ import java.util.Map;
  * @date 2020/10/14
  */
 public interface MessageSenderService {
-    void sendMessage(String touser, WxMessageTemplate wxMessageTemplate, Map<String, WxMessage.TemplateData> data);
+    void sendMessage(WxMessage message);
 }
