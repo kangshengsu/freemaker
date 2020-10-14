@@ -1,12 +1,16 @@
 package com.fm.business.base.service.wx.message.impl;
 
+import com.fm.business.base.enums.WxMessageTemplate;
 import com.fm.business.base.service.wx.message.MessageSenderService;
 import com.fm.business.base.service.wx.message.message.WxMessage;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
 
 /**
  * @author zhangleqi
@@ -27,23 +31,21 @@ public class MessageSenderServiceImpl implements MessageSenderService {
     @Value("${wx.miniapp.accessUrl}")
     private String accessUrl;
 
-    public void sendMessage() {
+    @Value("${wx.miniapp.messageUrl}")
+    private String messageUrl;
+
+    public void sendMessage(String touser, WxMessageTemplate wxMessageTemplate, Map<String, WxMessage.TemplateData> data) {
 
         String accessToken = getAccessToken();
-        String url = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=" + accessToken;
+
+        String sendUrl = String.format(messageUrl,accessToken);
 
         //拼接推送的模版
         WxMessage wxMessage = new WxMessage();
-        wxMessage.setTouser("o9kHZ5biqMlTd7yWesFjip984v34");
-        wxMessage.setTemplate_id("cv5hTnU_ABBjp8spFDvQacYttU2ZC3guvvJAoGKC8bA");
-        WxMessage.Data data = new WxMessage.Data();
-        data.setNumber1("1");
-        data.setThing2("啥玩应都是");
-        if(restTemplate==null){
-            restTemplate = new RestTemplate();
-        }
-
-        restTemplate.postForEntity(url, wxMessage, String.class);
+        wxMessage.setTouser(touser);
+        wxMessage.setTemplate_id(wxMessageTemplate.getCode());
+        wxMessage.setData(data);
+        ResponseEntity<String> response = restTemplate.postForEntity(sendUrl, wxMessage, String.class);
     }
 
     private String getAccessToken() {
