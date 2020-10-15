@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,6 +64,8 @@ public class OrderStatusChangeMessageSender {
         if (sysUser == null) {
             return;
         }
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = formatter.format(orderInfo.getUpdateTime());
         String desc = this.getDescToEmployer(orderInfo,employerInfo,freelancerInfo,demandInfo);
         WxMessage wxMessage = WxMessage.builder()
                 .addToUser(sysUser.getCode())
@@ -71,7 +74,7 @@ public class OrderStatusChangeMessageSender {
                 .addData("thing5", demandInfo.getSummarize())
                 .addData("phrase2", OrderStatus.get(orderInfo.getStatus()).getName())
                 .addData("amount8", String.valueOf(orderInfo.getOrderMny()))
-                .addData("date3", String.valueOf(orderInfo.getUpdateTime()))
+                .addData("date3", date)
                 .addData("thing4",desc)
                 .build();
         if (desc == null) {
@@ -93,6 +96,9 @@ public class OrderStatusChangeMessageSender {
         if (desc == null) {
             return;
         }
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = formatter.format(orderInfo.getUpdateTime());
         WxMessage wxMessage = WxMessage.builder()
                 .addToUser(sysUser.getCode())
                 .addTemplate(WxMessageTemplate.ORDER_STATUS_CHANGE_MESSAGE)
@@ -100,7 +106,7 @@ public class OrderStatusChangeMessageSender {
                 .addData("thing5", demandInfo.getSummarize())
                 .addData("phrase2", OrderStatus.get(orderInfo.getStatus()).getName())
                 .addData("amount8", String.valueOf(orderInfo.getOrderMny()))
-                .addData("date3", String.valueOf(orderInfo.getUpdateTime()))
+                .addData("date3", date)
                 .addData("thing4",desc)
                 .build();
         messageSenderService.sendMessage(wxMessage);
@@ -124,8 +130,8 @@ public class OrderStatusChangeMessageSender {
                 return String.format("尊敬的 %s，订单:%s,【%s】已经支付成功，平台已经安排人才开足马力制作中，祝早日达成期望！",
                         employerInfo.getName(), orderInfo.getCode(),demandInfo.getSummarize());
             case CHECKING_60:
-                return String.format("尊敬的 %s，订单:%s,【%s】已经交付成功，请您尽快验收吧！",
-                        employerInfo.getName(), orderInfo.getCode(),demandInfo.getSummarize());
+                return String.format("%s，订单已经交付成功，请您尽快验收吧！",
+                        employerInfo.getName());
             case FINISHED_80:
                 return String.format("尊敬的 %s，您的订单:%s,【%s】已经完成，期待您的评价，您的评价可以帮助平台更好的改善服务，谢谢您的支持！",
                         employerInfo.getName(), orderInfo.getCode(),demandInfo.getSummarize());
