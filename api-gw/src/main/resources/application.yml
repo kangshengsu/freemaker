@@ -25,7 +25,7 @@ wx:
     msgDataFormat: JSON
 #    token: 123456 #没用上
 #    aesKey: yyyy #没用上
-    message: howWorkMessageToken
+    messageToken: howWorkMessageToken
     accessUrl: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s
     messageUrl: https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=%s
 
