@@ -23,5 +23,11 @@ public interface ISysUserService extends Service<SysUser> {
      */
     SysUser findByCode(String code);
 
+    /**
+     * 更新用户数据，包含 用户表数据  自由职业者数据  雇佣者数据
+     * @param sysUser
+     * @return
+     */
+    boolean updateUserAllInfo(SysUser sysUser);
 
 }

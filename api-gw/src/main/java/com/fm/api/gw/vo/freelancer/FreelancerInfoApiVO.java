@@ -6,10 +6,15 @@
  */
 package com.fm.api.gw.vo.freelancer;
 
+import com.fm.api.gw.vo.user.UserApiVO;
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
 import com.fm.framework.web.VO;
 import lombok.Data;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -49,6 +54,7 @@ public class FreelancerInfoApiVO extends VO implements Serializable {
     /**
     * 技能描述
     **/
+	@Size(max = 300,message = "技能描述不能太长",groups = {UserApiVO.UpdateAllInfo.class})
 	private String skillSummarize;
 
 
