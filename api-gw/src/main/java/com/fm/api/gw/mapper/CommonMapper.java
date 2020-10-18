@@ -51,7 +51,7 @@ public abstract class CommonMapper {
         if (!StringUtils.isEmpty(path) && !HTTP_STR.startsWith(path)) {
             return fileService.getFullPath(path);
         }
-        return null;
+        return path;
     }
 
     /**
