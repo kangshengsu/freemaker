@@ -39,7 +39,8 @@ public abstract class ProductionMapper extends CommonMapper {
     @Mappings({
             @Mapping(target = "images", source = "attachmentInfos"),
             @Mapping(target = "statusName", source = "status", qualifiedByName = "statusConvert"),
-            @Mapping(target = "skills", source = "productionSkillRelations")
+            @Mapping(target = "skills", source = "productionSkillRelations"),
+            @Mapping(target = "freelancerInfo", source = "freelancerInfo", qualifiedByName = "freelancerInfoConvert")
     })
     public abstract  ProductionViewVO toProductionViewVO(ProductionInfo productionInfo);
 
