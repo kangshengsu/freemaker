@@ -16,6 +16,7 @@ import com.fm.framework.core.service.AuditBaseService;
 import org.springframework.stereotype.Service;
 import com.fm.framework.core.service.BaseService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Collections;
@@ -44,5 +45,21 @@ public class EmployerInfoServiceImpl extends AuditBaseService<IEmployerInfoMappe
                 .like(EmployerInfo::getPhone,str)
                 .orderByAsc(EmployerInfo::getName,EmployerInfo::getPhone)
                 .last("limit 10"));
+    }
+
+
+    @Override
+    public EmployerInfo getByUserId(Long userId) {
+        if(null == userId) {
+            return null;
+        }
+
+        List<EmployerInfo> employerInfos =
+                getBaseMapper().selectList(Wrappers.<EmployerInfo>lambdaQuery().eq(EmployerInfo::getUserId,userId));
+        if(CollectionUtils.isEmpty(employerInfos)) {
+            return null;
+        }
+
+        return employerInfos.get(0);
     }
 }

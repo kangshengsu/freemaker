@@ -39,4 +39,16 @@ public interface UserMapper {
     })
     SysUser toSysUser(UserApiVO userApiVO);
 
+    @Mappings({
+            @Mapping(source = "avatarUrl", target = "headImg"),
+            @Mapping(source = "freelancerInfo.provinceCode", target = "provinceCode"),
+            @Mapping(source = "freelancerInfo.cityCode", target = "cityCode"),
+            @Mapping(source = "freelancerInfo.districtCode", target = "districtCode"),
+            @Mapping(source = "freelancerInfo.countyCode", target = "countyCode"),
+            @Mapping(source = "freelancerInfo.name", target = "name"),
+            @Mapping(source = "freelancerInfo.skillSummarize", target = "freelancerInfo.skillSummarize"),
+            @Mapping(source = "freelancerInfo.language", target = "freelancerInfo.language"),
+    })
+    UserApiVO toUserApiVO(SysUser sysUser);
+
 }

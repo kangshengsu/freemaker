@@ -14,10 +14,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @program: freemaker-parent
@@ -77,6 +74,17 @@ public class UserController extends BaseController<SysUser,UserApiVO> {
         //fixme 如果后续有缓存 请刷新缓存
         return ApiResponse.ofSuccess(Boolean.TRUE);
     }
+
+    @GetMapping("/getCurrentInfo")
+    @ApiOperation(value="查看个人信息")
+    public ApiResponse<UserApiVO> getCurrent() {
+        Long currUserId = Context.getCurrUserId();
+        SysUser sysUser = sysUserService.findById(currUserId);
+        UserApiVO userApiVO = userMapper.toUserApiVO(sysUser);
+        return ApiResponse.ofSuccess(userApiVO);
+    }
+
+
 
     @Override
     protected Service<SysUser> service() {

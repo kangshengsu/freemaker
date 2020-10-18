@@ -1,8 +1,8 @@
 /**
  * @filename:SysUserServiceImpl 2020年09月11日
  * @project HowWork  V1.0
- * Copyright(c) 2018 LiuDuo Co. Ltd. 
- * All right reserved. 
+ * Copyright(c) 2018 LiuDuo Co. Ltd.
+ * All right reserved.
  */
 package com.fm.business.base.service.sys.impl;
 
@@ -21,12 +21,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-/**   
+import java.util.Arrays;
+
+/**
  * @Description:(用户服务实现)
  *
  * @version: V1.0
  * @author: LiuDuo
- * 
+ *
  */
 @Slf4j
 @Service("sysUserService")
@@ -78,6 +80,21 @@ public class SysUserServiceImpl extends BaseService<ISysUserMapper, SysUser> imp
         }
 
         return true;
+    }
+
+    @Override
+    public SysUser findById(Long id) {
+        SysUser sysUser = getBaseMapper().selectOne(Wrappers.lambdaQuery(SysUser.class).eq(SysUser::getId, id));
+        fillInfo(sysUser);
+        return sysUser;
+    }
+
+    private void fillInfo(SysUser sysUser) {
+        if (sysUser == null) {
+            return;
+        }
+        sysUser.setFreelancerInfo(freelancerInfoService.getByUserId(sysUser.getId()));
+        sysUser.setEmployerInfo(employerInfoService.getByUserId(sysUser.getId()));
     }
 
     @Override
