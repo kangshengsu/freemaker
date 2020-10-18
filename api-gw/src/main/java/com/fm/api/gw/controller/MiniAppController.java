@@ -176,6 +176,7 @@ public class MiniAppController {
 
     private void convertSysUser(SysUser sysUser, WeChatLoginVO weChatLoginVO, String openId) {
         sysUser.setName(weChatLoginVO.getNickName());
+        sysUser.setAvatarUrl(weChatLoginVO.getAvatarUrl());
 //        sysUser.setPhone(phoneNumber);
         sysUser.setCode(openId);
     }
