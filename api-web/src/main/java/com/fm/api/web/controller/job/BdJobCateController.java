@@ -150,6 +150,8 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
             if (isAdd) {
                 result = super.create(newNode);
             } else {
+                newNode.setTreeCode(null);
+                newNode.setParentId(null);
                 result = super.update(newNode);
             }
         } else {
