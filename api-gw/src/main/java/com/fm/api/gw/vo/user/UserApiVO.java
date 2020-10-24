@@ -74,5 +74,5 @@ public class UserApiVO extends VO implements Serializable {
     /**
      * 雇佣者相关信息
      */
-    private EmployerInfoApiVO employerInfoApiVO;
+    private EmployerInfoApiVO employerInfo;
 }

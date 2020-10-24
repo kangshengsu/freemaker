@@ -1,5 +1,6 @@
 package com.fm.api.gw.vo.recommend.mapper;
 
+import com.fm.api.gw.mapper.CommonMapper;
 import com.fm.api.gw.vo.attachment.AttachmentVO;
 import com.fm.api.gw.vo.recommend.RecommendProductionVO;
 import com.fm.business.base.model.AttachmentInfo;
@@ -18,10 +19,7 @@ import org.springframework.util.StringUtils;
  * 作品相关映射
  */
 @Mapper(componentModel = "spring")
-public abstract class RecommendMapper {
-
-    @Autowired
-    private FileService fileService;
+public abstract class RecommendMapper extends CommonMapper {
 
     @Mappings({
             @Mapping(target = "images", source = "attachmentInfos"),
@@ -35,16 +33,4 @@ public abstract class RecommendMapper {
     })
     public abstract  AttachmentVO toAttachmentVO(AttachmentInfo attachmentInfo);
 
-    /**
-     * 补全路径
-     * @param path
-     * @return
-     */
-    @Named("fullPath")
-     String fullPath(String path) {
-        if (!StringUtils.isEmpty(path)) {
-            return fileService.getFullPath(path);
-        }
-        return null;
-    }
 }

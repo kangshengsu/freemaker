@@ -31,7 +31,9 @@ public class IAccountInfoServiceImpl implements IAccountInfoService {
         iEmployerInfoService.save(employerInfo);
     }
 
+
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public void updateAccount(FreelancerInfo freelancerInfo, EmployerInfo employerInfo) {
         iFreelancerInfoService.update(freelancerInfo);
 

@@ -1,5 +1,6 @@
 package com.fm.api.gw.vo.user.mapper;
 
+import com.fm.api.gw.mapper.CommonMapper;
 import com.fm.api.gw.vo.user.UserApiVO;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
@@ -16,7 +17,7 @@ import org.mapstruct.Named;
  * @create: 2020-10-17 11:04
  **/
 @Mapper(componentModel = "spring")
-public interface UserMapper {
+public abstract class UserMapper extends CommonMapper {
 
     @Mappings({
             @Mapping(target = "avatarUrl", source = "headImg"),
@@ -37,10 +38,10 @@ public interface UserMapper {
             @Mapping(target = "employerInfo.name", source = "name"),
             @Mapping(target = "employerInfo.headImg", source = "headImg")
     })
-    SysUser toSysUser(UserApiVO userApiVO);
+    public abstract SysUser toSysUser(UserApiVO userApiVO);
 
     @Mappings({
-            @Mapping(source = "avatarUrl", target = "headImg"),
+            @Mapping(source = "avatarUrl", target = "headImg", qualifiedByName = "fullHeadImgPath"),
             @Mapping(source = "freelancerInfo.provinceCode", target = "provinceCode"),
             @Mapping(source = "freelancerInfo.cityCode", target = "cityCode"),
             @Mapping(source = "freelancerInfo.districtCode", target = "districtCode"),
@@ -49,6 +50,6 @@ public interface UserMapper {
             @Mapping(source = "freelancerInfo.skillSummarize", target = "freelancerInfo.skillSummarize"),
             @Mapping(source = "freelancerInfo.language", target = "freelancerInfo.language"),
     })
-    UserApiVO toUserApiVO(SysUser sysUser);
+    public abstract UserApiVO toUserApiVO(SysUser sysUser);
 
 }
