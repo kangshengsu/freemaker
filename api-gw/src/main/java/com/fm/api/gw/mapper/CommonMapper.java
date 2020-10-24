@@ -48,7 +48,7 @@ public abstract class CommonMapper {
      */
     @Named("fullHeadImgPath")
     protected String fullHeadImgPath(String path) {
-        if (!StringUtils.isEmpty(path) && !HTTP_STR.startsWith(path)) {
+        if (!StringUtils.isEmpty(path) && !path.startsWith(HTTP_STR)) {
             return fileService.getFullPath(path);
         }
         return path;
