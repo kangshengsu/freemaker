@@ -6,21 +6,21 @@
  */
 package com.fm.business.base.service.order.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.order.IOrderOperateInfoMapper;
-import com.fm.business.base.enums.AttachmentBusinessType;
-import com.fm.business.base.enums.AttachmentType;
-import com.fm.business.base.enums.OrderOperateType;
-import com.fm.business.base.enums.OrderStatus;
+import com.fm.business.base.enums.*;
 import com.fm.business.base.model.AttachmentInfo;
+import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.model.order.OrderOperateInfo;
 import com.fm.business.base.service.IAttachmentInfoService;
+import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.business.base.service.order.IOrderOperateInfoService;
 import com.fm.framework.core.Context;
+import com.fm.framework.core.enums.YesNoEnum;
 import com.fm.framework.core.service.AuditBaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -40,10 +40,18 @@ public class OrderOperateInfoServiceImpl extends AuditBaseService<IOrderOperateI
     @Autowired
     private IAttachmentInfoService attachmentInfoService;
 
+    @Autowired
+    private IOrderInfoService iOrderInfoService;
+
     @Override
     public void saveOperateInfo(Long orderId, Integer status, String description, List<AttachmentInfo> attachmentList) {
         OrderOperateInfo orderOperateInfo = new OrderOperateInfo();
-        if (OrderStatus.CHECKING_60.getCode().equals(status)) {
+
+        if (OrderStatus.TAKING_40.getCode().equals(status)) {
+            orderOperateInfo.setOperateType(OrderOperateType.SUBMIT_PAYMENT_VOUCHER.getCode());
+            orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
+            orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
+        } else if (OrderStatus.CHECKING_60.getCode().equals(status)) {
             orderOperateInfo.setOperateType(OrderOperateType.SUBMIT.getCode());
             orderOperateInfo.setOperateUser(Context.getCurrFreelancerId());
             orderOperateInfo.setReceiveUser(Context.getCurrEmployerId());
@@ -82,6 +90,24 @@ public class OrderOperateInfoServiceImpl extends AuditBaseService<IOrderOperateI
         }
 
         attachmentInfoService.save(attachmentList);
+    }
+
+
+    @Override
+    protected void afterSave(OrderOperateInfo orderOperateInfo) {
+        if(OrderOperateType.SUBMIT_PAYMENT_VOUCHER.getCode().equals(orderOperateInfo.getOperateType())){
+            OrderInfo orderInfo = iOrderInfoService.get(orderOperateInfo.getOrderId());
+            if(YesNoEnum.No.getIndex().equals(orderInfo.getIsUploadVoucher())){
+                OrderInfo updateOrderInfo = new OrderInfo();
+                updateOrderInfo.setIsUploadVoucher(YesNoEnum.Yes.getIndex());
+                iOrderInfoService.update(updateOrderInfo);
+            }
+        }
+    }
+
+    @Override
+    protected void afterDelete(OrderOperateInfo orderOperateInfo) {
+        attachmentInfoService.deleteByBusinessCode(orderOperateInfo.getId().toString());
     }
 
     @Override

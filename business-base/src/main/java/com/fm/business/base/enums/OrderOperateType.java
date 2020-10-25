@@ -1,7 +1,7 @@
 package com.fm.business.base.enums;
 
 public enum OrderOperateType {
-
+    SUBMIT_PAYMENT_VOUCHER(9,"提交支付凭证"),
     SUBMIT(10,"提交验收"),
     SUBMIT_AGAIN(11,"重新提交验收"),
     ACCEPT(20,"验收通过"),

@@ -129,10 +129,10 @@ public class OrderInfo extends BaseModel implements Serializable,IAudit {
 	private Long updateUser;
 
 
-
-
-
-
+    /**
+    * 是否上传支付凭证
+    **/
+	private Integer isUploadVoucher;
 
     /**
      * 获取主键方法，主键整体平台定义成Long数据类型，方便数据的整体插入性能

@@ -7,10 +7,11 @@
 package com.fm.api.gw.controller;
 
 import com.fm.api.gw.vo.OrderInfoVO;
-import com.fm.api.gw.vo.order.OrderOperateInfoVO;
+import com.fm.api.gw.vo.attachment.AttachmentVO;
 import com.fm.api.gw.vo.attachment.mapper.AttachmentMapper;
 import com.fm.api.gw.vo.employer.mapper.EmployerInfoMapper;
 import com.fm.api.gw.vo.freelancer.mapper.FreelancerInfoMapper;
+import com.fm.api.gw.vo.order.OrderOperateInfoVO;
 import com.fm.api.gw.vo.order.mapper.OrderOperateMapper;
 import com.fm.business.base.enums.FollowType;
 import com.fm.business.base.enums.OrderOperateRoleType;
@@ -43,9 +44,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -194,6 +197,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         }
 
         orderInfoVO.setCanChargeback(isHour48Ago(orderInfoVO.getId()));
+        orderInfoVO.setIsUploadVoucher(BooleanUtils.toBoolean(orderInfo.getIsUploadVoucher()));
 
         return ApiResponse.ofSuccess(orderInfoVO);
     }
@@ -287,7 +291,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         saveFollow(orderInfoVO);
 
         // 写操作表
-        saveOperateInfo(orderInfoVO);
+        saveOperateInfo(orderInfoVO.getId(),orderInfoVO.getStatus(),orderInfoVO.getFollowDesc(),orderInfoVO.getAttachmentList());
 
         return ApiResponse.ofSuccess(true);
     }
@@ -303,13 +307,44 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         return ApiResponse.ofSuccess(true);
     }
 
-    private void saveOperateInfo(OrderInfoVO orderInfoVO) {
-        List<AttachmentInfo> attachmentInfos = new ArrayList<>();
-        if(!CollectionUtils.isEmpty(orderInfoVO.getAttachmentList())){
-            attachmentInfos.addAll(orderInfoVO.getAttachmentList()
-                    .stream().map(attachmentVO -> attachmentMapper.toAttachment(attachmentVO)).collect(Collectors.toList()));
+    @ApiOperation(value="上传订单支付凭证（图片）")
+    @ApiImplicitParam(paramType="body", name = "orderInfoVO", value = "上传订单支付凭证", required = true, dataType = "String")
+    @PostMapping(value = "uploadPayAttachment")
+    public ApiResponse<Boolean> uploadPayAttachment(
+            @RequestBody @Validated(value = {OrderOperateInfoVO.UploadPayAttachment.class}) OrderOperateInfoVO orderOperateInfoVO) {
+        //上传前删除旧支付凭证记录
+        if (orderOperateInfoVO.getId() != null) {
+            orderOperateInfoService.delete(orderOperateInfoVO.getId());
         }
-        orderOperateInfoService.saveOperateInfo(orderInfoVO.getId(), orderInfoVO.getStatus(), orderInfoVO.getFollowDesc(),attachmentInfos);
+        OrderInfo orderInfo = orderInfoService.get(orderOperateInfoVO.getOrderId());
+        // 新增操作表记录
+        this.saveOperateInfo(orderOperateInfoVO.getOrderId(), orderInfo.getStatus(), null, orderOperateInfoVO.getImages());
+        return ApiResponse.ofSuccess(true);
+    }
+
+    @ApiOperation(value="获取订单支付凭证信息")
+    @ApiImplicitParam(paramType="query", name = "orderId", value = "获取订单支付凭证信息", required = true, dataType = "Long")
+    @GetMapping(value = "getPaymentVoucherInfo")
+    public ApiResponse<OrderOperateInfoVO> getPaymentVoucherInfo(@RequestParam("orderId") Long orderId) {
+        List<OrderOperateInfo> orderOperateInfos = orderOperateInfoService.findByOrderId(orderId, OrderOperateType.SUBMIT_PAYMENT_VOUCHER.getCode());
+
+        OrderOperateInfoVO result = Optional.ofNullable(orderOperateInfos)
+                .filter(r -> !CollectionUtils.isEmpty(r))
+                .map(r -> r.get(0))
+                .map(s -> orderOperateMapper.toOrderOperateInfoVO(s))
+                .orElse(null);
+
+        return success(result);
+    }
+
+    private void saveOperateInfo(Long orderId,Integer status,String followDesc,List<AttachmentVO> attachmentList) {
+        List<AttachmentInfo> attachmentInfos = new ArrayList<>();
+        if(!CollectionUtils.isEmpty(attachmentList)){
+            attachmentInfos.addAll(attachmentList.stream()
+                    .map(attachmentVO -> attachmentMapper.toAttachment(attachmentVO))
+                    .collect(Collectors.toList()));
+        }
+        orderOperateInfoService.saveOperateInfo(orderId, status, followDesc, attachmentInfos);
     }
 
     private void saveFollow(OrderInfoVO orderInfoVO) {
@@ -351,7 +386,6 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         return success(orderOperateInfos.stream().map(orderOperateInfo ->
                 orderOperateMapper.toOrderOperateInfoVO(orderOperateInfo)).collect(Collectors.toList()));
     }
-
 
     private void fillJobInfo(OrderInfoVO orderInfoVO) {
         orderInfoVO.setJobCateName(bdJobCateService.getFullTreePathById(orderInfoVO.getJobCateId()));

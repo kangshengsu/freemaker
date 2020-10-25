@@ -208,5 +208,10 @@ public class OrderInfoVO extends VO implements Serializable {
 
 	private Boolean canChargeback;
 
+	/**
+	 * 是否上传支付凭证
+	 **/
+	private Boolean isUploadVoucher;
+
 	EvaluationInfoVO evaluationInfoVO;
 }
