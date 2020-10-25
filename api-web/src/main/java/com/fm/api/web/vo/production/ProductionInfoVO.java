@@ -94,6 +94,28 @@ public class ProductionInfoVO extends VO implements Serializable {
     private String cateTreeCode;
 
     /**
+     * 交付方式
+     * @see com.fm.business.base.enums.DeliveryType
+     */
+    private Integer deliveryType;
+
+    /**
+     * 薪资计算方式
+     * @see com.fm.business.base.enums.BudgetType
+     */
+    private Integer budgetType;
+
+    /**
+     * 交付方式名称
+     */
+    private  String deliveryTypeName;
+
+    /**
+     * 预算方式名称
+     */
+    private  String budgetTypeName;
+
+    /**
      * 创建时间
      **/
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")

@@ -10,6 +10,8 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fm.api.web.vo.AttachmentInfoVO;
 import com.fm.api.web.vo.production.ProductionInfoVO;
+import com.fm.business.base.enums.BudgetType;
+import com.fm.business.base.enums.DeliveryType;
 import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.production.ProductionInfo;
@@ -110,6 +112,8 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         ProductionInfoVO form = super.convert(model);
         //转换枚举值
         form.setStatusName(ProductionStatus.getNameByCode(model.getStatus()));
+        form.setDeliveryTypeName(DeliveryType.getNameByCode(model.getDeliveryType()));
+        form.setBudgetTypeName(BudgetType.getNameByCode(model.getBudgetType()));
         //岗位名称
         BdJobCate bdJobCate = model.getPostCate();
         if (bdJobCate != null) {

@@ -95,6 +95,28 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
      */
 	private transient BdJobCate postCate;
 
+    /**
+     * 交付方式
+     * @see com.fm.business.base.enums.DeliveryType
+     */
+    private Integer deliveryType;
+
+    /**
+     * 薪资计算方式
+     * @see com.fm.business.base.enums.BudgetType
+     */
+    private Integer budgetType;
+
+    /**
+     * 交付方式名称
+     */
+    private transient String deliveryTypeName;
+
+    /**
+     * 预算方式名称
+     */
+    private transient String budgetTypeName;
+
 
     /**
     * 创建时间

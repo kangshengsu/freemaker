@@ -66,6 +66,18 @@ public class ProductionApiVO extends VO implements Serializable {
 
 
     /**
+     * 交付方式
+     * @see com.fm.business.base.enums.DeliveryType
+     */
+    private Integer deliveryType;
+
+    /**
+     * 薪资计算方式
+     * @see com.fm.business.base.enums.BudgetType
+     */
+    private Integer budgetType;
+
+    /**
      * 时薪
      **/
     @NotNull(message = "时薪不能为空",groups = {Release.class, Modify.class})

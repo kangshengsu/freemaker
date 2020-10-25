@@ -72,7 +72,8 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
     @ApiOperation(value = "按领域获取已经发布的需求分页信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "currentPage", value = "当前页", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "pageSize", value = "页大小", dataType = "Integer", paramType = "query")})
+            @ApiImplicitParam(name = "pageSize", value = "页大小", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "jobCateId", value = "领域id", dataType = "Integer", paramType = "query")})
     @RequestMapping(value = "getPageByJobCateId", method = RequestMethod.GET)
     public ApiResponse<Page<DemandInfoVO>> getPageByJobCateId(@RequestParam("currentPage") Integer currentPage,
                                                                @RequestParam("pageSize") Integer pageSize,
