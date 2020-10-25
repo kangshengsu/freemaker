@@ -136,7 +136,6 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
                         new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
                         getQueryWrapper().lambda()
                                 .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
-                                .eq(DemandInfo::getEmployerId, employerId)
                                 .eq(status != 0, DemandInfo::getStatus, status)
                                 .eq(jobCateId != null, DemandInfo::getJobCateId, jobCateId)
                                 .orderByDesc(DemandInfo::getCreateTime)));
