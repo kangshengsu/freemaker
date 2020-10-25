@@ -314,6 +314,7 @@ CREATE TABLE `order_info` (
                               `cate_tree_code` varchar(256) NOT NULL COMMENT '需求类型',
                               `status` tinyint(4) NOT NULL COMMENT '订单状态（10-初始态 20-已拒单 30-已接单 40-已支付 50-制作中 60-待验收 70-已完成 80-已评价）',
                               `order_mny` decimal(20,8) NOT NULL DEFAULT '0.00000000' COMMENT '订单金额',
+                              `act_order_mny` decimal(20,8) NOT NULL DEFAULT '0.00000000' COMMENT '实付订单金额',
                               `order_price` decimal(20,8) DEFAULT NULL,
                               `order_times` int(11) DEFAULT NULL,
                               `expect_delivery_time` datetime NOT NULL COMMENT '期望交付时间',

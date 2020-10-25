@@ -9,6 +9,8 @@ package com.fm.business.base.model.order;
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
 import lombok.Data;
+import org.springframework.data.annotation.Transient;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -55,9 +57,13 @@ public class OrderInfo extends BaseModel implements Serializable,IAudit {
 
 
     /**
-    * 订单金额
-    **/
-	private Double orderMny;
+     * 订单金额
+     **/
+    private Double orderMny;
+    /**
+     * 订单金额
+     **/
+    private Double actOrderMny;
 
     /**
      * 订单单价

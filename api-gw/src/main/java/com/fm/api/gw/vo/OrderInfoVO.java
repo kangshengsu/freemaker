@@ -74,6 +74,11 @@ public class OrderInfoVO extends VO implements Serializable {
 	 * 订单金额
 	 **/
 	private Double orderMny;
+
+	/**
+	 * 实付订单金额
+	 **/
+	private Double actOrderMny;
 	/**
 	 * 订单单价
 	 **/

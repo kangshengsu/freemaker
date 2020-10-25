@@ -12,6 +12,7 @@ import com.fm.api.gw.vo.attachment.mapper.AttachmentMapper;
 import com.fm.api.gw.vo.employer.mapper.EmployerInfoMapper;
 import com.fm.api.gw.vo.freelancer.mapper.FreelancerInfoMapper;
 import com.fm.api.gw.vo.order.mapper.OrderOperateMapper;
+import com.fm.business.base.enums.FollowType;
 import com.fm.business.base.enums.OrderOperateRoleType;
 import com.fm.business.base.enums.OrderOperateType;
 import com.fm.business.base.enums.OrderStatus;
@@ -244,6 +245,8 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     public ApiResponse<Boolean> save(@RequestBody OrderInfoVO orderInfoVO) {
         orderInfoVO.setEmployerId(Context.getCurrEmployerId());
         orderInfoVO.setStatus(OrderStatus.WAITING_20.getCode());
+        orderInfoVO.setActOrderMny(orderInfoVO.getActOrderMny());
+
         // search order info
         OrderInfo orderInfo = this.convert(orderInfoVO);
         if (StringUtils.isEmpty(orderInfo.getCode())) {
@@ -289,6 +292,17 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         return ApiResponse.ofSuccess(true);
     }
 
+    @ApiOperation(value="订单金额变更")
+    @ApiImplicitParam(paramType="body", name = "orderInfoVO", value = "订单操作信息", required = true, dataType = "OrderInfoVO")
+    @RequestMapping(value = "updateOrderMny",method = RequestMethod.PUT)
+    public ApiResponse<Boolean> updateOrderMny(@RequestBody OrderInfoVO orderInfoVO) {
+        this.update(orderInfoVO);
+
+        // 写流水
+        saveModifyFollow(orderInfoVO);
+        return ApiResponse.ofSuccess(true);
+    }
+
     private void saveOperateInfo(OrderInfoVO orderInfoVO) {
         List<AttachmentInfo> attachmentInfos = new ArrayList<>();
         if(!CollectionUtils.isEmpty(orderInfoVO.getAttachmentList())){
@@ -299,10 +313,18 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     }
 
     private void saveFollow(OrderInfoVO orderInfoVO) {
+        this.saveFollow(orderInfoVO, FollowType.get(orderInfoVO.getStatus()).getCode());
+    }
+
+    private void saveModifyFollow(OrderInfoVO orderInfoVO) {
+        this.saveFollow(orderInfoVO, FollowType.MODIFY_MNY_110.getCode());
+    }
+
+    private void saveFollow(OrderInfoVO orderInfoVO, Integer followType) {
         // 写流水
         OrderFollow orderFollow = new OrderFollow();
         orderFollow.setOrderId(orderInfoVO.getId());
-        orderFollow.setOperateType(orderInfoVO.getStatus());
+        orderFollow.setOperateType(followType);
         orderFollow.setOperateUser(Context.getCurrUserId());
         orderFollow.setMemo(orderInfoVO.getMemo());
         orderFollowService.save(orderFollow);
