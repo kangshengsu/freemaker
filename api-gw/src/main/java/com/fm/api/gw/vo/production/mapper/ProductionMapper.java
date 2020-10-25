@@ -8,6 +8,8 @@ import com.fm.api.gw.vo.attachment.AttachmentVO;
 import com.fm.api.gw.vo.production.relation.ReviewInfoVO;
 import com.fm.api.gw.vo.production.req.ProductionApiVO;
 import com.fm.api.gw.vo.production.view.ProductionViewVO;
+import com.fm.business.base.enums.BudgetType;
+import com.fm.business.base.enums.DeliveryType;
 import com.fm.business.base.enums.ProductionReviewStatus;
 import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.AttachmentInfo;
@@ -32,13 +34,16 @@ public abstract class ProductionMapper extends CommonMapper {
 
     @Mapping(target = "images", source = "attachmentInfos")
     @Mapping(target = "statusName", source = "status", qualifiedByName = "statusConvert")
+    @Mapping(target = "deliveryTypeName", source = "deliveryType", qualifiedByName = "deliveryTypeConvert")
+    @Mapping(target = "budgetTypeName", source = "budgetType", qualifiedByName = "budgetTypeConvert")
     @Mapping(target = "freelancerInfo", source = "freelancerInfo", qualifiedByName = "freelancerInfoConvert")
-
     public abstract  ProductionListVO toProductionListVO(ProductionInfo productionInfo);
 
     @Mappings({
             @Mapping(target = "images", source = "attachmentInfos"),
             @Mapping(target = "statusName", source = "status", qualifiedByName = "statusConvert"),
+            @Mapping(target = "deliveryTypeName", source = "deliveryType", qualifiedByName = "deliveryTypeConvert"),
+            @Mapping(target = "budgetTypeName", source = "budgetType", qualifiedByName = "budgetTypeConvert"),
             @Mapping(target = "skills", source = "productionSkillRelations"),
             @Mapping(target = "freelancerInfo", source = "freelancerInfo", qualifiedByName = "freelancerInfoConvert")
     })
@@ -75,6 +80,15 @@ public abstract class ProductionMapper extends CommonMapper {
             return ProductionReviewStatus.get(status).getName();
         }
         return null;
+    }
+
+    @Named("deliveryTypeConvert")
+    String deliveryTypeConvert(Integer deliveryType) {
+        return DeliveryType.getNameByCode(deliveryType) ;
+    }
+    @Named("budgetTypeConvert")
+    String budgetTypeConvert(Integer budgetType) {
+        return BudgetType.getNameByCode(budgetType) ;
     }
 
 }
