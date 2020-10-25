@@ -114,6 +114,22 @@ public class DemandInfo extends BaseModel implements Serializable, IAudit {
      **/
     private String description;
 
+    /**
+     * 交付方式
+     * @see com.fm.business.base.enums.DeliveryType
+     */
+    private Integer deliveryType;
+
+    /**
+     * 企业名称
+     */
+    private String companyName;
+
+    /**
+     * 预算计算方式
+     * @see com.fm.business.base.enums.BudgetType
+     */
+    private Integer budgetType;
 
     /**
      * 创建时间
@@ -142,6 +158,16 @@ public class DemandInfo extends BaseModel implements Serializable, IAudit {
      * 状态名称
      */
     private transient String statusName;
+
+    /**
+     * 交付方式名称
+     */
+    private transient String deliveryTypeName;
+
+    /**
+     * 预算方式名称
+     */
+    private transient String budgetTypeName;
 
     /**
      * 发布者信息

@@ -10,151 +10,175 @@ import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.framework.web.VO;
 import lombok.Data;
+
 import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 /**
  * @Description:(需求请求实体类)
- *
  * @version: V1.0
  * @author: LiuDuo
- *
  */
 @Data
 public class DemandInfoVO extends VO implements Serializable {
 
-	private static final long serialVersionUID = 1600497555102L;
+    private static final long serialVersionUID = 1600497555102L;
 
 
+    /**
+     * 需求编码
+     **/
+    private String code;
 
-	/**
-	 * 需求编码
-	 **/
-	private String code;
-
-	/**
-	 * 发布用户编码
-	 **/
-	private Long employerId;
-
-
-	/**
-	 * 需求状态（10-未发布，20-已发布，30-已取消，40-已下单）
-	 **/
-	private Integer status;
-
-	/**
-	 * 需求状态（10-未发布，20-已发布，30-已取消，40-已下单））
-	 **/
-	private String statusName;
-
-	/**
-	 * 需求类型
-	 **/
-	private Long jobCateId;
+    /**
+     * 发布用户编码
+     **/
+    private Long employerId;
 
 
-	/**
-	 * 需求类型
-	 **/
-	private String cateTreeCode;
+    /**
+     * 需求状态（10-未发布，20-已发布，30-已取消，40-已下单）
+     **/
+    private Integer status;
+
+    /**
+     * 需求状态（10-未发布，20-已发布，30-已取消，40-已下单））
+     **/
+    private String statusName;
+
+    /**
+     * 交付方式名称
+     */
+    private String deliveryTypeName;
+
+    /**
+     * 预算方式名称
+     */
+    private String budgetTypeName;
+    /**
+     * 需求类型
+     **/
+    private Long jobCateId;
 
 
-	/**
-	 * 期望交付时间
-	 **/
-	@JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
-	private Date expectDeliveryTime;
+    /**
+     * 需求类型
+     **/
+    private String cateTreeCode;
 
 
-	/**
-	 * 预算
-	 **/
-	private Double budget;
+    /**
+     * 期望交付时间
+     **/
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private Date expectDeliveryTime;
 
 
-	/**
-	 * 推荐人数
-	 **/
-	private Integer recommendCount;
+    /**
+     * 预算
+     **/
+    private Double budget;
 
 
-	/**
-	 * 需求省份编码
-	 **/
-	private String provinceCode;
+    /**
+     * 推荐人数
+     **/
+    private Integer recommendCount;
 
 
-	/**
-	 * 需求城市编码
-	 **/
-	private String cityCode;
+    /**
+     * 需求省份编码
+     **/
+    private String provinceCode;
 
 
-	/**
-	 * 需求区编码
-	 **/
-	private String districtCode;
+    /**
+     * 需求城市编码
+     **/
+    private String cityCode;
 
 
-	/**
-	 * 需求县编码
-	 **/
-	private String countyCode;
+    /**
+     * 需求区编码
+     **/
+    private String districtCode;
 
 
-	/**
-	 * 需求概括
-	 **/
-	private String summarize;
+    /**
+     * 需求县编码
+     **/
+    private String countyCode;
 
 
-	/**
-	 * 需求详细描述
-	 **/
-	private String description;
+    /**
+     * 需求概括
+     **/
+    private String summarize;
 
 
-	/**
-	 * 创建时间
-	 **/
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-	private Date createTime;
+    /**
+     * 需求详细描述
+     **/
+    private String description;
+
+    /**
+     * 交付方式
+     *
+     * @see com.fm.business.base.enums.DeliveryType
+     */
+    private Integer deliveryType;
+
+    /**
+     * 企业名称
+     */
+    private String companyName;
+
+    /**
+     * 预算计算方式
+     *
+     * @see com.fm.business.base.enums.BudgetType
+     */
+    private Integer budgetType;
 
 
-	/**
-	 * 修改时间
-	 **/
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-	private Date updateTime;
+    /**
+     * 创建时间
+     **/
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date createTime;
 
 
-	/**
-	 * 创建人
-	 **/
-	private Long createUser;
+    /**
+     * 修改时间
+     **/
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date updateTime;
 
 
-	/**
-	 * 修改人
-	 **/
-	private Long updateUser;
+    /**
+     * 创建人
+     **/
+    private Long createUser;
 
 
-	/**
-	 * 发布者信息
-	 */
-	private  EmployerInfo employerInfo;
-
-	/**
-	 * 需求名称
-	 */
-	private  BdJobCate bdJobCate;
+    /**
+     * 修改人
+     **/
+    private Long updateUser;
 
 
+    /**
+     * 发布者信息
+     */
+    private EmployerInfo employerInfo;
 
-
+    /**
+     * 需求名称
+     */
+    private BdJobCate bdJobCate;
 
 
 }

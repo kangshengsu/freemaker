@@ -10,6 +10,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.IDemandInfoMapper;
+import com.fm.business.base.enums.BudgetType;
+import com.fm.business.base.enums.DeliveryType;
 import com.fm.business.base.enums.DemandStatus;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.demand.DemandInfo;
@@ -84,6 +86,8 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
 
         demandInfos.forEach(demandInfo -> {
             demandInfo.setStatusName(DemandStatus.get(demandInfo.getStatus()).getName());
+            demandInfo.setDeliveryTypeName(DeliveryType.getNameByCode(demandInfo.getDeliveryType()));
+            demandInfo.setBudgetTypeName(BudgetType.getNameByCode(demandInfo.getBudgetType()));
             if (employerInfMap.containsKey(demandInfo.getEmployerId())) {
                 demandInfo.setEmployerInfo(employerInfMap.get(demandInfo.getEmployerId()));
             }
@@ -122,6 +126,19 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
                                 .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
                                 .eq(DemandInfo::getEmployerId, employerId)
                                 .eq(status != 0, DemandInfo::getStatus, status)
+                                .orderByDesc(DemandInfo::getCreateTime)));
+    }
+
+    @Override
+    public Page<DemandInfo> gePageByStatusJobCateId(Integer currentPage, Integer pageSize, Long employerId, Integer status, Integer jobCateId) {
+        return toPage(
+                getBaseMapper().selectPage(
+                        new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
+                        getQueryWrapper().lambda()
+                                .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
+                                .eq(DemandInfo::getEmployerId, employerId)
+                                .eq(status != 0, DemandInfo::getStatus, status)
+                                .eq(jobCateId != null, DemandInfo::getJobCateId, jobCateId)
                                 .orderByDesc(DemandInfo::getCreateTime)));
     }
 

@@ -1,6 +1,8 @@
 package com.fm.api.gw.controller;
 
 import com.fm.api.gw.vo.DemandInfoVO;
+import com.fm.business.base.enums.BudgetType;
+import com.fm.business.base.enums.DeliveryType;
 import com.fm.business.base.enums.DemandStatus;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.demand.DemandInfo;
@@ -67,6 +69,23 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         return success(this.convert(demandInfoPage));
     }
 
+    @ApiOperation(value = "按领域获取已经发布的需求分页信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "currentPage", value = "当前页", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "pageSize", value = "页大小", dataType = "Integer", paramType = "query")})
+    @RequestMapping(value = "getPageByJobCateId", method = RequestMethod.GET)
+    public ApiResponse<Page<DemandInfoVO>> getPageByJobCateId(@RequestParam("currentPage") Integer currentPage,
+                                                               @RequestParam("pageSize") Integer pageSize,
+                                                               @RequestParam(value = "jobCateId", required = false) Integer jobCateId) {
+        Long currEmployerId = Context.getCurrEmployerId();
+        Page<DemandInfoVO> result = new PageInfo<>();
+        Page<DemandInfo> demandInfoPage = demandInfoService.gePageByStatusJobCateId(currentPage, pageSize,
+                currEmployerId, DemandStatus.RELEASE.getCode(),jobCateId);
+        if (demandInfoPage.getData().size() == 0) {
+            return ApiResponse.ofSuccess(result);
+        }
+        return success(this.convert(demandInfoPage));
+    }
 
     @ApiOperation(value = "获取不同状态下的需求总数")
     @RequestMapping(value = "getDemandGroupCount", method = RequestMethod.GET)
@@ -142,6 +161,8 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         DemandInfoVO form = super.convert(model);
         //转换枚举值
         form.setStatusName(DemandStatus.get(model.getStatus()).getName());
+        form.setDeliveryTypeName(DeliveryType.getNameByCode(model.getDeliveryType()));
+        form.setBudgetTypeName(BudgetType.getNameByCode(model.getBudgetType()));
         //获取作者数据
         EmployerInfo employerInfo = iEmployerInfoService.get(model.getEmployerId());
         if (employerInfo != null) {

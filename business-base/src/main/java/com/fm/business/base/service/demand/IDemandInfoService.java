@@ -45,6 +45,14 @@ public interface IDemandInfoService extends Service<DemandInfo> {
     Page<DemandInfo> gePageByEmployerId(Integer currentPage, Integer pageSize, Long employerId, Integer status);
 
     /**
+     * @param currentPage 当前页
+     * @param pageSize    页大小
+     * @return 需求编码
+     */
+    Page<DemandInfo> gePageByStatusJobCateId(Integer currentPage, Integer pageSize, Long employerId, Integer status,
+                                             Integer jobCateId);
+
+    /**
      * 根据需求编码更新需求状态
      *
      * @param code
