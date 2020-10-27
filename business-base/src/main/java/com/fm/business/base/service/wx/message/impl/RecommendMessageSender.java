@@ -68,7 +68,7 @@ public class RecommendMessageSender {
         String summarize = demandInfo.getSummarize();
         //获取作品名称
         String productionNames = productionInfos.stream().map(ProductionInfo::getTitle).collect(Collectors.joining(","));
-        String message = String.format("平台已为需求【需求名称】推荐人才，请选择人才下单吧！");
+        String message = String.format("平台已为需求推荐人才，请选择人才下单吧！");
 
         WxMessage wxMessage = WxMessage.builder().addToUser(sysUser.getCode()).addPage("index")
                 .addTemplate(WxMessageTemplate.RECOMMEND_MESSAGE)
