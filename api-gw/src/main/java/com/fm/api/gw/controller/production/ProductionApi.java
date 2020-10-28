@@ -173,7 +173,7 @@ public class ProductionApi extends BaseController<ProductionInfo, ProductionApiV
     @ApiOperation(value = "通过作者id查看是否发布过作品")
     public boolean hasProductionById() {
         Long currFreelancerId = Context.getCurrFreelancerId();
-        Page<ProductionInfo> byFreelancer = productionInfoService.findByFreelancer(1, 20, currFreelancerId, 30);
+        Page<ProductionInfo> byFreelancer = productionInfoService.findByFreelancer(1, 20, currFreelancerId, 40);
         if(byFreelancer.getTotal() != 0){
             return true;
         }
