@@ -70,7 +70,8 @@ public class RecommendMessageSender {
         String productionNames = productionInfos.stream().map(ProductionInfo::getTitle).collect(Collectors.joining(","));
         String message = String.format("平台已为需求推荐人才，请选择人才下单吧！");
 
-        WxMessage wxMessage = WxMessage.builder().addToUser(sysUser.getCode()).addPage("index")
+        WxMessage wxMessage = WxMessage.builder().addToUser(sysUser.getCode()).addPage("pages/demandDetails" +
+                "/demandDetails?demandCode="+demandId)
                 .addTemplate(WxMessageTemplate.RECOMMEND_MESSAGE)
                 .addData("number1", String.valueOf(productionInfos.size())).addData("thing2", message).build();
 
