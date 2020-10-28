@@ -2,7 +2,6 @@ package com.fm.api.gw.controller.user;
 
 import com.fm.api.gw.vo.user.UserApiVO;
 import com.fm.api.gw.vo.user.mapper.UserMapper;
-import com.fm.api.gw.vo.user.mapper.UserMapperImpl;
 import com.fm.business.base.model.sys.SysUser;
 import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.framework.core.Context;
