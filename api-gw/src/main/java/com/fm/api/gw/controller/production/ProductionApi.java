@@ -169,9 +169,9 @@ public class ProductionApi extends BaseController<ProductionInfo, ProductionApiV
 
     }
 
-    @GetMapping("/getProductionById")
+    @GetMapping("/hasProductionById")
     @ApiOperation(value = "通过作者id查看是否发布过作品")
-    public boolean getProductionById() {
+    public boolean hasProductionById() {
         Long currFreelancerId = Context.getCurrFreelancerId();
         Page<ProductionInfo> byFreelancer = productionInfoService.findByFreelancer(1, 20, currFreelancerId, 30);
         if(byFreelancer.getTotal() != 0){
