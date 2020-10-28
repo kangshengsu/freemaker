@@ -197,7 +197,8 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         }
 
         orderInfoVO.setCanChargeback(isHour48Ago(orderInfoVO.getId()));
-        orderInfoVO.setIsUploadVoucher(BooleanUtils.toBoolean(orderInfo.getIsUploadVoucher()));
+        //IsUploadVoucher对应的数据库字段设置默认之后，可直接转换boolean
+        orderInfoVO.setIsUploadVoucher(orderInfo.getIsUploadVoucher() == null ? Boolean.FALSE : BooleanUtils.toBoolean(orderInfo.getIsUploadVoucher()));
 
         return ApiResponse.ofSuccess(orderInfoVO);
     }
