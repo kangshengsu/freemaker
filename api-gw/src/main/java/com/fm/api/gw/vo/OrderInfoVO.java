@@ -71,6 +71,11 @@ public class OrderInfoVO extends VO implements Serializable {
 	private Integer statusStep;
 
 	/**
+	 * 预算计算方式(0-时薪  1-一口价  2-面谈)
+	 */
+	private Integer budgetType;
+
+	/**
 	 * 订单金额
 	 **/
 	private Double orderMny;

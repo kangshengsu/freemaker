@@ -7,6 +7,7 @@ spring:
     url: jdbc:mysql://172.21.16.11:3306/how_work_test?useUnicode=true&characterEncoding=utf-8&useSSL=false&autoReconnect=true&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull
     username: how_work_test
     password: how_work_test
+
   cos:
     appId: 1301749332
     secretId: AKIDALMUUvExISTJz5nk6LPJ3c37peLtuUXP
