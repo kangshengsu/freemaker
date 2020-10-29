@@ -7,12 +7,14 @@ import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.demand.DemandProductionRelation;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.order.OrderInfo;
+import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.model.sys.SysUser;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.order.IOrderInfoDetailService;
+import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.business.base.service.wx.message.MessageSenderService;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,21 +45,26 @@ public class OrderStatusChangeMessageSender {
     @Autowired
     private IFreelancerInfoService freelancerInfoService;
     @Autowired
+    private IOrderInfoService orderInfoService;
+    @Autowired
+    private IOrderInfoDetailService orderInfoDetailService;
+    @Autowired
     private ISysUserService sysUserService;
 
     public void sendStatusChangeMessage(OrderInfo orderInfo) {
-        EmployerInfo employerInfo = employerInfoService.get(orderInfo.getEmployerId());
-        FreelancerInfo freelancerInfo = freelancerInfoService.get(orderInfo.getFreelancerId());
-        DemandInfo demandInfo = demandInfoService.get(orderInfo.getDemandId());
-        if (demandInfo == null) {
+        orderInfo = orderInfoService.get(orderInfo.getId());
+        List<OrderInfoDetail> orderInfoDetails = orderInfoDetailService.getOrderDetailByOrderIds(Arrays.asList(orderInfo.getId()));
+        if (CollectionUtils.isEmpty(orderInfoDetails)) {
             return;
         }
-        this.sendStatusChangeMessageToEmployer(orderInfo,employerInfo,freelancerInfo,demandInfo);
-        this.sendStatusChangeMessageToFreelancer(orderInfo,employerInfo,freelancerInfo,demandInfo);
+        EmployerInfo employerInfo = employerInfoService.get(orderInfo.getEmployerId());
+        FreelancerInfo freelancerInfo = freelancerInfoService.get(orderInfo.getFreelancerId());
+        this.sendStatusChangeMessageToEmployer(orderInfo,employerInfo,freelancerInfo,orderInfoDetails.get(0));
+        this.sendStatusChangeMessageToFreelancer(orderInfo,employerInfo,freelancerInfo,orderInfoDetails.get(0));
     }
 
     private void sendStatusChangeMessageToEmployer(OrderInfo orderInfo,EmployerInfo employerInfo,
-                                                   FreelancerInfo freelancerInfo,DemandInfo demandInfo) {
+                                                   FreelancerInfo freelancerInfo,OrderInfoDetail orderInfoDetail) {
         if (employerInfo == null || employerInfo.getUserId() == null) {
             return;
         }
@@ -66,12 +74,12 @@ public class OrderStatusChangeMessageSender {
         }
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = formatter.format(orderInfo.getUpdateTime());
-        String desc = this.getDescToEmployer(orderInfo,employerInfo,freelancerInfo,demandInfo);
+        String desc = this.getDescToEmployer(orderInfo,employerInfo,freelancerInfo);
         WxMessage wxMessage = WxMessage.builder()
                 .addToUser(sysUser.getCode())
                 .addTemplate(WxMessageTemplate.ORDER_STATUS_CHANGE_MESSAGE)
-                .addPage("index")
-                .addData("thing5", demandInfo.getSummarize())
+                .addPage("pages/orderDetails/orderDetails?orderId="+orderInfo.getId())
+                .addData("thing5", orderInfoDetail.getSummarize())
                 .addData("phrase2", OrderStatus.get(orderInfo.getStatus()).getName())
                 .addData("amount8", String.valueOf(orderInfo.getOrderMny()))
                 .addData("date3", date)
@@ -84,7 +92,7 @@ public class OrderStatusChangeMessageSender {
 
     }
     private void sendStatusChangeMessageToFreelancer(OrderInfo orderInfo,EmployerInfo employerInfo,
-                                                     FreelancerInfo freelancerInfo,DemandInfo demandInfo) {
+                                                     FreelancerInfo freelancerInfo,OrderInfoDetail orderInfoDetail) {
         if (freelancerInfo == null || freelancerInfo.getUserId() == null) {
             return;
         }
@@ -92,7 +100,7 @@ public class OrderStatusChangeMessageSender {
         if (sysUser == null) {
             return;
         }
-        String desc = this.getDescToFreelancer(orderInfo,employerInfo,freelancerInfo,demandInfo);
+        String desc = this.getDescToFreelancer(orderInfo,employerInfo,freelancerInfo);
         if (desc == null) {
             return;
         }
@@ -103,7 +111,7 @@ public class OrderStatusChangeMessageSender {
                 .addToUser(sysUser.getCode())
                 .addTemplate(WxMessageTemplate.ORDER_STATUS_CHANGE_MESSAGE)
                 .addPage("index")
-                .addData("thing5", demandInfo.getSummarize())
+                .addData("thing5", orderInfoDetail.getSummarize())
                 .addData("phrase2", OrderStatus.get(orderInfo.getStatus()).getName())
                 .addData("amount8", String.valueOf(orderInfo.getOrderMny()))
                 .addData("date3", date)
@@ -112,7 +120,7 @@ public class OrderStatusChangeMessageSender {
         messageSenderService.sendMessage(wxMessage);
     }
 
-    private String getDescToEmployer(OrderInfo orderInfo,EmployerInfo employerInfo,FreelancerInfo freelancerInfo, DemandInfo demandInfo) {
+    private String getDescToEmployer(OrderInfo orderInfo,EmployerInfo employerInfo,FreelancerInfo freelancerInfo) {
         switch (OrderStatus.get(orderInfo.getStatus())) {
             case WAITING_20:
                 return String.format("您的订单已下单成功，请您耐心等待人才接单吧。");
@@ -135,7 +143,7 @@ public class OrderStatusChangeMessageSender {
     }
 
     private String getDescToFreelancer(OrderInfo orderInfo,EmployerInfo employerInfo,
-                                                  FreelancerInfo freelancerInfo, DemandInfo demandInfo) {
+                                                  FreelancerInfo freelancerInfo) {
         switch (OrderStatus.get(orderInfo.getStatus())) {
             case WAITING_20:
                 return String.format("您已收到订单，快去认接单吧！");
