@@ -34,6 +34,7 @@ public class WxMessage {
         private String touser;
         private String template_id;
         private String page;
+        private String miniprogram_state;
         private Map<String, TemplateData> data = new HashMap<>();
 
         Builder() {
@@ -56,6 +57,11 @@ public class WxMessage {
 
         public WxMessage.Builder addData(String name, String vaule) {
             this.data.put(name, new TemplateData(vaule));
+            return this;
+        }
+
+        public WxMessage.Builder addMiniprogramState(String state) {
+            this.miniprogram_state = state;
             return this;
         }
 

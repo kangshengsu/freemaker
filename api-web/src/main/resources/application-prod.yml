@@ -22,3 +22,6 @@ spring:
     password: HowWork!
     database: 0
 
+wx:
+  miniapp:
+    state: formal

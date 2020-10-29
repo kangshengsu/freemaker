@@ -20,6 +20,7 @@ import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.business.base.service.wx.message.MessageSenderService;
 import com.fm.business.base.service.wx.message.message.WxMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -34,6 +35,9 @@ import java.util.stream.Collectors;
  */
 @Service
 public class OrderStatusChangeMessageSender {
+
+    @Value("${wx.miniapp.state}")
+    private String state;
     @Autowired
     private MessageSenderService messageSenderService;
     @Autowired
@@ -79,6 +83,7 @@ public class OrderStatusChangeMessageSender {
                 .addToUser(sysUser.getCode())
                 .addTemplate(WxMessageTemplate.ORDER_STATUS_CHANGE_MESSAGE)
                 .addPage("pages/orderDetails/orderDetails?orderId="+orderInfo.getId())
+                .addMiniprogramState(state)
                 .addData("thing5", orderInfoDetail.getSummarize())
                 .addData("phrase2", OrderStatus.get(orderInfo.getStatus()).getName())
                 .addData("amount8", String.valueOf(orderInfo.getOrderMny()))
@@ -105,12 +110,13 @@ public class OrderStatusChangeMessageSender {
             return;
         }
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
         String date = formatter.format(orderInfo.getUpdateTime());
         WxMessage wxMessage = WxMessage.builder()
                 .addToUser(sysUser.getCode())
                 .addTemplate(WxMessageTemplate.ORDER_STATUS_CHANGE_MESSAGE)
-                .addPage("index")
+                .addPage("pages/orderDetails/orderDetails?orderId="+orderInfo.getId())
+                .addMiniprogramState(state)
                 .addData("thing5", orderInfoDetail.getSummarize())
                 .addData("phrase2", OrderStatus.get(orderInfo.getStatus()).getName())
                 .addData("amount8", String.valueOf(orderInfo.getOrderMny()))
@@ -123,7 +129,7 @@ public class OrderStatusChangeMessageSender {
     private String getDescToEmployer(OrderInfo orderInfo,EmployerInfo employerInfo,FreelancerInfo freelancerInfo) {
         switch (OrderStatus.get(orderInfo.getStatus())) {
             case WAITING_20:
-                return String.format("您的订单已下单成功，请您耐心等待人才接单吧。");
+                return String.format("您的订单下单成功,请等待人才接单");
             case TAKING_40:
                 return String.format("您的订单已经被人才接单成功，请前往支付！");
             case REJECT_30:
@@ -146,7 +152,7 @@ public class OrderStatusChangeMessageSender {
                                                   FreelancerInfo freelancerInfo) {
         switch (OrderStatus.get(orderInfo.getStatus())) {
             case WAITING_20:
-                return String.format("您已收到订单，快去认接单吧！");
+                return String.format("您已收到订单,快去认接单吧");
             case TAKING_40:
                 return String.format("您的订单已经接单成功了，请等待雇佣的支付。");
             case REJECT_30:
@@ -162,7 +168,7 @@ public class OrderStatusChangeMessageSender {
             case EVALUATED_90:
                 return String.format("订单已经获得评价，快去看看吧。");
             case CANCELD_100:
-                return String.format("很遗憾，已被雇主取消。");
+                return String.format("很遗憾，订单已被雇主取消。");
         }
         return null;
     }
