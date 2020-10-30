@@ -15,6 +15,7 @@ import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.business.base.service.wx.message.MessageSenderService;
 import com.fm.business.base.service.wx.message.message.WxMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -30,6 +31,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class RecommendMessageSender {
+    @Value("${wx.miniapp.state}")
+    private String state;
     @Autowired
     private MessageSenderService messageSenderService;
     @Autowired
@@ -72,9 +75,9 @@ public class RecommendMessageSender {
 
         WxMessage wxMessage = WxMessage.builder().addToUser(sysUser.getCode()).addPage("pages/demandDetails" +
                 "/demandDetails?demandCode="+demandId)
+                .addMiniprogramState(state)
                 .addTemplate(WxMessageTemplate.RECOMMEND_MESSAGE)
                 .addData("number1", String.valueOf(productionInfos.size())).addData("thing2", message).build();
-
         messageSenderService.sendMessage(wxMessage);
 
     }

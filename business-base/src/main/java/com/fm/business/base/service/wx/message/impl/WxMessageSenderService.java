@@ -3,8 +3,11 @@ package com.fm.business.base.service.wx.message.impl;
 import com.fm.business.base.enums.WxMessageTemplate;
 import com.fm.business.base.service.wx.message.MessageSenderService;
 import com.fm.business.base.service.wx.message.message.WxMessage;
+import com.fm.framework.core.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
+import org.redisson.api.RBucket;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author zhangleqi
@@ -22,7 +26,8 @@ import java.util.Map;
 @Service
 @Slf4j
 public class WxMessageSenderService implements MessageSenderService {
-
+    @Autowired
+    private RedissonClient redissonClient;
     @Autowired
     private RestTemplate restTemplate;
 
@@ -59,10 +64,17 @@ public class WxMessageSenderService implements MessageSenderService {
     }
 
     private String getAccessToken() {
+        RBucket<String> rBucket = redissonClient.getBucket("appAccessToken");
+        //缓存用户token信息，供拦截器使用
+        if (rBucket.isExists()) {
+            return rBucket.get();
+        }
         String url = String.format(accessUrl, appid, secret);
         String json = restTemplate.getForObject(url, String.class);
         JSONObject jsonObject = new JSONObject(json);
-        return jsonObject.get("access_token").toString();
+        String access_token = jsonObject.get("access_token").toString();
+        redissonClient.getBucket("appAccessToken").set(access_token,1, TimeUnit.HOURS);
+        return access_token;
     }
 
 }
