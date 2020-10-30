@@ -81,7 +81,7 @@ public class ProductionApiVO extends VO implements Serializable {
      * 时薪
      **/
     @NotNull(message = "时薪不能为空",groups = {Release.class, Modify.class})
-    @Max(value = 99999,message = "超过时薪最大值",groups = {Release.class, Modify.class})
+    @Max(value = 9999999,message = "超过时薪最大值",groups = {Release.class, Modify.class})
     private BigDecimal hourlyWage;
 
 

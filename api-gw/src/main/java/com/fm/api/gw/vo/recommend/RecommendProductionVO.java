@@ -30,6 +30,11 @@ public class RecommendProductionVO extends VO implements Serializable {
     private String title;
 
     /**
+     * 预算计算方式
+     */
+    private Integer budgetType;
+
+    /**
      * 时薪
      **/
     private BigDecimal hourlyWage;
