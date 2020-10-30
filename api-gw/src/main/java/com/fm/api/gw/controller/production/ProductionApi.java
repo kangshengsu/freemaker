@@ -16,6 +16,7 @@ import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -173,7 +174,7 @@ public class ProductionApi extends BaseController<ProductionInfo, ProductionApiV
         if(byFreelancer.getTotal() != 0){
             return ApiResponse.ofSuccess(Boolean.TRUE);
         }
-        return failed("用户没有发布过作品");
+        return ApiResponse.of(1, "未发布作品", Boolean.FALSE);
     }
 
 }
