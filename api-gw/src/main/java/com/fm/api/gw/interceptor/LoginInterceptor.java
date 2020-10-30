@@ -63,9 +63,9 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Deprecated
     private RBucket<MiniAppUserVO> fillMockUser() {
         MiniAppUserVO miniAppUserVO = new MiniAppUserVO();
-        miniAppUserVO.setUserId(8105L);
-        miniAppUserVO.setFreeLancerId(8105L);
-        miniAppUserVO.setEmployerId(8105L);
+        miniAppUserVO.setUserId(11L);
+        miniAppUserVO.setFreeLancerId(22L);
+        miniAppUserVO.setEmployerId(33L);
 
         RBucket<MiniAppUserVO> currUser = redissonClient.getBucket(mockToken);
         currUser.set(miniAppUserVO, 99999, TimeUnit.HOURS);

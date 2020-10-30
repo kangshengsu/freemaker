@@ -6,7 +6,6 @@
  */
 package com.fm.api.gw.controller.production;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fm.api.gw.vo.production.mapper.ProductionMapper;
 import com.fm.api.gw.vo.production.req.ProductionApiVO;
 import com.fm.business.base.enums.ProductionStatus;
@@ -14,11 +13,9 @@ import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.query.Page;
-import com.fm.framework.core.query.QueryItem;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -27,7 +24,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.Console;
 import java.util.*;
 
 /**
@@ -171,13 +167,13 @@ public class ProductionApi extends BaseController<ProductionInfo, ProductionApiV
 
     @GetMapping("/hasProductionById")
     @ApiOperation(value = "通过作者id查看是否发布过作品")
-    public boolean hasProductionById() {
+    public ApiResponse<Boolean> hasProductionById() {
         Long currFreelancerId = Context.getCurrFreelancerId();
         Page<ProductionInfo> byFreelancer = productionInfoService.findByFreelancer(1, 20, currFreelancerId, 40);
         if(byFreelancer.getTotal() != 0){
-            return true;
+            return ApiResponse.ofSuccess(Boolean.TRUE);
         }
-        return false;
+        return failed("用户没有发布过作品");
     }
 
 }
