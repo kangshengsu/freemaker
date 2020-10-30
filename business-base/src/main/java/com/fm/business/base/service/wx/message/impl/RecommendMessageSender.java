@@ -15,6 +15,7 @@ import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.business.base.service.wx.message.MessageSenderService;
 import com.fm.business.base.service.wx.message.message.WxMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -30,6 +31,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class RecommendMessageSender {
+    @Value("${wx.miniapp.state}")
+    private String state;
     @Autowired
     private MessageSenderService messageSenderService;
     @Autowired
@@ -68,13 +71,13 @@ public class RecommendMessageSender {
         String summarize = demandInfo.getSummarize();
         //获取作品名称
         String productionNames = productionInfos.stream().map(ProductionInfo::getTitle).collect(Collectors.joining(","));
-        String message = String.format("尊敬的【%s】，平台已根据需求【%s】向您推荐作品【%s】，请您尽快和人才沟通，向符合您要求的作品进行下单哦！", employerName,
-                summarize, productionNames);
+        String message = String.format("平台已为需求推荐人才，请选择人才下单吧！");
 
-        WxMessage wxMessage = WxMessage.builder().addToUser(sysUser.getCode()).addPage("index")
+        WxMessage wxMessage = WxMessage.builder().addToUser(sysUser.getCode()).addPage("pages/demandDetails" +
+                "/demandDetails?demandCode="+demandId)
+                .addMiniprogramState(state)
                 .addTemplate(WxMessageTemplate.RECOMMEND_MESSAGE)
                 .addData("number1", String.valueOf(productionInfos.size())).addData("thing2", message).build();
-
         messageSenderService.sendMessage(wxMessage);
 
     }

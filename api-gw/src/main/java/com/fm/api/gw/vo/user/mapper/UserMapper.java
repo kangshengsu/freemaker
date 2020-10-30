@@ -30,6 +30,7 @@ public abstract class UserMapper extends CommonMapper {
             @Mapping(target = "freelancerInfo.headImg", source = "headImg"),
             @Mapping(target = "freelancerInfo.skillSummarize", source = "freelancerInfo.skillSummarize"),
             @Mapping(target = "freelancerInfo.language", source = "freelancerInfo.language"),
+            @Mapping(target = "freelancerInfo.referralCode",source = "freelancerInfo.referralCode"),
 
             @Mapping(target = "employerInfo.provinceCode", source = "provinceCode"),
             @Mapping(target = "employerInfo.cityCode", source = "cityCode"),

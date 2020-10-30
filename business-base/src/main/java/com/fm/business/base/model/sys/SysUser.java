@@ -87,12 +87,12 @@ public class SysUser extends BaseModel implements Serializable {
 //    private String openId;
 
     /**
-     * 雇佣者
+     * 自由职业者
      */
     private transient FreelancerInfo freelancerInfo;
 
     /**
-     * 自由职业者
+     * 雇佣者
      */
     private transient EmployerInfo employerInfo;
 

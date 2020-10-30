@@ -56,6 +56,11 @@ public class OrderInfoVO extends VO implements Serializable {
 	private Integer status;
 
 	/**
+	 * 预算计算方式(0-时薪  1-一口价  2-面谈)
+	 */
+	private Integer budgetType;
+
+	/**
 	 * 订单状态（10-初始态 20-已拒单 30-已接单 40-已支付 50-制作中 60-待验收 70-已完成 80-已评价）
 	 **/
 	private String statusName;
