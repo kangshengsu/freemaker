@@ -1,5 +1,6 @@
 package com.fm.business.base.service.conf.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.conf.DisplayConfigMapper;
 import com.fm.business.base.enums.ProductionStatus;
@@ -16,6 +17,7 @@ import com.fm.framework.core.service.AuditBaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -40,6 +42,9 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
      * 产品信息服务
      */
     private final IProductionInfoService productionInfoService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
 
     @Autowired
@@ -99,9 +104,25 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
                 .stream()
                 .map(DisplayConfig::getDisplayId)
                 .collect(Collectors.toSet());
+        String displayKey = getDisplayConfigsKey();
+        List<BdJobCate> bdJobCateList = redisTemplate.opsForHash().values(displayKey);
+        HashMap<String, BdJobCate> map = new HashMap<>();
+        if(bdJobCateList.isEmpty()){
+            List<BdJobCate> jobCateList = bdJobCateService.getByIds(jobCateIds);
+            if (!jobCateList.isEmpty()){
+                for (BdJobCate bdJobCate : jobCateList) {
+                    map.put(bdJobCate.getId().toString(), bdJobCate);
+                }
+                redisTemplate.opsForHash().putAll(displayKey, map);
+            }
+            return jobCateList;
+        }
+        return bdJobCateList;
+    }
 
-        return bdJobCateService.getByIds(jobCateIds);
-
+    private String getDisplayConfigsKey(){
+        String displayKey = "displayConfigs";
+        return displayKey;
     }
 
     /**
