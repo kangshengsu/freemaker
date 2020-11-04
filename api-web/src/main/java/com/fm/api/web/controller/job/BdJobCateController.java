@@ -14,6 +14,7 @@ import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.job.BdJobSkill;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IBdJobSkillService;
+import com.fm.business.base.service.conf.impl.DisplayConfigServiceImpl;
 import com.fm.framework.core.model.TreeNode;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.query.QueryItem;
@@ -28,6 +29,7 @@ import com.fm.framework.web.response.ApiResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -53,6 +55,12 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
 
     @Autowired
     private IBdJobSkillService bdJobSkillService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+
+
 
     /**
      * 获取领域数据
@@ -149,10 +157,19 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
         if (!JobNodeType.SKILL.getType().equals(newNode.getCateType())) {
             if (isAdd) {
                 result = super.create(newNode);
+                String displayKey = "displayConfigs";
+                if (!redisTemplate.opsForHash().values(displayKey).isEmpty()){
+                    redisTemplate.boundHashOps(displayKey).put(newNode.getId().toString(),newNode);
+                }
+
             } else {
                 newNode.setTreeCode(null);
                 newNode.setParentId(null);
                 result = super.update(newNode);
+                String displayKey = "displayConfigs";
+                if (!redisTemplate.opsForHash().values(displayKey).isEmpty()){
+                    redisTemplate.delete(displayKey);
+                }
             }
         } else {
             BdJobSkill jobSkill = new BdJobSkill();
@@ -185,6 +202,10 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
             result = super.success(this.bdJobSkillService.delete(jobNodeVO.getJobId()));
         } else {
             result = super.delete(jobNodeVO.getJobId());
+            String displayKey = "displayConfigs";
+            if(!redisTemplate.opsForHash().values(displayKey).isEmpty()){
+                redisTemplate.delete(displayKey);
+            }
         }
 
         return result;
