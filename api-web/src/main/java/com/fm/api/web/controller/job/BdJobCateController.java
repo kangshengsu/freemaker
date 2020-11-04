@@ -130,6 +130,7 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
         return ApiResponse.ofSuccess(Arrays.asList(transferTree(treeNodeList)));
     }
 
+
     /**
      * 获取只有领域岗位技能树
      * @return

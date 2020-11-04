@@ -72,7 +72,7 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
 
     @Override
     public List<BdJobCate> getSecondLevelJobCateConfigNoCache() {
-        return getJobCate(get(DisplayType.job_cate_2));
+        return getJobCateForSecond(get(DisplayType.job_cate_2));
     }
 
     @Override
@@ -119,7 +119,19 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
         }
         return bdJobCateList;
     }
+    public List<BdJobCate> getJobCateForSecond(Collection<DisplayConfig> displayConfigs) {
 
+        if (displayConfigs.isEmpty()) {
+            return Collections.emptyList();
+        }
+        log.info("getJobCate displayConfigs: {}", displayConfigs);
+        Set<Long> jobCateIds = displayConfigs
+                .stream()
+                .map(DisplayConfig::getDisplayId)
+                .collect(Collectors.toSet());
+            List<BdJobCate> jobCateList = bdJobCateService.getByIds(jobCateIds);
+            return jobCateList;
+        }
     private String getDisplayConfigsKey(){
         String displayKey = "displayConfigs";
         return displayKey;
