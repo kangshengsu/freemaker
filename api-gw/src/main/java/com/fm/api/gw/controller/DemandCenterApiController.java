@@ -1,6 +1,7 @@
 package com.fm.api.gw.controller;
 
-import com.fm.api.gw.vo.DemandInfoVO;
+import com.fm.api.gw.vo.demand.DemandInfoVO;
+import com.fm.api.gw.vo.demand.mapper.DemandInfoMapper;
 import com.fm.business.base.enums.BudgetType;
 import com.fm.business.base.enums.DeliveryType;
 import com.fm.business.base.enums.DemandStatus;
@@ -10,7 +11,6 @@ import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandCenterInfoService;
-import com.fm.business.base.service.demand.IDemandInfoService;
 import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.query.Page;
@@ -46,6 +46,9 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
 
     @Autowired
     private IOrderInfoService iOrderInfoService;
+
+    @Autowired
+    private DemandInfoMapper demandInfoMapper;
 
     /**
      *
@@ -85,8 +88,9 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
     @RequestMapping(value = "getDemandCenterDtlByCode", method = RequestMethod.GET)
     public ApiResponse<DemandInfoVO> getDemandCenterDtlByCode(@RequestParam(value = "code", required = false) String code) {
         Long currEmployerId = Context.getCurrEmployerId();
-        DemandInfo demandInfoPage = demandCenterInfoService.getDemandCenterDtlByCode(code);
-        return success(this.convert(demandInfoPage));
+        DemandInfo demandInfo = demandCenterInfoService.getDemandCenterDtlByCode(code);
+        DemandInfoVO demandInfoVO = demandInfoMapper.toDemandInfoVO(demandInfo);
+        return ApiResponse.ofSuccess(demandInfoVO);
     }
 
     @Override

@@ -28,4 +28,6 @@ public interface IEmployerInfoService extends Service<EmployerInfo> {
 
     EmployerInfo getByUserId(Long currUser);
 
+    EmployerInfo getById(Long id);
+
 }

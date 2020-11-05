@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fm.business.base.dao.IDemandCenterInfoMapper">
+
+	<resultMap id="BaseResultMap" type="com.fm.business.base.model.demand.DemandInfo">
+		<id column="id" property="id" />
+		<id column="code" property="code" />
+		<id column="employer_code" property="employerCode" />
+		<id column="status" property="status" />
+		<id column="job_code" property="jobCode" />
+		<id column="tree_code" property="treeCode" />
+		<id column="expect_delivery_time" property="expectDeliveryTime" />
+		<id column="budget" property="budget" />
+		<id column="recommend_count" property="recommendCount" />
+		<id column="province_code" property="provinceCode" />
+		<id column="city_code" property="cityCode" />
+		<id column="district_code" property="districtCode" />
+		<id column="county_code" property="countyCode" />
+		<id column="summarize" property="summarize" />
+		<id column="description" property="description" />
+		<id column="create_time" property="createTime" />
+		<id column="update_time" property="updateTime" />
+		<id column="create_user" property="createUser" />
+		<id column="update_user" property="updateUser" />
+		<id column="is_delete" property="isDelete" />
+		<id column="ts" property="ts" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, code, employer_code, status, job_code, tree_code, expect_delivery_time, budget, recommend_count, province_code, city_code, district_code, county_code, summarize, description, create_time, update_time, create_user, update_user, is_delete, ts
+	</sql>
+
+</mapper>
