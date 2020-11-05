@@ -13,7 +13,7 @@ public abstract class DemandInfoMapper extends CommonMapper {
 
     @Mappings({
             @Mapping(target = "employerInfo.name", source = "employerInfo.name"),
-            @Mapping(target = "employerInfo.headImg", source = "employerInfo.headImg"),
+            @Mapping(target = "employerInfo.headImg", source = "employerInfo.headImg",qualifiedByName = "fullHeadImgPath"),
             @Mapping(target = "employerInfo.phone", source = "employerInfo.phone")
     })
     public abstract DemandInfoVO toDemandInfoVO(DemandInfo demandInfo);

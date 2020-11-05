@@ -90,7 +90,7 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
         Long currEmployerId = Context.getCurrEmployerId();
         DemandInfo demandInfo = demandCenterInfoService.getDemandCenterDtlByCode(code);
         DemandInfoVO demandInfoVO = demandInfoMapper.toDemandInfoVO(demandInfo);
-        return ApiResponse.ofSuccess(demandInfoVO);
+        return success(this.fill(demandInfo));
     }
 
     @Override
@@ -121,4 +121,28 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
         form.setOrderCount(iOrderInfoService.getOrderCountByDemandId(form.getId()));
         return form;
     }
+
+    protected DemandInfoVO fill(DemandInfo model) {
+        if (Objects.isNull(model)) {
+            return null;
+        }
+        DemandInfoVO form = demandInfoMapper.toDemandInfoVO(model);
+        //转换枚举值
+        form.setStatusName(DemandStatus.get(model.getStatus()).getName());
+        form.setDeliveryTypeName(DeliveryType.getNameByCode(model.getDeliveryType()));
+        form.setBudgetTypeName(BudgetType.getNameByCode(model.getBudgetType()));
+        //获取作者数据
+        EmployerInfo employerInfo = iEmployerInfoService.get(model.getEmployerId());
+        if (employerInfo != null) {
+            form.setEmployerName(employerInfo.getName());
+        }
+        //获取需求信息
+        BdJobCate bdJobCate = iBdJobCateService.get(model.getJobCateId());
+        if (bdJobCate != null) {
+            form.setJobCateIdName(bdJobCate.getCateName());
+        }
+        form.setOrderCount(iOrderInfoService.getOrderCountByDemandId(form.getId()));
+        return form;
+    }
+
 }
