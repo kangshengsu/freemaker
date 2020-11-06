@@ -17,6 +17,7 @@ public class WxMessage {
     private String touser;
     private String template_id;
     private String page;
+    private String miniprogram_state;
     private Map<String, TemplateData> data = new HashMap<>();
 
     public static WxMessage.Builder builder() {
@@ -71,6 +72,7 @@ public class WxMessage {
             wxMessage.setTemplate_id(this.template_id);
             wxMessage.setPage(this.page);
             wxMessage.setData(this.data);
+            wxMessage.setMiniprogram_state(this.miniprogram_state);
             return wxMessage;
         }
     }

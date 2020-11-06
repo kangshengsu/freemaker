@@ -4,9 +4,10 @@
  * Copyright(c) 2020 LiuDuo Co. Ltd.
  * All right reserved.
  */
-package com.fm.api.gw.vo;
+package com.fm.api.gw.vo.demand;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fm.api.gw.vo.employer.EmployerInfoApiVO;
 import com.fm.framework.web.VO;
 import lombok.Data;
 
@@ -181,8 +182,10 @@ public class DemandInfoVO extends VO implements Serializable {
 	 **/
 	private Long updateUser;
 
-
-
+	/**
+	 * 雇佣者信息
+	 */
+	private EmployerInfoApiVO employerInfo;
 
 
 

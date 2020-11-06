@@ -1,6 +1,6 @@
 package com.fm.api.gw.controller;
 
-import com.fm.api.gw.vo.DemandInfoVO;
+import com.fm.api.gw.vo.demand.DemandInfoVO;
 import com.fm.business.base.enums.BudgetType;
 import com.fm.business.base.enums.DeliveryType;
 import com.fm.business.base.enums.DemandStatus;

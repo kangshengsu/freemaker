@@ -62,4 +62,19 @@ public class EmployerInfoServiceImpl extends AuditBaseService<IEmployerInfoMappe
 
         return employerInfos.get(0);
     }
+
+    @Override
+    public EmployerInfo getById(Long id) {
+        if(null == id) {
+            return null;
+        }
+
+        List<EmployerInfo> employerInfos =
+                getBaseMapper().selectList(Wrappers.<EmployerInfo>lambdaQuery().eq(EmployerInfo::getId,id));
+        if(CollectionUtils.isEmpty(employerInfos)) {
+            return null;
+        }
+
+        return employerInfos.get(0);
+    }
 }
