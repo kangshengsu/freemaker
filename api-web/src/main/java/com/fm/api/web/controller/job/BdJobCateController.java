@@ -10,6 +10,7 @@ import com.fm.business.base.enums.JobNodeType;
 import com.fm.api.web.vo.job.BdJobCateVO;
 import com.fm.api.web.vo.job.BdJobSkillVO;
 import com.fm.api.web.vo.job.JobNodeVO;
+import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.job.BdJobSkill;
 import com.fm.business.base.service.IBdJobCateService;
@@ -26,6 +27,7 @@ import com.fm.framework.core.utils.TreeUtil;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +60,9 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private DisplayConfigServiceImpl displayConfigService;
 
 
 

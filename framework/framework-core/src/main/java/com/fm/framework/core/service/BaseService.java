@@ -94,6 +94,7 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
         return result;
     }
 
+
     @Override
     public boolean saveOrUpdate(T model) {
         if (model.getId() == null) {

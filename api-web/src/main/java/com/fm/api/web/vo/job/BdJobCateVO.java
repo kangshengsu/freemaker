@@ -6,11 +6,13 @@
  */
 package com.fm.api.web.vo.job;
 
+import com.fm.business.base.model.AttachmentInfo;
 import com.fm.framework.web.VO;
 import lombok.Data;
 import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
+import java.util.List;
 
 /**   
  * @Description:(岗位请求实体类)
@@ -65,6 +67,16 @@ public class BdJobCateVO extends VO implements Serializable {
     * 
     **/
 	private String parentCode;
+
+	/**
+	 * 附件列表
+	 */
+	private List<AttachmentInfo> attachmentInfos;
+
+	/**
+	 * 附件路径
+	 */
+	private List<String> attachmentInfoPaths;
 
 
     /**

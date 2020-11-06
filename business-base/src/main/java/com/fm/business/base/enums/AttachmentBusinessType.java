@@ -39,7 +39,12 @@ public enum AttachmentBusinessType {
     /**
      * 42-雇佣者
      */
-    EMPLOYER_PROFILE_PHOTO(42,"雇佣者");
+    EMPLOYER_PROFILE_PHOTO(42,"雇佣者"),
+
+    /**
+     * 50-岗位默认图片
+     */
+    JOB_DEFAULT_IMAGE(50,"岗位默认图片");
 
     /**
      * 编码

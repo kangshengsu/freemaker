@@ -1,8 +1,8 @@
 /**
  * @filename:BdJobCateServiceImpl 2020年09月11日
  * @project HowWork  V1.0
- * Copyright(c) 2018 LiuDuo Co. Ltd. 
- * All right reserved. 
+ * Copyright(c) 2018 LiuDuo Co. Ltd.
+ * All right reserved.
  */
 package com.fm.business.base.service.impl;
 
@@ -10,12 +10,17 @@ package com.fm.business.base.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.job.IBdJobCateMapper;
+import com.fm.business.base.enums.AttachmentBusinessType;
+import com.fm.business.base.enums.AttachmentType;
 import com.fm.business.base.enums.JobNodeType;
+import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.job.BdJobCate;
+import com.fm.business.base.service.IAttachmentInfoService;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.framework.core.query.QueryItem;
 import com.fm.framework.core.query.QueryType;
 import com.fm.framework.core.service.AuditBaseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.fm.framework.core.service.BaseService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,17 +29,19 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 
-/**   
+/**
  * @Description:(岗位服务实现)
  *
  * @version: V1.0
  * @author: LiuDuo
- * 
+ *
  */
 @Slf4j
 @Service("bdJobCateService")
 public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJobCate> implements IBdJobCateService {
 
+    @Autowired
+    private IAttachmentInfoService attachmentInfoService;
 
     /**
      * 获取全部领域 暂时不限制条数
@@ -46,7 +53,7 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
         LambdaQueryWrapper<BdJobCate> wrapper = Wrappers.lambdaQuery(BdJobCate.class)
                 .eq(BdJobCate::getCateType, JobNodeType.JOB.getType());
 
-        if(!StringUtils.isEmpty(keyword)){
+        if (!StringUtils.isEmpty(keyword)) {
             wrapper.like(BdJobCate::getCateName, keyword)
                     .or()
                     .like(BdJobCate::getCateCode, keyword);
@@ -59,7 +66,7 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
         LambdaQueryWrapper<BdJobCate> wrapper = Wrappers.lambdaQuery(BdJobCate.class)
                 .eq(BdJobCate::getCateType, JobNodeType.POST.getType());
 
-        if(!StringUtils.isEmpty(keyword)){
+        if (!StringUtils.isEmpty(keyword)) {
             wrapper.like(BdJobCate::getCateName, keyword)
                     .or()
                     .like(BdJobCate::getCateCode, keyword);
@@ -79,7 +86,7 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
                 .eq(BdJobCate::getParentId, DomainId)
                 .eq(BdJobCate::getCateType, JobNodeType.POST.getType());
 
-        if(!StringUtils.isEmpty(keyword)){
+        if (!StringUtils.isEmpty(keyword)) {
             wrapper.like(BdJobCate::getCateName, keyword)
                     .or()
                     .like(BdJobCate::getCateCode, keyword);
@@ -88,12 +95,10 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
     }
 
 
-
-
     @Override
     public List<BdJobCate> get(Collection<String> codes) {
 
-        if(CollectionUtils.isEmpty(codes)) {
+        if (CollectionUtils.isEmpty(codes)) {
             return Collections.emptyList();
         }
 
@@ -165,11 +170,35 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
     private List<String> splitTreeCode(String treeCode) {
         List<String> treeCodeList = new ArrayList<>();
         String thisLvlPath = "";
-        for (int i = 0; i < treeCode.length(); i=i+4) {
-            thisLvlPath += treeCode.substring(i, i+4);
+        for (int i = 0; i < treeCode.length(); i = i + 4) {
+            thisLvlPath += treeCode.substring(i, i + 4);
             treeCodeList.add(thisLvlPath);
         }
 
         return treeCodeList;
+    }
+
+    @Override
+    protected void afterUpdate(BdJobCate model) {
+        super.afterUpdate(model);
+        /**
+         * 删除附件表中存在的默认图片
+         */
+        attachmentInfoService.deleteByBusinessCode(model.getCateCode());
+        saveAttachments(model);
+
+    }
+
+    private boolean saveAttachments(BdJobCate model) {
+        List<AttachmentInfo> attachmentInfos = model.getAttachmentInfos();
+        if (!CollectionUtils.isEmpty(attachmentInfos)) {
+            for (AttachmentInfo attachmentInfo : attachmentInfos) {
+                attachmentInfo.setBusinessCode(model.getCateCode());
+                attachmentInfo.setBusinessType(AttachmentBusinessType.JOB_DEFAULT_IMAGE.getCode());
+                attachmentInfo.setType(AttachmentType.PICTURE.getCode());
+            }
+            return attachmentInfoService.save(attachmentInfos);
+        }
+        return true;
     }
 }
