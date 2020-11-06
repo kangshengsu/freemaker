@@ -89,7 +89,6 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
     public ApiResponse<DemandInfoVO> getDemandCenterDtlByCode(@RequestParam(value = "code", required = false) String code) {
         Long currEmployerId = Context.getCurrEmployerId();
         DemandInfo demandInfo = demandCenterInfoService.getDemandCenterDtlByCode(code);
-        DemandInfoVO demandInfoVO = demandInfoMapper.toDemandInfoVO(demandInfo);
         return success(this.fill(demandInfo));
     }
 
@@ -122,6 +121,11 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
         return form;
     }
 
+    /**
+     * 额外填充个人信息头像电话等信息
+     * @param model
+     * @return
+     */
     protected DemandInfoVO fill(DemandInfo model) {
         if (Objects.isNull(model)) {
             return null;

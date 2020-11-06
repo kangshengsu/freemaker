@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/demandCenterApi")
+@RequestMapping("/v1/demandProductionRelationApi")
 @Api(value = "需求中心直接推荐作品")
 public class DemandProductionRelationController extends BaseController<DemandProductionRelation, DemandProductionRelationVO> {
 
@@ -29,7 +29,7 @@ public class DemandProductionRelationController extends BaseController<DemandPro
     @ApiImplicitParams({
             @ApiImplicitParam(name = "demandId", value = "需求Id", dataType = "Long", paramType = "query"),
             @ApiImplicitParam(name = "productionIds", value = "作品Id", dataType = "List<Long>", paramType = "query")})
-    @RequestMapping(value = "recommend",method = RequestMethod.GET)
+    @RequestMapping(value = "recommend",method = RequestMethod.POST)
     public ApiResponse<Boolean> recommend(Long demandId, List<Long> productionIds) {
         demandProductionRelationService.recommend(demandId, productionIds);
         return ApiResponse.ofSuccess(Boolean.TRUE);
