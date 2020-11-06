@@ -1,11 +1,13 @@
 package com.fm.api.gw.vo;
 
+import com.fm.business.base.model.AttachmentInfo;
 import com.fm.framework.core.model.ITreeNode;
 import com.fm.framework.web.VO;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class JobCateVO extends VO implements ITreeNode, Serializable {
@@ -43,6 +45,11 @@ public class JobCateVO extends VO implements ITreeNode, Serializable {
      *
      **/
     private Long parentId;
+
+    /**
+     * 附件
+     */
+    private transient List<AttachmentInfo> attachmentInfos;
 
 
     /**
