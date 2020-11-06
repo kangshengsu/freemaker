@@ -1,5 +1,7 @@
 package com.fm.api.gw.controller.demand;
 
+import com.fm.api.gw.vo.DirectRecommendVO;
+import com.fm.api.gw.vo.RecommendVO;
 import com.fm.api.gw.vo.demand.DemandProductionRelationVO;
 import com.fm.business.base.model.demand.DemandProductionRelation;
 import com.fm.business.base.service.demand.IDemandProductionRelationService;
@@ -11,10 +13,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,8 +30,8 @@ public class DemandProductionRelationController extends BaseController<DemandPro
             @ApiImplicitParam(name = "demandId", value = "需求Id", dataType = "Long", paramType = "query"),
             @ApiImplicitParam(name = "productionIds", value = "作品Id", dataType = "List<Long>", paramType = "query")})
     @RequestMapping(value = "recommend",method = RequestMethod.POST)
-    public ApiResponse<Boolean> recommend(Long demandId, @RequestParam(value = "productionIds")List<Long> productionIds) {
-        demandProductionRelationService.recommend(demandId, productionIds);
+    public ApiResponse<Boolean> recommend(@RequestBody DirectRecommendVO recommendVO) {
+        demandProductionRelationService.recommend(recommendVO.getDemandId(),recommendVO.getProductionIds());
         return ApiResponse.ofSuccess(Boolean.TRUE);
     }
 
