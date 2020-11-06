@@ -83,6 +83,15 @@ public class EmployerInfo extends BaseModel implements Serializable,IAudit {
      **/
     private String phone;
 
+    /**
+     * 职务名称
+     */
+    private String jobTitle;
+
+    /**
+     * 公司
+     */
+    private String company;
 
     /**
      * 创建时间

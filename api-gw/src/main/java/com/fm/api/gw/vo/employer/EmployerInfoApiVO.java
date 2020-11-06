@@ -65,4 +65,15 @@ public class EmployerInfoApiVO {
      **/
     private String phone;
 
+
+    /**
+     * 职务名称
+     */
+    private String jobTitle;
+
+    /**
+     * 公司
+     */
+    private String company;
+
 }
