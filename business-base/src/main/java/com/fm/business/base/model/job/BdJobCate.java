@@ -6,11 +6,13 @@
  */
 package com.fm.business.base.model.job;
 
+import com.fm.business.base.model.AttachmentInfo;
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
 import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**   
  * @Description:(岗位实体类)
@@ -69,6 +71,11 @@ public class BdJobCate extends BaseModel implements Serializable,IAudit {
     **/
 	private String parentCode;
 
+
+    /**
+     * 附件
+     */
+    private transient List<AttachmentInfo> attachmentInfos;
 
     /**
     * 创建时间

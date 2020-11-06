@@ -105,7 +105,7 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
                 .map(DisplayConfig::getDisplayId)
                 .collect(Collectors.toSet());
         String displayKey = getDisplayConfigsKey();
-        List<BdJobCate> bdJobCateList = redisTemplate.opsForHash().values(displayKey);
+        List bdJobCateList = redisTemplate.opsForHash().values(displayKey);
         HashMap<String, BdJobCate> map = new HashMap<>();
         if(bdJobCateList.isEmpty()){
             List<BdJobCate> jobCateList = bdJobCateService.getByIds(jobCateIds);
