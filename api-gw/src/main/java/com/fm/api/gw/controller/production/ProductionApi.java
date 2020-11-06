@@ -6,10 +6,13 @@
  */
 package com.fm.api.gw.controller.production;
 
+import com.fm.api.gw.vo.PublishStatusVo;
 import com.fm.api.gw.vo.production.mapper.ProductionMapper;
 import com.fm.api.gw.vo.production.req.ProductionApiVO;
 import com.fm.business.base.enums.ProductionStatus;
+import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.query.Page;
@@ -20,6 +23,7 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
@@ -28,12 +32,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 /**
- *
  * <p>说明： 作品API接口层</p>
+ *
  * @version: V1.0
  * @author: LiuDuo
  * @time 2020年09月11日
- *
  */
 @Api(value = "/v1/productionApi", description = "作品操作相关接口")
 @RestController
@@ -47,10 +50,14 @@ public class ProductionApi extends BaseController<ProductionInfo, ProductionApiV
     @Autowired
     private ProductionMapper productionMapper;
 
+    @Autowired
+    private IEmployerInfoService employerInfoService;
+
     /**
      * 发布作品
-     *
+     * <p>
      * {"id":null,"code":null,"title":"刘铎测试8","summarize":"阿斯达","hourlyWage":2312,"freelancerId":10000,"jobCateId":10006,"images":[{"name":"test1","path":"test/00001.jpg","otherPath":"test/00001.jpg"},{"name":"test2","path":"test/00001.jpg","otherPath":"test/00001.jpg"}],"skills":[{"jobSkillId":22006},{"jobSkillId":44001}]}
+     *
      * @param apiVO
      * @return
      */
@@ -69,8 +76,9 @@ public class ProductionApi extends BaseController<ProductionInfo, ProductionApiV
 
     /**
      * 修改作品
-     *
+     * <p>
      * {"id":1,"code":null,"title":"刘铎测试8","summarize":"阿斯达","hourlyWage":2312,"freelancerId":10000,"jobCateId":10006,"images":[{"name":"test1","path":"test/00001.jpg","otherPath":"test/00001.jpg"},{"name":"test2","path":"test/00001.jpg","otherPath":"test/00001.jpg"}],"skills":[{"jobSkillId":22006},{"jobSkillId":44001}]}
+     *
      * @param apiVO
      * @return
      */
@@ -151,6 +159,7 @@ public class ProductionApi extends BaseController<ProductionInfo, ProductionApiV
 
     /**
      * 移除修改时不关心字段
+     *
      * @param form
      */
     protected void removeUpdateNoCareFiled(ProductionApiVO form) {
@@ -166,16 +175,25 @@ public class ProductionApi extends BaseController<ProductionInfo, ProductionApiV
 
     }
 
-    @GetMapping("/hasProductionById")
-    @ApiOperation(value = "通过作者id查看是否发布过作品")
-    public ApiResponse<Boolean> hasProductionById() {
+    @GetMapping("/publishStatus")
+    @ApiOperation(value = "发布状态接口")
+    public ApiResponse<PublishStatusVo> publishStatus() {
         Long currFreelancerId = Context.getCurrFreelancerId();
+        Long currEmployerId = Context.getCurrEmployerId();
+        PublishStatusVo publishStatusVo = new PublishStatusVo();
         Page<ProductionInfo> byFreelancer = productionInfoService.findByFreelancer(1, 20, currFreelancerId, 40);
-        if(byFreelancer.getTotal() != 0){
-            return ApiResponse.ofSuccess(Boolean.TRUE);
-        }
-        return ApiResponse.of(1, "未发布作品", Boolean.FALSE);
+        EmployerInfo employerInfo = employerInfoService.getById(currEmployerId);
+
+        boolean hasProduction = Optional.ofNullable(byFreelancer)
+                .map(p -> CollectionUtils.isEmpty(p.getData()))
+                .orElse(false);
+        boolean hasCompany = Optional.ofNullable(employerInfo)
+                .map(e -> StringUtils.isNotBlank(e.getCompany()))
+                .orElse(false);
+
+        publishStatusVo.setHasProduction(hasProduction);
+        publishStatusVo.setHasCompany(hasCompany);
+        return ApiResponse.ofSuccess(publishStatusVo);
+
     }
-
 }
-
