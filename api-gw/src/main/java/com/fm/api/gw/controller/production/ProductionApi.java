@@ -185,7 +185,7 @@ public class ProductionApi extends BaseController<ProductionInfo, ProductionApiV
         EmployerInfo employerInfo = employerInfoService.getById(currEmployerId);
 
         boolean hasProduction = Optional.ofNullable(byFreelancer)
-                .map(p -> CollectionUtils.isEmpty(p.getData()))
+                .map(p -> !CollectionUtils.isEmpty(p.getData()))
                 .orElse(false);
         boolean hasCompany = Optional.ofNullable(employerInfo)
                 .map(e -> StringUtils.isNotBlank(e.getCompany()))
