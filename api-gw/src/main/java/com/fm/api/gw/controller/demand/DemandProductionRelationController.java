@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class DemandProductionRelationController extends BaseController<DemandPro
             @ApiImplicitParam(name = "demandId", value = "需求Id", dataType = "Long", paramType = "query"),
             @ApiImplicitParam(name = "productionIds", value = "作品Id", dataType = "List<Long>", paramType = "query")})
     @RequestMapping(value = "recommend",method = RequestMethod.POST)
-    public ApiResponse<Boolean> recommend(Long demandId, List<Long> productionIds) {
+    public ApiResponse<Boolean> recommend(Long demandId, @RequestParam(value = "productionIds")List<Long> productionIds) {
         demandProductionRelationService.recommend(demandId, productionIds);
         return ApiResponse.ofSuccess(Boolean.TRUE);
     }
