@@ -37,7 +37,9 @@ public abstract class UserMapper extends CommonMapper {
             @Mapping(target = "employerInfo.districtCode", source = "districtCode"),
             @Mapping(target = "employerInfo.countyCode", source = "countyCode"),
             @Mapping(target = "employerInfo.name", source = "name"),
-            @Mapping(target = "employerInfo.headImg", source = "headImg")
+            @Mapping(target = "employerInfo.headImg", source = "headImg"),
+            @Mapping(target = "employerInfo.jobTitle", source = "employerInfo.jobTitle"),
+            @Mapping(target = "employerInfo.company", source = "employerInfo.company")
     })
     public abstract SysUser toSysUser(UserApiVO userApiVO);
 

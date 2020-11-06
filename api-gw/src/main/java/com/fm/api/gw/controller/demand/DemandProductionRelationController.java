@@ -25,13 +25,19 @@ public class DemandProductionRelationController extends BaseController<DemandPro
     @Autowired
     private IDemandProductionRelationService demandProductionRelationService;
 
+    /**
+     * 需求中心直接推荐作品status=10，后台分配为20
+     * @param recommendVO
+     * @return
+     */
     @ApiOperation(value = "需求中心直接推荐作品")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "demandId", value = "需求Id", dataType = "Long", paramType = "query"),
             @ApiImplicitParam(name = "productionIds", value = "作品Id", dataType = "List<Long>", paramType = "query")})
     @RequestMapping(value = "recommend",method = RequestMethod.POST)
     public ApiResponse<Boolean> recommend(@RequestBody DirectRecommendVO recommendVO) {
-        demandProductionRelationService.recommend(recommendVO.getDemandId(),recommendVO.getProductionIds());
+        Integer status = 20;
+        demandProductionRelationService.recommend(recommendVO.getDemandId(), recommendVO.getProductionIds(), status);
         return ApiResponse.ofSuccess(Boolean.TRUE);
     }
 

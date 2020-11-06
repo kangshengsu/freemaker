@@ -89,12 +89,12 @@ public class DemandProductionRelationServiceImpl extends AuditBaseService<IDeman
 
     @Override
     @Transactional
-    public void recommend(Long demandId,List<Long> productionIds) {
+    public void recommend(Long demandId, List<Long> productionIds, Integer status) {
         List<DemandProductionRelation> oldRelations = demandProductionRelationService.getByDemandId(demandId);
         List<DemandProductionRelation> newRelations = productionIds.stream().map(productionId -> {
             DemandProductionRelation demandProductionRelation = new DemandProductionRelation();
             demandProductionRelation.setDemandId(demandId);
-            demandProductionRelation.setStatus(10);
+            demandProductionRelation.setStatus(status);
             demandProductionRelation.setProductionId(productionId);
             return demandProductionRelation;
         }).collect(Collectors.toList());
