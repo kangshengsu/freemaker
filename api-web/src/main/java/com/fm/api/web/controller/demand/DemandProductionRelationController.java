@@ -58,10 +58,15 @@ public class DemandProductionRelationController extends BaseController<DemandPro
         return ApiResponse.ofSuccess(datas);
     }
 
-
+    /**
+     * 后台推荐作品status=20，用户直接推荐为10
+     * @param recommendVO
+     * @return
+     */
     @RequestMapping(value = "recommend",method = RequestMethod.POST)
     public ApiResponse<Boolean> recommend(@RequestBody RecommendVO recommendVO) {
-        demandProductionRelationService.recommend(recommendVO.getDemandId(),recommendVO.getProductionIds());
+        Integer status = 20;
+        demandProductionRelationService.recommend(recommendVO.getDemandId(),recommendVO.getProductionIds(), status);
         return ApiResponse.ofSuccess(Boolean.TRUE);
     }
 

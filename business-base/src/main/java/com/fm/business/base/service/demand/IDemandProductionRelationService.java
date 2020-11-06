@@ -36,7 +36,7 @@ public interface IDemandProductionRelationService extends Service<DemandProducti
     /**
      * 推荐
      */
-    void recommend( Long demandId,List<Long> productionIds);
+    void recommend( Long demandId, List<Long> productionIds, Integer status);
 
     int deleteByIds(List<Long> ids);
 
