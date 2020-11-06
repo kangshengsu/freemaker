@@ -1,4 +1,4 @@
-package com.fm.api.gw.controller;
+package com.fm.api.gw.controller.demand;
 
 import com.fm.api.gw.vo.demand.DemandInfoVO;
 import com.fm.api.gw.vo.demand.mapper.DemandInfoMapper;
