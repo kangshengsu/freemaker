@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.fm.framework.core.model.BaseModel;
+import com.fm.framework.core.model.AuditStatusBaseModel;
 import com.fm.framework.core.model.DBFieldConst;
 import com.fm.framework.core.model.ITreeNode;
 import com.fm.framework.core.utils.TreeIncodeUtil;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  **/
 @Slf4j
-public class TreeBaseService<M extends BaseMapper<T>, T extends BaseModel & ITreeNode> extends BaseService<M, T> {
+public class TreeAuditStatusBaseService<M extends BaseMapper<T>, T extends AuditStatusBaseModel & ITreeNode> extends AuditStatusBaseService<M, T> {
 
     /**
      * 获取当前节点
@@ -51,7 +51,7 @@ public class TreeBaseService<M extends BaseMapper<T>, T extends BaseModel & ITre
 
 
     /**
-     * 获取当前节点下所有子节点，切记，数量不宜太多，如果太多建议调用{@link TreeBaseService#findChild(BaseModel ITreeNode)}
+     * 获取当前节点下所有子节点，切记，数量不宜太多，如果太多建议调用{@link TreeAuditStatusBaseService#findChild(AuditStatusBaseModel ITreeNode)}
      * @param parent 当前节点，也就是父节点
      * @return 返回所有子节点
      */
@@ -69,7 +69,7 @@ public class TreeBaseService<M extends BaseMapper<T>, T extends BaseModel & ITre
     }
 
     /**
-     * 获取当前节点下所有子节点，切记，数量不宜太多，如果太多建议调用{@link TreeBaseService#findChild(BaseModel ITreeNode)}
+     * 获取当前节点下所有子节点，切记，数量不宜太多，如果太多建议调用{@link TreeAuditStatusBaseService#findChild(AuditStatusBaseModel ITreeNode)}
      * @param parentId 当前节点ID，也就是父节点
      * @return 返回所有子节点
      */
