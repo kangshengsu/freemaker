@@ -8,10 +8,12 @@ import com.fm.business.base.enums.DemandStatus;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.job.BdJobCate;
+import com.fm.business.base.model.sys.SysUser;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandCenterInfoService;
 import com.fm.business.base.service.order.IOrderInfoService;
+import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.query.PageInfo;
@@ -50,6 +52,9 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
     @Autowired
     private DemandInfoMapper demandInfoMapper;
 
+    @Autowired
+    private ISysUserService sysUserService;
+
     /**
      *
      * @param currentPage
@@ -87,7 +92,6 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
             @ApiImplicitParam(name = "code", value = "需求编码", dataType = "String", paramType = "query")})
     @RequestMapping(value = "getDemandCenterDtlByCode", method = RequestMethod.GET)
     public ApiResponse<DemandInfoVO> getDemandCenterDtlByCode(@RequestParam(value = "code", required = false) String code) {
-        Long currEmployerId = Context.getCurrEmployerId();
         DemandInfo demandInfo = demandCenterInfoService.getDemandCenterDtlByCode(code);
         return success(this.fill(demandInfo));
     }
@@ -146,6 +150,15 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
             form.setJobCateIdName(bdJobCate.getCateName());
         }
         form.setOrderCount(iOrderInfoService.getOrderCountByDemandId(form.getId()));
+
+        Long currUserId = Context.getCurrUserId();
+        SysUser sysUser = sysUserService.findById(currUserId);
+        if(sysUser == null){
+            form.setUserEmployerId(null);
+        }else {
+            EmployerInfo userEmployerInfo = iEmployerInfoService.getByUserId(sysUser.getId());
+            form.setUserEmployerId(userEmployerInfo.getId());
+        }
         return form;
     }
 

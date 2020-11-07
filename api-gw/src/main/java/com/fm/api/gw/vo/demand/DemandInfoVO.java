@@ -187,7 +187,10 @@ public class DemandInfoVO extends VO implements Serializable {
 	 */
 	private EmployerInfoApiVO employerInfo;
 
-
+	/**
+	 * 登陆用户的employerId，为判断改需求是否为自己发布
+	 */
+	private Long userEmployerId;
 
 
 
