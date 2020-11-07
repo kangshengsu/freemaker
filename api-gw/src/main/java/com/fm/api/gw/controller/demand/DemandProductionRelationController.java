@@ -62,7 +62,7 @@ public class DemandProductionRelationController extends BaseController<DemandPro
     @ApiImplicitParams({
             @ApiImplicitParam(name = "demandId", value = "需求Id", dataType = "Long", paramType = "query"),
     })
-    @RequestMapping(value = "findRecommend")
+    @RequestMapping(value = "findRecommend", method = RequestMethod.GET)
     public ApiResponse<Boolean> findRecommend(Long demandId){
         Long currUserId = Context.getCurrUserId();
         SysUser sysUser = sysUserService.findById(currUserId);
