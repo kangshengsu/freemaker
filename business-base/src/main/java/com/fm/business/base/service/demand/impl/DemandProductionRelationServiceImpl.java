@@ -6,8 +6,11 @@
  */
 package com.fm.business.base.service.demand.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.IDemandProductionRelationMapper;
+import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.demand.DemandProductionRelation;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.model.production.RecommendProduction;
@@ -123,6 +126,13 @@ public class DemandProductionRelationServiceImpl extends AuditBaseService<IDeman
     @Override
     public int deleteByIds(List<Long> ids) {
         return getBaseMapper().deleteBatchIds(ids);
+    }
+
+    @Override
+    public List<DemandProductionRelation> findRecommend(List<Long> productionIds, Long demandId) {
+        Wrapper queryWrapper = Wrappers.lambdaQuery(DemandProductionRelation.class).in(DemandProductionRelation::getProductionId,productionIds)
+                .eq(DemandProductionRelation::getDemandId,demandId);
+        return getBaseMapper().selectList(queryWrapper);
     }
 
 }

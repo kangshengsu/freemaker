@@ -105,4 +105,6 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
      * @return 作品集合
      */
     List<ProductionInfo> query(String title);
+
+    List<ProductionInfo> findAllProduction(Long freelancerId);
 }

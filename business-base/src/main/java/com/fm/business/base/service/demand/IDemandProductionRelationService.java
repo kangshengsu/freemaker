@@ -40,4 +40,8 @@ public interface IDemandProductionRelationService extends Service<DemandProducti
 
     int deleteByIds(List<Long> ids);
 
+    List<DemandProductionRelation> findRecommend(List<Long>productionIds, Long demandId);
+
+
+
 }

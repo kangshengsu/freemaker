@@ -485,4 +485,13 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
                 .selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(1, 100), queryWrapper).getRecords();
     }
 
+    @Override
+    public List<ProductionInfo> findAllProduction(Long freelancerId) {
+        Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class)
+                .eq(ProductionInfo::getStatus, ProductionStatus.RELEASE.getCode())
+                .eq(ProductionInfo::getFreelancerId, freelancerId);
+
+        return getBaseMapper().selectList(queryWrapper);
+    }
+
 }
