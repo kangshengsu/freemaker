@@ -1,6 +1,7 @@
 package com.fm.business.base.service.sm;
 
 import com.fm.business.base.model.sm.RoleUser;
+import com.fm.framework.core.service.IStatusService;
 import com.fm.framework.core.service.Service;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
  *
  * @author hubo
  */
-public interface IRoleUserService extends Service<RoleUser> {
+public interface IRoleUserService extends IStatusService<RoleUser> {
 
     /**
      * 根据用户ID删除用户角色信息

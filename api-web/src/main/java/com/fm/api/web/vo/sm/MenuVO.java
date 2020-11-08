@@ -5,6 +5,7 @@ import com.fm.framework.web.VO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class MenuVO extends VO implements ITreeNode {
     /**
      * 时间戳
      */
-    private Date ts;
+    private LocalDateTime ts;
 
     private List<MenuVO> children;
 

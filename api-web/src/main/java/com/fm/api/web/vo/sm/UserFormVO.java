@@ -4,6 +4,7 @@ import com.fm.framework.web.VO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -24,11 +25,6 @@ public class UserFormVO extends VO {
      * 员工名称
      */
     private String name;
-
-    /**
-     * 别名
-     */
-    private String aliasName;
 
     /**
      * 头像链接
@@ -69,7 +65,7 @@ public class UserFormVO extends VO {
     /**
      * 时间戳
      */
-    private Date ts;
+    private LocalDateTime ts;
 
     List<AccountVO> accounts;
 

@@ -2,6 +2,7 @@ package com.fm.business.base.service.sm;
 
 
 import com.fm.business.base.model.sm.Role;
+import com.fm.framework.core.service.IStatusService;
 import com.fm.framework.core.service.Service;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.Map;
  * @author hubo
  * @version 1.0.0
  **/
-public interface IRoleService extends Service<Role> {
+public interface IRoleService extends IStatusService<Role> {
 
     Map<Long, List<Role>> getUserRoleMap(List<Long> userIds);
 

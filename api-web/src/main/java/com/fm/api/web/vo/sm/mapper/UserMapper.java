@@ -26,7 +26,6 @@ public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    @Mapping(target = "importErrorMsg", source = "")
     @Mapping(target = "orgName", source = "org.name")
     UserFormVO toUserVO(User user);
 
