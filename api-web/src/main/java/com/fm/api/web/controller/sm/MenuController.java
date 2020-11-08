@@ -1,6 +1,5 @@
 package com.fm.api.web.controller.sm;
 
-import com.fm.api.web.util.R;
 import com.fm.api.web.vo.sm.MenuVO;
 import com.fm.api.web.vo.sm.TreeNodeVO;
 import com.fm.api.web.vo.sm.mapper.MenuMapper;
@@ -21,6 +20,7 @@ import com.fm.framework.core.utils.TreeUtil;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
+import com.fm.framework.web.response.ApiStatus;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -54,7 +54,7 @@ public class MenuController extends BaseController<Menu, MenuVO> {
     /**
      * 分页获取菜单信息
      *
-     * @param restRequest
+     * @param QueryRequest
      * @return
      */
     @PostMapping("/pagelist")
@@ -326,7 +326,7 @@ public class MenuController extends BaseController<Menu, MenuVO> {
         if (update) {
             return this.success(null);
         } else {
-            return this.failed(R.FAILED_MSG);
+            return this.failed(ApiStatus.FAILED.getMessage());
         }
     }
 
