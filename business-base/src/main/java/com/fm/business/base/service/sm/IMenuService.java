@@ -2,7 +2,9 @@ package com.fm.business.base.service.sm;
 
 
 import com.fm.business.base.model.sm.Menu;
+import com.fm.business.base.model.sm.Org;
 import com.fm.framework.core.query.QueryItem;
+import com.fm.framework.core.service.IStatusService;
 import com.fm.framework.core.service.TreeService;
 
 import java.util.List;
@@ -12,7 +14,7 @@ import java.util.List;
  * @author hubo
  * @version 1.0.0
  **/
-public interface IMenuService extends TreeService<Menu> {
+public interface IMenuService extends TreeService<Menu>, IStatusService<Menu> {
 
     /**
      * 查询菜单

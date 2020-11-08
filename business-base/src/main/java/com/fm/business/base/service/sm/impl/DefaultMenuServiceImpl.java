@@ -106,6 +106,7 @@ public class DefaultMenuServiceImpl extends TreeAuditStatusBaseService<IMenuMapp
     @Override
     protected void beforeSave(Menu menu) {
         super.beforeSave(menu);
+
         this.updateSq(menu);
     }
 

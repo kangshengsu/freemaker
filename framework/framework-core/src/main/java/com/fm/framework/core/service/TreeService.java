@@ -33,4 +33,11 @@ public interface TreeService<T extends BaseModel & ITreeNode> extends Service<T>
      * @param nodes 给定节点
      */
     public void completionParentNode(List<T> nodes);
+
+    /**
+     * 通过parentId递归查询子节点
+     * @param nodeId 父节点
+     * @return 所有子节点
+     */
+    List<T> findAllChildByNodeId(Long nodeId);
 }

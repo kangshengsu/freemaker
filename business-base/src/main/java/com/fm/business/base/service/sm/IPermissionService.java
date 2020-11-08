@@ -2,8 +2,10 @@ package com.fm.business.base.service.sm;
 
 
 import com.fm.business.base.model.sm.Menu;
+import com.fm.business.base.model.sm.Org;
 import com.fm.business.base.model.sm.Permission;
 import com.fm.business.base.model.sm.Role;
+import com.fm.framework.core.service.IStatusService;
 import com.fm.framework.core.service.Service;
 
 import java.util.Collection;
@@ -14,7 +16,7 @@ import java.util.List;
  * @author hubo
  * @version 1.0.0
  **/
-public interface IPermissionService extends Service<Permission> {
+public interface IPermissionService extends Service<Permission>, IStatusService<Permission> {
 
     /**
      * 分配权限

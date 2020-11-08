@@ -55,6 +55,10 @@ public class Menu extends AuditStatusBaseModel implements IStatus , ITreeNode {
      * 顺序
      */
     private Integer sq;
+    /**
+     * 状态
+     */
+    private Integer status;
 
     @Override
     public Long getNodeId() {
