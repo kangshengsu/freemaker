@@ -17,6 +17,7 @@ import lombok.EqualsAndHashCode;
 @TableName("sm_menu")
 public class Menu extends AuditStatusBaseModel implements IStatus , ITreeNode {
 
+
     private Long id;
     /**
      * 名称
