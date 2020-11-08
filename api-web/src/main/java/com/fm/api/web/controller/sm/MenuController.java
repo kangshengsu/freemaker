@@ -309,7 +309,7 @@ public class MenuController extends BaseController<Menu, MenuVO> {
      *
      * @param dataStatus enable：启用  disable：禁用
      */
-    private ApiResponse changeDataStatus(Long id, DataStatus dataStatus) {
+    private ApiResponse<Boolean> changeDataStatus(Long id, DataStatus dataStatus) {
         if (id == null) {
             return this.failed("参数错误 请重试!");
         }
@@ -324,7 +324,7 @@ public class MenuController extends BaseController<Menu, MenuVO> {
 
         boolean update = this.menuService.update(menu);
         if (update) {
-            return this.success(null);
+            return this.success(Boolean.TRUE);
         } else {
             return this.failed(ApiStatus.FAILED.getMessage());
         }

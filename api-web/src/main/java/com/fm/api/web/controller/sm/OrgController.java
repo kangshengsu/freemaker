@@ -1,6 +1,5 @@
 package com.fm.api.web.controller.sm;
 
-import com.fm.api.web.util.R;
 import com.fm.api.web.util.RestRequest;
 import com.fm.api.web.vo.sm.OrgVO;
 import com.fm.api.web.vo.sm.TreeNodeVO;
@@ -20,7 +19,9 @@ import com.fm.framework.core.service.Service;
 import com.fm.framework.core.utils.TreeIncodeUtil;
 import com.fm.framework.core.utils.TreeUtil;
 import com.fm.framework.web.controller.BaseController;
+import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
+import com.fm.framework.web.response.ApiStatus;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class OrgController extends BaseController<Org, OrgVO> {
      * @return 返回组织好的组织书
      */
     @RequestMapping("/tree")
-    public R getTree() {
+    public ApiResponse<TreeNodeVO> getTree() {
         List<OrgVO> orgVOList = orgService.getAllEnableStatus().stream().map(OrgMapper.INSTANCE::toOrgVO).collect(Collectors.toList());
         return getTreeR(orgVOList);
     }
@@ -63,24 +64,24 @@ public class OrgController extends BaseController<Org, OrgVO> {
      * @return 返回组织好的组织书
      */
     @RequestMapping("/allTree")
-    public R allTree() {
+    public ApiResponse<TreeNodeVO> allTree() {
         List<OrgVO> orgVOList = orgService.getAll().stream().map(OrgMapper.INSTANCE::toOrgVO).collect(Collectors.toList());
         return getTreeR(orgVOList);
 
     }
 
-    private R getTreeR(List<OrgVO> orgVOList) {
+    private ApiResponse<TreeNodeVO> getTreeR(List<OrgVO> orgVOList) {
         TreeNode<OrgVO> root = TreeUtil.buildTree(orgVOList);
         List<TreeNode<OrgVO>> childs = root.getChilds();
         if (CollectionUtils.isEmpty(childs)){
-            return R.createSuccessR();
+            return this.success(null);
         }
 
         TreeNode<OrgVO> orgRoot = childs.get(0);
 
         //jackson 循环问题
         TreeUtil.setParentNull(orgRoot);
-        return R.createSuccessR().data(convert(orgRoot));
+        return this.success(convert(orgRoot));
     }
 
     /**
@@ -108,10 +109,12 @@ public class OrgController extends BaseController<Org, OrgVO> {
     }
 
     @PostMapping(path = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    public R list(@RequestBody RestRequest<OrgVO> restRequest){
-        List<QueryItem> queryItemList = getQueryItems(restRequest);
+    public ApiResponse<TreeNode<OrgVO>> listOrgTree(@RequestBody QueryRequest queryRequest){
+        // TODO: 2020/11/8 入参在前台拼装
+        // List<QueryItem> queryItemList = getQueryItems(restRequest);
+
         //查询符合条件的组织
-        List<Org> orgList = orgService.get(queryItemList,null);
+        List<Org> orgList = orgService.get(queryRequest.getQueryItems(),null);
         //为了构造树状结构，补充未查询出的父节点
         orgList = appendParentOrg(orgList);
 
@@ -121,13 +124,13 @@ public class OrgController extends BaseController<Org, OrgVO> {
         TreeNode<OrgVO> root = TreeUtil.buildTree(orgVOList);
         List<TreeNode<OrgVO>> childs = root.getChilds();
         if (CollectionUtils.isEmpty(childs)){
-            return R.createSuccessR();
+            return this.success(null);
         }
         //每个租户都只有一个根节点
         TreeNode<OrgVO> orgRoot = childs.get(0);
         //jackson 循环问题
         TreeUtil.setParentNull(orgRoot);
-        return R.createSuccessR().data(orgRoot);
+        return this.success(orgRoot);
     }
 
 
@@ -168,7 +171,7 @@ public class OrgController extends BaseController<Org, OrgVO> {
         return inCodes;
     }
 
-    private List<QueryItem> getQueryItems(RestRequest<OrgVO> restRequest) {
+   /* private List<QueryItem> getQueryItems(RestRequest<OrgVO> restRequest) {
         List<QueryItem> queryItemList = Lists.newArrayList();
         if(restRequest!=null && restRequest.getData()!=null) {
             OrgVO orgVO = restRequest.getData();
@@ -188,7 +191,7 @@ public class OrgController extends BaseController<Org, OrgVO> {
 
         }
         return queryItemList;
-    }
+    }*/
 
     private QueryItem getLikeItem(String column, String val) {
         QueryItem queryItem = new QueryItem();
@@ -207,21 +210,20 @@ public class OrgController extends BaseController<Org, OrgVO> {
     }
 
     @PostMapping("/save")
-    public ApiResponse<Boolean> create(@RequestBody RestRequest<OrgVO> restRequest){
-        return super.create(restRequest.getData());
+    public ApiResponse<Boolean> create(@RequestBody OrgVO orgVO){
+        return super.create(orgVO);
     }
 
 
     @PostMapping("/deleteById")
-    public ApiResponse<Boolean> deleteById(@RequestBody RestRequest<OrgVO> restRequest){
+    public ApiResponse<Boolean> deleteById(@RequestBody Long id){
 
-        OrgVO orgVO = restRequest.getData();
-        //删除机构规则
+       //删除机构规则
         //1、机构下不能有子机构
         List<QueryItem> orgItems = new ArrayList<>();
         QueryItem parentIdOrgItem = new QueryItem();
         parentIdOrgItem.setType(QueryType.eq);
-        parentIdOrgItem.setValue(orgVO.getId());
+        parentIdOrgItem.setValue(id);
         parentIdOrgItem.setQueryField("parent_id");
         orgItems.add(parentIdOrgItem);
 
@@ -233,7 +235,7 @@ public class OrgController extends BaseController<Org, OrgVO> {
         List<QueryItem> userItems = new ArrayList<>();
         QueryItem roleIdItem = new QueryItem();
         roleIdItem.setType(QueryType.eq);
-        roleIdItem.setValue(orgVO.getId());
+        roleIdItem.setValue(id);
         roleIdItem.setQueryField("org_id");
         userItems.add(roleIdItem);
 
@@ -242,16 +244,15 @@ public class OrgController extends BaseController<Org, OrgVO> {
             return failed("待删除的机构下不能存在用户！");
         }
 
-        return success(service().delete(restRequest.getData().getId()));
-//        return super.standardDeleteById(restRequest);
+        return success(service().delete(id));
     }
 
 
 
     @PostMapping("/update")
-    public ApiResponse<Boolean> update(@RequestBody RestRequest<OrgVO> restRequest){
+    public ApiResponse<Boolean> update(@RequestBody OrgVO orgVO){
 
-        Org org = doConvertModel(restRequest.getData());
+        Org org = doConvertModel(orgVO);
 
         Org orgOld = this.orgService.get(org.getId());
         //根机构不能修改父级机构
@@ -273,56 +274,55 @@ public class OrgController extends BaseController<Org, OrgVO> {
 
 
     @RequestMapping("/canChangeParent")
-    public R canChangeParent(@RequestBody OrgVO orgVO) {
+    public ApiResponse<Boolean> canChangeParent(@RequestBody OrgVO orgVO) {
 
         if (Objects.isNull(orgVO)) {
-            R.createSuccessR().data(false);
+            this.success(false);
         }
-        return R.createSuccessR().data(this.orgService.canChangeParent(doConvertModel(orgVO)));
+        return this.success(this.orgService.canChangeParent(doConvertModel(orgVO)));
     }
 
     @PostMapping("/getAllChild")
-    public R getAllChild(@RequestBody RestRequest<OrgVO> restRequest){
-        return this.findChild(restRequest, true);
+    public ApiResponse<List<OrgVO>> getAllChild(@RequestBody Long parentId){
+        return this.findChild(parentId, true);
     }
 
     @PostMapping("/getDirectChild")
-    public R getDirectChild(@RequestBody RestRequest<OrgVO> restRequest){
-        return this.findChild(restRequest, false);
+    public ApiResponse<List<OrgVO>> getDirectChild(@RequestBody Long parentId){
+        return this.findChild(parentId, false);
     }
 
     @PostMapping("/enable")
-    public R enable(@RequestBody RestRequest<OrgVO> restRequest){
-        return this.changeDataStatus(restRequest, DataStatus.enable);
+    public ApiResponse<Boolean> enable(@RequestBody Long id){
+        return this.changeDataStatus(id, DataStatus.enable);
     }
 
     @PostMapping("/disable")
-    public R disable(@RequestBody RestRequest<OrgVO> restRequest){
-        return this.changeDataStatus(restRequest, DataStatus.disable);
+    public ApiResponse<Boolean> disable(@RequestBody Long id){
+        return this.changeDataStatus(id, DataStatus.disable);
     }
 
     /**
      * 更改数据状态 启动 禁用
      * @param dataStatus  enable：启用  disable：禁用
      * */
-    private R changeDataStatus(@RequestBody RestRequest<OrgVO> restRequest, DataStatus dataStatus) {
-        if (!restRequest.baseCheck() || restRequest.getData().getId() == null){
-            return R.create().code(R.FAILED_CODE).message("参数错误 请重试!");
+    private ApiResponse<Boolean> changeDataStatus(Long id, DataStatus dataStatus) {
+        if (id == null) {
+            return this.failed("参数错误 请重试!");
         }
         if(dataStatus == DataStatus.disable){
             //禁用的情况
             QueryItem item = new QueryItem();
             item.setQueryField(DBFieldConst.ORG_ID);
-            item.setValue(restRequest.getData().getId());
+            item.setValue(id);
             item.setType(QueryType.eq);
             List<User> userList = userService.get(Arrays.asList(item));
             if(!CollectionUtils.isEmpty(userList)){
-                return R.create().code(R.FAILED_CODE).message("该组织下还有有效用户，不能禁用");
+                return this.failed("该组织下还有有效用户，不能禁用");
             }
         }
         Org org = new Org();
-        org.setId(restRequest.getData().getId());
-        org.setTs(restRequest.getData().getTs());
+        org.setId(id);
 
         if (dataStatus.equals(DataStatus.enable)){
             // 启用是如果父机构为禁用，报错
@@ -330,7 +330,7 @@ public class OrgController extends BaseController<Org, OrgVO> {
             if(tempOrg.getParentId() != -1){
                 tempOrg = orgService.get(tempOrg.getParentId());
                 if(tempOrg.getStatus() == DataStatus.disable.code()){
-                    return R.create().code(R.FAILED_CODE).message("父机构处于禁用状态无法启用子机构！");
+                    return this.failed("父机构处于禁用状态无法启用子机构！");
                 }
             }
             org.setStatus(DataStatus.enable.code());
@@ -342,7 +342,7 @@ public class OrgController extends BaseController<Org, OrgVO> {
             item.setQueryField("parent_id");
             int count = orgService.countEnableStatus(Collections.singletonList(item));
             if (count >= 1){
-                return R.create().code(R.FAILED_CODE).message("禁用组织机构时不能存在已启用的子级组织机构！");
+                return this.failed("禁用组织机构时不能存在已启用的子级组织机构！");
             }
 
             org.setStatus(DataStatus.disable.code());
@@ -350,9 +350,9 @@ public class OrgController extends BaseController<Org, OrgVO> {
 
         boolean update = this.orgService.update(org);
         if (update){
-            return R.create().code(R.SUCCESS_CODE).message(R.SUCCESS_MSG);
+            return this.success(Boolean.TRUE);
         }else {
-            return R.create().code(R.FAILED_CODE).message(R.FAILED_MSG);
+            return this.failed(ApiStatus.FAILED.getMessage());
         }
     }
 
@@ -360,17 +360,10 @@ public class OrgController extends BaseController<Org, OrgVO> {
      * 查找组织子节点
      * @param ifAll  true:查询所有(直接和间接子节点)   false:查询直接子节点
      * */
-    private R findChild(@RequestBody RestRequest<OrgVO> restRequest, boolean ifAll) {
-        if (!restRequest.baseCheck()){
-            return R.create().code(R.FAILED_CODE).message("查询参数不能为空!");
-        }
-
-        OrgVO data = restRequest.getData();
-        Long parentId = data.getParentId();
+    private ApiResponse<List<OrgVO>> findChild(Long parentId, boolean ifAll) {
         if (parentId == null){
-            return R.create().code(R.FAILED_CODE).message("父级id不能为空!");
+            return this.failed("父级id不能为空!");
         }
-
         List<Org> children = Collections.emptyList();
         if (ifAll){
             children = this.orgService.findAllChild(parentId);
@@ -381,29 +374,23 @@ public class OrgController extends BaseController<Org, OrgVO> {
         }
         List<OrgVO> orgVOs = this.doConvertVOs(children);
 
-        return R.create().data(orgVOs).code(R.SUCCESS_CODE).message(R.SUCCESS_MSG);
+        return this.success(orgVOs);
     }
 
     @PostMapping("/checkIfExists")
-    public ApiResponse<Boolean> checkIfExists(@RequestBody RestRequest<OrgVO> restRequest){
-        if (!restRequest.baseCheck()){
-            return failed("参数错误 请重试!");
-        }
+    public ApiResponse<Boolean> checkIfExists(@RequestBody QueryRequest queryRequest){
 
-        OrgVO data = restRequest.getData();
+        // TODO: 2020/11/8 暂时定位前台组装参数,不在后台进行拼装
+        //List<QueryItem> items = this.doBeforeCheckExistsAddSearchParam(data);
 
-
-        List<QueryItem> items = this.doBeforeCheckExistsAddSearchParam(data);
-
-        int count = this.service().count(items);
-
-        return success(count >= 1);
+        int count = this.service().count(queryRequest.getQueryItems());
+        return this.success(count > 0);
     }
 
     @GetMapping("/getAllOrgType")
-    public R getAllOrgType(){
+    public ApiResponse<List<OrgType>> getAllOrgType(){
         List<OrgType> orgTypes = this.orgService.getAllOrgType();
-        return R.createSuccessR().data(orgTypes);
+        return this.success(orgTypes);
     }
 
     /**
@@ -471,20 +458,20 @@ public class OrgController extends BaseController<Org, OrgVO> {
      *
      * @param data
      */
-    protected R parametericCheckBeforeCreate(OrgVO data) {
+    protected ApiResponse<Boolean> parametericCheckBeforeCreate(OrgVO data) {
         if(StringUtils.isBlank(data.getName())){
-            return R.create().code(R.FAILED_CODE).message("组织名称不能为空!");
+            return this.failed("组织名称不能为空!");
         }
 
         if(data.getType() == null){
-            return R.create().code(R.FAILED_CODE).message("组织类型不能为空!");
+            return this.failed("组织类型不能为空!");
         }
 
         if (data.getParentId() == null){
-            return R.create().code(R.FAILED_CODE).message("组织父节点不能为空!");
+            return this.failed("组织父节点不能为空!");
         }
 
-        return R.create().code(R.SUCCESS_CODE);
+        return this.failed(ApiStatus.FAILED.getMessage());
     }
 
     /**
@@ -511,12 +498,12 @@ public class OrgController extends BaseController<Org, OrgVO> {
      *
      * @param data
      */
-    protected R parametericCheckBeforeUpdate(OrgVO data) {
+    protected ApiResponse<Boolean> parametericCheckBeforeUpdate(OrgVO data) {
         if(StringUtils.isBlank(data.getName())){
-            return R.create().code(R.FAILED_CODE).message("组织名称不能为空!");
+            return this.failed("组织名称不能为空!");
         }
 
-        return R.create().code(R.SUCCESS_CODE);
+        return this.success(Boolean.TRUE);
     }
 
     protected void doBeforeDelete(Org org) {
