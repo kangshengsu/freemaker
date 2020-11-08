@@ -2,6 +2,7 @@ package com.fm.business.base.service.sm;
 
 import com.fm.business.base.model.sm.Org;
 import com.fm.business.base.model.sm.OrgType;
+import com.fm.framework.core.service.IStatusService;
 import com.fm.framework.core.service.TreeService;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
  * @author hubo
  * @version 1.0.0
  **/
-public interface IOrgService extends TreeService<Org> {
+public interface IOrgService extends TreeService<Org>, IStatusService<Org> {
 
 
     boolean canChangeParent(Org org);

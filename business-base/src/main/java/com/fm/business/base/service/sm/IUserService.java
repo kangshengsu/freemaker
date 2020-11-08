@@ -4,6 +4,7 @@ import com.fm.business.base.model.sm.Org;
 import com.fm.business.base.model.sm.User;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.query.QueryItem;
+import com.fm.framework.core.service.IStatusService;
 import com.fm.framework.core.service.Service;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  * @author hubo
  * @version 1.0.0
  **/
-public interface IUserService extends Service<User> {
+public interface IUserService extends IStatusService<User> {
 
     /**
      * 创建系统用户，系统用户是一个状态为禁用的用户，用于系统初始化等目的。

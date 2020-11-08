@@ -156,7 +156,7 @@ public class DefaultRoleServiceImpl extends AuditStatusBaseService<IRoleMapper, 
      * 删除角色对应菜单
      * */
     private void deletePermissionMenu(Role role) {
-        permissionService.deletByRoleId(role.getId());
+        permissionService.deleteByRoleId(role.getId());
     }
 
     @Transactional(rollbackFor = {RuntimeException.class, Exception.class, Throwable.class}, isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED)
