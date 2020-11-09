@@ -7,7 +7,7 @@ ADD COLUMN `job_title` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_general_ci CO
  */
 ALTER TABLE
 `freelancer_info`
-ADD COLUMN referrer COMMENT '推荐人' AFTER referral_code
+ADD COLUMN referrer bigint(50) COMMENT '推荐人' AFTER referral_code
 
 /**
 修改邀请码字段长度
