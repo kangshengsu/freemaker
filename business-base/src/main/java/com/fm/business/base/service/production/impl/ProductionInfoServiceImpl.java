@@ -494,4 +494,11 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         return getBaseMapper().selectList(queryWrapper);
     }
 
+    @Override
+    public List<ProductionInfo> findByFreeLancer(Long freelancerId) {
+        Wrapper wrapper = Wrappers.lambdaQuery(ProductionInfo.class)
+                .eq(ProductionInfo::getFreelancerId, freelancerId);
+        return getBaseMapper().selectList(wrapper);
+    }
+
 }

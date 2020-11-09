@@ -120,5 +120,10 @@ public class FreelancerInfoApiVO extends VO implements Serializable {
 	 */
 	private String referralCode;
 
+	/**
+	 * 推荐人
+	 */
+	private Long referrer;
+
 
 }
