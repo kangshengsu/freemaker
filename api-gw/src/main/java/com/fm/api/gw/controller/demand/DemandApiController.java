@@ -167,7 +167,7 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         List<ProductionInfo> productionInfoList = iProductionInfoService.findAllProduction(freelancerInfo.getId());
         List<Long> productionIds = productionInfoList.stream().map(ProductionInfo::getId).collect(Collectors.toList());
         List<DemandProductionRelation> demandProductionRelations = demandProductionRelationService.findAllRecommend(productionIds);
-        if(demandInfo.getId().longValue() == currEmployerId.longValue()){
+        if(demandInfo.getEmployerId().longValue() == currEmployerId.longValue()){
             demandInfo.setDemandStatus(RecommendType.MY_START.getCode());
         }else {
             demandProductionRelations.forEach(
