@@ -4,13 +4,21 @@ import com.fm.api.gw.vo.demand.DemandInfoVO;
 import com.fm.business.base.enums.BudgetType;
 import com.fm.business.base.enums.DeliveryType;
 import com.fm.business.base.enums.DemandStatus;
+import com.fm.business.base.enums.RecommendType;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.demand.DemandInfo;
+import com.fm.business.base.model.demand.DemandProductionRelation;
+import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
+import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
+import com.fm.business.base.service.demand.IDemandProductionRelationService;
+import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.order.IOrderInfoService;
+import com.fm.business.base.service.production.IProductionInfoService;
+import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.query.PageInfo;
@@ -28,8 +36,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author zhangleqi
@@ -52,6 +62,15 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
     @Autowired
     private IOrderInfoService iOrderInfoService;
 
+    @Autowired
+    private IDemandProductionRelationService demandProductionRelationService;
+
+    @Autowired
+    private IFreelancerInfoService iFreelancerInfoService;
+
+    @Autowired
+    private IProductionInfoService iProductionInfoService;
+
     @ApiOperation(value = "获取需求分页信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "currentPage", value = "当前页", dataType = "String", paramType = "query"),
@@ -60,9 +79,29 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
     public ApiResponse<Page<DemandInfoVO>> getPageByEmployerId(@RequestParam("currentPage") Integer currentPage,
                                                                @RequestParam("pageSize") Integer pageSize,
                                                                @RequestParam(value = "status", required = false) Integer status) {
+        Long currUserId = Context.getCurrUserId();
         Long currEmployerId = Context.getCurrEmployerId();
+        FreelancerInfo freelancerInfo = iFreelancerInfoService.getByUserId(currUserId);
+        List<ProductionInfo> productionInfoList = iProductionInfoService.findAllProduction(freelancerInfo.getId());
+        List<Long> productionIds = productionInfoList.stream().map(ProductionInfo::getId).collect(Collectors.toList());
+        List<DemandProductionRelation> demandProductionRelations = demandProductionRelationService.findAllRecommend(productionIds);
+        List<Long> demandProductionRelationIds = demandProductionRelations.stream().map(DemandProductionRelation::getDemandId).collect(Collectors.toList());
         Page<DemandInfoVO> result = new PageInfo<>();
-        Page<DemandInfo> demandInfoPage = demandInfoService.gePageByEmployerId(currentPage, pageSize, currEmployerId, status);
+        Page<DemandInfo> demandInfoPage = demandInfoService.gePageByEmployerId(currentPage, pageSize, currEmployerId, status, demandProductionRelationIds);
+        demandInfoPage.getData().forEach(
+                demandInfo->{
+                    if(demandInfo.getEmployerId().longValue() == currEmployerId.longValue()){
+                        demandInfo.setDemandStatus(RecommendType.MY_START.getName());
+                    }else {
+                        demandProductionRelations.forEach(
+                                demandProductionRelation->{
+                                    if(demandProductionRelation.getDemandId().longValue() == demandInfo.getId().longValue()){
+                                        demandInfo.setDemandStatus(RecommendType.get(demandProductionRelation.getStatus()).getName());
+                                    }
+                                });
+
+                    }
+                });
         if (demandInfoPage.getData().size() == 0) {
             return ApiResponse.ofSuccess(result);
         }

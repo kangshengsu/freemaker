@@ -20,6 +20,7 @@ import java.util.List;
  *
  */
 public interface IDemandProductionRelationService extends Service<DemandProductionRelation> {
+
     /**
      * 根据需求获取已经推荐的作品
      * @param demandId
@@ -33,6 +34,7 @@ public interface IDemandProductionRelationService extends Service<DemandProducti
      * @return
      */
     List<RecommendProduction> getDemandProductionsByDemandId(Long demandId);
+
     /**
      * 推荐
      */
@@ -40,7 +42,23 @@ public interface IDemandProductionRelationService extends Service<DemandProducti
 
     int deleteByIds(List<Long> ids);
 
+    /**
+     * 查询某个需求是否被推荐过
+     * @param productionIds
+     * @param demandId
+     * @return
+     */
     List<DemandProductionRelation> findRecommend(List<Long>productionIds, Long demandId);
+
+    /**
+     * 查询我的作品被推荐过的所有需求
+     * @param productionIds
+     * @return
+     */
+    List<DemandProductionRelation> findAllRecommend(List<Long>productionIds);
+
+
+
 
 
 

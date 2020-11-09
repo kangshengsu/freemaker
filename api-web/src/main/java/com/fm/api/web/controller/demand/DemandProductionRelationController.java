@@ -8,6 +8,7 @@ package com.fm.api.web.controller.demand;
 
 import com.fm.api.web.vo.demand.DemandProductionRelationVO;
 import com.fm.api.web.vo.demand.RecommendVO;
+import com.fm.business.base.enums.RecommendType;
 import com.fm.business.base.model.demand.DemandProductionRelation;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.production.ProductionInfo;
@@ -58,15 +59,9 @@ public class DemandProductionRelationController extends BaseController<DemandPro
         return ApiResponse.ofSuccess(datas);
     }
 
-    /**
-     * 后台推荐作品status=20，用户直接推荐为10
-     * @param recommendVO
-     * @return
-     */
     @RequestMapping(value = "recommend",method = RequestMethod.POST)
     public ApiResponse<Boolean> recommend(@RequestBody RecommendVO recommendVO) {
-        Integer status = 20;
-        demandProductionRelationService.recommend(recommendVO.getDemandId(),recommendVO.getProductionIds(), status);
+        demandProductionRelationService.recommend(recommendVO.getDemandId(),recommendVO.getProductionIds(), RecommendType.SYSTEM_RECOMMEND.getCode());
         return ApiResponse.ofSuccess(Boolean.TRUE);
     }
 

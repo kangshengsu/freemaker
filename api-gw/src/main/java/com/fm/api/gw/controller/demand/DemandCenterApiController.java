@@ -152,11 +152,8 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
         form.setOrderCount(iOrderInfoService.getOrderCountByDemandId(form.getId()));
 
         Long currUserId = Context.getCurrUserId();
-        SysUser sysUser = sysUserService.findById(currUserId);
-        if(sysUser == null){
-            form.setUserEmployerId(null);
-        }else {
-            EmployerInfo userEmployerInfo = iEmployerInfoService.getByUserId(sysUser.getId());
+        if(currUserId != null){
+            EmployerInfo userEmployerInfo = iEmployerInfoService.getByUserId(currUserId);
             form.setUserEmployerId(userEmployerInfo.getId());
         }
         return form;
