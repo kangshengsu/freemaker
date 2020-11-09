@@ -7,6 +7,15 @@ package com.fm.business.base.model.sm;
  **/
 public enum OrgType {
 
-    CORP, DEPT
+    CORP(1), DEPT(2);
 
+    OrgType(int code) {
+        this.code = code;
+    }
+
+    private final int code;
+
+    public int getCode() {
+        return code;
+    }
 }

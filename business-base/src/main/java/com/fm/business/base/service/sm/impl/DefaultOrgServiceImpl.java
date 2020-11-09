@@ -13,6 +13,7 @@ import com.fm.framework.core.service.TreeAuditStatusBaseService;
 import com.fm.framework.core.utils.TreeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -20,6 +21,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Objects.isNull;
 
@@ -35,7 +37,7 @@ import static java.util.Objects.isNull;
 public class DefaultOrgServiceImpl extends TreeAuditStatusBaseService<IOrgMapper, Org> implements IOrgService {
 
     @Autowired
-    private final IUserService userService;
+    private ObjectProvider<IUserService> userServiceOProvider;
 
     @Override
     protected void beforeSave(Org org) {
@@ -127,7 +129,7 @@ public class DefaultOrgServiceImpl extends TreeAuditStatusBaseService<IOrgMapper
 
 
     private boolean hasUser(Org org) {
-        return userService.hasUserInOrg(org);
+        return Objects.requireNonNull(userServiceOProvider.getIfAvailable()).hasUserInOrg(org);
     }
 
     private boolean isChildNode(Org org) {

@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * 组织.
  */
 @RestController
-@RequestMapping(path = "/api/org")
+@RequestMapping(path = "/org")
 public class OrgController extends BaseController<Org, OrgVO> {
 
     @Autowired
@@ -102,6 +102,8 @@ public class OrgController extends BaseController<Org, OrgVO> {
                 child.add(convert(n));
             });
             treeNodeVO.setChildren(child);
+        } else {
+            treeNodeVO.setChildren(Collections.emptyList());
         }
 
         return treeNodeVO;
@@ -109,12 +111,12 @@ public class OrgController extends BaseController<Org, OrgVO> {
     }
 
     @PostMapping(path = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<TreeNode<OrgVO>> listOrgTree(@RequestBody QueryRequest queryRequest){
+    public ApiResponse<TreeNode<OrgVO>> listOrgTree(@RequestBody RestRequest<OrgVO> restRequest){
         // TODO: 2020/11/8 入参在前台拼装
-        // List<QueryItem> queryItemList = getQueryItems(restRequest);
+         List<QueryItem> queryItemList = getQueryItems(restRequest);
 
         //查询符合条件的组织
-        List<Org> orgList = orgService.get(queryRequest.getQueryItems(),null);
+        List<Org> orgList = orgService.get(queryItemList);
         //为了构造树状结构，补充未查询出的父节点
         orgList = appendParentOrg(orgList);
 
@@ -171,7 +173,7 @@ public class OrgController extends BaseController<Org, OrgVO> {
         return inCodes;
     }
 
-   /* private List<QueryItem> getQueryItems(RestRequest<OrgVO> restRequest) {
+   private List<QueryItem> getQueryItems(RestRequest<OrgVO> restRequest) {
         List<QueryItem> queryItemList = Lists.newArrayList();
         if(restRequest!=null && restRequest.getData()!=null) {
             OrgVO orgVO = restRequest.getData();
@@ -191,7 +193,7 @@ public class OrgController extends BaseController<Org, OrgVO> {
 
         }
         return queryItemList;
-    }*/
+    }
 
     private QueryItem getLikeItem(String column, String val) {
         QueryItem queryItem = new QueryItem();
@@ -216,7 +218,7 @@ public class OrgController extends BaseController<Org, OrgVO> {
 
 
     @PostMapping("/deleteById")
-    public ApiResponse<Boolean> deleteById(@RequestBody Long id){
+    public ApiResponse<Boolean> deleteById(Long id){
 
        //删除机构规则
         //1、机构下不能有子机构
@@ -293,12 +295,12 @@ public class OrgController extends BaseController<Org, OrgVO> {
     }
 
     @PostMapping("/enable")
-    public ApiResponse<Boolean> enable(@RequestBody Long id){
+    public ApiResponse<Boolean> enable(Long id){
         return this.changeDataStatus(id, DataStatus.enable);
     }
 
     @PostMapping("/disable")
-    public ApiResponse<Boolean> disable(@RequestBody Long id){
+    public ApiResponse<Boolean> disable(Long id){
         return this.changeDataStatus(id, DataStatus.disable);
     }
 
@@ -378,12 +380,30 @@ public class OrgController extends BaseController<Org, OrgVO> {
     }
 
     @PostMapping("/checkIfExists")
-    public ApiResponse<Boolean> checkIfExists(@RequestBody QueryRequest queryRequest){
+    public ApiResponse<Boolean> checkIfExists(@RequestBody RestRequest<OrgVO> queryRequest){
 
         // TODO: 2020/11/8 暂时定位前台组装参数,不在后台进行拼装
-        //List<QueryItem> items = this.doBeforeCheckExistsAddSearchParam(data);
 
-        int count = this.service().count(queryRequest.getQueryItems());
+        OrgVO data = queryRequest.getData();
+
+        List<QueryItem> items = new ArrayList<>();
+        if (StringUtils.isNotBlank(data.getName())){
+            QueryItem nameItem =  new QueryItem();
+            nameItem.setQueryField("name");
+            nameItem.setValue(data.getName());
+            nameItem.setType(QueryType.eq);
+            items.add(nameItem);
+        }
+        if (StringUtils.isNotBlank(data.getCode())){
+            QueryItem codeItem =  new QueryItem();
+            codeItem.setQueryField("code");
+            codeItem.setValue(data.getCode());
+            codeItem.setType(QueryType.eq);
+            items.add(codeItem);
+        }
+
+
+        int count = this.service().count(items);
         return this.success(count > 0);
     }
 
