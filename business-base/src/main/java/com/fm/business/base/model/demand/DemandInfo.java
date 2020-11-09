@@ -203,5 +203,5 @@ public class DemandInfo extends BaseModel implements Serializable, IAudit {
     /**
      * 状态信息
      */
-    private transient String demandStatus;
+    private transient Integer demandStatus;
 }

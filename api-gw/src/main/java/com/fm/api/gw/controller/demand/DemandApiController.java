@@ -91,12 +91,12 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         demandInfoPage.getData().forEach(
                 demandInfo->{
                     if(demandInfo.getEmployerId().longValue() == currEmployerId.longValue()){
-                        demandInfo.setDemandStatus(RecommendType.MY_START.getName());
+                        demandInfo.setDemandStatus(RecommendType.MY_START.getCode());
                     }else {
                         demandProductionRelations.forEach(
                                 demandProductionRelation->{
                                     if(demandProductionRelation.getDemandId().longValue() == demandInfo.getId().longValue()){
-                                        demandInfo.setDemandStatus(RecommendType.get(demandProductionRelation.getStatus()).getName());
+                                        demandInfo.setDemandStatus(RecommendType.get(demandProductionRelation.getStatus()).getCode());
                                     }
                                 });
 
