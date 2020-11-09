@@ -160,6 +160,24 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
             return ApiResponse.ofFailed("需求编号不能为空");
         }
         DemandInfo demandInfo = demandInfoService.getByCode(demandCode);
+
+        Long currUserId = Context.getCurrUserId();
+        Long currEmployerId = Context.getCurrEmployerId();
+        FreelancerInfo freelancerInfo = iFreelancerInfoService.getByUserId(currUserId);
+        List<ProductionInfo> productionInfoList = iProductionInfoService.findAllProduction(freelancerInfo.getId());
+        List<Long> productionIds = productionInfoList.stream().map(ProductionInfo::getId).collect(Collectors.toList());
+        List<DemandProductionRelation> demandProductionRelations = demandProductionRelationService.findAllRecommend(productionIds);
+        if(demandInfo.getId().longValue() == currEmployerId.longValue()){
+            demandInfo.setDemandStatus(RecommendType.MY_START.getCode());
+        }else {
+            demandProductionRelations.forEach(
+                    demandProductionRelation->{
+                        if(demandProductionRelation.getDemandId().longValue() == demandInfo.getId().longValue()){
+                            demandInfo.setDemandStatus(RecommendType.get(demandProductionRelation.getStatus()).getCode());
+                        }
+                    });
+        }
+
         return success(this.convert(demandInfo));
     }
 
@@ -169,7 +187,8 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         form.setCode(CodeUtil.generateNewCode2yyMMddHH());
         form.setEmployerId(Context.getCurrEmployerId());
         ApiResponse<Boolean> booleanApiResponse = super.create(form);
-        if (ApiStatus.SUCCESS.getCode() == booleanApiResponse.getCode()) {
+        boolean updateCompanyName = iEmployerInfoService.updateCompanyName(form.getEmployerId(),form.getCompanyName());
+        if (ApiStatus.SUCCESS.getCode() == booleanApiResponse.getCode() && updateCompanyName) {
             return ApiResponse.ofSuccess(form.getCode());
         }
         return success(booleanApiResponse.getMessage());

@@ -7,6 +7,8 @@
 package com.fm.business.base.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.IEmployerInfoMapper;
 import com.fm.business.base.model.EmployerInfo;
@@ -76,5 +78,17 @@ public class EmployerInfoServiceImpl extends AuditBaseService<IEmployerInfoMappe
         }
 
         return employerInfos.get(0);
+    }
+
+    @Override
+    public boolean updateCompanyName(Long employerId, String companyName) {
+        EmployerInfo employerInfo = new EmployerInfo();
+        employerInfo.setCompany(companyName);
+        int result = getBaseMapper().update(employerInfo, new LambdaQueryWrapper<EmployerInfo>().eq(EmployerInfo::getId, employerId));
+        if(result == 0){
+            return false;
+        }else {
+            return true;
+        }
     }
 }
