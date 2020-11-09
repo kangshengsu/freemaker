@@ -1,5 +1,6 @@
 package com.fm.api.web.controller.sm;
 
+import com.fm.api.web.util.RestRequest;
 import com.fm.api.web.vo.sm.MenuVO;
 import com.fm.api.web.vo.sm.TreeNodeVO;
 import com.fm.api.web.vo.sm.mapper.MenuMapper;
@@ -18,7 +19,6 @@ import com.fm.framework.core.query.QueryType;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.core.utils.TreeUtil;
 import com.fm.framework.web.controller.BaseController;
-import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import com.fm.framework.web.response.ApiStatus;
 import com.google.common.collect.Lists;
@@ -54,20 +54,24 @@ public class MenuController extends BaseController<Menu, MenuVO> {
     /**
      * 分页获取菜单信息
      *
-     * @param QueryRequest
+     * @param restRequest
      * @return
      */
     @PostMapping("/pagelist")
-    public ApiResponse<Page<MenuVO>> list(@RequestBody QueryRequest queryRequest) {
-        // TODO: 2020/11/8 暂时定位前台组装参数,不在后台进行拼装
-        return super.list(queryRequest);
+    public ApiResponse<Page<MenuVO>> list(@RequestBody RestRequest<MenuVO> restRequest) {
+        List<QueryItem> queryItems = doBeforePageAddSearchParam(restRequest);
+        Page<Menu> list = menuService.list(queryItems,restRequest.getPage().getCurrentPage(),restRequest.getPage().getPageSize());
+        return this.success(this.convert(list));
     }
 
 
     @PostMapping("/queryList")
-    public ApiResponse<List<MenuVO>> queryList(@RequestBody QueryRequest queryRequest) {
-        // TODO: 2020/11/8 暂时定位前台组装参数,不在后台进行拼装
-        /*List<QueryItem> queryItems = new ArrayList<>();
+    public ApiResponse<List<MenuVO>> queryList(@RequestBody RestRequest<MenuVO> restRequest) {
+        if (!restRequest.baseCheck()){
+            return this.failed("请求参数异常!");
+        }
+        List<QueryItem> queryItems = new ArrayList<>();
+        MenuVO vo = restRequest.getData();
         if (StringUtils.isNotBlank(vo.getName())) {
             QueryItem item = new QueryItem();
             item.setQueryField("name");
@@ -105,10 +109,10 @@ public class MenuController extends BaseController<Menu, MenuVO> {
             item.setValue(vo.getType());
             item.setType(QueryType.eq);
             queryItems.add(item);
-        }*/
+        }
 
         //获取菜单信息
-        List<MenuVO> menuVOList = this.convert(menuService.get(queryRequest.getQueryItems()));
+        List<MenuVO> menuVOList = this.convert(menuService.get(queryItems));
 
         if (CollectionUtils.isEmpty(menuVOList)) {
             return this.success(Collections.EMPTY_LIST);
@@ -147,7 +151,8 @@ public class MenuController extends BaseController<Menu, MenuVO> {
     }
 
     @PostMapping("/save")
-    public ApiResponse<Boolean> create(@RequestBody MenuVO menuVO) {
+    public ApiResponse<Boolean> create(@RequestBody RestRequest<MenuVO> restRequest) {
+        MenuVO menuVO = restRequest.getData();
         if (StringUtils.isBlank(menuVO.getName())) {
             return this.failed("菜单名称不能为空!");
         }
@@ -169,7 +174,7 @@ public class MenuController extends BaseController<Menu, MenuVO> {
     }
 
     @PostMapping("/deleteById")
-    public ApiResponse<Boolean> deleteById(@RequestBody Long id) {
+    public ApiResponse<Boolean> deleteById(@RequestBody RestRequest<MenuVO> restRequest) {
         //菜单删除规则
         //1、没有子菜单
 //        List<QueryItem> menuItems = new ArrayList<>();
@@ -183,12 +188,12 @@ public class MenuController extends BaseController<Menu, MenuVO> {
 //        if (menuCount > 0){
 //            return R.createFailR().message("待删除的菜单不能存在子菜单！");
 //        }
-
+        MenuVO menuVO = restRequest.getData();
         //2、没有关联角色
         List<QueryItem> roleItems = new ArrayList<>();
         QueryItem menuIdItem = new QueryItem();
         menuIdItem.setType(QueryType.eq);
-        menuIdItem.setValue(id);
+        menuIdItem.setValue(menuVO.getId());
         menuIdItem.setQueryField("menu_id");
         roleItems.add(menuIdItem);
 
@@ -196,31 +201,31 @@ public class MenuController extends BaseController<Menu, MenuVO> {
         if (roleCount > 0) {
             return failed("待删除的菜单不能存在关联的角色！");
         }
-        return success(service().delete(id));
+        return success(service().delete(menuVO.getId()));
     }
 
     @PostMapping("/update")
-    public ApiResponse<Boolean> update(@RequestBody MenuVO menuVO) {
-        return super.update(menuVO);
+    public ApiResponse<Boolean> update(@RequestBody RestRequest<MenuVO> restRequest) {
+        return super.update(restRequest.getData());
     }
 
 
     @PostMapping("/getAllChild")
-    public ApiResponse<List<MenuVO>>  getAllChild(@RequestBody Long parentId) {
-        return this.findChild(parentId, true);
+    public ApiResponse<List<MenuVO>>  getAllChild(@RequestBody RestRequest<MenuVO> restRequest) {
+        return this.findChild(restRequest.getData().getParentId(), true);
     }
 
     @PostMapping("/getDirectChild")
-    public ApiResponse<List<MenuVO>>  getDirectChild(@RequestBody Long parentId) {
-        return this.findChild(parentId, false);
+    public ApiResponse<List<MenuVO>>  getDirectChild(@RequestBody RestRequest<MenuVO> restRequest) {
+        return this.findChild(restRequest.getData().getParentId(), false);
     }
 
     @PostMapping("getMenusByRoleId")
-    public ApiResponse<List<Menu>> getMenusByRoleId(@RequestBody Long roleId) {
+    public ApiResponse<List<Menu>> getMenusByRoleId(@RequestBody RestRequest<MenuVO> restRequest) {
 
         //通过角色id查询菜单
         Role role = new Role();
-        role.setId(roleId);
+        role.setId(restRequest.getData().getRoleId());
         List<Menu> menus = permissionService.getPermissions(role);
         return this.success(menus);
     }
@@ -288,20 +293,20 @@ public class MenuController extends BaseController<Menu, MenuVO> {
     }
 
     @PostMapping("/checkIfExists")
-    public ApiResponse<Boolean> checkIfExists(@RequestBody QueryRequest queryRequest) {
-        // TODO: 2020/11/8 暂时定位前台组装参数,不在后台进行拼装
-        int count = this.service().count(queryRequest.getQueryItems());
+    public ApiResponse<Boolean> checkIfExists(@RequestBody RestRequest<MenuVO> restRequest) {
+        List<QueryItem> queryItems = this.doBeforeCheckExistsAddSearchParam(restRequest.getData());
+        int count = this.service().count(queryItems);
         return this.success(count > 0);
     }
 
     @PostMapping("/enable")
-    public ApiResponse enable(@RequestBody Long id) {
-        return this.changeDataStatus(id, DataStatus.enable);
+    public ApiResponse enable(@RequestBody RestRequest<MenuVO> restRequest) {
+        return this.changeDataStatus(restRequest, DataStatus.enable);
     }
 
     @PostMapping("/disable")
-    public ApiResponse disable(@RequestBody Long id) {
-        return this.changeDataStatus(id, DataStatus.disable);
+    public ApiResponse disable(@RequestBody RestRequest<MenuVO> restRequest) {
+        return this.changeDataStatus(restRequest, DataStatus.disable);
     }
 
     /**
@@ -309,12 +314,12 @@ public class MenuController extends BaseController<Menu, MenuVO> {
      *
      * @param dataStatus enable：启用  disable：禁用
      */
-    private ApiResponse<Boolean> changeDataStatus(Long id, DataStatus dataStatus) {
-        if (id == null) {
+    private ApiResponse<Boolean> changeDataStatus(@RequestBody RestRequest<MenuVO> restRequest, DataStatus dataStatus) {
+        if (restRequest.getData().getId() == null) {
             return this.failed("参数错误 请重试!");
         }
         Menu menu = new Menu();
-        menu.setId(id);
+        menu.setId(restRequest.getData().getId());
 
         if (dataStatus == (DataStatus.enable)) {
             menu.setStatus(DataStatus.enable.code());
@@ -514,7 +519,7 @@ public class MenuController extends BaseController<Menu, MenuVO> {
     /*
      * 添加分页查询参数
      * */
-    /*protected List<QueryItem> doBeforePageAddSearchParam(RestRequest<MenuVO> restRequest) {
+    protected List<QueryItem> doBeforePageAddSearchParam(RestRequest<MenuVO> restRequest) {
         List<QueryItem> queryItems = Lists.newArrayList();
         MenuVO vo = restRequest.getData();
         if (restRequest == null || vo == null) {
@@ -565,7 +570,7 @@ public class MenuController extends BaseController<Menu, MenuVO> {
             queryItems.add(item);
         }
         return queryItems;
-    }*/
+    }
 
     protected List<MenuVO> convert(List<Menu> menus) {
         if (CollectionUtils.isEmpty(menus)) {

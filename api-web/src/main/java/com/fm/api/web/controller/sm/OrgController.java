@@ -112,7 +112,6 @@ public class OrgController extends BaseController<Org, OrgVO> {
 
     @PostMapping(path = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<TreeNode<OrgVO>> listOrgTree(@RequestBody RestRequest<OrgVO> restRequest){
-        // TODO: 2020/11/8 入参在前台拼装
          List<QueryItem> queryItemList = getQueryItems(restRequest);
 
         //查询符合条件的组织
