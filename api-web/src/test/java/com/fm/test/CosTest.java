@@ -25,7 +25,7 @@ public class CosTest {
 
     @Test
     public void getUpload() throws IOException {
-        File file = new File("/Users/zhangleqi/Pictures/me.jpg");
+        File file = new File("C:/Users/123/Desktop/11.png");
         InputStream fileInputStream = new FileInputStream(file);
         byte[] data = new byte[(int) file.length()];
         new FileInputStream(file).read(data);

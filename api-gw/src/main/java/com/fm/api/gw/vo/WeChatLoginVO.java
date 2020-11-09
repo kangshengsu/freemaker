@@ -69,6 +69,11 @@ public class WeChatLoginVO extends VO implements Serializable {
      * 登录凭证
      */
     private String code;
+
+    /**
+     * 推荐人
+     */
+    private Long scene;
 //
 //    /**
 //     * 签名

@@ -114,6 +114,11 @@ public class FreelancerInfo extends BaseModel implements Serializable,IAudit {
     private String referralCode;
 
     /**
+     * 推荐人
+     */
+    private Long referrer;
+
+    /**
     * 创建时间
     **/
 	private Date createTime;

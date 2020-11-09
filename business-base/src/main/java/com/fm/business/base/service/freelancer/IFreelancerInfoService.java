@@ -28,4 +28,15 @@ public interface IFreelancerInfoService extends Service<FreelancerInfo> {
     List<FreelancerInfo> findLikeNameOrPhone(String str);
 
     FreelancerInfo getByUserId(Long currUser);
+
+    /**
+     * 通过userId生成小程序码
+     */
+    String createReferralCode();
+
+    Long getRecommended(Long currUserId);
+
+    Long getPublishProduction(Long currUserId);
+
+    Long getProductionPass(Long currUserId);
 }

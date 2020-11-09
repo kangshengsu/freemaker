@@ -212,6 +212,7 @@ public class MiniAppController {
         freelancerInfo.setCountyCode(Optional.ofNullable(weChatLoginVO.getCounty()).orElse(""));
         freelancerInfo.setUserId(userId);
         freelancerInfo.setHeadImg(weChatLoginVO.getAvatarUrl());
+        freelancerInfo.setReferrer(weChatLoginVO.getScene());
 
     }
 }

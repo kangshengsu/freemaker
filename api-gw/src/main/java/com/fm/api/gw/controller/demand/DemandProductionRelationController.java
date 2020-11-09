@@ -21,9 +21,12 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -69,11 +72,15 @@ public class DemandProductionRelationController extends BaseController<DemandPro
         List<ProductionInfo> productionInfoList = iProductionInfoService.findAllProduction(freelancerInfo.getId());
         List<Long> productionIds = productionInfoList.stream().map(ProductionInfo::getId).collect(Collectors.toList());
         List<DemandProductionRelation> result = demandProductionRelationService.findRecommend(productionIds, demandId);
-        if(result.size() == 0){
-            return ApiResponse.ofSuccess(Boolean.FALSE);
-        }else {
-            return ApiResponse.ofSuccess(Boolean.TRUE);
-        }
+      boolean flag = Optional.ofNullable(result)
+                .map(r -> !CollectionUtils.isEmpty(r))
+                .orElse(false);
+      return ApiResponse.ofSuccess(flag);
+//        if(result.size() == 0){
+//            return ApiResponse.ofSuccess(Boolean.FALSE);
+//        }else {
+//            return ApiResponse.ofSuccess(Boolean.TRUE);
+//        }
     }
 
 
