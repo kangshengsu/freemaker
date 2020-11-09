@@ -97,7 +97,6 @@ public class DemandProductionRelationServiceImpl extends AuditBaseService<IDeman
         List<DemandProductionRelation> newRelations = productionIds.stream().map(productionId -> {
             DemandProductionRelation demandProductionRelation = new DemandProductionRelation();
             demandProductionRelation.setDemandId(demandId);
-            demandProductionRelation.setStatus(status);
             demandProductionRelation.setProductionId(productionId);
             return demandProductionRelation;
         }).collect(Collectors.toList());
