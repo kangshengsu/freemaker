@@ -3,6 +3,7 @@ package com.fm.api.gw.controller.demand;
 import com.fm.api.gw.vo.DirectRecommendVO;
 import com.fm.api.gw.vo.RecommendVO;
 import com.fm.api.gw.vo.demand.DemandProductionRelationVO;
+import com.fm.business.base.enums.RecommendType;
 import com.fm.business.base.model.demand.DemandProductionRelation;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.production.ProductionInfo;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/v1/demandProductionRelationApi")
-@Api(value = "需求中心直接推荐作品")
+@Api(value = "需求中心自己直接推荐作品")
 public class DemandProductionRelationController extends BaseController<DemandProductionRelation, DemandProductionRelationVO> {
 
     @Autowired
@@ -46,30 +47,28 @@ public class DemandProductionRelationController extends BaseController<DemandPro
     private IProductionInfoService iProductionInfoService;
 
     /**
-     * 需求中心直接推荐作品status=10，后台分配为20
+     * 需求中心自己直接推荐作品
      * @param recommendVO
      * @return
      */
-    @ApiOperation(value = "需求中心直接推荐作品")
+    @ApiOperation(value = "需求中心自己推荐作品")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "demandId", value = "需求Id", dataType = "Long", paramType = "query"),
             @ApiImplicitParam(name = "productionIds", value = "作品Id", dataType = "List<Long>", paramType = "query")})
     @RequestMapping(value = "recommend", method = RequestMethod.POST)
     public ApiResponse<Boolean> recommend(@RequestBody DirectRecommendVO recommendVO) {
-        Integer status = 20;
-        demandProductionRelationService.recommend(recommendVO.getDemandId(), recommendVO.getProductionIds(), status);
+        demandProductionRelationService.recommend(recommendVO.getDemandId(), recommendVO.getProductionIds(), RecommendType.MY_RECOMMEND.getCode());
         return ApiResponse.ofSuccess(Boolean.TRUE);
     }
 
-    @ApiOperation(value = "需求中心推荐作品查询是否已推荐")
+    @ApiOperation(value = "需求中心自己推荐作品时查询是否已推荐")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "demandId", value = "需求Id", dataType = "Long", paramType = "query"),
     })
     @RequestMapping(value = "findRecommend", method = RequestMethod.GET)
     public ApiResponse<Boolean> findRecommend(Long demandId){
         Long currUserId = Context.getCurrUserId();
-        SysUser sysUser = sysUserService.findById(currUserId);
-        FreelancerInfo freelancerInfo = iFreelancerInfoService.getByUserId(sysUser.getId());
+        FreelancerInfo freelancerInfo = iFreelancerInfoService.getByUserId(currUserId);
         List<ProductionInfo> productionInfoList = iProductionInfoService.findAllProduction(freelancerInfo.getId());
         List<Long> productionIds = productionInfoList.stream().map(ProductionInfo::getId).collect(Collectors.toList());
         List<DemandProductionRelation> result = demandProductionRelationService.findRecommend(productionIds, demandId);

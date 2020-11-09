@@ -21,6 +21,7 @@ import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
+import com.fm.business.base.service.demand.IDemandProductionRelationService;
 import com.fm.framework.core.enums.DeleteEnum;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.AuditBaseService;
@@ -49,6 +50,9 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
 
     @Autowired
     private IBdJobCateService bdJobCateService;
+
+    @Autowired
+    private IDemandProductionRelationService iDemandProductionRelationService;
 
     @Override
     protected Page<DemandInfo> toPage(com.baomidou.mybatisplus.extension.plugins.pagination.Page<DemandInfo> mybatisPlusPage) {
@@ -118,13 +122,16 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
     }
 
     @Override
-    public Page<DemandInfo> gePageByEmployerId(Integer currentPage, Integer pageSize, Long employerId, Integer status) {
+    public Page<DemandInfo> gePageByEmployerId(Integer currentPage, Integer pageSize, Long employerId, Integer status, List<Long> demandProductionRelationIds) {
         return toPage(
                 getBaseMapper().selectPage(
                         new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
                         getQueryWrapper().lambda()
                                 .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
                                 .eq(DemandInfo::getEmployerId, employerId)
+                                .eq(status != 0, DemandInfo::getStatus, status)
+                                .or().in(DemandInfo::getId, demandProductionRelationIds)
+                                .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
                                 .eq(status != 0, DemandInfo::getStatus, status)
                                 .orderByDesc(DemandInfo::getCreateTime)));
     }
@@ -208,4 +215,5 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
                 .like(DemandInfo::getSummarize, str)
                 .last("limit 10"));
     }
+
 }

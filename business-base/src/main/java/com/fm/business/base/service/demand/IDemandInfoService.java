@@ -42,7 +42,7 @@ public interface IDemandInfoService extends Service<DemandInfo> {
      * @param employerId  雇主ID
      * @return 需求编码
      */
-    Page<DemandInfo> gePageByEmployerId(Integer currentPage, Integer pageSize, Long employerId, Integer status);
+    Page<DemandInfo> gePageByEmployerId(Integer currentPage, Integer pageSize, Long employerId, Integer status, List<Long> demandProductionRelationIds);
 
     /**
      * @param currentPage 当前页
@@ -66,4 +66,5 @@ public interface IDemandInfoService extends Service<DemandInfo> {
     DemandInfo getByCode(String code);
 
     List<DemandInfo> findDemandInfoLikeNameOrCode(String str);
+
 }

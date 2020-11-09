@@ -190,7 +190,12 @@ public class DemandInfoVO extends VO implements Serializable {
 	/**
 	 * 登陆用户的employerId，为判断改需求是否为自己发布
 	 */
-	private Long userEmployerId;
+	private Long userEmployerId = null;
+
+	/**
+	 * 状态信息
+	 */
+	private String demandStatus;
 
 
 

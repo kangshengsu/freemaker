@@ -14,6 +14,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Description:(需求实体类)
@@ -198,4 +199,9 @@ public class DemandInfo extends BaseModel implements Serializable, IAudit {
     public void setId(Long id) {
         this.id = id;
     }
+
+    /**
+     * 状态信息
+     */
+    private transient String demandStatus;
 }

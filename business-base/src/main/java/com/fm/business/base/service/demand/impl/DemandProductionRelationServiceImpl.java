@@ -131,8 +131,17 @@ public class DemandProductionRelationServiceImpl extends AuditBaseService<IDeman
     @Override
     public List<DemandProductionRelation> findRecommend(List<Long> productionIds, Long demandId) {
         Wrapper queryWrapper = Wrappers.lambdaQuery(DemandProductionRelation.class).in(DemandProductionRelation::getProductionId,productionIds)
-                .eq(DemandProductionRelation::getDemandId,demandId);
+                .eq(DemandProductionRelation::getDemandId,demandId)
+                .eq(DemandProductionRelation::getIsDelete,0);
         return getBaseMapper().selectList(queryWrapper);
     }
+
+    @Override
+    public List<DemandProductionRelation> findAllRecommend(List<Long> productionIds) {
+        Wrapper queryWrapper = Wrappers.lambdaQuery(DemandProductionRelation.class).in(DemandProductionRelation::getProductionId,productionIds)
+                .eq(DemandProductionRelation::getIsDelete,0);
+        return getBaseMapper().selectList(queryWrapper);
+    }
+
 
 }
