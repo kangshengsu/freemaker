@@ -22,9 +22,9 @@ public class DemandCenterInfoServiceImpl extends AuditBaseService<IDemandInfoMap
     private IEmployerInfoService employerInfoService;
 
     @Override
-    public Page<DemandInfo> getDemandCenterPage(Integer currentPage, Integer pageSize, Integer status , Integer jobCateId) {
+    public Page<DemandInfo> getDemandCenterPage(Integer currentPage, Integer pageSize, Integer attestation, Integer jobCateId) {
         String jobId = "";
-        if(jobCateId!=null){
+        if(jobCateId != null){
             jobId = TreeCodeType.get(jobCateId).getCateTreeNode();
         }
 
@@ -33,8 +33,8 @@ public class DemandCenterInfoServiceImpl extends AuditBaseService<IDemandInfoMap
                         new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
                         getQueryWrapper().lambda()
                                 .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
-                                .eq(status != 0, DemandInfo::getStatus, status)
-                                .likeRight(jobCateId!=null, DemandInfo::getCateTreeCode, jobId)
+                                .eq(attestation != 0, DemandInfo::getAttestation, attestation)
+                                .likeRight(jobCateId != null, DemandInfo::getCateTreeCode, jobId)
                                 .orderByDesc(DemandInfo::getCreateTime)));
     }
 

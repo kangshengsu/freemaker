@@ -11,7 +11,7 @@ public interface IDemandCenterInfoService extends Service<DemandInfo> {
      * @param pageSize    页大小
      * @return 需求编码
      */
-    Page<DemandInfo> getDemandCenterPage(Integer currentPage, Integer pageSize, Integer status , Integer jobCateId);
+    Page<DemandInfo> getDemandCenterPage(Integer currentPage, Integer pageSize, Integer attestation, Integer jobCateId);
 
     DemandInfo getDemandCenterDtlByCode(String code);
 }
