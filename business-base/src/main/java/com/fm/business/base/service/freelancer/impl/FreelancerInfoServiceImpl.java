@@ -7,6 +7,7 @@
 package com.fm.business.base.service.freelancer.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.freelancer.IFreelancerInfoMapper;
 import com.fm.business.base.enums.ProductionStatus;
@@ -100,11 +101,14 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
 
     @Override
     public String createReferralCode() {
-        ByteArrayInputStream inputStream = null;
-        FileOutputStream outputStream = null;
         try {
-            RestTemplate rest = new RestTemplate();
             Long currUserId = Context.getCurrUserId();
+            FreelancerInfo freelancerInfo1 = getBaseMapper().selectOne(Wrappers.lambdaQuery(FreelancerInfo.class)
+                    .eq(FreelancerInfo::getUserId, currUserId));
+            if(!StringUtils.isEmpty(freelancerInfo1.getReferralCode())){
+                return freelancerInfo1.getReferralCode();
+            }
+            RestTemplate rest = new RestTemplate();
             String accessToken = wxMessageSenderService.getAccessToken();
             String url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=" + accessToken;
             Map<String, Object> param = new HashMap<>();
@@ -115,9 +119,10 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
             byte[] result = entity.getBody();
             byte[] bytes = new byte[result.length];
             new ByteArrayInputStream(result).read(bytes);
-            fileService.upload("referralCode/" + currUserId + "referralCode.png", bytes);
+            long time = new Date().getTime();
+            fileService.upload("referralCode/" + currUserId + time + "referralCode.png", bytes);
             String bucketName = cosProperties.getBucketName();
-            String key = "referralCode/" + currUserId + "referralCode.png";
+            String key = "referralCode/" + currUserId + time + "referralCode.png";
             Date expiration = new Date(new Date().getTime() + 5 * 60 * 10000);
             URL oldUrl = cosClient.generatePresignedUrl(bucketName, key, expiration);
             String newUrl = oldUrl.toString();
