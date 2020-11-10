@@ -35,6 +35,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
@@ -101,6 +102,7 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
 
     @Override
     public String createReferralCode() {
+        ByteArrayInputStream inputStream = null;
         try {
             Long currUserId = Context.getCurrUserId();
             FreelancerInfo freelancerInfo1 = getBaseMapper().selectOne(Wrappers.lambdaQuery(FreelancerInfo.class)
@@ -118,7 +120,8 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
             ResponseEntity<byte[]> entity = rest.exchange(url, HttpMethod.POST, requestEntity, byte[].class, new Object[0]);
             byte[] result = entity.getBody();
             byte[] bytes = new byte[result.length];
-            new ByteArrayInputStream(result).read(bytes);
+            inputStream = new ByteArrayInputStream(result);
+            inputStream.read(bytes);
             long time = new Date().getTime();
             fileService.upload("referralCode/" + currUserId + time + "referralCode.png", bytes);
             String bucketName = cosProperties.getBucketName();
@@ -134,6 +137,14 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
             return newUrl;
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+                if (inputStream != null){
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
         }
         return null;
     }
