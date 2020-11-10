@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.IDemandProductionRelationMapper;
+import com.fm.business.base.enums.RecommendType;
 import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.demand.DemandProductionRelation;
 import com.fm.business.base.model.production.ProductionInfo;
@@ -112,10 +113,12 @@ public class DemandProductionRelationServiceImpl extends AuditBaseService<IDeman
             demandProductionRelationService.save(newRelations);
         }
 
-        //删除
-        if (!CollectionUtils.isEmpty(oldRelations)) {
-            List<Long> deleteIds = oldRelations.stream().map(DemandProductionRelation::getId).collect(Collectors.toList());
-            demandProductionRelationService.deleteByIds(deleteIds);
+        if(status == RecommendType.SYSTEM_RECOMMEND.getCode()){
+            //删除
+            if (!CollectionUtils.isEmpty(oldRelations)) {
+                List<Long> deleteIds = oldRelations.stream().map(DemandProductionRelation::getId).collect(Collectors.toList());
+                demandProductionRelationService.deleteByIds(deleteIds);
+            }
         }
 
         iDemandInfoService.updateRecommendCountById(demandId,productionIds.size());
@@ -138,7 +141,10 @@ public class DemandProductionRelationServiceImpl extends AuditBaseService<IDeman
 
     @Override
     public List<DemandProductionRelation> findAllRecommend(List<Long> productionIds) {
-        Wrapper queryWrapper = Wrappers.lambdaQuery(DemandProductionRelation.class).in(DemandProductionRelation::getProductionId,productionIds)
+        if(CollectionUtils.isEmpty(productionIds)){
+            return new ArrayList<>();
+        }
+        Wrapper queryWrapper = Wrappers.lambdaQuery(DemandProductionRelation.class).in(DemandProductionRelation::getProductionId, productionIds)
                 .eq(DemandProductionRelation::getIsDelete,0);
         return getBaseMapper().selectList(queryWrapper);
     }

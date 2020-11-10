@@ -195,7 +195,7 @@ public class DemandInfoVO extends VO implements Serializable {
 	/**
 	 * 状态信息
 	 */
-	private String demandStatus;
+	private Integer demandStatus;
 
 
 

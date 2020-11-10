@@ -30,6 +30,8 @@ public interface IEmployerInfoService extends Service<EmployerInfo> {
 
     EmployerInfo getById(Long id);
 
+    boolean updateCompanyName(Long employerId, String companyName);
+
 
 
 }

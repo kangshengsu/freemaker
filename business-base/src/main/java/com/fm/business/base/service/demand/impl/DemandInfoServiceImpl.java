@@ -130,9 +130,9 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
                                 .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
                                 .eq(DemandInfo::getEmployerId, employerId)
                                 .eq(status != 0, DemandInfo::getStatus, status)
-                                .or().in(DemandInfo::getId, demandProductionRelationIds)
-                                .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
-                                .eq(status != 0, DemandInfo::getStatus, status)
+                                .or().in(!CollectionUtils.isEmpty(demandProductionRelationIds), DemandInfo::getId, demandProductionRelationIds)
+                                .eq(!CollectionUtils.isEmpty(demandProductionRelationIds),DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
+                                .eq(!CollectionUtils.isEmpty(demandProductionRelationIds)&&status != 0, DemandInfo::getStatus, status)
                                 .orderByDesc(DemandInfo::getCreateTime)));
     }
 
