@@ -8,7 +8,6 @@ import com.fm.business.base.enums.DemandStatus;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.job.BdJobCate;
-import com.fm.business.base.model.sys.SysUser;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandCenterInfoService;
@@ -52,9 +51,6 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
     @Autowired
     private DemandInfoMapper demandInfoMapper;
 
-    @Autowired
-    private ISysUserService sysUserService;
-
     /**
      *
      * @param currentPage
@@ -71,11 +67,10 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
     @RequestMapping(value = "getDemandCenterPage", method = RequestMethod.GET)
     public ApiResponse<Page<DemandInfoVO>> getDemandCenterPage(@RequestParam("currentPage") Integer currentPage,
                                                                @RequestParam("pageSize") Integer pageSize,
-                                                               @RequestParam(value = "status", required = false) Integer status,
+                                                               @RequestParam(value = "attestation", required = false) Integer attestation,
                                                                @RequestParam(value = "jobCateId", required = false) Integer jobCateId) {
-        Long currEmployerId = Context.getCurrEmployerId();
         Page<DemandInfoVO> result = new PageInfo<>();
-        Page<DemandInfo> demandInfoPage = demandCenterInfoService.getDemandCenterPage(currentPage, pageSize, status , jobCateId);
+        Page<DemandInfo> demandInfoPage = demandCenterInfoService.getDemandCenterPage(currentPage, pageSize, attestation , jobCateId);
         if (demandInfoPage.getData().size() == 0) {
             return ApiResponse.ofSuccess(result);
         }

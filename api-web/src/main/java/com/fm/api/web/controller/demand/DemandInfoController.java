@@ -80,6 +80,16 @@ public class DemandInfoController extends BaseController<DemandInfo, DemandInfoV
         return super.success(this.convert(this.demandInfoService.findDemandInfoLikeNameOrCode(keyword)));
     }
 
+    @RequestMapping(value="setDemandAttestation", method = RequestMethod.POST)
+    public ApiResponse<Boolean> setDemandAttestation(@RequestBody DemandInfoVO form) {
+        if(form.getAttestation() == 0){
+            form.setAttestation(1L);
+        }else {
+            form.setAttestation(0L);
+        }
+        return super.update(form);
+    }
+
     @Override
     protected Service<DemandInfo> service() {
         return demandInfoService;

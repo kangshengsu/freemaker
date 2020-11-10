@@ -13,4 +13,4 @@ ADD COLUMN referrer bigint(50) COMMENT '推荐人' AFTER referral_code
 修改邀请码字段长度
  */
 ALTER TABLE demand_info
-ADD COLUMN `attestation` BIGINT(50) COMMENT '平台认证:0-未认证,1-认证' AFTER `delivery_type`;
+ADD COLUMN `attestation` BIGINT(50) DEFAULT '0' COMMENT '平台认证:0-未认证,1-认证' AFTER `delivery_type`;

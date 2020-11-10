@@ -155,7 +155,11 @@ public class DemandInfoVO extends VO implements Serializable {
 	 * 预算方式名称
 	 */
 	private String budgetTypeName;
+
 	/**
+	 * 平台认证:0-未认证,1-认证
+	 */
+	private Long attestation;
 
 	/**
 	 * 创建时间

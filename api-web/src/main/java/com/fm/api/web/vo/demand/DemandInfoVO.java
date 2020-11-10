@@ -82,6 +82,11 @@ public class DemandInfoVO extends VO implements Serializable {
      **/
     private Double budget;
 
+    /**
+     * 平台认证:0-未认证,1-认证
+     */
+    private Long attestation;
+
 
     /**
      * 推荐人数
