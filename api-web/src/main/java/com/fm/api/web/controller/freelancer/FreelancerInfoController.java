@@ -52,6 +52,18 @@ public class FreelancerInfoController extends BaseController<FreelancerInfo, Fre
 
     }
 
+    /**
+     * 根据推荐人Id或姓名查找数据
+     * @param form
+     * @return
+     */
+    @RequestMapping(value = "/findLikeNameOrUserId",method = RequestMethod.POST)
+    public ApiResponse<List<FreelancerInfoVO>> findLikeNameOrUserId(@RequestBody FreelancerInfoVO form){
+       List<FreelancerInfo> freelancerInfos = freelancerInfoService.findLikeNameOrUserId(form.getKeyword());
+       return success(convert(freelancerInfos));
+
+    }
+
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public ApiResponse<Boolean> create(@RequestBody FreelancerInfoVO form) {
