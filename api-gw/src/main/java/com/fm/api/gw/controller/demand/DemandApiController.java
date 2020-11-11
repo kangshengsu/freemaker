@@ -204,11 +204,16 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
     @ApiOperation(value = "根据需求编码更新需求")
     @RequestMapping(value = "updateByCode", method = RequestMethod.POST)
     public ApiResponse<Boolean> updateByCode(@RequestBody DemandInfoVO demandInfoVO) {
+        EmployerInfo employerInfo = new EmployerInfo();
+        employerInfo.setCompany(demandInfoVO.getCompanyName());
+        employerInfo.setJobTitle(demandInfoVO.getJobTitle());
+
         if (StringUtils.isEmpty(demandInfoVO.getCode())) {
             return ApiResponse.ofFailed("需求编号不能为空");
         }
         DemandInfo demandInfo = this.convert(demandInfoVO);
         demandInfoService.updateByCode(demandInfo);
+        iEmployerInfoService.updateCompanyName(demandInfoVO.getEmployerId(), employerInfo);
         return success(Boolean.TRUE);
     }
 
