@@ -7,7 +7,6 @@
 package com.fm.business.base.service.production;
 
 import com.fm.business.base.enums.ProductionStatus;
-import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
@@ -110,4 +109,6 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
     List<ProductionInfo> findAllProduction(Long freelancerId);
 
     List<ProductionInfo> findByFreeLancer(Long freelancerId);
+
+    List<ProductionInfo> distinctProductions(List<Long> productionIds);
 }

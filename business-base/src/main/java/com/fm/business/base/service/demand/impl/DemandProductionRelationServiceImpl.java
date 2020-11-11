@@ -7,7 +7,6 @@
 package com.fm.business.base.service.demand.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.IDemandProductionRelationMapper;
 import com.fm.business.base.enums.RecommendType;
@@ -93,7 +92,7 @@ public class DemandProductionRelationServiceImpl extends AuditBaseService<IDeman
 
     @Override
     @Transactional
-    public void recommend(Long demandId, List<Long> productionIds, Integer status) {
+    public synchronized void recommend(Long demandId, List<Long> productionIds, Integer status) {
         List<DemandProductionRelation> oldRelations = demandProductionRelationService.getByDemandId(demandId);
         List<DemandProductionRelation> newRelations = productionIds.stream().map(productionId -> {
             DemandProductionRelation demandProductionRelation = new DemandProductionRelation();
@@ -121,8 +120,13 @@ public class DemandProductionRelationServiceImpl extends AuditBaseService<IDeman
             }
         }
 
-        iDemandInfoService.updateRecommendCountById(demandId,productionIds.size());
-
+        if(status == RecommendType.MY_RECOMMEND.getCode()){
+            DemandInfo demandInfo = iDemandInfoService.get(demandId);
+            iDemandInfoService.updateRecommendCountById(demandId,demandInfo.getRecommendCount()+1);
+        }else {
+            List<ProductionInfo> productionInfos = productionInfoService.distinctProductions(productionIds);
+            iDemandInfoService.updateRecommendCountById(demandId,productionInfos.size());
+        }
 
     }
 

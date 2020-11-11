@@ -8,16 +8,13 @@ package com.fm.business.base.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.IEmployerInfoMapper;
 import com.fm.business.base.model.EmployerInfo;
-import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.framework.core.service.AuditBaseService;
-import org.springframework.stereotype.Service;
-import com.fm.framework.core.service.BaseService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -81,9 +78,7 @@ public class EmployerInfoServiceImpl extends AuditBaseService<IEmployerInfoMappe
     }
 
     @Override
-    public boolean updateCompanyName(Long employerId, String companyName) {
-        EmployerInfo employerInfo = new EmployerInfo();
-        employerInfo.setCompany(companyName);
+    public boolean updateCompanyName(Long employerId, EmployerInfo employerInfo) {
         int result = getBaseMapper().update(employerInfo, new LambdaQueryWrapper<EmployerInfo>().eq(EmployerInfo::getId, employerId));
         if(result == 0){
             return false;
