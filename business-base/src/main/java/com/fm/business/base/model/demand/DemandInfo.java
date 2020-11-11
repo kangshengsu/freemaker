@@ -14,7 +14,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @Description:(需求实体类)
@@ -120,6 +119,11 @@ public class DemandInfo extends BaseModel implements Serializable, IAudit {
      * @see com.fm.business.base.enums.DeliveryType
      */
     private Integer deliveryType;
+
+    /**
+     * 职务名称
+     */
+    private String jobTitle;
 
     /**
      * 企业名称
