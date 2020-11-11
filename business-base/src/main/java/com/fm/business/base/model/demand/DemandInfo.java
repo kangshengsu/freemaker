@@ -162,7 +162,7 @@ public class DemandInfo extends BaseModel implements Serializable, IAudit {
     /**
      * 平台认证
      */
-    private Long attestation;
+    private Integer attestation;
 
     /**
      * 状态名称

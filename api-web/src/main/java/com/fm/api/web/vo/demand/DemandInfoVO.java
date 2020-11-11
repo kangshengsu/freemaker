@@ -6,15 +6,13 @@
  */
 package com.fm.api.web.vo.demand;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.framework.web.VO;
 import lombok.Data;
 
 import java.io.Serializable;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.util.Date;
 
 /**
@@ -85,7 +83,7 @@ public class DemandInfoVO extends VO implements Serializable {
     /**
      * 平台认证:0-未认证,1-认证
      */
-    private Long attestation;
+    private Integer attestation;
 
 
     /**

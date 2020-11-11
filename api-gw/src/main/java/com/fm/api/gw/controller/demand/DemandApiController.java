@@ -1,10 +1,7 @@
 package com.fm.api.gw.controller.demand;
 
 import com.fm.api.gw.vo.demand.DemandInfoVO;
-import com.fm.business.base.enums.BudgetType;
-import com.fm.business.base.enums.DeliveryType;
-import com.fm.business.base.enums.DemandStatus;
-import com.fm.business.base.enums.RecommendType;
+import com.fm.business.base.enums.*;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.demand.DemandProductionRelation;
@@ -212,6 +209,7 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
             return ApiResponse.ofFailed("需求编号不能为空");
         }
         DemandInfo demandInfo = this.convert(demandInfoVO);
+        demandInfo.setAttestation(DemandAttestationType.NO_ATTESTATION.getCode());
         demandInfoService.updateByCode(demandInfo);
         DemandInfo d = demandInfoService.getByCode(demandInfoVO.getCode());
         iEmployerInfoService.updateCompanyName(d.getEmployerId(), employerInfo);
