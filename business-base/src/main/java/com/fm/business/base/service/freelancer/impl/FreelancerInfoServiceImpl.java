@@ -126,6 +126,8 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
                 .orderByAsc(FreelancerInfo::getName,FreelancerInfo::getUserId,FreelancerInfo::getPhone));
     }
 
+
+
     @Override
     public FreelancerInfo getByUserId(Long userId) {
         if (null == userId) {
@@ -235,5 +237,23 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
         JSONObject jsonObject = new JSONObject(json);
         String access_token = jsonObject.get("access_token").toString();
         return access_token;
+    }
+
+
+    @Override
+    public List<FreelancerInfo> getFreelancerName(List<Long> referrers) {
+        if (CollectionUtils.isEmpty(referrers)){
+            return Collections.emptyList();
+        }
+        List<FreelancerInfo> list = new ArrayList<>();
+        referrers.forEach(referrer -> {
+            if (referrer == null){
+                return ;
+            }
+            FreelancerInfo freelancerInfo = getBaseMapper().selectOne(Wrappers.lambdaQuery(FreelancerInfo.class)
+                    .eq(FreelancerInfo::getUserId, referrer));
+            list.add(freelancerInfo);
+        });
+        return list;
     }
 }

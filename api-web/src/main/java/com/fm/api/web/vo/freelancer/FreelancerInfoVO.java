@@ -27,6 +27,8 @@ public class FreelancerInfoVO extends VO implements Serializable {
 
 	private List<Long> ids;
 
+	private List<Long> referrers;
+
 	private String keyword;
 
     /**

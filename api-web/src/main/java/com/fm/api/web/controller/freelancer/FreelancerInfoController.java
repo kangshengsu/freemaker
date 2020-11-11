@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -111,6 +112,14 @@ public class FreelancerInfoController extends BaseController<FreelancerInfo, Fre
         }).collect(Collectors.toList())));
 
     }
+
+    @RequestMapping(value = "getFreelancerName",method = RequestMethod.POST)
+    public ApiResponse<List<FreelancerInfoVO>> getFreelancerName(@RequestBody FreelancerInfoVO form){
+        List<FreelancerInfo> freelancerInfos =  freelancerInfoService.getFreelancerName(form.getReferrers());
+        return success(convert(freelancerInfos));
+    }
+
+
     @Override
     protected Service<FreelancerInfo> service() {
         return freelancerInfoService;
