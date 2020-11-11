@@ -35,7 +35,7 @@ CREATE TABLE `attachment_info` (
   `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
   `ts` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '数据库时间戳',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32070 DEFAULT CHARSET=utf8 COMMENT='附件表';
+) ENGINE=InnoDB AUTO_INCREMENT=32108 DEFAULT CHARSET=utf8 COMMENT='附件表';
 
 /*Table structure for table `bd_job_cate` */
 
@@ -125,6 +125,7 @@ CREATE TABLE `demand_info` (
   `company_name` varchar(500) DEFAULT '' COMMENT '企业名称',
   `budget_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '预算计算方式:0:时薪,1:一口价,2:面谈',
   `delivery_type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '交付方式:0:远程,1:现场',
+  `attestation` bigint(50) DEFAULT '0' COMMENT '平台认证:0-未认证,1-认证',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `create_user` bigint(20) NOT NULL COMMENT '创建人',
@@ -136,7 +137,7 @@ CREATE TABLE `demand_info` (
   KEY `idx_demand_employer_id` (`employer_id`),
   KEY `idx_demand_status` (`status`),
   KEY `idx_demand_job_cate_id` (`job_cate_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10002 DEFAULT CHARSET=utf8 COMMENT='需求表';
+) ENGINE=InnoDB AUTO_INCREMENT=12002 DEFAULT CHARSET=utf8 COMMENT='需求表';
 
 /*Table structure for table `demand_production_relation` */
 
@@ -157,7 +158,7 @@ CREATE TABLE `demand_production_relation` (
   PRIMARY KEY (`id`),
   KEY `idx_demand_production_demand_id` (`demand_id`),
   KEY `idx_demand_production_production_id` (`production_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8 COMMENT='订单流水';
+) ENGINE=InnoDB AUTO_INCREMENT=12002 DEFAULT CHARSET=utf8 COMMENT='订单流水';
 
 /*Table structure for table `display_config` */
 
@@ -175,7 +176,7 @@ CREATE TABLE `display_config` (
   `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
   `ts` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '数据库时间戳',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14003 DEFAULT CHARSET=utf8 COMMENT='展位配置表';
+) ENGINE=InnoDB AUTO_INCREMENT=18002 DEFAULT CHARSET=utf8 COMMENT='展位配置表';
 
 /*Table structure for table `employer_info` */
 
@@ -193,6 +194,8 @@ CREATE TABLE `employer_info` (
   `district_code` varchar(32) DEFAULT NULL,
   `county_code` varchar(32) DEFAULT NULL,
   `phone` varchar(32) CHARACTER SET utf8 DEFAULT NULL COMMENT '手机号',
+  `job_title` varchar(50) CHARACTER SET utf8 DEFAULT NULL COMMENT '职务名称',
+  `company` varchar(500) CHARACTER SET utf8 DEFAULT NULL COMMENT '公司名称',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `create_user` varchar(50) CHARACTER SET utf8 NOT NULL COMMENT '创建人',
@@ -226,7 +229,7 @@ CREATE TABLE `evaluation_info` (
   `ts` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
   `is_delete` tinyint(4) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2002 DEFAULT CHARSET=utf8 COMMENT='评价信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=4002 DEFAULT CHARSET=utf8 COMMENT='评价信息表';
 
 /*Table structure for table `evaluation_info_tag` */
 
@@ -265,7 +268,8 @@ CREATE TABLE `freelancer_info` (
   `county_code` varchar(32) DEFAULT NULL,
   `account_code` varchar(32) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '关联账户(微信登录认证)',
   `phone` varchar(32) CHARACTER SET utf8 DEFAULT '' COMMENT '手机号',
-  `referral_code` varchar(64) DEFAULT '' COMMENT '推荐码',
+  `referral_code` varchar(255) DEFAULT NULL,
+  `referrer` bigint(50) DEFAULT NULL COMMENT '推荐人',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `create_user` bigint(20) NOT NULL COMMENT '创建人',
@@ -305,7 +309,7 @@ CREATE TABLE `order_follow` (
   `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
   `ts` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '数据库时间戳',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12002 DEFAULT CHARSET=utf8 COMMENT='订单流水';
+) ENGINE=InnoDB AUTO_INCREMENT=12017 DEFAULT CHARSET=utf8 COMMENT='订单流水';
 
 /*Table structure for table `order_info` */
 
@@ -336,7 +340,7 @@ CREATE TABLE `order_info` (
   `ts` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '数据库时间戳',
   PRIMARY KEY (`id`),
   UNIQUE KEY `IDX_UN_CODE` (`code`) COMMENT '唯一索引'
-) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8 COMMENT='订单信息';
+) ENGINE=InnoDB AUTO_INCREMENT=12005 DEFAULT CHARSET=utf8 COMMENT='订单信息';
 
 /*Table structure for table `order_info_detail` */
 
@@ -378,7 +382,7 @@ CREATE TABLE `order_operate_info` (
   `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
   `ts` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '数据库时间戳',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6002 DEFAULT CHARSET=utf8mb4 COMMENT='岗位技能表';
+) ENGINE=InnoDB AUTO_INCREMENT=10003 DEFAULT CHARSET=utf8mb4 COMMENT='岗位技能表';
 
 /*Table structure for table `production_info` */
 
@@ -406,7 +410,7 @@ CREATE TABLE `production_info` (
   UNIQUE KEY `IDX_UN_CODE` (`code`) COMMENT 'code唯一索引',
   KEY `IDX_CREATE_TIME` (`create_time`),
   KEY `IDX_JOB_CATE_ID` (`job_cate_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28008 DEFAULT CHARSET=utf8 COMMENT='作品表';
+) ENGINE=InnoDB AUTO_INCREMENT=28069 DEFAULT CHARSET=utf8 COMMENT='作品表';
 
 /*Table structure for table `production_review_info` */
 
@@ -426,7 +430,7 @@ CREATE TABLE `production_review_info` (
   `ts` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '数据库时间戳',
   PRIMARY KEY (`id`),
   KEY `IDX_PRO_ID` (`production_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18003 DEFAULT CHARSET=utf8 COMMENT='作品审核表';
+) ENGINE=InnoDB AUTO_INCREMENT=18084 DEFAULT CHARSET=utf8 COMMENT='作品审核表';
 
 /*Table structure for table `production_skill_relation` */
 
@@ -445,7 +449,7 @@ CREATE TABLE `production_skill_relation` (
   `ts` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '数据库时间戳',
   PRIMARY KEY (`id`),
   KEY `IDX_PRO_ID` (`production_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28024 DEFAULT CHARSET=utf8 COMMENT='作品与技能关联表';
+) ENGINE=InnoDB AUTO_INCREMENT=28051 DEFAULT CHARSET=utf8 COMMENT='作品与技能关联表';
 
 /*Table structure for table `sys_base_dict` */
 
