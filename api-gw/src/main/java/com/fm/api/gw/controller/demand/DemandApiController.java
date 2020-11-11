@@ -18,7 +18,6 @@ import com.fm.business.base.service.demand.IDemandProductionRelationService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
-import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.query.PageInfo;
@@ -184,10 +183,17 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
     @ApiOperation(value = "发布新需求")
     @RequestMapping(value = "publish", method = RequestMethod.POST)
     public ApiResponse<String> publish(@RequestBody DemandInfoVO form) {
+        EmployerInfo employerInfo = new EmployerInfo();
+        employerInfo.setCompany(form.getCompanyName());
+        employerInfo.setProvinceCode(form.getProvinceCode());
+        employerInfo.setCityCode(form.getCityCode());
+        employerInfo.setDistrictCode(form.getDistrictCode());
+        employerInfo.setJobTitle(form.getJobTitle());
+
         form.setCode(CodeUtil.generateNewCode2yyMMddHH());
         form.setEmployerId(Context.getCurrEmployerId());
         ApiResponse<Boolean> booleanApiResponse = super.create(form);
-        boolean updateCompanyName = iEmployerInfoService.updateCompanyName(form.getEmployerId(),form.getCompanyName());
+        boolean updateCompanyName = iEmployerInfoService.updateCompanyName(form.getEmployerId(), employerInfo);
         if (ApiStatus.SUCCESS.getCode() == booleanApiResponse.getCode() && updateCompanyName) {
             return ApiResponse.ofSuccess(form.getCode());
         }

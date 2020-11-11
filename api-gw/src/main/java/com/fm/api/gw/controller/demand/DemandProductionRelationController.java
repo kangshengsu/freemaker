@@ -1,13 +1,11 @@
 package com.fm.api.gw.controller.demand;
 
 import com.fm.api.gw.vo.DirectRecommendVO;
-import com.fm.api.gw.vo.RecommendVO;
 import com.fm.api.gw.vo.demand.DemandProductionRelationVO;
 import com.fm.business.base.enums.RecommendType;
 import com.fm.business.base.model.demand.DemandProductionRelation;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.production.ProductionInfo;
-import com.fm.business.base.model.sys.SysUser;
 import com.fm.business.base.service.demand.IDemandProductionRelationService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
@@ -22,9 +20,11 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,9 +52,6 @@ public class DemandProductionRelationController extends BaseController<DemandPro
      * @return
      */
     @ApiOperation(value = "需求中心自己推荐作品")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "demandId", value = "需求Id", dataType = "Long", paramType = "query"),
-            @ApiImplicitParam(name = "productionIds", value = "作品Id", dataType = "List<Long>", paramType = "query")})
     @RequestMapping(value = "recommend", method = RequestMethod.POST)
     public ApiResponse<Boolean> recommend(@RequestBody DirectRecommendVO recommendVO) {
         demandProductionRelationService.recommend(recommendVO.getDemandId(), recommendVO.getProductionIds(), RecommendType.MY_RECOMMEND.getCode());

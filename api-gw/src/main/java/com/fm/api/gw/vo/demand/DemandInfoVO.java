@@ -116,6 +116,11 @@ public class DemandInfoVO extends VO implements Serializable {
 	private String companyName;
 
 	/**
+	 * 职务
+	 */
+	private String jobTitle;
+
+	/**
 	 * 预算计算方式
 	 *
 	 * @see com.fm.business.base.enums.BudgetType

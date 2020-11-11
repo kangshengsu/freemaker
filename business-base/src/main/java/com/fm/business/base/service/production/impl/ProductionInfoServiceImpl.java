@@ -9,17 +9,14 @@ package com.fm.business.base.service.production.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.production.IProductionInfoMapper;
 import com.fm.business.base.enums.AttachmentBusinessType;
 import com.fm.business.base.enums.AttachmentType;
 import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.AttachmentInfo;
-import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.production.ProductionInfo;
@@ -31,8 +28,6 @@ import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.business.base.service.production.IProductionSkillRelationService;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.query.PageInfo;
-import com.fm.framework.core.query.QueryItem;
-import com.fm.framework.core.query.QueryType;
 import com.fm.framework.core.service.AuditBaseService;
 import com.fm.framework.core.utils.CodeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -499,6 +494,14 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         Wrapper wrapper = Wrappers.lambdaQuery(ProductionInfo.class)
                 .eq(ProductionInfo::getFreelancerId, freelancerId);
         return getBaseMapper().selectList(wrapper);
+    }
+
+    @Override
+    public List<ProductionInfo> distinctProductions(List<Long> productionIds) {
+        QueryWrapper<ProductionInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("distinct freelancer_Id")
+                .in("id", productionIds);
+        return getBaseMapper().selectList(queryWrapper);
     }
 
 }
