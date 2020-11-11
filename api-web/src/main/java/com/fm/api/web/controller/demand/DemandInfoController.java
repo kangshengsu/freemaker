@@ -7,10 +7,8 @@
 package com.fm.api.web.controller.demand;
 
 import com.fm.api.web.vo.demand.DemandInfoVO;
-import com.fm.business.base.enums.DemandStatus;
-import com.fm.business.base.model.EmployerInfo;
+import com.fm.business.base.enums.DemandAttestationType;
 import com.fm.business.base.model.demand.DemandInfo;
-import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
@@ -21,7 +19,6 @@ import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.YamlProcessor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -83,9 +80,9 @@ public class DemandInfoController extends BaseController<DemandInfo, DemandInfoV
     @RequestMapping(value="setDemandAttestation", method = RequestMethod.POST)
     public ApiResponse<Boolean> setDemandAttestation(@RequestBody DemandInfoVO form) {
         if(form.getAttestation() == 0){
-            form.setAttestation(1L);
+            form.setAttestation(DemandAttestationType.YES_ATTESTATION.getCode());
         }else {
-            form.setAttestation(0L);
+            form.setAttestation(DemandAttestationType.NO_ATTESTATION.getCode());
         }
         return super.update(form);
     }
