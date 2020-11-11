@@ -498,6 +498,9 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
     @Override
     public List<ProductionInfo> distinctProductions(List<Long> productionIds) {
+        if(CollectionUtils.isEmpty(productionIds)){
+            return new ArrayList<>();
+        }
         QueryWrapper<ProductionInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("distinct freelancer_Id")
                 .in("id", productionIds);
