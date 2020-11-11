@@ -213,7 +213,8 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         }
         DemandInfo demandInfo = this.convert(demandInfoVO);
         demandInfoService.updateByCode(demandInfo);
-        iEmployerInfoService.updateCompanyName(demandInfoVO.getEmployerId(), employerInfo);
+        DemandInfo d = demandInfoService.getByCode(demandInfoVO.getCode());
+        iEmployerInfoService.updateCompanyName(d.getEmployerId(), employerInfo);
         return success(Boolean.TRUE);
     }
 
