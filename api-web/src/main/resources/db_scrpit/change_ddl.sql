@@ -1,1 +1,0 @@
-ALTER TABLE demand_info ADD COLUMN `job_title` varchar(50) CHARACTER SET utf8 COMMENT '职务名称' AFTER `description`;

@@ -35,7 +35,7 @@ CREATE TABLE `attachment_info` (
   `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
   `ts` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '数据库时间戳',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32108 DEFAULT CHARSET=utf8 COMMENT='附件表';
+) ENGINE=InnoDB AUTO_INCREMENT=48011 DEFAULT CHARSET=utf8 COMMENT='附件表';
 
 /*Table structure for table `bd_job_cate` */
 
@@ -122,6 +122,7 @@ CREATE TABLE `demand_info` (
   `county_code` varchar(32) DEFAULT NULL,
   `summarize` varchar(128) NOT NULL DEFAULT '' COMMENT '需求概括',
   `description` varchar(1024) NOT NULL DEFAULT '' COMMENT '需求详细描述',
+  `job_title` varchar(50) DEFAULT NULL COMMENT '职务名称',
   `company_name` varchar(500) DEFAULT '' COMMENT '企业名称',
   `budget_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '预算计算方式:0:时薪,1:一口价,2:面谈',
   `delivery_type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '交付方式:0:远程,1:现场',
@@ -137,7 +138,7 @@ CREATE TABLE `demand_info` (
   KEY `idx_demand_employer_id` (`employer_id`),
   KEY `idx_demand_status` (`status`),
   KEY `idx_demand_job_cate_id` (`job_cate_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12002 DEFAULT CHARSET=utf8 COMMENT='需求表';
+) ENGINE=InnoDB AUTO_INCREMENT=14001 DEFAULT CHARSET=utf8 COMMENT='需求表';
 
 /*Table structure for table `demand_production_relation` */
 
@@ -158,7 +159,7 @@ CREATE TABLE `demand_production_relation` (
   PRIMARY KEY (`id`),
   KEY `idx_demand_production_demand_id` (`demand_id`),
   KEY `idx_demand_production_production_id` (`production_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12002 DEFAULT CHARSET=utf8 COMMENT='订单流水';
+) ENGINE=InnoDB AUTO_INCREMENT=16014 DEFAULT CHARSET=utf8 COMMENT='订单流水';
 
 /*Table structure for table `display_config` */
 
@@ -410,7 +411,7 @@ CREATE TABLE `production_info` (
   UNIQUE KEY `IDX_UN_CODE` (`code`) COMMENT 'code唯一索引',
   KEY `IDX_CREATE_TIME` (`create_time`),
   KEY `IDX_JOB_CATE_ID` (`job_cate_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28069 DEFAULT CHARSET=utf8 COMMENT='作品表';
+) ENGINE=InnoDB AUTO_INCREMENT=36002 DEFAULT CHARSET=utf8 COMMENT='作品表';
 
 /*Table structure for table `production_review_info` */
 
@@ -430,7 +431,7 @@ CREATE TABLE `production_review_info` (
   `ts` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '数据库时间戳',
   PRIMARY KEY (`id`),
   KEY `IDX_PRO_ID` (`production_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18084 DEFAULT CHARSET=utf8 COMMENT='作品审核表';
+) ENGINE=InnoDB AUTO_INCREMENT=26011 DEFAULT CHARSET=utf8 COMMENT='作品审核表';
 
 /*Table structure for table `production_skill_relation` */
 
@@ -449,7 +450,7 @@ CREATE TABLE `production_skill_relation` (
   `ts` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '数据库时间戳',
   PRIMARY KEY (`id`),
   KEY `IDX_PRO_ID` (`production_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28051 DEFAULT CHARSET=utf8 COMMENT='作品与技能关联表';
+) ENGINE=InnoDB AUTO_INCREMENT=38016 DEFAULT CHARSET=utf8 COMMENT='作品与技能关联表';
 
 /*Table structure for table `sys_base_dict` */
 
