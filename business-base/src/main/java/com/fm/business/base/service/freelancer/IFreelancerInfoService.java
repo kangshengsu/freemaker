@@ -39,4 +39,6 @@ public interface IFreelancerInfoService extends Service<FreelancerInfo> {
     Long getPublishProduction(Long currUserId);
 
     Long getProductionPass(Long currUserId);
+
+    List<FreelancerInfo> findLikeNameOrUserId(String keyword);
 }

@@ -63,7 +63,7 @@ public class WxMessageSenderService implements MessageSenderService {
         }
     }
 
-    public String getAccessToken() {
+    private String getAccessToken() {
         RBucket<String> rBucket = redissonClient.getBucket("appAccessToken");
         //缓存用户token信息，供拦截器使用
         if (rBucket.isExists()) {

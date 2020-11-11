@@ -23,7 +23,9 @@ import com.fm.framework.core.service.AuditBaseService;
 import com.fm.framework.core.service.FileService;
 import com.qcloud.cos.COSClient;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -33,12 +35,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -66,6 +69,21 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
     @Autowired
     private IProductionInfoService productionInfoService;
 
+    @Autowired
+    private RestTemplate rest;
+
+
+
+    @Value("${wx.miniapp.appid}")
+    private String appid;
+
+    @Value("${wx.miniapp.secret}")
+    private String secret;
+
+    @Value("${wx.miniapp.accessUrl}")
+    private String accessUrl;
+
+
     /**
      * 通过名字或电话查找数据 最多返回10条
      * @param str
@@ -78,12 +96,34 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
             return Collections.emptyList();
         }
 
-        return getBaseMapper().selectList(Wrappers.lambdaQuery(FreelancerInfo.class)
+        List<FreelancerInfo> freelancerInfos = getBaseMapper().selectList(Wrappers.lambdaQuery(FreelancerInfo.class)
                 .like(FreelancerInfo::getName, str)
                 .or()
                 .like(FreelancerInfo::getPhone, str)
+                .or()
                 .orderByAsc(FreelancerInfo::getName, FreelancerInfo::getPhone)
                 .last("limit 10"));
+        return freelancerInfos;
+    }
+
+    /**
+     * 通过名字或UserId查找数据 最多返回10条
+     * @param
+     * @return
+     */
+    @Override
+    public List<FreelancerInfo> findLikeNameOrUserId(String keyword) {
+        if (StringUtils.isEmpty(keyword)){
+            return Collections.emptyList();
+        }
+
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(FreelancerInfo.class)
+                .like(FreelancerInfo::getName,keyword)
+                .or()
+                .eq(FreelancerInfo::getUserId,keyword)
+                .or()
+                .like(FreelancerInfo::getPhone,keyword)
+                .orderByAsc(FreelancerInfo::getName,FreelancerInfo::getUserId,FreelancerInfo::getPhone));
     }
 
     @Override
@@ -110,22 +150,25 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
             if(!StringUtils.isEmpty(freelancerInfo1.getReferralCode())){
                 return freelancerInfo1.getReferralCode();
             }
-            RestTemplate rest = new RestTemplate();
-            String accessToken = wxMessageSenderService.getAccessToken();
+
+            String accessToken = getAccessToken();
             String url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=" + accessToken;
             Map<String, Object> param = new HashMap<>();
             param.put("scene", currUserId);
             LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(param, headers);
-            ResponseEntity<byte[]> entity = rest.exchange(url, HttpMethod.POST, requestEntity, byte[].class, new Object[0]);
+            ResponseEntity<byte[]> entity = rest.exchange(url, HttpMethod.POST, requestEntity, byte[].class);
             byte[] result = entity.getBody();
             byte[] bytes = new byte[result.length];
             inputStream = new ByteArrayInputStream(result);
             inputStream.read(bytes);
             long time = new Date().getTime();
-            fileService.upload("referralCode/" + currUserId + time + "referralCode.png", bytes);
+            Date date = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String formatDate = sdf.format(date);
+            fileService.upload("referralCode/" + formatDate + "/"+ currUserId + time + "referralCode.png", bytes);
             String bucketName = cosProperties.getBucketName();
-            String key = "referralCode/" + currUserId + time + "referralCode.png";
+            String key = "referralCode/" + formatDate + "/"+ currUserId + time + "referralCode.png";
             Date expiration = new Date(new Date().getTime() + 5 * 60 * 10000);
             URL oldUrl = cosClient.generatePresignedUrl(bucketName, key, expiration);
             String newUrl = oldUrl.toString();
@@ -184,5 +227,13 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
             }
         });
         return (long) map.size();
+    }
+
+    private String getAccessToken(){
+        String url = String.format(accessUrl, appid, secret);
+        String json = rest.getForObject(url, String.class);
+        JSONObject jsonObject = new JSONObject(json);
+        String access_token = jsonObject.get("access_token").toString();
+        return access_token;
     }
 }
