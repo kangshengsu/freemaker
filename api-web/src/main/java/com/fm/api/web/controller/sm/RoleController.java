@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * 角色.
  */
 @RestController
-@RequestMapping("api/role")
+@RequestMapping("/role")
 @Slf4j
 @RequiredArgsConstructor
 public class RoleController extends BaseController<Role, RoleVO> {

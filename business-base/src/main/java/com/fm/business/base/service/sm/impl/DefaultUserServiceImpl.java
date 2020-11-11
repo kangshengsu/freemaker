@@ -14,11 +14,9 @@ import com.fm.framework.core.utils.NamePair;
 import com.fm.framework.core.utils.SubModelCompareResult;
 import com.fm.framework.core.utils.UpdateUtils;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -105,8 +103,6 @@ public class DefaultUserServiceImpl extends AuditStatusBaseService<IUserMapper, 
         if(!CollectionUtils.isEmpty(queryItemList)) {
             Iterator<QueryItem> it = queryItemList.iterator();
 
-            NamePair accountQuery = new NamePair();
-
             List<QueryItem> addQueryItemList = new ArrayList<>();
 
             while (it.hasNext()) {
@@ -118,35 +114,17 @@ public class DefaultUserServiceImpl extends AuditStatusBaseService<IUserMapper, 
 
                     List<RoleUser> roleUsers = roleUserService.getRoleUsersRoleId(roleId);
 
+                    QueryItem roleUserItem = new QueryItem();
                     if(!roleUsers.isEmpty()) {
-                        QueryItem roleUserItem = new QueryItem();
                         roleUserItem.setQueryField(DBFieldConst.ID).setType(QueryType.in)
                                 .setValue(roleUsers.stream().map(RoleUser::getUserId).collect(Collectors.toList()));
 
-                        addQueryItemList.add(roleUserItem);
+                    }else {
+                        roleUserItem.setQueryField(DBFieldConst.ID).setType(QueryType.eq)
+                                .setValue(-1);
                     }
-                    continue;
+                    addQueryItemList.add(roleUserItem);
                 }
-
-                if("account_type".equals(item.getQueryField())) {
-                    accountQuery.setName(item.getValue());
-                    it.remove();
-                }
-
-                if("account_value".equals(item.getQueryField())) {
-                    accountQuery.setValue(item.getValue());
-                    it.remove();
-                }
-            }
-
-            if(accountQuery.validate()) {
-
-                Account account = accountService.get(String.valueOf(accountQuery.getValue()));
-                QueryItem accountQueryItem = new QueryItem();
-                accountQueryItem.setQueryField(DBFieldConst.ID).setType(QueryType.eq)
-                        .setValue(Objects.nonNull(account) ? account.getUserId() : -1);
-                addQueryItemList.add(accountQueryItem);
-
             }
 
             if(!addQueryItemList.isEmpty()) {
@@ -154,7 +132,6 @@ public class DefaultUserServiceImpl extends AuditStatusBaseService<IUserMapper, 
             }
 
         }
-
 
         Page<User> userPage = list(orgId, queryItemList, currPage, pageSize);
 
@@ -177,7 +154,7 @@ public class DefaultUserServiceImpl extends AuditStatusBaseService<IUserMapper, 
      * 补充用户其他信息
      * @param userList 用户列表
      */
-    private void fillUserOtherInfo(List<User> userList) {
+    public void fillUserOtherInfo(List<User> userList) {
 
         if(userList.isEmpty()) {
             return;
@@ -188,7 +165,7 @@ public class DefaultUserServiceImpl extends AuditStatusBaseService<IUserMapper, 
 
         Map<Long, List<Role>> roleNameMap = roleService.getUserRoleMap(userIds);
         Map<Long, Org >  orgNameMap = orgService.getByIds(orgIds).stream().collect(Collectors.toMap(Org::getId, Function.identity(), (key1, key2) -> key2));
-        Map<Long, List<Account>> accountMap = accountService.getAccountMap(userIds);
+        Map<Long, Account> accountMap = accountService.getAccountMap(userIds);
 
         userList.forEach(user -> {
 
@@ -200,7 +177,10 @@ public class DefaultUserServiceImpl extends AuditStatusBaseService<IUserMapper, 
                 user.setRoles(roles);
             }
             user.setOrg(orgNameMap.get(user.getOrgId()));
-            user.setAccounts(accountMap.containsKey(user.getId()) ? accountMap.get(user.getId()) : new ArrayList<>());
+
+            if(accountMap.containsKey(user.getId())) {
+                user.setAccount(accountMap.get(user.getId()));
+            }
         });
     }
 
@@ -267,7 +247,7 @@ public class DefaultUserServiceImpl extends AuditStatusBaseService<IUserMapper, 
                 addRoles(model);
             }
 
-            if(!CollectionUtils.isEmpty(model.getAccounts())) {
+            if(Objects.nonNull(model.getAccount())) {
                 addAccount(model);
             }
         }
@@ -295,8 +275,8 @@ public class DefaultUserServiceImpl extends AuditStatusBaseService<IUserMapper, 
             //批量保存账号
             List<Account> accounts = new ArrayList<>();
             entityList.forEach(a->{
-                if(!CollectionUtils.isEmpty(a.getAccounts())){
-                    accounts.addAll(getAccounts(a));
+                if(Objects.nonNull(a.getAccount())){
+                    accounts.add(getAccount(a));
                 }});
             accountService.save(accounts);
         }
@@ -327,26 +307,39 @@ public class DefaultUserServiceImpl extends AuditStatusBaseService<IUserMapper, 
     }
 
     private void updateAccount(User model) {
-        List<Account> oldAccounts = accountService.getAccount(model.getId());
 
-        List<Account> newAccounts = getAccounts(model);
+        Account newAccount = getAccount(model);
 
-        SubModelCompareResult<Account> accountCompareResult = UpdateUtils
-                .compare(newAccounts, oldAccounts,
-                        account ->  String.valueOf(account.getUserId()),
-                        (old, newT) -> Objects.equals(old.getUsername(), newT.getUsername()));
+        Account oldAccount = accountService.getAccount(model.getId());
 
-        if(!CollectionUtils.isEmpty(accountCompareResult.getNewList())) {
-            accountService.save(accountCompareResult.getNewList());
+        if(Objects.isNull(oldAccount)) {
+            if(Objects.nonNull(newAccount)) {
+                accountService.save(newAccount);
+            }
+        } else {
+            if(Objects.isNull(newAccount)) {
+                accountService.deleteAccount(model.getId());
+            } else {
+                accountService.update(newAccount);
+            }
         }
 
-        if(!CollectionUtils.isEmpty(accountCompareResult.getDelList())) {
-            accountService.delete(accountCompareResult.getDelList());
-        }
-
-        if(!CollectionUtils.isEmpty(accountCompareResult.getUpdateList())) {
-            accountService.update(accountCompareResult.getUpdateList());
-        }
+//        SubModelCompareResult<Account> accountCompareResult = UpdateUtils
+//                .compare(newAccounts, oldAccounts,
+//                        account ->  String.valueOf(account.getUserId()),
+//                        (old, newT) -> Objects.equals(old.getUsername(), newT.getUsername()));
+//
+//        if(!CollectionUtils.isEmpty(accountCompareResult.getNewList())) {
+//            accountService.save(accountCompareResult.getNewList());
+//        }
+//
+//        if(!CollectionUtils.isEmpty(accountCompareResult.getDelList())) {
+//            accountService.delete(accountCompareResult.getDelList());
+//        }
+//
+//        if(!CollectionUtils.isEmpty(accountCompareResult.getUpdateList())) {
+//            accountService.update(accountCompareResult.getUpdateList());
+//        }
 
     }
 
@@ -391,18 +384,20 @@ public class DefaultUserServiceImpl extends AuditStatusBaseService<IUserMapper, 
     }
 
     private void addAccount(User model) {
-        List<Account> accounts = getAccounts(model);
+        Account account = getAccount(model);
+        if(Objects.nonNull(account)) {
+            accountService.save(account);
+        }
 
-        accountService.save(accounts);
     }
 
-    private List<Account> getAccounts(User model) {
-        List<Account> accounts = model.getAccounts();
-
-        accounts.forEach(account -> {
-            account.setUserId(model.getId());
-        });
-        return accounts.stream().filter(account -> !StringUtils.isEmpty(account.getUsername())).collect(Collectors.toList());
+    private Account getAccount(User model) {
+        Account account = model.getAccount();
+        if(Objects.isNull(account)) {
+            return null;
+        }
+        account.setUserId(model.getId());
+        return account;
     }
 
     @Override

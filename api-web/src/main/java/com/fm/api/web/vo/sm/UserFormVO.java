@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,6 +18,7 @@ public class UserFormVO extends VO {
      * 员工编号
      */
     private String code;
+
     private String oldCode;
 
     /**
@@ -67,7 +67,7 @@ public class UserFormVO extends VO {
      */
     private LocalDateTime ts;
 
-    List<AccountVO> accounts;
+    AccountVO account;
 
 
 }

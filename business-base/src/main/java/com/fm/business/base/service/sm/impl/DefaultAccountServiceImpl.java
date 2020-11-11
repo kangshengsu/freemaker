@@ -1,6 +1,7 @@
 package com.fm.business.base.service.sm.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.sm.IAccountMapper;
 import com.fm.business.base.model.sm.Account;
 import com.fm.business.base.model.sm.User;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -108,22 +110,22 @@ public class DefaultAccountServiceImpl extends AuditStatusBaseService<IAccountMa
     }
 
     @Override
-    public List<Account> getAccount(Long userId) {
+    public Account getAccount(Long userId) {
 
         if (Objects.isNull(userId)) {
-            return new ArrayList<>();
+            return null;
         }
 
-        return getAccount(Collections.singletonList(userId));
+        return getOne(Wrappers.lambdaQuery(Account.class).eq(Account::getUserId, userId));
     }
 
     @Override
     public boolean deleteAccount(Long userId) {
 
-        List<Account> accounts = getAccount(userId);
+        Account account = getAccount(userId);
 
-        if (!accounts.isEmpty()) {
-            return this.delete(accounts);
+        if (Objects.nonNull(account)) {
+            return this.delete(account);
         }
 
         return false;
@@ -149,16 +151,9 @@ public class DefaultAccountServiceImpl extends AuditStatusBaseService<IAccountMa
     }
 
     @Override
-    public Map<Long, List<Account>> getAccountMap(List<Long> userIds) {
+    public Map<Long, Account> getAccountMap(List<Long> userIds) {
 
-        return getAccount(userIds).stream().collect(Collectors.toMap(Account::getUserId, account -> {
-            List<Account> list = new ArrayList<>();
-            list.add(account);
-            return list;
-        }, (v1, v2) -> {
-            v1.addAll(v2);
-            return v1;
-        }));
+        return getAccount(userIds).stream().collect(Collectors.toMap(Account::getUserId, Function.identity(), (v1, v2) -> v2));
     }
 
     @Override

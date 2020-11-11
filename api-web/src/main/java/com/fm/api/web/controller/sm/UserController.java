@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  * 用户.
  */
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 @Slf4j
 @RequiredArgsConstructor
 public class UserController extends BaseController<User, UserFormVO> {
@@ -157,16 +157,7 @@ public class UserController extends BaseController<User, UserFormVO> {
 
         Page<User> page = userService.listEnableStatus(items, request.getPagination().getCurrentPage(), request.getPagination().getPageSize());
 
-        List<Long> orgIds = page.getData().stream().map(User::getOrgId).collect(Collectors.toList());
-        List<Long> userIds = page.getData().stream().map(User::getId).collect(Collectors.toList());
-
-        Map<Long, Org> orgNameMap = orgService.getByIds(orgIds).stream().collect(Collectors.toMap(Org::getId, Function.identity(), (key1, key2) -> key2));
-        Map<Long, List<Account>> accountMap = accountService.getAccountMap(userIds);
-
-        page.getData().forEach(user -> {
-            user.setOrg(orgNameMap.get(user.getOrgId()));
-            user.setAccounts(accountMap.containsKey(user.getId()) ? accountMap.get(user.getId()) : new ArrayList<>());
-        });
+        userService.fillUserOtherInfo(page.getData());
 
         PageInfo<UserTableVO> resultPage = new PageInfo<>();
         resultPage.setCurrentPage(page.getCurrentPage());

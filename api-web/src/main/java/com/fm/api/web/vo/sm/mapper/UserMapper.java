@@ -65,41 +65,4 @@ public interface UserMapper {
             return role;
         }).collect(Collectors.toList());
     }
-
-    /**
-     * Account集合转换成AccountVO对象
-     * @param accounts accountList
-     * @return AccountVO
-     */
-    default List<AccountVO> toAccountVO(List<Account> accounts) {
-        List<AccountVO> results = new ArrayList<>();
-        //AccountVO accountVO = new AccountVO();
-        if(accounts != null && !accounts.isEmpty()) {
-            accounts.forEach(account -> {
-                AccountVO item = new AccountVO();
-                item.setAcctName(account.getUsername());
-                results.add(item);
-            });
-        }
-        return results;
-    }
-
-    /**
-     * AccountVO对象转换成List<Account>集合
-     * @param accountVOs AccountVO对象
-     * @return List<Account>集合
-     */
-    default List<Account> toAccountList(List<AccountVO> accountVOs) {
-        if(accountVOs != null && accountVOs.size() > 0){
-            List<Account> accounts = new ArrayList<>();
-            accountVOs.forEach(accountVO -> {
-                Account item = new Account();
-                item.setUsername(accountVO.getAcctName());
-                accounts.add(item);
-            });
-            return accounts;
-        }else{
-            return Collections.emptyList();
-        }
-    }
 }
