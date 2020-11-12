@@ -4,6 +4,7 @@ import com.fm.api.web.util.RestRequest;
 import com.fm.api.web.vo.sm.MenuVO;
 import com.fm.api.web.vo.sm.TreeNodeVO;
 import com.fm.api.web.vo.sm.mapper.MenuMapper;
+import com.fm.business.base.enums.MenuStatus;
 import com.fm.business.base.model.sm.Menu;
 import com.fm.business.base.model.sm.MenuType;
 import com.fm.business.base.model.sm.Role;
@@ -162,20 +163,19 @@ public class MenuController extends BaseController<Menu, MenuVO> {
 
     @PostMapping("/deleteById")
     public ApiResponse<Boolean> deleteById(@RequestBody RestRequest<MenuVO> restRequest) {
-        //菜单删除规则
-        //1、没有子菜单
-//        List<QueryItem> menuItems = new ArrayList<>();
-//        QueryItem parentIdMenuItem = new QueryItem();
-//        parentIdMenuItem.setType(QueryType.eq);
-//        parentIdMenuItem.setValue(menuVO.getId());
-//        parentIdMenuItem.setQueryField("parent_id");
-//        menuItems.add(parentIdMenuItem);
-//
-//        int menuCount = this.menuService.countEnableStatus(menuItems);
-//        if (menuCount > 0){
-//            return R.createFailR().message("待删除的菜单不能存在子菜单！");
-//        }
         MenuVO menuVO = restRequest.getData();
+        //1、没有子菜单
+        List<QueryItem> menuItems = new ArrayList<>();
+        QueryItem parentIdMenuItem = new QueryItem();
+        parentIdMenuItem.setType(QueryType.eq);
+        parentIdMenuItem.setValue(menuVO.getId());
+        parentIdMenuItem.setQueryField("parent_id");
+        menuItems.add(parentIdMenuItem);
+
+        int menuCount = this.menuService.countEnableStatus(menuItems);
+        if (menuCount > 0){
+            return this.failed("待删除的菜单不能存在子菜单！");
+        }
         //2、没有关联角色
         List<QueryItem> roleItems = new ArrayList<>();
         QueryItem menuIdItem = new QueryItem();
@@ -305,9 +305,10 @@ public class MenuController extends BaseController<Menu, MenuVO> {
         if (restRequest.getData().getId() == null) {
             return this.failed("参数错误 请重试!");
         }
-        Menu menu = new Menu();
-        menu.setId(restRequest.getData().getId());
-
+        Menu menu = menuService.get(restRequest.getData().getId());
+        if (menu == null) {
+            return this.failed("菜单不存在");
+        }
         if (dataStatus == (DataStatus.enable)) {
             menu.setStatus(DataStatus.enable.code());
         } else {
