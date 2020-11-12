@@ -5,6 +5,7 @@ import com.fm.framework.core.model.AuditStatusBaseModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("sm_user")
-public class User extends AuditStatusBaseModel {
+public class User extends AuditStatusBaseModel implements Serializable {
 
     /**
      * ID

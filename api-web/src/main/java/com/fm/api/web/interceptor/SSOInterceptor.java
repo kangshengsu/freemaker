@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fm.business.base.constant.CacheKeyConstants;
+import com.fm.business.base.model.sm.Account;
+import com.fm.business.base.model.sm.User;
 import com.fm.business.base.model.sys.SysUser;
 import com.fm.framework.core.Context;
 import com.fm.framework.web.utils.ResponseUtil;
@@ -50,7 +52,7 @@ public class SSOInterceptor implements  HandlerInterceptor {
             String cacheKye = String.format(CacheKeyConstants.LOGIN_TOKEN.getKey(),token);
             //获取当前登录token是否有效
             try{
-                RBucket<SysUser> currUser = redissonClient.getBucket(cacheKye);
+                RBucket<User> currUser = redissonClient.getBucket(cacheKye);
                 if(currUser != null && currUser.get() != null){
                     //存入上下文
                     Context.setCurrUser(currUser.get().getId());
