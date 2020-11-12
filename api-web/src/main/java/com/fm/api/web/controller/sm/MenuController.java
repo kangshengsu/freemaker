@@ -566,7 +566,6 @@ public class MenuController extends BaseController<Menu, MenuVO> {
         List<MenuVO> vos = menus.stream().map(o -> {
             MenuVO vo = menuMapper.convert(o);
             vo.setParentName(menuMap.get(vo.getParentId()));
-            vo.setHref(null);
             return vo;
         }).collect(Collectors.toList());
 

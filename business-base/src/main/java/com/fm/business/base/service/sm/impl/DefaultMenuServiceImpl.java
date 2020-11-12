@@ -170,8 +170,6 @@ public class DefaultMenuServiceImpl extends TreeAuditStatusBaseService<IMenuMapp
         if(node.isLeaf()) {
             if(node.getValue().getType()== MenuType.button.value()) {
                 node.getValue().setComponent("button");
-            } else {
-                node.getValue().setComponent("frame");
             }
         } else {
             boolean hasNotButtonChild = false;
@@ -180,12 +178,12 @@ public class DefaultMenuServiceImpl extends TreeAuditStatusBaseService<IMenuMapp
                     hasNotButtonChild = true;
                 }
                 updateComponent(childNode);
-            }
+            }/*
             if(hasNotButtonChild) {
                 node.getValue().setComponent("nested");
             } else {
                 node.getValue().setComponent("frame");
-            }
+            }*/
         }
     }
 
