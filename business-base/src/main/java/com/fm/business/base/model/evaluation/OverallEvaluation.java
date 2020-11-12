@@ -19,13 +19,21 @@ public class OverallEvaluation implements Serializable {
      */
     public Double totalScore;
     /**
-     * 结果打分
+     * 响应速度打分
      */
-    public Double resultScore;
+    public Double responseSpeed;
     /**
-     * 过程打分
+     * 沟通能力打分
      */
-    public Double processScore;
+    public Double communicateCapacity;
+    /**
+     * 完成时间
+     */
+    public Double completionTime;
+    /**
+     * 完成质量
+     */
+    public Double accomplishQuality;
     /**
      * 推荐意向
      */
@@ -36,13 +44,21 @@ public class OverallEvaluation implements Serializable {
      */
     public Double totalScoreSum;
     /**
-     * 结果打分 总分
+     * 响应速度打分 总分
      */
-    public Double resultScoreSum;
+    public Double responseSpeedSum;
     /**
-     * 过程打分 总分
+     * 沟通能力打分 总分
      */
-    public Double processScoreSum;
+    public Double communicateCapacitySum;
+    /**
+     * 完成时间
+     */
+    public Double completionTimeSum;
+    /**
+     * 完成质量
+     */
+    public Double accomplishQualitySum;
     /**
      * 推荐意向 总分
      */

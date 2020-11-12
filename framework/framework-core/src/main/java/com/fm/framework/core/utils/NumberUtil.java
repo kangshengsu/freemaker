@@ -22,15 +22,15 @@ public class NumberUtil {
         // 保留位小数
         nf.setMaximumFractionDigits(limit);
         //四舍五入
-        nf.setRoundingMode(RoundingMode.HALF_UP);
+        //nf.setRoundingMode(RoundingMode.HALF_UP);
 
         return Double.valueOf(nf.format(data));
     }
 
     public static void main(String[] args) {
-        System.out.println(formatDouble(Double.valueOf("4.95"),1));
-        System.out.println(formatDouble(Double.valueOf("4.94"),1));
-        System.out.println(formatDouble(Double.valueOf("4.96"),1));
+        System.out.println(formatDouble(Double.valueOf("4.95"),2));
+        System.out.println(formatDouble(Double.valueOf("4.94"),2));
+        System.out.println(formatDouble(Double.valueOf("4.96"),2));
 
 
     }

@@ -10,13 +10,23 @@ public interface EvaluationConstants {
      */
     Double TOTAL_SCORE_MAX = Double.valueOf("5.0");
     /**
-     * 结果打分
+     * 响应速度打分
      */
-    Double RESULT_SCORE_MAX = Double.valueOf("5.0");
+    Double RESPONSE_SPEED_MAX = Double.valueOf("5.0");
     /**
-     * 过程打分
+     * 沟通能力打分
      */
-    Double PROCESS_SCORE_MAX= Double.valueOf("5.0");
+    Double COMMUNICATE_CAPACITY_MAX= Double.valueOf("5.0");
+    /**
+     * 完成时间打分
+     */
+    Double COMPLETION_TIME_MAX= Double.valueOf("5.0");
+
+    /**
+     * 完成质量打分
+     */
+    Double ACCOMPLISH_QUALITY_MAX= Double.valueOf("5.0");
+
     /**
      * 推荐意向
      */

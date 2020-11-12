@@ -17,13 +17,21 @@ public class OverallEvaluationVO {
      */
     public Double totalScore;
     /**
-     * 结果打分
+     * 响应速度打分
      */
-    public Double resultScore;
+    public Double responseSpeed;
     /**
-     * 过程打分
+     * 沟通能力打分
      */
-    public Double processScore;
+    public Double communicateCapacity;
+    /**
+     *完成时间打分
+     */
+    public Double completionTime;
+    /**
+     * 完成质量打分
+     */
+    public Double accomplishQuality;
     /**
      * 推荐意向
      */

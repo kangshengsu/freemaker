@@ -52,13 +52,21 @@ public class EvaluationInfo extends BaseModel implements Serializable, IAudit {
      */
     public Double totalScore;
     /**
-     * 结果打分
+     * 响应速度
      */
-    public Double resultScore;
+    public Double responseSpeed;
     /**
-     * 过程打分
+     * 沟通能力
      */
-    public Double processScore;
+    public Double communicateCapacity;
+    /**
+     * 完成时间
+     */
+    public Double completionTime;
+    /**
+     * 完成质量
+     */
+    public Double accomplishQuality;
     /**
      * 推荐意向
      */

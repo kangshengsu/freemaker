@@ -100,35 +100,45 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
 
         // 取出评价总分 以及 评价数量  如果评价数量小于最低要求评价数量 则补充满分样本数据， 无评价数量则返回满分
         Double totalScore ;
-        Double resultScore ;
-        Double processScore ;
+        Double responseSpeed ;
+        Double communicateCapacity ;
+        Double completionTime ;
+        Double accomplishQuality ;
         Double recommendScore ;
 
         if(overallEvaluation == null || overallEvaluation.getEvaluationCount().equals(Integer.valueOf(0))){
             overallEvaluation = new OverallEvaluation();
             //无样本数据 返回满分
             totalScore = EvaluationConstants.TOTAL_SCORE_MAX;
-            resultScore = EvaluationConstants.RESULT_SCORE_MAX;
-            processScore = EvaluationConstants.PROCESS_SCORE_MAX;
+            responseSpeed = EvaluationConstants.RESPONSE_SPEED_MAX;
+            communicateCapacity = EvaluationConstants.COMMUNICATE_CAPACITY_MAX;
+            completionTime = EvaluationConstants.COMPLETION_TIME_MAX;
+            accomplishQuality = EvaluationConstants.ACCOMPLISH_QUALITY_MAX;
             recommendScore = EvaluationConstants.RECOMMEND_SCORE_MAX;
         }else if (EvaluationConstants.EVALUATION_DEFAULT_COUNT.compareTo(overallEvaluation.getEvaluationCount())>0){
             //样本数据不足  补充满分样本数据
             int diff = EvaluationConstants.EVALUATION_DEFAULT_COUNT - overallEvaluation.getEvaluationCount();
             totalScore = (EvaluationConstants.TOTAL_SCORE_MAX * diff+overallEvaluation.getTotalScoreSum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
-            resultScore = (EvaluationConstants.RESULT_SCORE_MAX * diff+overallEvaluation.getResultScoreSum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
-            processScore = (EvaluationConstants.PROCESS_SCORE_MAX * diff+overallEvaluation.getProcessScoreSum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
+            responseSpeed = (EvaluationConstants.RESPONSE_SPEED_MAX * diff+overallEvaluation.getResponseSpeedSum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
+            communicateCapacity = (EvaluationConstants.COMMUNICATE_CAPACITY_MAX * diff+overallEvaluation.getCommunicateCapacitySum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
+            completionTime = (EvaluationConstants.COMPLETION_TIME_MAX * diff+overallEvaluation.getCompletionTimeSum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
+            accomplishQuality = (EvaluationConstants.ACCOMPLISH_QUALITY_MAX * diff+overallEvaluation.getAccomplishQualitySum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
             recommendScore = (EvaluationConstants.RECOMMEND_SCORE_MAX * diff+overallEvaluation.getRecommendScoreSum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
         }else {
             totalScore = overallEvaluation.getTotalScoreSum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
-            resultScore = overallEvaluation.getResultScoreSum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
-            processScore = overallEvaluation.getProcessScoreSum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
+            responseSpeed = overallEvaluation.getResponseSpeedSum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
+            communicateCapacity = overallEvaluation.getCommunicateCapacitySum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
+            completionTime = overallEvaluation.getCompletionTimeSum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
+            accomplishQuality = overallEvaluation.getAccomplishQualitySum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
             recommendScore = overallEvaluation.getRecommendScoreSum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
         }
 
-        overallEvaluation.setProcessScore(NumberUtil.formatDouble(processScore,1));
-        overallEvaluation.setRecommendScore(NumberUtil.formatDouble(recommendScore,1));
-        overallEvaluation.setTotalScore(NumberUtil.formatDouble(totalScore,1));
-        overallEvaluation.setResultScore(NumberUtil.formatDouble(resultScore,1));
+        overallEvaluation.setCommunicateCapacity(NumberUtil.formatDouble(communicateCapacity,2));
+        overallEvaluation.setRecommendScore(NumberUtil.formatDouble(recommendScore,2));
+        overallEvaluation.setTotalScore(NumberUtil.formatDouble(totalScore,2));
+        overallEvaluation.setResponseSpeed(NumberUtil.formatDouble(responseSpeed,2));
+        overallEvaluation.setCompletionTime(NumberUtil.formatDouble(completionTime,2));
+        overallEvaluation.setAccomplishQuality(NumberUtil.formatDouble(accomplishQuality,2));
 
         return overallEvaluation;
     }
