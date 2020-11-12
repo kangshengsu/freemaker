@@ -6,19 +6,35 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum TreeCodeType {
-    LCJD(36001,"LCJD"),
 
-    BBTE(36003,"BBTE"),
+    /**
+     * 专家类
+     */
+    CRIM(6000,"CRIM"),
 
-    RHXC(38002,"RHXC"),
+    /**
+     * 设计类
+     */
+    NCDI(6001,"NCDI"),
 
-    PJJI(38008,"PJJI"),
+    /**
+     * 运营类
+     */
+    ROBD(6002,"ROBD"),
 
-    NXTG(38011,"NXTG"),
+    /**
+     * 视频类
+     */
+    FWKJ(8000,"FWKJ"),
 
-    ULFU(38013,"ULFU");
+    /**
+     * 研发类
+     */
+    YNEH(8001,"YNEH");
+
 
     private Integer jobCateId;
+
     private String cateTreeNode;
 
     public static TreeCodeType get(Integer jobCateId) {

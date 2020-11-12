@@ -12,7 +12,6 @@ import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandCenterInfoService;
 import com.fm.business.base.service.order.IOrderInfoService;
-import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.query.PageInfo;
@@ -70,7 +69,7 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
                                                                @RequestParam(value = "attestation", required = false) Integer attestation,
                                                                @RequestParam(value = "jobCateId", required = false) Integer jobCateId) {
         Page<DemandInfoVO> result = new PageInfo<>();
-        Page<DemandInfo> demandInfoPage = demandCenterInfoService.getDemandCenterPage(currentPage, pageSize, attestation , jobCateId);
+        Page<DemandInfo> demandInfoPage = demandCenterInfoService.getDemandCenterPage(currentPage, pageSize, attestation, jobCateId);
         if (demandInfoPage.getData().size() == 0) {
             return ApiResponse.ofSuccess(result);
         }
