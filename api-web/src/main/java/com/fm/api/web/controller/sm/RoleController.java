@@ -194,7 +194,7 @@ public class RoleController extends BaseController<Role, RoleVO> {
         }
         Role role = doConvertModel(roleVO);
 
-        return success(service().save(role));
+        return success(service().update(role));
     }
 
     @PostMapping("/checkIfExists")
