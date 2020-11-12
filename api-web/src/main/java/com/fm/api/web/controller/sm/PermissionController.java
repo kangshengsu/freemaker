@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * @author hubo
  */
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 public class PermissionController{
 
     @Autowired
@@ -49,13 +49,13 @@ public class PermissionController{
         //获取登录用户的角色信息
         List<Role> roles = roleService.getUserRoles(currUserId);
         if (roles.isEmpty()) {
-            return ApiResponse.ofSuccess(Collections.EMPTY_LIST);
+            return ApiResponse.ofSuccess(Collections.emptyList());
         }
 
         //获取角色的菜单信息
         List<Menu> menus = permissionService.getPermissionsByRoles(roles);
         if (CollectionUtils.isEmpty(menus)) {
-            return ApiResponse.ofSuccess(Collections.EMPTY_LIST);
+            return ApiResponse.ofSuccess(Collections.emptyList());
         }
         menuService.completionParentNode(menus);
 
@@ -110,6 +110,8 @@ public class PermissionController{
 
             menuVO.setChildren(childs);
 
+        } else {
+            menuVO.setChildren(Collections.emptyList());
         }
 
         return menuVO;
