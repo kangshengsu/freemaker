@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  * 菜单.
  */
 @RestController
-@RequestMapping("api/menu")
+@RequestMapping("/menu")
 @RequiredArgsConstructor
 public class MenuController extends BaseController<Menu, MenuVO> {
 
@@ -78,6 +78,12 @@ public class MenuController extends BaseController<Menu, MenuVO> {
             item.setValue(vo.getName());
             item.setType(QueryType.like);
             queryItems.add(item);
+        }else{
+            QueryItem item = new QueryItem();
+            item.setQueryField("parent_id");
+            item.setValue(Lists.newArrayList(0, -1)); // 父节点
+            item.setType(QueryType.in);
+            queryItems.add(item);
         }
         if (StringUtils.isNotBlank(vo.getCode())) {
             QueryItem item = new QueryItem();
@@ -91,14 +97,6 @@ public class MenuController extends BaseController<Menu, MenuVO> {
             QueryItem item = new QueryItem();
             item.setQueryField("status");
             item.setValue(vo.getStatus());
-            item.setType(QueryType.eq);
-            queryItems.add(item);
-        }
-
-        if (vo.getProductId() != null) {
-            QueryItem item = new QueryItem();
-            item.setQueryField("product_id");
-            item.setValue(vo.getProductId());
             item.setType(QueryType.eq);
             queryItems.add(item);
         }
@@ -139,12 +137,6 @@ public class MenuController extends BaseController<Menu, MenuVO> {
 
         List<MenuVO> menuVOS = this.convert(menus);
 
-        /*List<String> codeList = menus.stream().map(Menu::getProductCode).collect(Collectors.toList());
-        Map<String, Product> productMap = productService.getProducts(codeList).stream().collect(Collectors.toMap(Product::getCode, Function.identity()));
-
-        menuVOS = menuVOS.stream().peek(m -> m.setProductName(productMap.get(m.getProductCode()).getName())).collect(Collectors.toList());
-       */
-
         menuVOS.sort(Comparator.comparingInt(MenuVO::getSq));
 
         return this.success(menuVOS);
@@ -160,11 +152,6 @@ public class MenuController extends BaseController<Menu, MenuVO> {
         if (StringUtils.isBlank(menuVO.getCode())) {
             return this.failed("菜单编码不能为空!");
         }
-
-        if (menuVO.getProductId() == null) {
-            return this.failed("菜单关联产品不能为空!");
-        }
-
 
         if (menuVO.getType() != null && MenuType.menu.value() == (menuVO.getType()) && StringUtils.isBlank(menuVO.getHref())) {
             return this.failed("菜单链接不能为空!");
@@ -363,15 +350,7 @@ public class MenuController extends BaseController<Menu, MenuVO> {
 
     @PostMapping("/parentMenuTree")
     public ApiResponse< List<TreeNodeVO>> getMenuTree(@RequestBody MenuVO menuVO) {
-        Long productId = menuVO.getProductId();
         List<QueryItem> items = new ArrayList<>();
-//        QueryItem productIdItem = new QueryItem();
-//        productIdItem.setQueryField("product_id");
-//        productIdItem.setValue(productId);
-//        productIdItem.setType(QueryType.eq);
-//        items.add(productIdItem);
-
-
         List<Menu> childMenu = menuService.findAllChildByNodeId(menuVO.getId());
 
         List<Long> exIds = childMenu.stream().map(Menu::getId).collect(Collectors.toList());
