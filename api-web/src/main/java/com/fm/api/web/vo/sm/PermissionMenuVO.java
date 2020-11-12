@@ -1,5 +1,6 @@
 package com.fm.api.web.vo.sm;
 
+import com.fm.business.base.model.sm.MenuComponentType;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -24,7 +25,7 @@ public class PermissionMenuVO {
 
     private boolean noCache = true;
 
-//    private boolean alwaysShow;
+    private boolean alwaysShow;
 
     private int sq;
 
@@ -40,6 +41,6 @@ public class PermissionMenuVO {
 
 
     public boolean isAlwaysShow() {
-        return children != null && children.size() > 0;
+        return !MenuComponentType.layout.value().equals(this.component);
     }
 }

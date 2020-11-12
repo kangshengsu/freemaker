@@ -91,7 +91,7 @@ public class PermissionController{
         menuVO.setPath(Objects.isNull(node.getValue().getHref()) ? "/" + node.getValue().getCode() : node.getValue().getHref());
         menuVO.setComponent(node.getValue().getComponent());
         menuVO.setSq(node.getValue().getSq());
-
+        menuVO.setAlwaysShow(menuVO.isAlwaysShow());
         PermissionMenuMeta meta = new PermissionMenuMeta();
         meta.setTitle(node.getValue().getName());
         meta.setIcon(node.getValue().getIcon());
