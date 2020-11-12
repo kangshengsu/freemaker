@@ -581,6 +581,6 @@ public class MenuController extends BaseController<Menu, MenuVO> {
         }).collect(Collectors.toList());
         */
 
-        return menus.stream().map(this::convert).collect(Collectors.toList());
+        return vos;
     }
 }
