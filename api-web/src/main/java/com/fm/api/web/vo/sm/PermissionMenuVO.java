@@ -40,7 +40,7 @@ public class PermissionMenuVO {
     }
 
 
-    public boolean isAlwaysShow() {
-        return !MenuComponentType.layout.value().equals(this.component);
-    }
+//    public boolean isAlwaysShow() {
+//        return children != null && children.size() > 0;
+//    }
 }
