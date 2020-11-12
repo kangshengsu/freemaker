@@ -351,17 +351,19 @@ public class MenuController extends BaseController<Menu, MenuVO> {
     @PostMapping("/parentMenuTree")
     public ApiResponse< List<TreeNodeVO>> getMenuTree(@RequestBody MenuVO menuVO) {
         List<QueryItem> items = new ArrayList<>();
-        List<Menu> childMenu = menuService.findAllChildByNodeId(menuVO.getId());
 
-        List<Long> exIds = childMenu.stream().map(Menu::getId).collect(Collectors.toList());
-        exIds.add(menuVO.getId());
+        if (menuVO.getId() != null) {
+            List<Menu> childMenu = menuService.findAllChildByNodeId(menuVO.getId());
 
-        QueryItem exIdItem = new QueryItem();
-        exIdItem.setQueryField(DBFieldConst.ID);
-        exIdItem.setValue(exIds);
-        exIdItem.setType(QueryType.notIn);
-        items.add(exIdItem);
+            List<Long> exIds = childMenu.stream().map(Menu::getId).collect(Collectors.toList());
+            exIds.add(menuVO.getId());
 
+            QueryItem exIdItem = new QueryItem();
+            exIdItem.setQueryField(DBFieldConst.ID);
+            exIdItem.setValue(exIds);
+            exIdItem.setType(QueryType.notIn);
+            items.add(exIdItem);
+        }
         QueryItem typeItem = new QueryItem();
         typeItem.setQueryField("type");
         typeItem.setValue(MenuType.button.value());
