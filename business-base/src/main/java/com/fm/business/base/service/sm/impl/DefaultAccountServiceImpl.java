@@ -11,6 +11,7 @@ import com.fm.framework.core.model.DBFieldConst;
 import com.fm.framework.core.query.QueryItem;
 import com.fm.framework.core.query.QueryType;
 import com.fm.framework.core.service.AuditStatusBaseService;
+import com.qcloud.cos.utils.Md5Utils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -51,6 +52,7 @@ public class DefaultAccountServiceImpl extends AuditStatusBaseService<IAccountMa
     @Override
     protected void beforeSave(Account model) {
         checkSameUsername(model);
+        model.setPassword(Md5Utils.md5Hex(model.getPassword()));
         super.beforeSave(model);
     }
 
@@ -59,6 +61,17 @@ public class DefaultAccountServiceImpl extends AuditStatusBaseService<IAccountMa
         super.beforeSave(models);
         for (Account model : models) {
             checkSameUsername(model);
+            model.setPassword(Md5Utils.md5Hex(model.getPassword()));
+
+        }
+    }
+
+    @Override
+    protected void beforeUpdate(Account model) {
+        super.beforeUpdate(model);
+        Account old = get(model.getId());
+        if(!old.getPassword().equals(model.getPassword())) {
+            model.setPassword(Md5Utils.md5Hex(model.getPassword()));
         }
     }
 
