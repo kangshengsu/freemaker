@@ -5,7 +5,6 @@ import com.fm.framework.web.VO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -70,13 +69,6 @@ public class UserTableVO extends VO {
 
     List<Role> roles;
 
-    List<AccountVO> accounts;
-
-    private Long tenantId;
-
-    private String tenantCode;
-
-    private String tenantName;
-
+    AccountVO account;
 
 }

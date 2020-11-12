@@ -64,7 +64,7 @@ public class User extends AuditStatusBaseModel {
     /**
      * 账号信息
      */
-    private transient List<Account> accounts;
+    private transient Account account;
 
     /**
      * 角色信息

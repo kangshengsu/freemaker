@@ -26,7 +26,7 @@ public interface IAccountService extends Service<Account> {
 
     Account getAccount(String username);
 
-    List<Account> getAccount(Long userId);
+    Account getAccount(Long userId);
 
     List<Account> getAccount(List<Long> userIds);
 
@@ -38,7 +38,7 @@ public interface IAccountService extends Service<Account> {
 
     boolean deleteAccountById(Long acctId);
 
-    Map<Long, List<Account>> getAccountMap(List<Long> userIds);
+    Map<Long,Account> getAccountMap(List<Long> userIds);
 
     Account get(String username);
 

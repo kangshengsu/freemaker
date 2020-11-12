@@ -108,4 +108,6 @@ public interface IUserService extends IStatusService<User> {
     Page<User> pageList(Page<User> page, User user);
 
     List<User> findAllByOrgId(Long orgId);
+
+    void fillUserOtherInfo(List<User> userList);
 }
