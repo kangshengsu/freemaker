@@ -114,7 +114,8 @@ public class CommonController extends BaseController<SysUser, LoginVO> {
         userInfo.setToken(token);
         String[] roles = {"admin"};
         userInfo.setRoles(roles);
-        userInfo.setUsername(Context.getCurrUserName());
+//        userInfo.setUsername(Context.getCurrUserName());
+        userInfo.setName(Context.getCurrUserName());
         userInfo.setAvatar("https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
         userInfo.setIntroduction("introduction");
         return success(userInfo);
