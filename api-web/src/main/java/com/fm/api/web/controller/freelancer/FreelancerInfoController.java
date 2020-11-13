@@ -7,19 +7,20 @@
 package com.fm.api.web.controller.freelancer;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.fm.api.web.vo.freelancer.FreelancerInfoVO;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
-import com.fm.framework.core.query.Page;
+import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
+import com.fm.business.base.service.production.IProductionInfoService;
+import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
-import com.fm.api.web.vo.freelancer.FreelancerInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +38,9 @@ public class FreelancerInfoController extends BaseController<FreelancerInfo, Fre
 
     @Autowired
     private IFreelancerInfoService freelancerInfoService;
+
+    @Autowired
+    private IProductionInfoService iProductionInfoService;
 
 
     /**
@@ -85,6 +89,12 @@ public class FreelancerInfoController extends BaseController<FreelancerInfo, Fre
 
         return super.update(form);
 
+    }
+
+    @RequestMapping(value = "findFreelancerByProductionId", method = RequestMethod.POST)
+    public ApiResponse<FreelancerInfo> findFreelancerByProductionId(@RequestBody FreelancerInfoVO form) {
+        ProductionInfo productionInfo = iProductionInfoService.get(form.getId());
+        return success(service().get(productionInfo.getFreelancerId()));
     }
 
     @RequestMapping(value = "list", method = RequestMethod.POST)
