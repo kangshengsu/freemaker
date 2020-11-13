@@ -75,6 +75,17 @@ public class DefaultAccountServiceImpl extends AuditStatusBaseService<IAccountMa
         }
     }
 
+    @Override
+    protected void beforeUpdate(Collection<Account> models) {
+        super.beforeUpdate(models);
+        models.forEach(model -> {
+            Account old = get(model.getId());
+            if(!old.getPassword().equals(model.getPassword())) {
+                model.setPassword(Md5Utils.md5Hex(model.getPassword()));
+            }
+        });
+    }
+
     /**
      * 检查相同的用户名
      *
