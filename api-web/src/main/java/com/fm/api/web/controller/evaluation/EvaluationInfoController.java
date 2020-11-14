@@ -4,14 +4,15 @@ import com.fm.api.web.vo.evaluation.EvaluationInfoVO;
 import com.fm.api.web.convert.EvaluationConvert;
 import com.fm.business.base.model.evaluation.EvaluationInfo;
 import com.fm.business.base.service.evaluation.IEvaluationInfoService;
+import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
+import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 /**
  * 评价信息API
@@ -35,6 +36,27 @@ public class EvaluationInfoController extends BaseController<EvaluationInfo, Eva
         return success(convert(evaluationInfo));
     }
 
+    @RequestMapping(value = "create", method = RequestMethod.POST)
+    public ApiResponse<Boolean> create(@RequestBody EvaluationInfoVO form) {
+        return super.create(form);
+    }
+
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public ApiResponse<Boolean> update(@RequestBody EvaluationInfoVO form) {
+        return super.update(form);
+    }
+
+    @RequestMapping(value = "delete", method = RequestMethod.POST)
+    public ApiResponse<Boolean> delete(@RequestBody Long id) {
+        return super.delete(id);
+    }
+
+    @RequestMapping(value = "list",method = RequestMethod.POST)
+    public ApiResponse<Page<EvaluationInfoVO>> list(@RequestBody QueryRequest queryRequest){
+        return super.list(queryRequest);
+    }
+
+
     @Override
     protected Service<EvaluationInfo> service() {
         return evaluationInfoService;
@@ -42,6 +64,6 @@ public class EvaluationInfoController extends BaseController<EvaluationInfo, Eva
 
     @Override
     protected EvaluationInfoVO convert(EvaluationInfo model) {
-        return  EvaluationConvert.INSTANCE.to(model);
+        return EvaluationConvert.INSTANCE.to(model);
     }
 }

@@ -30,5 +30,5 @@ public interface IEvaluationInfoMapper extends BaseMapper<EvaluationInfo> {
      * @param freelancerId
      * @return
      */
-    OverallEvaluation findOverallEvaluationByCateAndFreelancer(@Param("jobCateId") Long jobCateId, @Param("freelancerId") Long freelancerId ,@Param("maxCount") Integer maxCount);
+    OverallEvaluation findOverallEvaluationByCateAndFreelancer(@Param("jobCateId") Long jobCateId, @Param("freelancerId") Long freelancerId ,@Param("maxCount") Integer maxCount,@Param("status")Integer status);
 }

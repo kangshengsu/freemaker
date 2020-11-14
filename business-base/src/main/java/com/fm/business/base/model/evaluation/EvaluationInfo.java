@@ -12,6 +12,7 @@ import com.fm.framework.core.model.IAudit;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -50,31 +51,35 @@ public class EvaluationInfo extends BaseModel implements Serializable, IAudit {
     /**
      * 总体评价
      */
-    public Double totalScore;
+    public BigDecimal totalScore;
     /**
      * 响应速度
      */
-    public Double responseSpeed;
+    public BigDecimal responseSpeed;
     /**
      * 沟通能力
      */
-    public Double communicateCapacity;
+    public BigDecimal communicateCapacity;
     /**
      * 完成时间
      */
-    public Double completionTime;
+    public BigDecimal completionTime;
     /**
      * 完成质量
      */
-    public Double accomplishQuality;
+    public BigDecimal accomplishQuality;
     /**
      * 推荐意向
      */
-    public Double recommendScore;
+    public BigDecimal recommendScore;
     /**
      * 评价描述
      */
     public String description;
+    /**
+     * 评价审核状态
+     */
+    public Long status;
     /**
      * 创建时间
      **/

@@ -2,6 +2,8 @@ package com.fm.api.gw.vo.evaluation;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * @author zhangleqi
  * @date 2020/10/9
@@ -15,29 +17,34 @@ public class OverallEvaluationVO {
     /**
      * 总体评价
      */
-    public Double totalScore;
+    public BigDecimal totalScore;
     /**
      * 响应速度打分
      */
-    public Double responseSpeed;
+    public BigDecimal responseSpeed;
     /**
      * 沟通能力打分
      */
-    public Double communicateCapacity;
+    public BigDecimal communicateCapacity;
     /**
      *完成时间打分
      */
-    public Double completionTime;
+    public BigDecimal completionTime;
     /**
      * 完成质量打分
      */
-    public Double accomplishQuality;
+    public BigDecimal accomplishQuality;
     /**
      * 推荐意向
      */
-    public Double recommendScore;
+    public BigDecimal recommendScore;
     /**
      * 总体评价描述
      */
     public String totalEvaluationDesc;
+
+    /**
+     * 评价数量
+     */
+    public Integer evaluationCount;
 }

@@ -10,6 +10,7 @@ import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.evaluation.EvaluationInfo;
 import com.fm.business.base.model.evaluation.OverallEvaluation;
 import com.fm.business.base.model.job.BdJobTag;
+import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -27,7 +28,7 @@ public interface IEvaluationInfoService extends Service<EvaluationInfo> {
      * @param str
      * @return
      */
-    List<EvaluationInfo> findByCateAndFreelancer( Long jobCateId, Long freelancerId,Integer limit);
+    Page<EvaluationInfo> findByCateAndFreelancerPage(Long jobCateId, Long freelancerId, Integer limit, Integer currentPage, Integer pageSize,Integer storeSort, Integer timeSort);
     /**
      * 根据作者和岗位获取总体评价信息
      * @param str

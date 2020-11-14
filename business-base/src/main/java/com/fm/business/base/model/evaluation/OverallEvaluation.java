@@ -3,6 +3,7 @@ package com.fm.business.base.model.evaluation;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @author zhangleqi
@@ -17,52 +18,52 @@ public class OverallEvaluation implements Serializable {
     /**
      * 总体评价
      */
-    public Double totalScore;
+    public BigDecimal totalScore;
     /**
      * 响应速度打分
      */
-    public Double responseSpeed;
+    public BigDecimal responseSpeed;
     /**
      * 沟通能力打分
      */
-    public Double communicateCapacity;
+    public BigDecimal communicateCapacity;
     /**
      * 完成时间
      */
-    public Double completionTime;
+    public BigDecimal completionTime;
     /**
      * 完成质量
      */
-    public Double accomplishQuality;
+    public BigDecimal accomplishQuality;
     /**
      * 推荐意向
      */
-    public Double recommendScore;
+    public BigDecimal recommendScore;
 
     /**
      * 总体评价 总分
      */
-    public Double totalScoreSum;
+    public BigDecimal totalScoreSum;
     /**
      * 响应速度打分 总分
      */
-    public Double responseSpeedSum;
+    public BigDecimal responseSpeedSum;
     /**
      * 沟通能力打分 总分
      */
-    public Double communicateCapacitySum;
+    public BigDecimal communicateCapacitySum;
     /**
      * 完成时间
      */
-    public Double completionTimeSum;
+    public BigDecimal completionTimeSum;
     /**
      * 完成质量
      */
-    public Double accomplishQualitySum;
+    public BigDecimal accomplishQualitySum;
     /**
      * 推荐意向 总分
      */
-    public Double recommendScoreSum;
+    public BigDecimal recommendScoreSum;
 
     /**
      * 评价数量

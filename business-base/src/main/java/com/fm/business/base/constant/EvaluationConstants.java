@@ -1,5 +1,7 @@
 package com.fm.business.base.constant;
 
+import java.math.BigDecimal;
+
 /**
  * 评价相关常量
  */
@@ -8,29 +10,29 @@ public interface EvaluationConstants {
     /**
      * 总体评价
      */
-    Double TOTAL_SCORE_MAX = Double.valueOf("5.0");
+    BigDecimal TOTAL_SCORE_MAX = BigDecimal.valueOf(5.00);
     /**
      * 响应速度打分
      */
-    Double RESPONSE_SPEED_MAX = Double.valueOf("5.0");
+    BigDecimal RESPONSE_SPEED_MAX = BigDecimal.valueOf(5.00);
     /**
      * 沟通能力打分
      */
-    Double COMMUNICATE_CAPACITY_MAX= Double.valueOf("5.0");
+    BigDecimal COMMUNICATE_CAPACITY_MAX= BigDecimal.valueOf(5.00);
     /**
      * 完成时间打分
      */
-    Double COMPLETION_TIME_MAX= Double.valueOf("5.0");
+    BigDecimal COMPLETION_TIME_MAX= BigDecimal.valueOf(5.00);
 
     /**
      * 完成质量打分
      */
-    Double ACCOMPLISH_QUALITY_MAX= Double.valueOf("5.0");
+    BigDecimal ACCOMPLISH_QUALITY_MAX= BigDecimal.valueOf(5.00);
 
     /**
      * 推荐意向
      */
-    Double RECOMMEND_SCORE_MAX = Double.valueOf("5.0");
+    BigDecimal RECOMMEND_SCORE_MAX = BigDecimal.valueOf(5.00);
 
     /**
      * 样本数量

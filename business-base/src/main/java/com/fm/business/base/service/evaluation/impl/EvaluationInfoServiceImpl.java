@@ -11,9 +11,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.constant.EvaluationConstants;
 import com.fm.business.base.dao.evaluationinfo.IEvaluationInfoMapper;
-import com.fm.business.base.enums.AttachmentBusinessType;
-import com.fm.business.base.enums.AttachmentType;
-import com.fm.business.base.enums.OrderStatus;
+import com.fm.business.base.enums.*;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.evaluation.EvaluationInfo;
@@ -24,14 +22,13 @@ import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.job.BdJobTag;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.model.order.OrderInfoDetail;
-import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.service.*;
 import com.fm.business.base.service.evaluation.IEvaluationInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
-import com.fm.business.base.service.order.IOrderFollowService;
 import com.fm.business.base.service.order.IOrderInfoDetailService;
 import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.framework.core.exception.BusinessException;
+import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.AuditBaseService;
 import com.fm.framework.core.utils.NumberUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +37,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -69,24 +67,59 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
     private IOrderInfoDetailService orderInfoDetailService;
     @Autowired
     private IBdJobTagService bdJobTagService;
+
+    DecimalFormat decimalFormat = new DecimalFormat("#.00");
+
     @Override
-    public List<EvaluationInfo> findByCateAndFreelancer(Long jobCateId, Long freelancerId,Integer limit) {
-        LambdaQueryWrapper<EvaluationInfo> queryWrapper =
-                Wrappers.lambdaQuery(EvaluationInfo.class).eq(EvaluationInfo::getJobCateId,
-                jobCateId).eq(EvaluationInfo::getFreelancerId, freelancerId).orderByDesc(EvaluationInfo::getId);
+    public Page<EvaluationInfo> findByCateAndFreelancerPage(Long jobCateId, Long freelancerId, Integer limit, Integer currentPage, Integer pageSize, Integer storeSort, Integer timeSort) {
+        LambdaQueryWrapper<EvaluationInfo> wrapper = Wrappers.lambdaQuery(EvaluationInfo.class).eq(EvaluationInfo::getJobCateId,
+                jobCateId).eq(EvaluationInfo::getFreelancerId, freelancerId).eq(EvaluationInfo::getStatus, EvaluationStatusEnum.AUDIT_PASS.getCode());
+        MiniAppEvaluationEnum evaluationEnum = MiniAppEvaluationEnum.resolve(storeSort);
+        switch (evaluationEnum){
+            case ALL:
+                break;
+            case ASC:
+                wrapper.orderByAsc(EvaluationInfo::getTotalScore);
+                break;
+            case DESC:
+                wrapper.orderByDesc(EvaluationInfo::getTotalScore);
+                break;
+        }
+        MiniAppEvaluationTimeEnum evaluationTimeEnum = MiniAppEvaluationTimeEnum.resolve(timeSort);
+        switch (evaluationTimeEnum){
+            case ALL:
+                break;
+            case ASC:
+                wrapper.orderByAsc(EvaluationInfo::getUpdateTime);
+                break;
+            case DESC:
+                wrapper.orderByDesc(EvaluationInfo::getUpdateTime);
+                break;
+        }
+            wrapper.orderByDesc(EvaluationInfo::getId);
+
         if (limit != null) {
-            queryWrapper = queryWrapper.last(" limit " + limit);
+            wrapper = wrapper.last(" limit " + limit);
         }
 
-        List<EvaluationInfo> evaluationInfos = getBaseMapper().selectList(queryWrapper);
+        Page<EvaluationInfo> evaluationInfos = toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage,pageSize),wrapper));
+        List<EvaluationInfo> evaluationInfoList = evaluationInfos.getData();
+        evaluationInfoList.forEach(evaluationInfo -> {
+            evaluationInfo.setTotalScore(evaluationInfo.getTotalScore());
+            evaluationInfo.setResponseSpeed(evaluationInfo.getResponseSpeed());
+            evaluationInfo.setCommunicateCapacity(evaluationInfo.getCommunicateCapacity());
+            evaluationInfo.setCompletionTime(evaluationInfo.getCompletionTime());
+            evaluationInfo.setAccomplishQuality(evaluationInfo.getAccomplishQuality());
+            evaluationInfo.setRecommendScore(evaluationInfo.getRecommendScore());
+        });
         //补其他字段信息
-        fillEvaluationInfo(evaluationInfos);
+        fillEvaluationInfo(evaluationInfoList);
         return evaluationInfos;
     }
 
     /**
      * 统计评价分数
-     *
+     * <p>
      * 如果评价数据样本小于一定数量 则 按一定比例稀释数据
      *
      * @param jobCateId
@@ -96,17 +129,17 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
     @Override
     public OverallEvaluation findOverallEvaluationByCateAndFreelancer(Long jobCateId, Long freelancerId) {
 
-        OverallEvaluation overallEvaluation = this.getBaseMapper().findOverallEvaluationByCateAndFreelancer(jobCateId, freelancerId,EvaluationConstants.EVALUATION_DEFAULT_COUNT);
+        OverallEvaluation overallEvaluation = this.getBaseMapper().findOverallEvaluationByCateAndFreelancer(jobCateId, freelancerId, EvaluationConstants.EVALUATION_DEFAULT_COUNT, EvaluationStatusEnum.AUDIT_PASS.getCode());
 
         // 取出评价总分 以及 评价数量  如果评价数量小于最低要求评价数量 则补充满分样本数据， 无评价数量则返回满分
-        Double totalScore ;
-        Double responseSpeed ;
-        Double communicateCapacity ;
-        Double completionTime ;
-        Double accomplishQuality ;
-        Double recommendScore ;
+        BigDecimal totalScore = null;
+        BigDecimal responseSpeed;
+        BigDecimal communicateCapacity;
+        BigDecimal completionTime;
+        BigDecimal accomplishQuality;
+        BigDecimal recommendScore;
 
-        if(overallEvaluation == null || overallEvaluation.getEvaluationCount().equals(Integer.valueOf(0))){
+        if (overallEvaluation == null || overallEvaluation.getEvaluationCount().equals(Integer.valueOf(0))) {
             overallEvaluation = new OverallEvaluation();
             //无样本数据 返回满分
             totalScore = EvaluationConstants.TOTAL_SCORE_MAX;
@@ -115,38 +148,43 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
             completionTime = EvaluationConstants.COMPLETION_TIME_MAX;
             accomplishQuality = EvaluationConstants.ACCOMPLISH_QUALITY_MAX;
             recommendScore = EvaluationConstants.RECOMMEND_SCORE_MAX;
-        }else if (EvaluationConstants.EVALUATION_DEFAULT_COUNT.compareTo(overallEvaluation.getEvaluationCount())>0){
+        } else if (EvaluationConstants.EVALUATION_DEFAULT_COUNT.compareTo(overallEvaluation.getEvaluationCount()) > 0) {
             //样本数据不足  补充满分样本数据
-            int diff = EvaluationConstants.EVALUATION_DEFAULT_COUNT - overallEvaluation.getEvaluationCount();
-            totalScore = (EvaluationConstants.TOTAL_SCORE_MAX * diff+overallEvaluation.getTotalScoreSum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
-            responseSpeed = (EvaluationConstants.RESPONSE_SPEED_MAX * diff+overallEvaluation.getResponseSpeedSum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
-            communicateCapacity = (EvaluationConstants.COMMUNICATE_CAPACITY_MAX * diff+overallEvaluation.getCommunicateCapacitySum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
-            completionTime = (EvaluationConstants.COMPLETION_TIME_MAX * diff+overallEvaluation.getCompletionTimeSum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
-            accomplishQuality = (EvaluationConstants.ACCOMPLISH_QUALITY_MAX * diff+overallEvaluation.getAccomplishQualitySum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
-            recommendScore = (EvaluationConstants.RECOMMEND_SCORE_MAX * diff+overallEvaluation.getRecommendScoreSum()) / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
-        }else {
-            totalScore = overallEvaluation.getTotalScoreSum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
-            responseSpeed = overallEvaluation.getResponseSpeedSum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
-            communicateCapacity = overallEvaluation.getCommunicateCapacitySum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
-            completionTime = overallEvaluation.getCompletionTimeSum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
-            accomplishQuality = overallEvaluation.getAccomplishQualitySum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
-            recommendScore = overallEvaluation.getRecommendScoreSum() / EvaluationConstants.EVALUATION_DEFAULT_COUNT;
+            BigDecimal diff = BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT - overallEvaluation.getEvaluationCount());
+            totalScore = (EvaluationConstants.TOTAL_SCORE_MAX.multiply(diff).add(overallEvaluation.getTotalScoreSum())).divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
+            responseSpeed = (EvaluationConstants.RESPONSE_SPEED_MAX.multiply(diff).add( overallEvaluation.getResponseSpeedSum())).divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT)) ;
+            communicateCapacity = (EvaluationConstants.COMMUNICATE_CAPACITY_MAX.multiply(diff).add(overallEvaluation.getCommunicateCapacitySum())).divide( BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
+            completionTime = (EvaluationConstants.COMPLETION_TIME_MAX.multiply(diff).add(overallEvaluation.getCompletionTimeSum())).divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
+            accomplishQuality = (EvaluationConstants.ACCOMPLISH_QUALITY_MAX.multiply(diff).add(overallEvaluation.getAccomplishQualitySum())).divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
+            recommendScore = (EvaluationConstants.RECOMMEND_SCORE_MAX.multiply(diff).add(overallEvaluation.getRecommendScoreSum())).divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
+        } else {
+            totalScore = overallEvaluation.getTotalScoreSum().divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
+            responseSpeed = overallEvaluation.getResponseSpeedSum().divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
+            communicateCapacity = overallEvaluation.getCommunicateCapacitySum().divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
+            completionTime = overallEvaluation.getCompletionTimeSum().divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
+            accomplishQuality = overallEvaluation.getAccomplishQualitySum().divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
+            recommendScore = overallEvaluation.getRecommendScoreSum().divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
         }
 
-        overallEvaluation.setCommunicateCapacity(NumberUtil.formatDouble(communicateCapacity,2));
-        overallEvaluation.setRecommendScore(NumberUtil.formatDouble(recommendScore,2));
-        overallEvaluation.setTotalScore(NumberUtil.formatDouble(totalScore,2));
-        overallEvaluation.setResponseSpeed(NumberUtil.formatDouble(responseSpeed,2));
-        overallEvaluation.setCompletionTime(NumberUtil.formatDouble(completionTime,2));
-        overallEvaluation.setAccomplishQuality(NumberUtil.formatDouble(accomplishQuality,2));
-
+        overallEvaluation.setCommunicateCapacity(NumberUtil.formantBigDecimal(communicateCapacity));
+        overallEvaluation.setRecommendScore(NumberUtil.formantBigDecimal(recommendScore));
+        overallEvaluation.setTotalScore(NumberUtil.formantBigDecimal(totalScore));
+        overallEvaluation.setResponseSpeed(NumberUtil.formantBigDecimal(responseSpeed));
+        overallEvaluation.setCompletionTime(NumberUtil.formantBigDecimal(completionTime));
+        overallEvaluation.setAccomplishQuality(NumberUtil.formantBigDecimal(accomplishQuality));
         return overallEvaluation;
     }
 
     @Override
     public EvaluationInfo findByOrderId(Long orderId) {
         EvaluationInfo evaluationInfo = getBaseMapper().selectOne(Wrappers.lambdaQuery(EvaluationInfo.class).eq(EvaluationInfo::getOrderId,
-                orderId).orderByDesc(EvaluationInfo::getId).last("limit 1"));
+                orderId).eq(EvaluationInfo::getStatus, EvaluationStatusEnum.AUDIT_PASS.getCode()).orderByDesc(EvaluationInfo::getId).last("limit 1"));
+        evaluationInfo.setTotalScore(evaluationInfo.getTotalScore());
+        evaluationInfo.setResponseSpeed(evaluationInfo.getResponseSpeed());
+        evaluationInfo.setCommunicateCapacity(evaluationInfo.getCommunicateCapacity());
+        evaluationInfo.setCompletionTime(evaluationInfo.getCompletionTime());
+        evaluationInfo.setAccomplishQuality(evaluationInfo.getAccomplishQuality());
+        evaluationInfo.setRecommendScore(evaluationInfo.getRecommendScore());
         if (evaluationInfo == null) {
             return evaluationInfo;
         }
@@ -185,6 +223,7 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
 
     /**
      * 保存标签
+     *
      * @param evaluationInfo
      */
     private void saveTags(EvaluationInfo evaluationInfo) {
@@ -203,6 +242,7 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
 
     /**
      * 保存附件
+     *
      * @param evaluationInfo
      */
     private void saveAttachments(EvaluationInfo evaluationInfo) {
@@ -213,7 +253,7 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
                 attachmentInfo.setBusinessType(AttachmentBusinessType.ORDER_EVALUATION.getCode());
                 attachmentInfo.setType(AttachmentType.PICTURE.getCode());
             }
-           attachmentInfoService.save(attachmentInfos);
+            attachmentInfoService.save(attachmentInfos);
         }
     }
 
@@ -256,14 +296,14 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
         Map<Long, BdJobCate> bdJobCateMap = bdJobCateService.getByIds(jobCateIds)
                 .stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
 
-        List<EvaluationInfoTag>  evaluationInfoTags= evaluationInfoTagService.getTagsByEvaluationIds(evaluationIds);
+        List<EvaluationInfoTag> evaluationInfoTags = evaluationInfoTagService.getTagsByEvaluationIds(evaluationIds);
 
         List<Long> tagIds = evaluationInfoTags.stream().map(EvaluationInfoTag::getTagId).collect(Collectors.toList());
         Map<Long, BdJobTag> bdJobTagMap = bdJobTagService.getByIds(tagIds)
                 .stream().collect(Collectors.toMap(BdJobTag::getId, Function.identity(), (v1, v2) -> v2));
 
         Map<Long, List<BdJobTag>> tagMap =
-                evaluationInfoTags .stream().collect(Collectors.toMap(EvaluationInfoTag::getEvaluationInfoId, v -> {
+                evaluationInfoTags.stream().collect(Collectors.toMap(EvaluationInfoTag::getEvaluationInfoId, v -> {
                     List<BdJobTag> list = new ArrayList<>();
                     if (bdJobTagMap.containsKey(v.getTagId())) {
                         list.add(bdJobTagMap.get(v.getTagId()));
@@ -273,7 +313,6 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
                     v1.addAll(v2);
                     return v1;
                 }));
-
 
 
         Map<String, List<AttachmentInfo>> attachmentMap = attachmentInfoService.getByCodeAndType(attachmentCodes, AttachmentBusinessType.ORDER_EVALUATION)
@@ -288,6 +327,7 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
         evaluationInfos.forEach(evaluationInfo -> {
             if (freelancerInfoMap.containsKey(evaluationInfo.getFreelancerId())) {
                 evaluationInfo.setFreelancerInfo(freelancerInfoMap.get(evaluationInfo.getFreelancerId()));
+
             }
             if (employerInfoMap.containsKey(evaluationInfo.getEmployerId())) {
                 evaluationInfo.setEmployerInfo(employerInfoMap.get(evaluationInfo.getEmployerId()));
