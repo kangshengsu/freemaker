@@ -78,7 +78,7 @@ public class MenuController extends BaseController<Menu, MenuVO> {
             item.setValue(vo.getName());
             item.setType(QueryType.like);
             queryItems.add(item);
-        }else{
+        }else if (MenuType.menu.value() == vo.getType()){
             QueryItem item = new QueryItem();
             item.setQueryField("parent_id");
             item.setValue(Lists.newArrayList(0, -1)); // 父节点
