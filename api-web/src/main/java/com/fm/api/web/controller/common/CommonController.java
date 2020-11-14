@@ -2,7 +2,11 @@ package com.fm.api.web.controller.common;
 
 import com.fm.api.web.vo.common.LoginVO;
 import com.fm.business.base.constant.CacheKeyConstants;
+import com.fm.business.base.model.sm.Account;
+import com.fm.business.base.model.sm.User;
 import com.fm.business.base.model.sys.SysUser;
+import com.fm.business.base.service.sm.IAccountService;
+import com.fm.business.base.service.sm.IUserService;
 import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.service.Service;
@@ -36,6 +40,12 @@ public class CommonController extends BaseController<SysUser, LoginVO> {
     @Autowired
     private RedissonClient redissonClient;
 
+    @Autowired
+    private IAccountService accountService;
+
+    @Autowired
+    private IUserService userService;
+
     /**
      * 默认存活时间
      */
@@ -50,19 +60,25 @@ public class CommonController extends BaseController<SysUser, LoginVO> {
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     public ApiResponse<LoginVO> login(@Valid @RequestBody LoginVO form){
         //获取用户
-        SysUser sysUser = sysUserService.findByCode(form.getUsername());
-        if(sysUser == null ){
+//        SysUser sysUser = sysUserService.findByCode(form.getUsername());
+
+        Account account = accountService.getAccount(form.getUsername());
+
+        if(account == null ){
             return failed("用户不存在！");
         }
 
         //匹配密码
-        if(sysUser.getPassword().equals(form.getPassword())){
+        if(account.getPassword().equals(form.getPassword())){
             //分配token
             String token = UUID.randomUUID().toString();
             String cacheKye = String.format(CacheKeyConstants.LOGIN_TOKEN.getKey(),token);
             form.setToken(token);
+
+            User user = userService.get(account.getUserId());
+
             //缓存token
-            redissonClient.getBucket(cacheKye).set(sysUser,DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
+            redissonClient.getBucket(cacheKye).set(user,DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
 
         }else{
             return failed("密码不正确！");
@@ -98,7 +114,8 @@ public class CommonController extends BaseController<SysUser, LoginVO> {
         userInfo.setToken(token);
         String[] roles = {"admin"};
         userInfo.setRoles(roles);
-        userInfo.setUsername(Context.getCurrUserName());
+//        userInfo.setUsername(Context.getCurrUserName());
+        userInfo.setName(Context.getCurrUserName());
         userInfo.setAvatar("https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
         userInfo.setIntroduction("introduction");
         return success(userInfo);

@@ -105,4 +105,9 @@ public interface DBFieldConst {
      *  产品id
      */
     String PRODUCT_ID = "product_id";
+
+    /**
+     * 删除
+     */
+    String IS_DELETE = "is_delete";
 }

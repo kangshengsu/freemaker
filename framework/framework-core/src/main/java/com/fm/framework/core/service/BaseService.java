@@ -258,6 +258,17 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
 
     }
 
+    public T getOneFromExistSame(List<QueryItem> queryItems) {
+
+        QueryWrapper<T> queryWrapper = getQueryWrapper();
+
+        setQueryItem2Wrapper(queryItems, queryWrapper);
+
+        List<T> list = getBaseMapper().selectList(queryWrapper);
+
+        return list.isEmpty() ? null : list.get(0);
+    }
+
     protected void setOrderItem2Wrapper(OrderItem orderItem, QueryWrapper<T> queryWrapper) {
         if (!Objects.isNull(orderItem)
                 && !Objects.isNull(orderItem.getFields())
