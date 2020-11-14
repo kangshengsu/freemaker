@@ -17,27 +17,27 @@ public class OverallEvaluationVO {
     /**
      * 总体评价
      */
-    public BigDecimal totalScore;
+    public String totalScore;
     /**
      * 响应速度打分
      */
-    public BigDecimal responseSpeed;
+    public String responseSpeed;
     /**
      * 沟通能力打分
      */
-    public BigDecimal communicateCapacity;
+    public String communicateCapacity;
     /**
      *完成时间打分
      */
-    public BigDecimal completionTime;
+    public String completionTime;
     /**
      * 完成质量打分
      */
-    public BigDecimal accomplishQuality;
+    public String accomplishQuality;
     /**
      * 推荐意向
      */
-    public BigDecimal recommendScore;
+    public String recommendScore;
     /**
      * 总体评价描述
      */

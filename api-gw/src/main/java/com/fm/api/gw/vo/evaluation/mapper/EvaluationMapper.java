@@ -55,7 +55,7 @@ public abstract class EvaluationMapper extends CommonMapper {
     abstract AttachmentVO toAttachmentVO(AttachmentInfo attachmentInfo);
 
     @Named("totalEvaluationDesc")
-    String totalEvaluationDesc(Double totalScore) {
+    String totalEvaluationDesc(String totalScore) {
         return EvaluationEnum.getEvaluationDescByScore(totalScore);
     }
 

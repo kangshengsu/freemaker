@@ -51,27 +51,27 @@ public class EvaluationInfo extends BaseModel implements Serializable, IAudit {
     /**
      * 总体评价
      */
-    public BigDecimal totalScore;
+    public String totalScore;
     /**
      * 响应速度
      */
-    public BigDecimal responseSpeed;
+    public String responseSpeed;
     /**
      * 沟通能力
      */
-    public BigDecimal communicateCapacity;
+    public String communicateCapacity;
     /**
      * 完成时间
      */
-    public BigDecimal completionTime;
+    public String completionTime;
     /**
      * 完成质量
      */
-    public BigDecimal accomplishQuality;
+    public String accomplishQuality;
     /**
      * 推荐意向
      */
-    public BigDecimal recommendScore;
+    public String recommendScore;
     /**
      * 评价描述
      */

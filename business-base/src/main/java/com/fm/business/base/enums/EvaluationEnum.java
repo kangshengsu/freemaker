@@ -31,12 +31,12 @@ public enum EvaluationEnum {
      */
     private String desc;
 
-    public static String getEvaluationDescByScore(Double score) {
+    public static String getEvaluationDescByScore(String score) {
         if (score == null) {
             return "";
         }
         for (EvaluationEnum value : EvaluationEnum.values()) {
-            if (score > value.getMinimum() && score <= value.getMaximum()) {
+            if (Double.valueOf(score) > value.getMinimum() && Double.valueOf(score) <= value.getMaximum()) {
                 return value.getDesc();
             }
         }

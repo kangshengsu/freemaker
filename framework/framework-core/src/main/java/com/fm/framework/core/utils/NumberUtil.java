@@ -29,15 +29,16 @@ public class NumberUtil {
         return Double.valueOf(nf.format(data));
     }
 
-    public static BigDecimal formantBigDecimal(BigDecimal data){
-        return  data.setScale(2, BigDecimal.ROUND_HALF_UP);
+    public static String formantBigDecimal(BigDecimal data){
+        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+        return  decimalFormat.format(data);
     }
 
     public static void main(String[] args) {
         System.out.println(formatDouble(Double.valueOf("4.95"),2));
         System.out.println(formatDouble(Double.valueOf("4.94"),2));
         System.out.println(formatDouble(Double.valueOf("4.96"),2));
-        System.out.println(formatDouble(Double.valueOf("5.00"),2));
+        System.out.println(formantBigDecimal(BigDecimal.valueOf(5.00)));
 
 
     }

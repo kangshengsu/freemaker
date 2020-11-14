@@ -54,7 +54,9 @@ public class EvaluationInfoApiController extends BaseController<EvaluationInfo, 
             return failed("请选择订单");
         }
         EvaluationInfo evaluationInfo = evaluationInfoService.findByOrderId(orderId);
-        return success(evaluationMapper.toEvaluationListVO(evaluationInfo));
+        EvaluationInfoVO evaluationInfoVO = evaluationMapper.toEvaluationListVO(evaluationInfo);
+        System.out.println("evaluationInfoVO.getTotalScore() = " + evaluationInfoVO.getTotalScore());
+        return success(evaluationInfoVO);
     }
 
     @RequestMapping(value = "/findByCateAndFreelancer", method = RequestMethod.GET)
