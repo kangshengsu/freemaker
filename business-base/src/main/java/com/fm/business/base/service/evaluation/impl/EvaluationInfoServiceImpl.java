@@ -179,15 +179,15 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
     public EvaluationInfo findByOrderId(Long orderId) {
         EvaluationInfo evaluationInfo = getBaseMapper().selectOne(Wrappers.lambdaQuery(EvaluationInfo.class).eq(EvaluationInfo::getOrderId,
                 orderId).eq(EvaluationInfo::getStatus, EvaluationStatusEnum.AUDIT_PASS.getCode()).orderByDesc(EvaluationInfo::getId).last("limit 1"));
+        if (evaluationInfo == null) {
+            return null;
+        }
         evaluationInfo.setTotalScore(evaluationInfo.getTotalScore());
         evaluationInfo.setResponseSpeed(evaluationInfo.getResponseSpeed());
         evaluationInfo.setCommunicateCapacity(evaluationInfo.getCommunicateCapacity());
         evaluationInfo.setCompletionTime(evaluationInfo.getCompletionTime());
         evaluationInfo.setAccomplishQuality(evaluationInfo.getAccomplishQuality());
         evaluationInfo.setRecommendScore(evaluationInfo.getRecommendScore());
-        if (evaluationInfo == null) {
-            return evaluationInfo;
-        }
         fillEvaluationInfo(Arrays.asList(evaluationInfo));
         return evaluationInfo;
     }
