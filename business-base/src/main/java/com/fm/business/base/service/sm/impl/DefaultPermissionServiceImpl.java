@@ -1,6 +1,7 @@
 package com.fm.business.base.service.sm.impl;
 
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.sm.IPermissionMapper;
 import com.fm.business.base.model.sm.Menu;
 import com.fm.business.base.model.sm.MenuType;
@@ -167,6 +168,24 @@ public class DefaultPermissionServiceImpl extends AuditStatusBaseService<IPermis
         menuService.completionParentNode(result);
 
         return result;
+    }
+
+    @Override
+    public Menu getPermissionMenu(String menuCode) {
+
+        Menu menu = menuService.getByCode(menuCode);
+
+        if(menu == null) {
+            return null;
+        }
+
+        Permission permission = getOne(Wrappers.lambdaQuery(Permission.class).eq(Permission::getMenuId, menu.getId()));
+
+        if(permission != null) {
+            return menu;
+        }
+
+        return null;
     }
 
     @Override

@@ -59,6 +59,9 @@ public interface IPermissionService extends Service<Permission>, IStatusService<
     List<Menu> getAllMenuByRoleIds(List<Long> roleId);
 
 
+    Menu getPermissionMenu(String menuCode);
+
+
     boolean deleteByMenus(List<Menu> menus);
 
 }

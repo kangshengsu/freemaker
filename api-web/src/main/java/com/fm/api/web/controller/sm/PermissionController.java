@@ -1,10 +1,9 @@
 package com.fm.api.web.controller.sm;
 
-import com.fm.api.web.vo.sm.OrgVO;
 import com.fm.api.web.vo.sm.PermissionMenuMeta;
 import com.fm.api.web.vo.sm.PermissionMenuVO;
 import com.fm.business.base.model.sm.Menu;
-import com.fm.business.base.model.sm.Org;
+import com.fm.business.base.model.sm.MenuType;
 import com.fm.business.base.model.sm.Role;
 import com.fm.business.base.service.sm.IMenuService;
 import com.fm.business.base.service.sm.IPermissionService;
@@ -12,18 +11,14 @@ import com.fm.business.base.service.sm.IRoleService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.model.TreeNode;
 import com.fm.framework.core.utils.TreeUtil;
-import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -41,6 +36,22 @@ public class PermissionController{
     private IPermissionService permissionService;
     @Autowired
     private IMenuService menuService;
+
+    @RequestMapping("/permission/button/{buttonCode}")
+    public ApiResponse<Boolean> getPermissionButtons(@PathVariable String buttonCode, String actionType) {
+        Long currUserId = Context.getCurrUserId();
+
+        //获取登录用户的角色信息
+        List<Role> roles = roleService.getUserRoles(currUserId);
+        if (roles.isEmpty()) {
+            return ApiResponse.ofSuccess(false);
+        }
+
+
+
+        return ApiResponse.ofSuccess(permissionService.getPermissionMenu(buttonCode) != null);
+    }
+
 
     @RequestMapping("/permissions")
     public ApiResponse<List<PermissionMenuVO>> getPermissions() {
