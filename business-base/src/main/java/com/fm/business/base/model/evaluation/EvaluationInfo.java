@@ -79,7 +79,7 @@ public class EvaluationInfo extends BaseModel implements Serializable, IAudit {
     /**
      * 评价审核状态
      */
-    public Long status;
+    public Integer status;
     /**
      * 创建时间
      **/

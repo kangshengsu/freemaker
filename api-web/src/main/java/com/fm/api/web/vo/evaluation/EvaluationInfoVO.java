@@ -104,11 +104,11 @@ public class EvaluationInfoVO extends VO implements Serializable {
     private Long updateUser;
 
     /**
-     * 评价人信息
+     * 被评价人信息
      */
     private FreelancerInfoVO freelancerInfo;
     /**
-     * 被评价人信息
+     * 评价人信息
      */
     private EmployerInfo employerInfo;
     /**
@@ -127,4 +127,19 @@ public class EvaluationInfoVO extends VO implements Serializable {
      * 附件信息
      */
     private List<AttachmentInfo> images;
+
+    /**
+     * 评价审核状态（10-审核中  20-审核未通过，30审核通过）
+     */
+    private String evaluationStatusName;
+
+    /**
+     * 订单概括
+     **/
+    private String summarize;
+
+    /**
+     * 评价审核状态
+     */
+    private Integer status;
 }

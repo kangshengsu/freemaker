@@ -2,8 +2,16 @@ package com.fm.api.web.controller.evaluation;
 
 import com.fm.api.web.vo.evaluation.EvaluationInfoVO;
 import com.fm.api.web.convert.EvaluationConvert;
+import com.fm.api.web.vo.order.OrderInfoDetailVO;
+import com.fm.api.web.vo.order.OrderInfoVO;
+import com.fm.business.base.enums.EvaluationEnum;
+import com.fm.business.base.enums.EvaluationStatusEnum;
+import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.evaluation.EvaluationInfo;
+import com.fm.business.base.model.order.OrderInfoDetail;
+import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.evaluation.IEvaluationInfoService;
+import com.fm.business.base.service.order.IOrderInfoDetailService;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
@@ -12,7 +20,7 @@ import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 评价信息API
@@ -26,6 +34,12 @@ public class EvaluationInfoController extends BaseController<EvaluationInfo, Eva
 
     @Autowired
     private IEvaluationInfoService evaluationInfoService;
+
+    @Autowired
+    private IOrderInfoDetailService orderInfoDetailService;
+
+    @Autowired
+    private IEmployerInfoService employerInfoService;
 
     @RequestMapping(value = "/findByOrderId", method = RequestMethod.GET)
     public ApiResponse<EvaluationInfoVO> findByOrderId(@RequestParam("orderId") Long orderId) {
@@ -53,7 +67,40 @@ public class EvaluationInfoController extends BaseController<EvaluationInfo, Eva
 
     @RequestMapping(value = "list",method = RequestMethod.POST)
     public ApiResponse<Page<EvaluationInfoVO>> list(@RequestBody QueryRequest queryRequest){
-        return super.list(queryRequest);
+        ApiResponse<Page<EvaluationInfoVO>> result = super.list(queryRequest);
+        fillDetailInfo(result.getData().getData());
+        return result;
+    }
+
+
+
+    private void fillDetailInfo(List<EvaluationInfoVO> evaluationInfoVOS) {
+        ArrayList<Long> orderIds = new ArrayList<>();
+        ArrayList<Long> employerIds = new ArrayList<>();
+        evaluationInfoVOS.forEach(evaluationInfoVO -> {
+            orderIds.add(evaluationInfoVO.getOrderId());
+            employerIds.add(evaluationInfoVO.getEmployerId());
+        });
+        List<OrderInfoDetail> orderDetails = orderInfoDetailService.getOrderDetailByOrderIds(orderIds);
+        List<EmployerInfo> employerInfos = employerInfoService.getByIds(employerIds);
+        Map<Long, OrderInfoDetail> orderInfoDetailMap = new HashMap<>();
+        Map<Long, EmployerInfo> employerInfoMap = new HashMap<>();
+      orderDetails.forEach(orderInfoDetail -> orderInfoDetailMap.put(orderInfoDetail.getOrderId(), orderInfoDetail));
+      employerInfos.forEach(employerInfo -> employerInfoMap.put(employerInfo.getId(),employerInfo));
+
+
+        evaluationInfoVOS.forEach(evaluationInfoVO -> {
+            if (orderInfoDetailMap.containsKey(evaluationInfoVO.getOrderId())){
+                evaluationInfoVO.setSummarize(orderInfoDetailMap.get(evaluationInfoVO.getOrderId()).getSummarize());
+            }
+            if (employerInfoMap.containsKey(evaluationInfoVO.getEmployerId())){
+                evaluationInfoVO.setEmployerInfo(employerInfoMap.get(evaluationInfoVO.getEmployerId()));
+            }
+
+            evaluationInfoVO.setEvaluationStatusName(EvaluationStatusEnum.get(evaluationInfoVO.getStatus())!=null?EvaluationStatusEnum.get(evaluationInfoVO.getStatus()).getName():"未知");
+        });
+
+
     }
 
 
