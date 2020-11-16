@@ -15,7 +15,7 @@ public enum BudgetType {
 
     HOURLY_WAGE(0, "时薪"),
     FIXED_PRICE(1, "一口价"),
-    INTERVIEW(2, "面谈");
+    INTERVIEW(2, "面议");
 
     /**
      * 编码
