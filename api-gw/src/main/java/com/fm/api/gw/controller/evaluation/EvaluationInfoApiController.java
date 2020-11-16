@@ -55,7 +55,6 @@ public class EvaluationInfoApiController extends BaseController<EvaluationInfo, 
         }
         EvaluationInfo evaluationInfo = evaluationInfoService.findByOrderId(orderId);
         EvaluationInfoVO evaluationInfoVO = evaluationMapper.toEvaluationListVO(evaluationInfo);
-        System.out.println("evaluationInfoVO.getTotalScore() = " + evaluationInfoVO.getTotalScore());
         return success(evaluationInfoVO);
     }
 
