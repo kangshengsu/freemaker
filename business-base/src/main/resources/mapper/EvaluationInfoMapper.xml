@@ -39,7 +39,6 @@
             from evaluation_info
             where freelancer_id = #{freelancerId}
               and job_cate_id = #{jobCateId}
-              and status = #{status}
             order by create_time desc
             limit #{maxCount}
 
