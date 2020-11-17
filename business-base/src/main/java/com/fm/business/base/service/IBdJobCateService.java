@@ -11,7 +11,6 @@ import com.fm.framework.core.service.Service;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Description:(岗位服务层)
@@ -60,4 +59,12 @@ public interface IBdJobCateService extends Service<BdJobCate> {
      * @return 岗位集合
      */
     List<BdJobCate> findAllJobCatePost();
+
+    /**
+     * 获取技能两级名称
+     * @param id
+     * @return
+     */
+    BdJobCate getJobCate(Long id);
+
 }

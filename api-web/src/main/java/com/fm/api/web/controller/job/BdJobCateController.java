@@ -6,11 +6,10 @@
 */
 package com.fm.api.web.controller.job;
 
-import com.fm.business.base.enums.JobNodeType;
 import com.fm.api.web.vo.job.BdJobCateVO;
 import com.fm.api.web.vo.job.BdJobSkillVO;
 import com.fm.api.web.vo.job.JobNodeVO;
-import com.fm.business.base.model.AttachmentInfo;
+import com.fm.business.base.enums.JobNodeType;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.job.BdJobSkill;
 import com.fm.business.base.service.IBdJobCateService;
@@ -27,12 +26,14 @@ import com.fm.framework.core.utils.TreeUtil;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -84,6 +85,7 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
      */
     @RequestMapping(value = "/findJobCatePost",method = RequestMethod.POST)
     public ApiResponse<List<BdJobCateVO>> findJobCatePost(@RequestBody BdJobCateVO form) {
+        List<BdJobCateVO> a = convert(bdJobCateService.findJobCatePost(form.getParentId(),form.getKeyword()));
         return success(convert(bdJobCateService.findJobCatePost(form.getParentId(),form.getKeyword())));
     }
 
@@ -99,7 +101,7 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
         return super.delete(id);
     }
 
-    @RequestMapping(value = "update",method = RequestMethod.POST)
+    @RequestMapping(value = "update", method = RequestMethod.POST)
     public ApiResponse<Boolean> update(@RequestBody BdJobCateVO newNode) {
         return saveJob(newNode, false);
     }
@@ -108,6 +110,18 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
     public ApiResponse<Page<BdJobCateVO>> list(@RequestBody QueryRequest queryRequest) {
 
         return super.list(queryRequest);
+    }
+
+    /**
+     * 获取技能两级名称
+     * @param form
+     * @return
+     */
+    @RequestMapping(value = "findJobCate", method = RequestMethod.POST)
+    public ApiResponse<String> findJobCate(@RequestBody BdJobSkillVO form){
+        BdJobCate jobCate1 = bdJobCateService.getJobCate(form.getJobCateId());
+        BdJobCate jobCate2 = bdJobCateService.getJobCate(jobCate1.getParentId());
+        return ApiResponse.ofSuccess(jobCate2.getCateName()+"-"+jobCate1.getCateName());
     }
 
     @RequestMapping(value = "treeData",method = RequestMethod.GET)
