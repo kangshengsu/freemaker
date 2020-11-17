@@ -8,6 +8,7 @@ package com.fm.business.base.service.evaluation.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.constant.EvaluationConstants;
 import com.fm.business.base.dao.evaluationinfo.IEvaluationInfoMapper;
@@ -409,4 +410,17 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
         });
     }
 
+
+    @Override
+    public boolean updateStatus(EvaluationInfo updateEvaluationInfo) {
+        if (updateEvaluationInfo.getId() == null){
+            return false;
+        }
+        LambdaUpdateWrapper<EvaluationInfo> wrapper = Wrappers.lambdaUpdate(EvaluationInfo.class).set(EvaluationInfo::getStatus, updateEvaluationInfo.getStatus());
+        if (updateEvaluationInfo.getId() != null){
+            wrapper.eq(EvaluationInfo::getId, updateEvaluationInfo.getId());
+        }
+
+        return getBaseMapper().update(updateEvaluationInfo, wrapper) > 0;
+    }
 }

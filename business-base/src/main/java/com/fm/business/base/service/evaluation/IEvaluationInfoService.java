@@ -43,4 +43,5 @@ public interface IEvaluationInfoService extends Service<EvaluationInfo> {
      */
     EvaluationInfo findByOrderId(Long orderId);
 
+    boolean updateStatus(EvaluationInfo updateEvaluationInfo);
 }

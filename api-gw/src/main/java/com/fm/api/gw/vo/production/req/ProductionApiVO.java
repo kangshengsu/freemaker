@@ -61,7 +61,7 @@ public class ProductionApiVO extends VO implements Serializable {
      * 技能描述
      **/
     @NotBlank(message = "描述不能为空",groups = {Release.class, Modify.class})
-    @Size( max = 300 , message = "技能描述不能超过300字",groups = {Release.class, Modify.class})
+    @Size( max = 500 , message = "技能描述不能超过500字",groups = {Release.class, Modify.class})
     private String summarize;
 
 

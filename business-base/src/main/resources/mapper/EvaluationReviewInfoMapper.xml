@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fm.business.base.dao.evaluationinfo.IEvaluationReviewInfoMapper">
+    <resultMap id="evaluationReviewResultMap" type="com.fm.business.base.model.evaluation.EvaluationReviewInfo">
+        <result column="evaluation_id" property="evaluationId"/>
+        <result column="reviewer_id" property="reviewerId"/>
+        <result column="reviewer_opinion" property="reviewerOpinion"/>
+        <result column="status" property="status"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,evaluation_id,reviewer_id,reviewer_opinion,status,create_time,update_time,create_user,update_user,is_delete
+    </sql>
+</mapper>

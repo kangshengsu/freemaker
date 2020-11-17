@@ -143,3 +143,4 @@ public class EvaluationInfoVO extends VO implements Serializable {
      */
     private Integer status;
 }
+
