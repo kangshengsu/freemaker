@@ -71,56 +71,10 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
 
     DecimalFormat decimalFormat = new DecimalFormat("#.00");
 
-//    @Override
-//    public Page<EvaluationInfo> findByCateAndFreelancerPage(Long jobCateId, Long freelancerId, Integer limit, Integer currentPage, Integer pageSize, Integer storeSort, Integer timeSort) {
-//        LambdaQueryWrapper<EvaluationInfo> wrapper = Wrappers.lambdaQuery(EvaluationInfo.class).eq(EvaluationInfo::getJobCateId,
-//                jobCateId).eq(EvaluationInfo::getFreelancerId, freelancerId).eq(EvaluationInfo::getStatus, EvaluationStatusEnum.AUDIT_PASS.getCode());
-//        MiniAppEvaluationEnum evaluationEnum = MiniAppEvaluationEnum.resolve(storeSort);
-//        switch (evaluationEnum){
-//            case ALL:
-//                break;
-//            case ASC:
-//                wrapper.orderByAsc(EvaluationInfo::getTotalScore);
-//                break;
-//            case DESC:
-//                wrapper.orderByDesc(EvaluationInfo::getTotalScore);
-//                break;
-//        }
-//        MiniAppEvaluationTimeEnum evaluationTimeEnum = MiniAppEvaluationTimeEnum.resolve(timeSort);
-//        switch (evaluationTimeEnum){
-//            case ALL:
-//                break;
-//            case ASC:
-//                wrapper.orderByAsc(EvaluationInfo::getUpdateTime);
-//                break;
-//            case DESC:
-//                wrapper.orderByDesc(EvaluationInfo::getUpdateTime);
-//                break;
-//        }
-//            wrapper.orderByDesc(EvaluationInfo::getId);
-//
-//        if (limit != null) {
-//            wrapper = wrapper.last(" limit " + limit);
-//        }
-//
-//        Page<EvaluationInfo> evaluationInfos = toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage,pageSize),wrapper));
-//        List<EvaluationInfo> evaluationInfoList = evaluationInfos.getData();
-//        evaluationInfoList.forEach(evaluationInfo -> {
-//            evaluationInfo.setTotalScore(evaluationInfo.getTotalScore());
-//            evaluationInfo.setResponseSpeed(evaluationInfo.getResponseSpeed());
-//            evaluationInfo.setCommunicateCapacity(evaluationInfo.getCommunicateCapacity());
-//            evaluationInfo.setCompletionTime(evaluationInfo.getCompletionTime());
-//            evaluationInfo.setAccomplishQuality(evaluationInfo.getAccomplishQuality());
-//            evaluationInfo.setRecommendScore(evaluationInfo.getRecommendScore());
-//        });
-//        //补其他字段信息
-//        fillEvaluationInfo(evaluationInfoList);
-//        return evaluationInfos;
-//    }
     @Override
     public Page<EvaluationInfo> findByCateAndFreelancerPage(Long jobCateId, Long freelancerId, Integer limit, Integer currentPage, Integer pageSize, Integer storeSort, Integer timeSort) {
         LambdaQueryWrapper<EvaluationInfo> wrapper = Wrappers.lambdaQuery(EvaluationInfo.class).eq(EvaluationInfo::getJobCateId,
-                jobCateId).eq(EvaluationInfo::getFreelancerId, freelancerId);
+                jobCateId).eq(EvaluationInfo::getFreelancerId, freelancerId).eq(EvaluationInfo::getStatus, EvaluationStatusEnum.AUDIT_PASS.getCode());
         MiniAppEvaluationEnum evaluationEnum = MiniAppEvaluationEnum.resolve(storeSort);
         switch (evaluationEnum){
             case ALL:
@@ -143,7 +97,7 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
                 wrapper.orderByDesc(EvaluationInfo::getUpdateTime);
                 break;
         }
-        wrapper.orderByDesc(EvaluationInfo::getId);
+            wrapper.orderByDesc(EvaluationInfo::getId);
 
         if (limit != null) {
             wrapper = wrapper.last(" limit " + limit);
@@ -163,6 +117,7 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
         fillEvaluationInfo(evaluationInfoList);
         return evaluationInfos;
     }
+
 
     /**
      * 统计评价分数
@@ -222,26 +177,10 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
         return overallEvaluation;
     }
 
-//    @Override
-//    public EvaluationInfo findByOrderId(Long orderId) {
-//        EvaluationInfo evaluationInfo = getBaseMapper().selectOne(Wrappers.lambdaQuery(EvaluationInfo.class).eq(EvaluationInfo::getOrderId,
-//                orderId).eq(EvaluationInfo::getStatus, EvaluationStatusEnum.AUDIT_PASS.getCode()).orderByDesc(EvaluationInfo::getId).last("limit 1"));
-//        if (evaluationInfo == null) {
-//            return null;
-//        }
-//        evaluationInfo.setTotalScore(evaluationInfo.getTotalScore());
-//        evaluationInfo.setResponseSpeed(evaluationInfo.getResponseSpeed());
-//        evaluationInfo.setCommunicateCapacity(evaluationInfo.getCommunicateCapacity());
-//        evaluationInfo.setCompletionTime(evaluationInfo.getCompletionTime());
-//        evaluationInfo.setAccomplishQuality(evaluationInfo.getAccomplishQuality());
-//        evaluationInfo.setRecommendScore(evaluationInfo.getRecommendScore());
-//        fillEvaluationInfo(Arrays.asList(evaluationInfo));
-//        return evaluationInfo;
-//    }
- @Override
+    @Override
     public EvaluationInfo findByOrderId(Long orderId) {
         EvaluationInfo evaluationInfo = getBaseMapper().selectOne(Wrappers.lambdaQuery(EvaluationInfo.class).eq(EvaluationInfo::getOrderId,
-                orderId).orderByDesc(EvaluationInfo::getId).last("limit 1"));
+                orderId).eq(EvaluationInfo::getStatus, EvaluationStatusEnum.AUDIT_PASS.getCode()).orderByDesc(EvaluationInfo::getId).last("limit 1"));
         if (evaluationInfo == null) {
             return null;
         }
@@ -254,6 +193,7 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
         fillEvaluationInfo(Arrays.asList(evaluationInfo));
         return evaluationInfo;
     }
+
 
 
     @Override
