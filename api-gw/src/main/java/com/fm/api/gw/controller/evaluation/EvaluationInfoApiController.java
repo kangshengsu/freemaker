@@ -59,7 +59,7 @@ public class EvaluationInfoApiController extends BaseController<EvaluationInfo, 
     }
 
     @RequestMapping(value = "/findByProductionId", method = RequestMethod.GET)
-    public ApiResponse<Page<EvaluationInfoVO>> findByCateAndFreelancer(@RequestParam("productionId") Long productionId,
+    public ApiResponse<Page<EvaluationInfoVO>> findByProductionId(@RequestParam("productionId") Long productionId,
                                                                        @RequestParam(value = "recent", required = false) Integer recent,
                                                                        @RequestParam(value = "currentPage") Integer currentPage,
                                                                        @RequestParam(value = "pageSize") Integer pageSize,

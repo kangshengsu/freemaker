@@ -71,7 +71,7 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
 
     @Override
     public Page<EvaluationInfo> findByProductionIdPage(Long productionId, Integer limit, Integer currentPage, Integer pageSize, Integer storeSort, Integer timeSort) {
-        LambdaQueryWrapper<EvaluationInfo> wrapper = Wrappers.lambdaQuery(EvaluationInfo.class).eq(EvaluationInfo::getJobCateId,
+        LambdaQueryWrapper<EvaluationInfo> wrapper = Wrappers.lambdaQuery(EvaluationInfo.class).eq(EvaluationInfo::getProductionId,
                 productionId);
         MiniAppEvaluationEnum evaluationEnum = MiniAppEvaluationEnum.resolve(storeSort);
         switch (evaluationEnum) {
