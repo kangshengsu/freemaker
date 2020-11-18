@@ -30,6 +30,12 @@ public class EvaluationInfoVO extends VO implements Serializable {
      */
     @NotNull(message = "订单不能为空")
     public Long orderId;
+
+    /**
+     * 作品主键
+     */
+    private Long productionId;
+
     /**
      * 所属领域
      **/

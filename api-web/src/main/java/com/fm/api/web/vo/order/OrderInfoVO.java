@@ -34,6 +34,10 @@ public class OrderInfoVO extends VO implements Serializable {
     **/
 	private String code;
 
+	/**
+	 * 作品id
+	 */
+	private Long productionId;
 
     /**
     * 需求类型

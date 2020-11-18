@@ -26,9 +26,9 @@ import java.sql.Wrapper;
 public interface IEvaluationInfoMapper extends BaseMapper<EvaluationInfo> {
     /**
      * 获取 自由职业者 以往评价的总分 以及评价条数
-     * @param jobCateId
-     * @param freelancerId
+     * @param productionId
+     * @param
      * @return
      */
-    OverallEvaluation findOverallEvaluationByCateAndFreelancer(@Param("jobCateId") Long jobCateId, @Param("freelancerId") Long freelancerId ,@Param("maxCount") Integer maxCount);
+    OverallEvaluation findOverallEvaluationByProductionId(@Param("productionId") Long productionId, @Param("maxCount") Integer maxCount);
 }

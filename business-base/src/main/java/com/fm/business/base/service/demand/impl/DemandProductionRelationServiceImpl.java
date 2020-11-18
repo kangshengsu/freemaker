@@ -80,8 +80,7 @@ public class DemandProductionRelationServiceImpl extends AuditBaseService<IDeman
         productionInfos.forEach(productionInfo -> {
             RecommendProduction recommendProduction = new RecommendProduction();
             BeanUtils.copyProperties(productionInfo,recommendProduction);
-            recommendProduction.setOverallEvaluation(iEvaluationInfoService.findOverallEvaluationByCateAndFreelancer(recommendProduction.getJobCateId(),
-                    recommendProduction.getFreelancerId()));
+            recommendProduction.setOverallEvaluation(iEvaluationInfoService.findOverallEvaluationByCateAndFreelancer(productionInfo.getId()));
             recommendProductions.add(recommendProduction);
 
         });

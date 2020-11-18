@@ -28,13 +28,13 @@ public interface IEvaluationInfoService extends Service<EvaluationInfo> {
      * @param str
      * @return
      */
-    Page<EvaluationInfo> findByCateAndFreelancerPage(Long jobCateId, Long freelancerId, Integer limit, Integer currentPage, Integer pageSize,Integer storeSort, Integer timeSort);
+    Page<EvaluationInfo> findByProductionIdPage(Long productionId, Integer limit, Integer currentPage, Integer pageSize,Integer storeSort, Integer timeSort);
     /**
      * 根据作者和岗位获取总体评价信息
      * @param str
      * @return
      */
-    OverallEvaluation findOverallEvaluationByCateAndFreelancer(Long jobCateId, Long freelancerId);
+    OverallEvaluation findOverallEvaluationByCateAndFreelancer(Long productionId);
 
     /**
      * 根据作品ID获取评价信息
