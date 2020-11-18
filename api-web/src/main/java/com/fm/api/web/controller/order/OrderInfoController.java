@@ -6,13 +6,11 @@
 */
 package com.fm.api.web.controller.order;
 
-import com.fm.api.web.vo.job.BdJobTagVO;
 import com.fm.api.web.vo.order.OrderInfoVO;
 import com.fm.api.web.vo.order.OrderOperateInfoVO;
 import com.fm.business.base.enums.AttachmentBusinessType;
 import com.fm.business.base.enums.OrderOperateType;
 import com.fm.business.base.enums.OrderStatus;
-import com.fm.business.base.enums.TagStatus;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.demand.DemandInfo;
@@ -20,20 +18,16 @@ import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.model.order.OrderInfoDetail;
+import com.fm.business.base.model.order.OrderOperateInfo;
 import com.fm.business.base.service.IAttachmentInfoService;
 import com.fm.business.base.service.IBdJobCateService;
-import com.fm.business.base.model.order.OrderInfoDetail;
-import com.fm.business.base.model.order.OrderOperateInfo;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
-import com.fm.business.base.service.order.IOrderFollowService;
 import com.fm.business.base.service.order.IOrderInfoDetailService;
 import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.business.base.service.order.IOrderOperateInfoService;
-import com.fm.framework.core.query.Page;
-import com.fm.framework.core.query.QueryItem;
-import com.fm.framework.core.query.QueryType;
+import com.fm.framework.core.query.*;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
@@ -41,7 +35,10 @@ import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
@@ -105,6 +102,8 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
 
     @RequestMapping(value = "list",method = RequestMethod.POST)
     public ApiResponse<Page<OrderInfoVO>> list(@RequestBody QueryRequest queryRequest) {
+        OrderItem orderItem = new OrderItem(OrderType.desc, "createTime");
+        queryRequest.setOrderItem(orderItem);
         ApiResponse<Page<OrderInfoVO>> result = super.list(queryRequest);
         fillDetailInfo(result.getData().getData());
 

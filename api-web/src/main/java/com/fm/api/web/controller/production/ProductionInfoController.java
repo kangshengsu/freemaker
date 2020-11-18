@@ -11,10 +11,15 @@ import com.fm.api.web.vo.production.ProductionInfoVO;
 import com.fm.business.base.enums.BudgetType;
 import com.fm.business.base.enums.DeliveryType;
 import com.fm.business.base.enums.ProductionStatus;
+import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
+import com.fm.framework.core.query.OrderItem;
+import com.fm.framework.core.query.OrderType;
 import com.fm.framework.core.query.Page;
+import com.fm.framework.core.query.QueryType;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
@@ -22,6 +27,7 @@ import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +45,9 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
 
     @Autowired
     private IProductionInfoService productionInfoService;
+
+    @Autowired
+    private IFreelancerInfoService iFreelancerInfoService;
 
 
     @RequestMapping(value = "/create",method = RequestMethod.POST)
@@ -92,10 +101,26 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
 
     @RequestMapping(value = "/list",method = RequestMethod.POST)
     public ApiResponse<Page<ProductionInfoVO>> list(@RequestBody QueryRequest queryRequest) {
-
+        OrderItem orderItem = new OrderItem(OrderType.desc, "createTime");
+        queryRequest.setOrderItem(orderItem);
         return super.list(queryRequest);
     }
 
+    @RequestMapping(value = "/conditionQuery",method = RequestMethod.POST)
+    public ApiResponse<Page<ProductionInfoVO>> conditionQuery(@RequestBody QueryRequest queryRequest) {
+        queryRequest.getQueryItems().forEach( queryItem -> {
+            if(queryItem.getQueryField().equals("referrer")){
+                List<FreelancerInfo> freelancerInfos = iFreelancerInfoService.findUserByReferrer(Long.valueOf(String.valueOf(queryItem.getValue())));
+                List<Long> result = freelancerInfos.stream().map(FreelancerInfo::getId).collect(Collectors.toList());
+                queryItem.setQueryField("freelancerId");
+                queryItem.setValue(result);
+                queryItem.setType(QueryType.in);
+            }
+        });
+        OrderItem orderItem = new OrderItem(OrderType.desc, "createTime");
+        queryRequest.setOrderItem(orderItem);
+        return super.list(queryRequest);
+    }
 
     @Override
     protected Service<ProductionInfo> service() {
