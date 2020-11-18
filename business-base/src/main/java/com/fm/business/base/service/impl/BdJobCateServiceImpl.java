@@ -20,10 +20,9 @@ import com.fm.business.base.service.IBdJobCateService;
 import com.fm.framework.core.query.QueryItem;
 import com.fm.framework.core.query.QueryType;
 import com.fm.framework.core.service.AuditBaseService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.fm.framework.core.service.BaseService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -153,6 +152,13 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
                 .eq(BdJobCate::getCateType, JobNodeType.POST.getType());
 
         return getBaseMapper().selectList(wrapper);
+    }
+
+    @Override
+    public BdJobCate getJobCate(Long id) {
+        LambdaQueryWrapper<BdJobCate> wrapper = Wrappers.lambdaQuery(BdJobCate.class)
+                .eq(BdJobCate::getId, id);
+        return getBaseMapper().selectOne(wrapper);
     }
 
     private List<BdJobCate> getJobNodes(List<String> treeCodes) {

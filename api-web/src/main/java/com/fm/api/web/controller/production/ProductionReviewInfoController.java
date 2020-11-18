@@ -6,20 +6,18 @@
 */
 package com.fm.api.web.controller.production;
 
+import com.fm.api.web.vo.production.ProductionReviewInfoVO;
 import com.fm.business.base.enums.ProductionReviewStatus;
-import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.production.ProductionReviewInfo;
-import com.fm.business.base.model.sys.SysUser;
-import com.fm.business.base.service.sys.ISysUserService;
-import com.fm.framework.core.Context;
-import com.fm.framework.core.query.Page;
+import com.fm.business.base.model.sm.User;
 import com.fm.business.base.service.production.IProductionReviewInfoService;
+import com.fm.business.base.service.sm.IUserService;
+import com.fm.business.base.service.sys.ISysUserService;
+import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
-import com.fm.api.web.vo.production.ProductionReviewInfoVO;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +44,9 @@ public class ProductionReviewInfoController extends BaseController<ProductionRev
 
     @Autowired
     private ISysUserService sysUserService;
+
+    @Autowired
+    private IUserService iUserService;
 
     /**
      * 审核通过
@@ -119,9 +120,9 @@ public class ProductionReviewInfoController extends BaseController<ProductionRev
         form.setStatusName(ProductionReviewStatus.get(model.getStatus()).getName());
 
         //获取作者数据
-        SysUser sysUser = sysUserService.get(model.getReviewerId());
-        if( sysUser != null ){
-            form.setReviewerName(sysUser.getName());
+        User user = iUserService.get(model.getReviewerId());
+        if( user != null ){
+            form.setReviewerName(user.getName());
         }
 
         return form;
