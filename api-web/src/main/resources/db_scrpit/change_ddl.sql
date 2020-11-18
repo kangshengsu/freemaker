@@ -26,3 +26,44 @@ ADD COLUMN production_id BIGINT(20) COMMENT '作品id' AFTER `code`
 -- 在评价表添加作品id一列
 ALTER TABLE `evaluation_info`
 ADD COLUMN production_id BIGINT(20) COMMENT '作品id' AFTER order_id
+
+-- 加入集团
+INSERT INTO `sm_org` (
+  `id`,
+  `name`,
+  `code`,
+  `incode`,
+  `memo`,
+  `status`,
+  `parent_id`,
+  `type`,
+  `principal`,
+  `phone`,
+  `sq`,
+  `create_time`,
+  `create_user`,
+  `update_time`,
+  `update_user`,
+  `ts`,
+  `is_delete`
+)
+VALUES
+  (
+    1,
+    '集团',
+    'JT',
+    'TREA',
+    NULL,
+    1,
+    - 1,
+    1,
+    '王家麒',
+    '15110245740',
+    1,
+    '2020-11-09 19:31:47',
+    1,
+    NULL,
+    NULL,
+    '2020-11-09 19:31:49.836',
+    0
+  )
