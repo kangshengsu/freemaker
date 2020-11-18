@@ -54,7 +54,7 @@ public class FreelancerInfoApiVO extends VO implements Serializable {
     /**
     * 技能描述
     **/
-	@Size(max = 500,message = "技能描述不能太长",groups = {UserApiVO.UpdateAllInfo.class})
+	@Size(max = 800,message = "技能描述不能太长",groups = {UserApiVO.UpdateAllInfo.class})
 	private String skillSummarize;
 
 
