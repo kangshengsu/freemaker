@@ -10,7 +10,6 @@ import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.framework.core.service.Service;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Description:(自由职业者信息服务层)
@@ -44,4 +43,11 @@ public interface IFreelancerInfoService extends Service<FreelancerInfo> {
     List<FreelancerInfo> findLikeNameOrUserId(String keyword);
 
     List<FreelancerInfo> getFreelancerName(List<Long> referrers);
+
+    /**
+     * 查询被推荐人的用户信息
+     * @param referrer
+     * @return
+     */
+    List<FreelancerInfo> findUserByReferrer(Long referrer);
 }

@@ -7,7 +7,6 @@
 package com.fm.business.base.service.freelancer.impl;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.freelancer.IFreelancerInfoMapper;
 import com.fm.business.base.enums.ProductionStatus;
@@ -35,13 +34,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.*;
-import java.net.HttpURLConnection;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -255,5 +252,11 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
             list.add(freelancerInfo);
         });
         return list;
+    }
+
+    @Override
+    public List<FreelancerInfo> findUserByReferrer(Long referrer) {
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(FreelancerInfo.class)
+                .eq(FreelancerInfo::getReferrer, referrer));
     }
 }

@@ -12,6 +12,8 @@ import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.service.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
+import com.fm.framework.core.query.OrderItem;
+import com.fm.framework.core.query.OrderType;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
@@ -68,7 +70,8 @@ public class DemandInfoController extends BaseController<DemandInfo, DemandInfoV
 
     @RequestMapping(value = "list",method = RequestMethod.POST)
     public ApiResponse<Page<DemandInfoVO>> list(@RequestBody QueryRequest queryRequest) {
-
+        OrderItem orderItem = new OrderItem(OrderType.desc, "createTime");
+        queryRequest.setOrderItem(orderItem);
         return super.list(queryRequest);
     }
 
