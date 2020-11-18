@@ -19,7 +19,7 @@
         <result column="evaluation_count" property="evaluationCount"/>
     </resultMap>
 
-    <select id="findOverallEvaluationByCateAndFreelancer" resultMap="overallEvaluationResultMap">
+    <select id="findOverallEvaluationByProductionId" resultMap="overallEvaluationResultMap">
         select freelancer_id
                  , sum(total_score)     as total_score_sum
                  , sum(response_speed)  as response_speed_sum
@@ -37,8 +37,7 @@
                  ,accomplish_quality
                  , recommend_score
             from evaluation_info
-            where freelancer_id = #{freelancerId}
-              and job_cate_id = #{jobCateId}
+            where production_id = #{productionId}
             order by create_time desc
             limit #{maxCount}
 

@@ -87,16 +87,12 @@ public class EvaluationInfoApiController extends BaseController<EvaluationInfo, 
         return ApiResponse.ofSuccess(evaluationInfoVOPageInfo);
     }
 
-    @RequestMapping(value = "/findOverallEvaluationByCateAndFreelancer", method = RequestMethod.GET)
-    public ApiResponse<OverallEvaluationVO> findOverallEvaluationByCateAndFreelancer(@RequestParam("jobCateId") Long jobCateId,
-                                                                                     @RequestParam("freelancerId") Long freelancerId) {
-        if (jobCateId == null) {
-            return failed("请选择岗位信息");
+    @RequestMapping(value = "/findOverallEvaluationByProductionId", method = RequestMethod.GET)
+    public ApiResponse<OverallEvaluationVO> findOverallEvaluationByProductionId(@RequestParam("productionId") Long productionId) {
+        if (productionId == null) {
+            return failed("请选择作品");
         }
-        if (freelancerId == null) {
-            return failed("请选择作者");
-        }
-        return success(evaluationMapper.toOverallEvaluationVO(evaluationInfoService.findOverallEvaluationByCateAndFreelancer(jobCateId, freelancerId)));
+        return success(evaluationMapper.toOverallEvaluationVO(evaluationInfoService.findOverallEvaluationByCateAndFreelancer(productionId)));
     }
 
     @Override

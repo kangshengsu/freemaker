@@ -122,14 +122,14 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
      * <p>
      * 如果评价数据样本小于一定数量 则 按一定比例稀释数据
      *
-     * @param jobCateId
-     * @param freelancerId
+     * @param 
+     * @param
      * @return
      */
     @Override
-    public OverallEvaluation findOverallEvaluationByCateAndFreelancer(Long jobCateId, Long freelancerId) {
+    public OverallEvaluation findOverallEvaluationByCateAndFreelancer(Long productionId) {
 
-        OverallEvaluation overallEvaluation = this.getBaseMapper().findOverallEvaluationByCateAndFreelancer(jobCateId, freelancerId, EvaluationConstants.EVALUATION_DEFAULT_COUNT);
+        OverallEvaluation overallEvaluation = this.getBaseMapper().findOverallEvaluationByProductionId(productionId, EvaluationConstants.EVALUATION_DEFAULT_COUNT);
 
         // 取出评价总分 以及 评价数量  如果评价数量小于最低要求评价数量 则补充满分样本数据， 无评价数量则返回满分
         BigDecimal totalScore = null;
