@@ -58,24 +58,20 @@ public class EvaluationInfoApiController extends BaseController<EvaluationInfo, 
         return success(evaluationInfoVO);
     }
 
-    @RequestMapping(value = "/findByCateAndFreelancer", method = RequestMethod.GET)
-    public ApiResponse<Page<EvaluationInfoVO>> findByCateAndFreelancer(@RequestParam("jobCateId") Long jobCateId,
-                                                                       @RequestParam("freelancerId") Long freelancerId,
+    @RequestMapping(value = "/findByProductionId", method = RequestMethod.GET)
+    public ApiResponse<Page<EvaluationInfoVO>> findByCateAndFreelancer(@RequestParam("productionId") Long productionId,
                                                                        @RequestParam(value = "recent", required = false) Integer recent,
                                                                        @RequestParam(value = "currentPage") Integer currentPage,
                                                                        @RequestParam(value = "pageSize") Integer pageSize,
                                                                        @RequestParam(value = "storeSort",required = false)  Integer storeSort,
                                                                        @RequestParam(value = "timeSort" ,required = false)  Integer timeSort) {
-        if (jobCateId == null) {
-            return failed("请选择岗位信息");
-        }
-        if (freelancerId == null) {
-            return failed("请选择作者");
+        if (productionId == null) {
+            return failed("请选择作品");
         }
         if (recent != null && (recent <= 0 || recent > 50)) {
             return failed("最近查看数范围为1到50");
         }
-        Page<EvaluationInfo> evaluationInfos = evaluationInfoService.findByCateAndFreelancerPage(jobCateId, freelancerId, recent, currentPage, pageSize,storeSort,timeSort);
+        Page<EvaluationInfo> evaluationInfos = evaluationInfoService.findByProductionIdPage(productionId, recent, currentPage, pageSize,storeSort,timeSort);
         List<EvaluationInfo> evaluationInfoList = evaluationInfos.getData();
         PageInfo<EvaluationInfoVO> evaluationInfoVOPageInfo = new PageInfo<>();
         ArrayList<EvaluationInfoVO> evaluationInfoVOList = new ArrayList<>();

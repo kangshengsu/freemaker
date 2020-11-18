@@ -32,6 +32,12 @@ public class EvaluationInfo extends BaseModel implements Serializable, IAudit {
      * 订单主键
      */
     public Long orderId;
+
+    /**
+     * 作品主键
+     */
+    private Long productionId;
+
     /**
      * 所属领域
      **/

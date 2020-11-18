@@ -69,14 +69,12 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
     @Autowired
     private IBdJobTagService bdJobTagService;
 
-    DecimalFormat decimalFormat = new DecimalFormat("#.00");
-
     @Override
-    public Page<EvaluationInfo> findByCateAndFreelancerPage(Long jobCateId, Long freelancerId, Integer limit, Integer currentPage, Integer pageSize, Integer storeSort, Integer timeSort) {
+    public Page<EvaluationInfo> findByProductionIdPage(Long productionId, Integer limit, Integer currentPage, Integer pageSize, Integer storeSort, Integer timeSort) {
         LambdaQueryWrapper<EvaluationInfo> wrapper = Wrappers.lambdaQuery(EvaluationInfo.class).eq(EvaluationInfo::getJobCateId,
-                jobCateId).eq(EvaluationInfo::getFreelancerId, freelancerId).eq(EvaluationInfo::getStatus, EvaluationStatusEnum.AUDIT_PASS.getCode());
+                productionId);
         MiniAppEvaluationEnum evaluationEnum = MiniAppEvaluationEnum.resolve(storeSort);
-        switch (evaluationEnum){
+        switch (evaluationEnum) {
             case ALL:
                 break;
             case ASC:
@@ -87,7 +85,7 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
                 break;
         }
         MiniAppEvaluationTimeEnum evaluationTimeEnum = MiniAppEvaluationTimeEnum.resolve(timeSort);
-        switch (evaluationTimeEnum){
+        switch (evaluationTimeEnum) {
             case ALL:
                 break;
             case ASC:
@@ -97,13 +95,13 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
                 wrapper.orderByDesc(EvaluationInfo::getUpdateTime);
                 break;
         }
-            wrapper.orderByDesc(EvaluationInfo::getId);
+        wrapper.orderByDesc(EvaluationInfo::getId);
 
         if (limit != null) {
             wrapper = wrapper.last(" limit " + limit);
         }
 
-        Page<EvaluationInfo> evaluationInfos = toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage,pageSize),wrapper));
+        Page<EvaluationInfo> evaluationInfos = toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), wrapper));
         List<EvaluationInfo> evaluationInfoList = evaluationInfos.getData();
         evaluationInfoList.forEach(evaluationInfo -> {
             evaluationInfo.setTotalScore(evaluationInfo.getTotalScore());
@@ -154,8 +152,8 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
             //样本数据不足  补充满分样本数据
             BigDecimal diff = BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT - overallEvaluation.getEvaluationCount());
             totalScore = (EvaluationConstants.TOTAL_SCORE_MAX.multiply(diff).add(overallEvaluation.getTotalScoreSum())).divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
-            responseSpeed = (EvaluationConstants.RESPONSE_SPEED_MAX.multiply(diff).add( overallEvaluation.getResponseSpeedSum())).divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT)) ;
-            communicateCapacity = (EvaluationConstants.COMMUNICATE_CAPACITY_MAX.multiply(diff).add(overallEvaluation.getCommunicateCapacitySum())).divide( BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
+            responseSpeed = (EvaluationConstants.RESPONSE_SPEED_MAX.multiply(diff).add(overallEvaluation.getResponseSpeedSum())).divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
+            communicateCapacity = (EvaluationConstants.COMMUNICATE_CAPACITY_MAX.multiply(diff).add(overallEvaluation.getCommunicateCapacitySum())).divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
             completionTime = (EvaluationConstants.COMPLETION_TIME_MAX.multiply(diff).add(overallEvaluation.getCompletionTimeSum())).divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
             accomplishQuality = (EvaluationConstants.ACCOMPLISH_QUALITY_MAX.multiply(diff).add(overallEvaluation.getAccomplishQualitySum())).divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
             recommendScore = (EvaluationConstants.RECOMMEND_SCORE_MAX.multiply(diff).add(overallEvaluation.getRecommendScoreSum())).divide(BigDecimal.valueOf(EvaluationConstants.EVALUATION_DEFAULT_COUNT));
@@ -180,7 +178,7 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
     @Override
     public EvaluationInfo findByOrderId(Long orderId) {
         EvaluationInfo evaluationInfo = getBaseMapper().selectOne(Wrappers.lambdaQuery(EvaluationInfo.class).eq(EvaluationInfo::getOrderId,
-                orderId).eq(EvaluationInfo::getStatus, EvaluationStatusEnum.AUDIT_PASS.getCode()).orderByDesc(EvaluationInfo::getId).last("limit 1"));
+                orderId).orderByDesc(EvaluationInfo::getId).last("limit 1"));
         if (evaluationInfo == null) {
             return null;
         }
@@ -193,7 +191,6 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
         fillEvaluationInfo(Arrays.asList(evaluationInfo));
         return evaluationInfo;
     }
-
 
 
     @Override
@@ -353,11 +350,11 @@ public class EvaluationInfoServiceImpl extends AuditBaseService<IEvaluationInfoM
 
     @Override
     public boolean updateStatus(EvaluationInfo updateEvaluationInfo) {
-        if (updateEvaluationInfo.getId() == null){
+        if (updateEvaluationInfo.getId() == null) {
             return false;
         }
         LambdaUpdateWrapper<EvaluationInfo> wrapper = Wrappers.lambdaUpdate(EvaluationInfo.class).set(EvaluationInfo::getStatus, updateEvaluationInfo.getStatus());
-        if (updateEvaluationInfo.getId() != null){
+        if (updateEvaluationInfo.getId() != null) {
             wrapper.eq(EvaluationInfo::getId, updateEvaluationInfo.getId());
         }
 
