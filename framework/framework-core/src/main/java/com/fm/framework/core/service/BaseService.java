@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.NonNull;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
@@ -81,6 +82,7 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public boolean save(T model) {
         boolean result;
         initDefaultField(model);

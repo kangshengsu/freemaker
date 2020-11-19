@@ -96,6 +96,13 @@ public class SysUser extends BaseModel implements Serializable {
      */
     private transient EmployerInfo employerInfo;
 
+    /**
+     * 推荐人
+     * todo 由于目前设定的CRUD模板，只能传数据库实体，因此在SysUser上扩展参数，并标注非数据库字段
+     * todo 仅从controller层到service传参使用，为构造Freelancer数据，可根据现有权限模型调整
+     */
+    @TableField(exist = false)
+    private Long scene;
 
     /**
      * 获取主键方法，主键整体平台定义成Long数据类型，方便数据的整体插入性能

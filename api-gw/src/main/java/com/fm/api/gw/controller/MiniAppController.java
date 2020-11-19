@@ -5,11 +5,9 @@ import com.fm.api.gw.vo.LoginReturnVO;
 import com.fm.api.gw.vo.MiniAppUserVO;
 import com.fm.api.gw.vo.WeChatDecryptVO;
 import com.fm.api.gw.vo.WeChatLoginVO;
-import com.fm.business.base.enums.LanguageEnum;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.sys.SysUser;
-import com.fm.business.base.service.IAccountInfoService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.sys.ISysUserService;
@@ -52,8 +50,6 @@ public class MiniAppController {
     @Autowired
     private ISysUserService iSysUserService;
 
-    @Autowired
-    private IAccountInfoService iAccountInfoService;
 
     @Autowired
     private IFreelancerInfoService iFreelancerInfoService;
@@ -93,16 +89,8 @@ public class MiniAppController {
             convertSysUser(sysUser, weChatLoginVO, openId);
             //同步howwork账号、自由职业者、雇主信息
             iSysUserService.save(sysUser);
-            //获取新增的用户ID
-            sysUser = iSysUserService.findByCode(openId);
-
-            FreelancerInfo freelancerInfo = new FreelancerInfo();
-            convertFreelancerInfo(freelancerInfo, weChatLoginVO, sysUser.getId());
-
-            EmployerInfo employerInfo = new EmployerInfo();
-            convertEmployerInfo(employerInfo, weChatLoginVO, sysUser.getId());
-
-            iAccountInfoService.createAccount(freelancerInfo, employerInfo);
+            //获取新增的用户ID todo 理论上新增用户后，sysUser中以填充了userId，详情见此类的方法：BaseService#initDefaultField
+            //sysUser = iSysUserService.findByCode(openId);
         }
         userId = sysUser.getId();
         RBucket<MiniAppUserVO> currUser = redissonClient.getBucket(cacheToken.get());
@@ -179,40 +167,5 @@ public class MiniAppController {
         sysUser.setAvatarUrl(weChatLoginVO.getAvatarUrl());
 //        sysUser.setPhone(phoneNumber);
         sysUser.setCode(openId);
-    }
-
-    private void convertEmployerInfo(EmployerInfo employerInfo, WeChatLoginVO weChatLoginVO, Long userId) {
-        employerInfo.setName(weChatLoginVO.getNickName());
-        employerInfo.setCode(weChatLoginVO.getNickName());
-//        employerInfo.setPhone(phoneNumber);
-        employerInfo.setProvinceCode(weChatLoginVO.getProvince());
-        employerInfo.setCityCode(weChatLoginVO.getCity());
-        //todo zyc 下三个为空
-        employerInfo.setDistrictCode(Optional.ofNullable(weChatLoginVO.getDistrict()).orElse(""));
-        employerInfo.setCountyCode(Optional.ofNullable(weChatLoginVO.getCounty()).orElse(""));
-        employerInfo.setAccountCode("");
-        employerInfo.setUserId(userId);
-        employerInfo.setHeadImg(weChatLoginVO.getAvatarUrl());
-    }
-
-    private void convertFreelancerInfo(FreelancerInfo freelancerInfo, WeChatLoginVO weChatLoginVO, Long userId) {
-        freelancerInfo.setName(weChatLoginVO.getNickName());
-        freelancerInfo.setCode(weChatLoginVO.getNickName());
-//        freelancerInfo.setPhone(phoneNumber);
-        //todo zyc 下面四个没值
-        freelancerInfo.setCateTreeCode("");
-        freelancerInfo.setJobCateId(0L);
-        freelancerInfo.setSkillSummarize("");
-        freelancerInfo.setAccountCode("");
-
-        freelancerInfo.setLanguage(LanguageEnum.CHINESE.getCode());
-        freelancerInfo.setProvinceCode(weChatLoginVO.getProvince());
-        freelancerInfo.setCityCode(weChatLoginVO.getCity());
-        freelancerInfo.setDistrictCode(Optional.ofNullable(weChatLoginVO.getDistrict()).orElse(""));
-        freelancerInfo.setCountyCode(Optional.ofNullable(weChatLoginVO.getCounty()).orElse(""));
-        freelancerInfo.setUserId(userId);
-        freelancerInfo.setHeadImg(weChatLoginVO.getAvatarUrl());
-        freelancerInfo.setReferrer(weChatLoginVO.getScene());
-
     }
 }
