@@ -13,6 +13,7 @@ import com.fm.framework.core.service.AuditBaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author qdl
@@ -28,6 +29,7 @@ public class EvaluationReviewInfoServiceImpl extends AuditBaseService<IEvaluatio
     private IEvaluationInfoService evaluationInfoService;
 
     @Override
+    @Transactional(rollbackFor = Throwable.class)
     public boolean review(EvaluationReviewInfo evaluationReviewInfo, EvaluationReviewStatus evaluationReviewStatus) {
         /**
          * 检查当前评价审核状态
