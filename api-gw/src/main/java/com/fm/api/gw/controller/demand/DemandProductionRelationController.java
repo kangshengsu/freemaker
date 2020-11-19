@@ -67,12 +67,17 @@ public class DemandProductionRelationController extends BaseController<DemandPro
         Long currUserId = Context.getCurrUserId();
         FreelancerInfo freelancerInfo = iFreelancerInfoService.getByUserId(currUserId);
         List<ProductionInfo> productionInfoList = iProductionInfoService.findAllProduction(freelancerInfo.getId());
-        List<Long> productionIds = productionInfoList.stream().map(ProductionInfo::getId).collect(Collectors.toList());
-        List<DemandProductionRelation> result = demandProductionRelationService.findRecommend(productionIds, demandId);
-      boolean flag = Optional.ofNullable(result)
-                .map(r -> !CollectionUtils.isEmpty(r))
-                .orElse(false);
-      return ApiResponse.ofSuccess(flag);
+        if(productionInfoList != null && productionInfoList .size() != 0){
+            List<Long> productionIds = productionInfoList.stream().map(ProductionInfo::getId).collect(Collectors.toList());
+            List<DemandProductionRelation> result = demandProductionRelationService.findRecommend(productionIds, demandId);
+            boolean flag = Optional.ofNullable(result)
+                    .map(r -> !CollectionUtils.isEmpty(r))
+                    .orElse(false);
+            return ApiResponse.ofSuccess(flag);
+        }else {
+            return ApiResponse.ofSuccess(Boolean.FALSE);
+        }
+
 //        if(result.size() == 0){
 //            return ApiResponse.ofSuccess(Boolean.FALSE);
 //        }else {
