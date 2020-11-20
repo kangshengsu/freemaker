@@ -167,5 +167,6 @@ public class MiniAppController {
         sysUser.setAvatarUrl(weChatLoginVO.getAvatarUrl());
 //        sysUser.setPhone(phoneNumber);
         sysUser.setCode(openId);
+        sysUser.setScene(weChatLoginVO.getScene());
     }
 }
