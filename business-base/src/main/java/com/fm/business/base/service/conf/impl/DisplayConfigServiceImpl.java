@@ -1,6 +1,5 @@
 package com.fm.business.base.service.conf.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.conf.DisplayConfigMapper;
 import com.fm.business.base.enums.ProductionStatus;
@@ -10,7 +9,7 @@ import com.fm.business.base.model.conf.DisplayConfigItemConvert;
 import com.fm.business.base.model.conf.DisplayType;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.production.ProductionInfo;
-import com.fm.business.base.service.IBdJobCateService;
+import com.fm.business.base.service.job.IBdJobCateService;
 import com.fm.business.base.service.conf.IDisplayConfigService;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.service.AuditBaseService;

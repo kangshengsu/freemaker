@@ -11,6 +11,7 @@ import com.fm.framework.web.response.ApiResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @Api(value = "/v1/userApi",description ="用户操作相关接口")
 @RestController
 @RequestMapping("/v1/userApi")
+@Slf4j
 public class UserController extends BaseController<SysUser,UserApiVO> {
 
     @Autowired
@@ -62,7 +64,7 @@ public class UserController extends BaseController<SysUser,UserApiVO> {
     @ApiImplicitParam(name = "form", value = "作品相关属性", dataType = "UserApiVO",paramType = "body")
     public ApiResponse<Boolean> updateAll(@RequestBody @Validated(value = UserApiVO.UpdateAllInfo.class) UserApiVO form) {
         SysUser sysUser = userMapper.toSysUser(form);
-
+        log.info("当前登录人：{}",Context.getCurrUserId());
         sysUser.setId(Context.getCurrUserId());
         sysUser.getFreelancerInfo().setId(Context.getCurrFreelancerId());
         sysUser.getEmployerInfo().setId(Context.getCurrEmployerId());

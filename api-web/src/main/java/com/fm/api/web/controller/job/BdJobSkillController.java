@@ -7,10 +7,9 @@
 package com.fm.api.web.controller.job;
 
 import com.fm.api.web.vo.common.SelectItemVO;
-import com.fm.api.web.vo.job.BdJobCateVO;
 import com.fm.business.base.model.job.BdJobSkill;
 import com.fm.framework.core.query.Page;
-import com.fm.business.base.service.IBdJobSkillService;
+import com.fm.business.base.service.job.IBdJobSkillService;
 import com.fm.framework.core.query.QueryItem;
 import com.fm.framework.core.query.QueryType;
 import com.fm.framework.core.service.Service;

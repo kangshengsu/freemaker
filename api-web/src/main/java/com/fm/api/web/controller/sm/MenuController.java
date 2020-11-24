@@ -474,6 +474,7 @@ public class MenuController extends BaseController<Menu, MenuVO> {
     }
 
 
+    @Override
     protected Page<MenuVO> convert(Page<Menu> page) {
         PageInfo<MenuVO> result = new PageInfo<>();
         result.setCurrentPage(page.getCurrentPage());
