@@ -111,4 +111,14 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
     List<ProductionInfo> findByFreeLancer(Long freelancerId);
 
     List<ProductionInfo> distinctProductions(List<Long> productionIds);
+
+    List<ProductionInfo> findByStatus(Long freelancerId, Integer status);
+
+    /**
+     * 根据状态查询所有作品
+     * @param status
+     * @return
+     */
+    List<ProductionInfo> findAllByStatus(List<Integer> status);
+
 }

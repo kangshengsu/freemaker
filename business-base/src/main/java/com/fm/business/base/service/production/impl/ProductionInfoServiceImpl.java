@@ -507,4 +507,19 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         return getBaseMapper().selectList(queryWrapper);
     }
 
+    @Override
+    public List<ProductionInfo> findByStatus(Long freelancerId, Integer status) {
+        Wrapper wrapper = Wrappers.lambdaQuery(ProductionInfo.class)
+                .eq(ProductionInfo::getFreelancerId, freelancerId)
+                .eq(ProductionInfo::getStatus, status);
+        return getBaseMapper().selectList(wrapper);
+    }
+
+    @Override
+    public List<ProductionInfo> findAllByStatus(List<Integer> status) {
+        QueryWrapper<ProductionInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("distinct freelancer_Id")
+                .in("status", status);
+        return getBaseMapper().selectList(queryWrapper);
+    }
 }

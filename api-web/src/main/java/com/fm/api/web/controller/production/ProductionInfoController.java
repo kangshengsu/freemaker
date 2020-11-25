@@ -111,10 +111,16 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         queryRequest.getQueryItems().forEach( queryItem -> {
             if(queryItem.getQueryField().equals("referrer")){
                 List<FreelancerInfo> freelancerInfos = iFreelancerInfoService.findUserByReferrer(Long.valueOf(String.valueOf(queryItem.getValue())));
-                List<Long> result = freelancerInfos.stream().map(FreelancerInfo::getId).collect(Collectors.toList());
-                queryItem.setQueryField("freelancerId");
-                queryItem.setValue(result);
-                queryItem.setType(QueryType.in);
+                if(org.springframework.util.CollectionUtils.isEmpty(freelancerInfos)){
+                    queryItem.setQueryField("freelancerId");
+                    queryItem.setValue("");
+                    queryItem.setType(QueryType.eq);
+                }else {
+                    List<Long> result = freelancerInfos.stream().map(FreelancerInfo::getId).collect(Collectors.toList());
+                    queryItem.setQueryField("freelancerId");
+                    queryItem.setValue(result);
+                    queryItem.setType(QueryType.in);
+                }
             }
         });
         OrderItem orderItem = new OrderItem(OrderType.desc, "createTime");

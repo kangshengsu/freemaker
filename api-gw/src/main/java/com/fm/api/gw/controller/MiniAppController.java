@@ -7,9 +7,11 @@ import com.fm.api.gw.vo.WeChatDecryptVO;
 import com.fm.api.gw.vo.WeChatLoginVO;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
+import com.fm.business.base.model.partner.PartnerInfo;
 import com.fm.business.base.model.sys.SysUser;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
+import com.fm.business.base.service.partner.PartnerInfoService;
 import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.query.QueryItem;
@@ -50,6 +52,8 @@ public class MiniAppController {
     @Autowired
     private ISysUserService iSysUserService;
 
+    @Autowired
+    private PartnerInfoService partnerInfoService;
 
     @Autowired
     private IFreelancerInfoService iFreelancerInfoService;
@@ -104,6 +108,16 @@ public class MiniAppController {
         miniAppUserVO.setFreeLancerId(freelancerInfoResult.getId());
         miniAppUserVO.setUserId(userId);
         miniAppUserVO.setSessionKey(weChatDecryptVO.getSessionKey());
+
+        //判断是否有推荐人，如有则在合伙人表里插入推荐人数据
+        PartnerInfo partnerInfo = new PartnerInfo();
+        if (weChatLoginVO.getScene() != null) {
+            partnerInfo.setReferrerId(weChatLoginVO.getScene());
+            partnerInfo.setBelongId(weChatLoginVO.getScene());
+        }
+        partnerInfo.setFreelancerId(freelancerInfoResult.getId());
+        partnerInfoService.save(partnerInfo);
+
         currUser.set(miniAppUserVO, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
 
         boolean isExistPhone = Optional.ofNullable(sysUser)
