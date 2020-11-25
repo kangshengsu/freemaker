@@ -30,6 +30,8 @@ public class BdJobCateVO extends VO implements Serializable {
 
 	private String keyword;
 
+	private List<Long> parentIds;
+
     /**
     * 
     **/

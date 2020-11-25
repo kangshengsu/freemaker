@@ -161,7 +161,7 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
 
     }
 
-
+    @Transactional(rollbackFor = RuntimeException.class)
     public boolean update(T model) {
         boolean result;
         beforeUpdate(model);

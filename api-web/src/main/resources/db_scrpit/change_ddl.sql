@@ -105,3 +105,8 @@ SELECT
 id as freelancer_id,referrer as referrer_id,referrer as belong_id,create_time as create_time,
 update_time as update_time,create_user as create_user,update_user as update_user
 FROM freelancer_info;
+
+-- id分布式自增表添加
+INSERT INTO `leaf_alloc`(biz_tag,max_id,step) VALUES('bd_job_cate_detail',1000,50)
+
+-- 修改bd_job_cate表treeCode与parentCode列为不为非空
