@@ -9,9 +9,8 @@ package com.fm.business.base.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.job.IBdJobTagMapper;
-import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.job.BdJobTag;
-import com.fm.business.base.service.IBdJobTagService;
+import com.fm.business.base.service.job.IBdJobTagService;
 import com.fm.framework.core.service.AuditBaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

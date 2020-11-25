@@ -11,7 +11,7 @@ public enum OrderStatus {
 
     CANCELD_100(100, "已取消", 2, OrderOperateRoleType.EMPLOYER.getCode()),
 
-    PAID_50(50, "制作中", 3, OrderOperateRoleType.EMPLOYER.getCode()), // = 已支付
+    PAID_50(50, "服务中", 3, OrderOperateRoleType.EMPLOYER.getCode()), // = 已支付
 
     CHECKING_60(60, "待验收", 4, OrderOperateRoleType.EMPLOYER.getCode()),
 

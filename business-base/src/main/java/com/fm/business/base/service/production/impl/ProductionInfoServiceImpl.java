@@ -22,7 +22,7 @@ import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.model.production.ProductionSkillRelation;
 import com.fm.business.base.service.IAttachmentInfoService;
-import com.fm.business.base.service.IBdJobCateService;
+import com.fm.business.base.service.job.IBdJobCateService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.business.base.service.production.IProductionSkillRelationService;
