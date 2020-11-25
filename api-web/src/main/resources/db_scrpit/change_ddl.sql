@@ -22,6 +22,8 @@ CREATE TABLE `bd_job_cate_detail` (
   `ts` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '数据库时间戳',
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=68002 DEFAULT CHARSET=utf8 COMMENT='类目信息表';
+
+-- 创建学历信息表
 CREATE TABLE `education_info` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '逻辑主键',
   `freelancer_id` bigint(20) NOT NULL COMMENT '自由职业者编码',
@@ -41,6 +43,7 @@ CREATE TABLE `education_info` (
   KEY `idx_education_freelancer_id` (`freelancer_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='学历信息表';
 
+-- 创建工作信息表
 CREATE TABLE `work_info` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '逻辑主键',
   `freelancer_id` bigint(20) NOT NULL COMMENT '自由职业者编码',
@@ -61,6 +64,7 @@ CREATE TABLE `work_info` (
   KEY `idx_education_freelancer_id` (`freelancer_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='工作信息表';
 
+-- 创建合伙人信息表
 CREATE TABLE `partner_info` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '逻辑主键',
   `freelancer_id` bigint(20) NOT NULL COMMENT '自由职业者编码',
@@ -85,11 +89,19 @@ CREATE TABLE `partner_info` (
 	KEY `idx_education_settlement_id` (`settlement_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='合伙人信息表';
 
+-- 添加字段
 ALTER TABLE production_review_info MODIFY production_id BIGINT(20) DEFAULT NULL COMMENT '作品编码';
 ALTER TABLE production_review_info ADD COLUMN modify_content varchar(2000) DEFAULT NULL COMMENT '修改内容' AFTER production_id;
 ALTER TABLE production_review_info ADD COLUMN freelancer_id BIGINT(20) DEFAULT NULL COMMENT '自由职业者编码' AFTER production_id;
+ALTER TABLE freelancer_info ADD COLUMN weight BIGINT(20) DEFAULT '0' COMMENT '权重' AFTER referrer;
 
 INSERT INTO leaf_alloc set biz_tag='education_info',max_id=2000,step=2000;
 INSERT INTO leaf_alloc set biz_tag='work_info',max_id=2000,step=2000;
 INSERT INTO leaf_alloc set biz_tag='partner_info',max_id=2000,step=2000;
 
+-- 补充数据
+INSERT into partner_info (freelancer_id,referrer_id,belong_id,create_time,update_time,create_user,update_user)
+SELECT
+id as freelancer_id,referrer as referrer_id,referrer as belong_id,create_time as create_time,
+update_time as update_time,create_user as create_user,update_user as update_user
+FROM freelancer_info;
