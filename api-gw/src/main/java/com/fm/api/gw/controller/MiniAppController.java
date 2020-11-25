@@ -95,7 +95,20 @@ public class MiniAppController {
             iSysUserService.save(sysUser);
             //获取新增的用户ID todo 理论上新增用户后，sysUser中以填充了userId，详情见此类的方法：BaseService#initDefaultField
             //sysUser = iSysUserService.findByCode(openId);
+
+            //判断是否有推荐人，如有则在合伙人表里插入推荐人数据
+            userId = sysUser.getId();
+            List<QueryItem> queryItems = getQueryItemsForUserId(userId);
+            FreelancerInfo freelancerInfoResult = iFreelancerInfoService.getOne(queryItems);
+            PartnerInfo partnerInfo = new PartnerInfo();
+            if (weChatLoginVO.getScene() != null) {
+                partnerInfo.setReferrerId(weChatLoginVO.getScene());
+                partnerInfo.setBelongId(weChatLoginVO.getScene());
+            }
+            partnerInfo.setFreelancerId(freelancerInfoResult.getId());
+            partnerInfoService.save(partnerInfo);
         }
+
         userId = sysUser.getId();
         RBucket<MiniAppUserVO> currUser = redissonClient.getBucket(cacheToken.get());
 
@@ -108,15 +121,6 @@ public class MiniAppController {
         miniAppUserVO.setFreeLancerId(freelancerInfoResult.getId());
         miniAppUserVO.setUserId(userId);
         miniAppUserVO.setSessionKey(weChatDecryptVO.getSessionKey());
-
-        //判断是否有推荐人，如有则在合伙人表里插入推荐人数据
-        PartnerInfo partnerInfo = new PartnerInfo();
-        if (weChatLoginVO.getScene() != null) {
-            partnerInfo.setReferrerId(weChatLoginVO.getScene());
-            partnerInfo.setBelongId(weChatLoginVO.getScene());
-        }
-        partnerInfo.setFreelancerId(freelancerInfoResult.getId());
-        partnerInfoService.save(partnerInfo);
 
         currUser.set(miniAppUserVO, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
 
