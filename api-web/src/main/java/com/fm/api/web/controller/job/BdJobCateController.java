@@ -62,10 +62,6 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
     @Autowired
     private RedisTemplate redisTemplate;
 
-    @Autowired
-    private DisplayConfigServiceImpl displayConfigService;
-
-
 
 
     /**
@@ -187,18 +183,16 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
         if (!JobNodeType.SKILL.getType().equals(newNode.getCateType())) {
             if (isAdd) {
                 result = super.create(newNode);
-                String displayKey = "displayConfigs";
-                if (!redisTemplate.opsForHash().values(displayKey).isEmpty()){
-                    redisTemplate.boundHashOps(displayKey).put(newNode.getId().toString(),newNode);
+                if (!redisTemplate.opsForHash().values(DisplayConfigServiceImpl.DISPLAYKEY).isEmpty()){
+                    redisTemplate.boundHashOps(DisplayConfigServiceImpl.DISPLAYKEY).put(newNode.getId().toString(),newNode);
                 }
 
             } else {
                 newNode.setTreeCode(null);
                 newNode.setParentId(null);
                 result = super.update(newNode);
-                String displayKey = "displayConfigs";
-                if (!redisTemplate.opsForHash().values(displayKey).isEmpty()){
-                    redisTemplate.delete(displayKey);
+                if (!redisTemplate.opsForHash().values(DisplayConfigServiceImpl.DISPLAYKEY).isEmpty()){
+                    redisTemplate.delete(DisplayConfigServiceImpl.DISPLAYKEY);
                 }
             }
         } else {
