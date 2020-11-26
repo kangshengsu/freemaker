@@ -70,4 +70,6 @@ public interface IBdJobCateService extends Service<BdJobCate> {
     List<BdJobCate> getParentJobCateByParentId(List<Long> parentIds);
 
     List<BdJobCate> getFirstJobCate();
+
+    BdJobCate getByParentId(Long id);
 }
