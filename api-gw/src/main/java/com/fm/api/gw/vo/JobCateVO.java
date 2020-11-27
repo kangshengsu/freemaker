@@ -58,6 +58,11 @@ public class JobCateVO extends VO implements ITreeNode, Serializable {
     private transient BdJobCateDetail bdJobCateDetail;
 
     /**
+     * 类目排序
+     */
+    private Long categorySort;
+
+    /**
      * 创建时间
      **/
     private Date createTime;
