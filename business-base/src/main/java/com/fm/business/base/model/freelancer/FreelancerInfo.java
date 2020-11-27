@@ -6,12 +6,11 @@
  */
 package com.fm.business.base.model.freelancer;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.fm.business.base.model.sys.SysUser;
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
 import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -119,6 +118,12 @@ public class FreelancerInfo extends BaseModel implements Serializable,IAudit {
     private Long referrer;
 
     /**
+     * 推荐人昵称
+     */
+    private transient String referrerName;
+
+
+    /**
     * 创建时间
     **/
 	private Date createTime;
@@ -152,6 +157,7 @@ public class FreelancerInfo extends BaseModel implements Serializable,IAudit {
      * 关联SysUser
      */
     private transient SysUser user;
+
 
 
     /**

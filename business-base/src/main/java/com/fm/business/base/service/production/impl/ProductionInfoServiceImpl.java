@@ -19,13 +19,17 @@ import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
+import com.fm.business.base.model.partner.PartnerInfo;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.model.production.ProductionSkillRelation;
+import com.fm.business.base.model.sys.SysUser;
 import com.fm.business.base.service.IAttachmentInfoService;
-import com.fm.business.base.service.job.IBdJobCateService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
+import com.fm.business.base.service.job.IBdJobCateService;
+import com.fm.business.base.service.partner.PartnerInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.business.base.service.production.IProductionSkillRelationService;
+import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.query.PageInfo;
 import com.fm.framework.core.service.AuditBaseService;
@@ -61,6 +65,12 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
     @Autowired
     private IProductionSkillRelationService productionSkillRelationService;
+
+    @Autowired
+    private PartnerInfoService partnerInfoService;
+
+    @Autowired
+    private ISysUserService iSysUserService;
 
 
     @Override
@@ -385,11 +395,18 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         Map<Long, BdJobCate> domainCateMap = bdJobCateService.findJobCateDomain(null)
                 .stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
 
+        Map<Long, PartnerInfo> partnerInfoMap = partnerInfoService.findByFreelancerIds(freelancerIds)
+                .stream().collect(Collectors.toMap(PartnerInfo::getFreelancerId, Function.identity(), (v1, v2) -> v2));
+
 
         productionInfos.forEach(productionInfo -> {
-
             if (freelancerInfoMap.containsKey(productionInfo.getFreelancerId())) {
+                if(freelancerInfoMap.get(productionInfo.getFreelancerId()).getReferrer() != null){
+                    SysUser sysUser = iSysUserService.get(freelancerInfoMap.get(productionInfo.getFreelancerId()).getReferrer());
+                    freelancerInfoMap.get(productionInfo.getFreelancerId()).setReferrerName(sysUser.getName());
+                }
                 productionInfo.setFreelancerInfo(freelancerInfoMap.get(productionInfo.getFreelancerId()));
+
             }
 
             if (postCateMap.containsKey(productionInfo.getJobCateId())) {
@@ -407,6 +424,14 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
             if (proSkillRMap.containsKey(productionInfo.getId())) {
                 productionInfo.setProductionSkillRelations(proSkillRMap.get(productionInfo.getId()));
+            }
+
+            if (partnerInfoMap.containsKey(productionInfo.getFreelancerId())) {
+                if(partnerInfoMap.get(productionInfo.getFreelancerId()).getBelongId() != null){
+                    SysUser sysUser = iSysUserService.get(partnerInfoMap.get(productionInfo.getFreelancerId()).getBelongId());
+                    partnerInfoMap.get(productionInfo.getFreelancerId()).setBelongIdName(sysUser.getName());
+                }
+                productionInfo.setPartnerInfo(partnerInfoMap.get(productionInfo.getFreelancerId()));
             }
 
         });

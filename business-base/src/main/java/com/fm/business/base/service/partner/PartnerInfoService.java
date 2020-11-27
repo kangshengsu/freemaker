@@ -4,6 +4,7 @@ import com.fm.business.base.model.partner.PartnerInfo;
 import com.fm.framework.core.service.Service;
 
 import java.util.List;
+import java.util.Set;
 
 public interface PartnerInfoService extends Service<PartnerInfo> {
 
@@ -19,5 +20,7 @@ public interface PartnerInfoService extends Service<PartnerInfo> {
     List<PartnerInfo> findByBelongId(Long id);
 
     List<PartnerInfo> findByBelongIds(List<Long> id);
+
+    List<PartnerInfo> findByFreelancerIds(Set<Long> id);
 
 }

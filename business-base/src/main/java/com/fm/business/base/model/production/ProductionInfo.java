@@ -7,12 +7,13 @@
 package com.fm.business.base.model.production;
 
 import com.fm.business.base.model.AttachmentInfo;
-import com.fm.business.base.model.evaluation.OverallEvaluation;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
+import com.fm.business.base.model.partner.PartnerInfo;
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
 import lombok.Data;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -49,6 +50,8 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
 
 
 	private transient FreelancerInfo freelancerInfo;
+
+    private transient PartnerInfo partnerInfo;
 
     /**
     * 作品标题

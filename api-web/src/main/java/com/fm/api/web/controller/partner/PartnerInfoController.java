@@ -97,7 +97,6 @@ public class PartnerInfoController extends BaseController<PartnerInfo, PartnerIn
 
         OrderItem orderItem = new OrderItem(OrderType.desc, "createTime");
         queryRequest.setOrderItem(orderItem);
-        ApiResponse<Page<PartnerInfoVO>> list = super.list(queryRequest);
         return super.list(queryRequest);
     }
 
