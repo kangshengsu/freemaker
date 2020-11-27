@@ -1,8 +1,7 @@
 package com.fm.api.gw.controller.jobCate;
 
-import com.fm.api.gw.vo.JobCateDetailVO;
-import com.fm.api.gw.vo.JobCateVO;
-import com.fm.business.base.model.job.BdJobCate;
+import com.fm.api.gw.vo.jobCate.JobCateDetailVO;
+import com.fm.api.gw.vo.jobCate.mapper.JobCateDetailMapper;
 import com.fm.business.base.model.job.BdJobCateDetail;
 import com.fm.business.base.service.job.IBdJobCateDetailService;
 import com.fm.business.base.service.job.IBdJobCateService;
@@ -36,25 +35,28 @@ public class JobCateController extends BaseController<BdJobCateDetail, JobCateDe
     @Autowired
     private IBdJobCateDetailService bdJobCateDetailService;
 
-    @RequestMapping(value = "getHomeShowFirstJobCate",method = RequestMethod.POST)
+    @Autowired
+    private JobCateDetailMapper jobCateDetailMapper;
+
+    @RequestMapping(value = "getHomeShowFirstJobCate",method = RequestMethod.GET)
     @ApiOperation(value = "获取首页一级类目")
-    public ApiResponse<List<BdJobCateDetail>> getHomeShowFirstJobCate(){
-        return success(bdJobCateDetailService.getHomeShowFirstJobCate());
+    public ApiResponse<List<JobCateDetailVO>> getHomeShowFirstJobCate(){
+        return success(bdJobCateDetailService.getHomeShowFirstJobCate().stream().map(jobCateDetailMapper::toJobCateDetailVO).collect(Collectors.toList()));
     }
 
-    @RequestMapping(value = "getFirstJobCate",method = RequestMethod.POST)
+    @RequestMapping(value = "getFirstJobCate",method = RequestMethod.GET)
     @ApiOperation(value = "获取所有一级类目")
-    public ApiResponse<List<BdJobCateDetail>> getFirstJobCate(){
-            return success(bdJobCateDetailService.getFirstJobCateAndDetail());
+    public ApiResponse<List<JobCateDetailVO>> getFirstJobCate(){
+            return success(bdJobCateDetailService.getFirstJobCateAndDetail().stream().map(jobCateDetailMapper::toJobCateDetailVO).collect(Collectors.toList()));
     }
 
-    @RequestMapping(value = "getSecondJobCate",method = RequestMethod.POST)
+    @RequestMapping(value = "getSecondJobCate",method = RequestMethod.GET)
     @ApiOperation("根据一级类目获取二级类目")
-    public ApiResponse<List<BdJobCateDetail>> getSecondJobCate(@RequestParam("cateJobId") Long cateJobId){
+    public ApiResponse<List<JobCateDetailVO>> getSecondJobCate(@RequestParam("cateJobId") Long cateJobId){
         if (Objects.isNull(cateJobId)){
             return failed("请选择类目");
         }
-       return success( bdJobCateDetailService.getSecondJobCate(bdJobCateService.getSecondJobCate(cateJobId)));
+       return success( bdJobCateDetailService.getSecondJobCate(bdJobCateService.getSecondJobCate(cateJobId)).stream().map(jobCateDetailMapper::toJobCateDetailVO).collect(Collectors.toList()));
     }
 
     
