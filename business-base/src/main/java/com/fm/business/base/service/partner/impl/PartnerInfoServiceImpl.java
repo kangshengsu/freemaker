@@ -30,4 +30,11 @@ public class PartnerInfoServiceImpl extends AuditBaseService<PartnerInfoMapper, 
         updateWrapper.set("distribution_status", DistributionStatus.YES_DISTRIBUTION.getCode()).in("freelancer_id", list);
         return super.update(updateWrapper);
     }
+
+    @Override
+    public List<PartnerInfo> findByBelongId(Long id) {
+        QueryWrapper<PartnerInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("belong_id", id);
+        return getBaseMapper().selectList(queryWrapper);
+    }
 }

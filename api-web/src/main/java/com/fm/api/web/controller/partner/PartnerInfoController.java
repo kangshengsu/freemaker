@@ -104,7 +104,8 @@ public class PartnerInfoController extends BaseController<PartnerInfo, PartnerIn
     @RequestMapping(value = "/distribution",method = RequestMethod.POST)
     public ApiResponse<Boolean> distribution(@RequestBody DistributionPartnerInfo distributionPartnerInfo){
         List<Long> collect = distributionPartnerInfo.getPartnerInfoList().stream().map(PartnerInfo::getFreelancerId).collect(Collectors.toList());
-        boolean b = partnerInfoService.setPartner(collect, distributionPartnerInfo.getPartnerId());
+        FreelancerInfo freelancerInfo = iFreelancerInfoService.get(distributionPartnerInfo.getPartnerId());
+        boolean b = partnerInfoService.setPartner(collect, freelancerInfo.getUserId());
         return ApiResponse.ofSuccess(b);
     }
 

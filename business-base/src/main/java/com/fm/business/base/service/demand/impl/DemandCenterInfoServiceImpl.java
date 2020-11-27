@@ -2,17 +2,20 @@ package com.fm.business.base.service.demand.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.IDemandInfoMapper;
-import com.fm.business.base.enums.TreeCodeType;
 import com.fm.business.base.model.demand.DemandInfo;
+import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandCenterInfoService;
-import com.fm.business.base.service.impl.EmployerInfoServiceImpl;
+import com.fm.business.base.service.job.IBdJobCateService;
 import com.fm.framework.core.enums.DeleteEnum;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.AuditBaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service("demandCenterInfoService")
@@ -21,12 +24,14 @@ public class DemandCenterInfoServiceImpl extends AuditBaseService<IDemandInfoMap
     @Autowired
     private IEmployerInfoService employerInfoService;
 
+    @Autowired
+    private IBdJobCateService iBdJobCateService;
+
     @Override
     public Page<DemandInfo> getDemandCenterPage(Integer currentPage, Integer pageSize, Integer attestation, Integer jobCateId) {
-        String jobId = "";
-        if(jobCateId != null){
-            jobId = TreeCodeType.get(jobCateId).getCateTreeNode();
-        }
+
+        List<BdJobCate> bdJobCates = iBdJobCateService.findByParentId(jobCateId);
+        List<Long> collect = bdJobCates.stream().map(BdJobCate::getId).collect(Collectors.toList());
 
         return toPage(
                 getBaseMapper().selectPage(
@@ -34,7 +39,7 @@ public class DemandCenterInfoServiceImpl extends AuditBaseService<IDemandInfoMap
                         getQueryWrapper().lambda()
                                 .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
                                 .eq(attestation != 0, DemandInfo::getAttestation, attestation)
-                                .likeRight(jobCateId != null, DemandInfo::getCateTreeCode, jobId)
+                                .in(jobCateId != null, DemandInfo::getJobCateId, collect)
                                 .orderByDesc(DemandInfo::getCreateTime)));
     }
 

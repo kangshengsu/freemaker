@@ -75,4 +75,11 @@ public interface IBdJobCateService extends Service<BdJobCate> {
 
 
     List<Long> getSecondJobCate(Long cateJobId);
+    /**
+     * 查询一级类目下所有种类
+     * @param id
+     * @return
+     */
+    List<BdJobCate> findByParentId(Integer id);
+
 }
