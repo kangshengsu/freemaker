@@ -117,10 +117,24 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
     @RequestMapping(value = "/conditionQuery",method = RequestMethod.POST)
     public ApiResponse<Page<ProductionInfoVO>> conditionQuery(@RequestBody QueryRequest queryRequest) {
 
+        //根据不同权限展示不同数据
         User user = iUserService.findById(Context.getCurrUserId());
         user.getRoles().forEach(role -> {
             if(!role.getCode().contains("admin")){
                 List<PartnerInfo> partnerInfos = partnerInfoService.findByBelongId(Long.valueOf(user.getCode()));
+                List<Long> collect = partnerInfos.stream().map(PartnerInfo::getFreelancerId).collect(Collectors.toList());
+                QueryItem queryItem = new QueryItem();
+                queryItem.setQueryField("freelancerId");
+                queryItem.setValue(collect);
+                queryItem.setType(QueryType.in);
+                queryRequest.getQueryItems().add(queryItem);
+            }
+            if(role.getCode().contains("admin") && !role.getCode().equals("admin")){
+                User org = iUserService.findById(user.getOrgId());
+                List<User> allByOrgId = iUserService.findAllByOrgId(org.getOrgId());
+                List<String> collect1 = allByOrgId.stream().map(User::getCode).collect(Collectors.toList());
+                List<Long> collect2 = collect1.stream().map(Long::valueOf).collect(Collectors.toList());
+                List<PartnerInfo> partnerInfos = partnerInfoService.findByBelongIds(collect2);
                 List<Long> collect = partnerInfos.stream().map(PartnerInfo::getFreelancerId).collect(Collectors.toList());
                 QueryItem queryItem = new QueryItem();
                 queryItem.setQueryField("freelancerId");

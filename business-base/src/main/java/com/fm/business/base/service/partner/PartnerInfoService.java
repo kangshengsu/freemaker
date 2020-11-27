@@ -18,4 +18,6 @@ public interface PartnerInfoService extends Service<PartnerInfo> {
 
     List<PartnerInfo> findByBelongId(Long id);
 
+    List<PartnerInfo> findByBelongIds(List<Long> id);
+
 }

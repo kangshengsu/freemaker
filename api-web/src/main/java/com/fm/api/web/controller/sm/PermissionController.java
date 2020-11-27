@@ -3,7 +3,6 @@ package com.fm.api.web.controller.sm;
 import com.fm.api.web.vo.sm.PermissionMenuMeta;
 import com.fm.api.web.vo.sm.PermissionMenuVO;
 import com.fm.business.base.model.sm.Menu;
-import com.fm.business.base.model.sm.MenuType;
 import com.fm.business.base.model.sm.Role;
 import com.fm.business.base.service.sm.IMenuService;
 import com.fm.business.base.service.sm.IPermissionService;
@@ -49,7 +48,7 @@ public class PermissionController{
 
 
 
-        return ApiResponse.ofSuccess(permissionService.getPermissionMenu(buttonCode) != null);
+        return ApiResponse.ofSuccess(permissionService.getPermissionMenu(roles.get(0).getId(), buttonCode) != null);
     }
 
 
