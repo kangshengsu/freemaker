@@ -174,6 +174,13 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
         return getBaseMapper().selectOne(wrapper);
     }
 
+    @Override
+    public List<BdJobCate> findByParentId(Integer id) {
+        LambdaQueryWrapper<BdJobCate> wrapper = Wrappers.lambdaQuery(BdJobCate.class)
+                .eq(BdJobCate::getParentId, id);
+        return getBaseMapper().selectList(wrapper);
+    }
+
 
     private List<BdJobCate> getJobNodes(List<String> treeCodes) {
         List<QueryItem> queryItems = new ArrayList<>();

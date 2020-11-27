@@ -13,13 +13,15 @@ import com.fm.business.base.enums.DeliveryType;
 import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
+import com.fm.business.base.model.partner.PartnerInfo;
 import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.business.base.model.sm.User;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
+import com.fm.business.base.service.partner.PartnerInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
-import com.fm.framework.core.query.OrderItem;
-import com.fm.framework.core.query.OrderType;
-import com.fm.framework.core.query.Page;
-import com.fm.framework.core.query.QueryType;
+import com.fm.business.base.service.sm.IUserService;
+import com.fm.framework.core.Context;
+import com.fm.framework.core.query.*;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
@@ -48,6 +50,12 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
 
     @Autowired
     private IFreelancerInfoService iFreelancerInfoService;
+
+    @Autowired
+    private IUserService iUserService;
+
+    @Autowired
+    private PartnerInfoService partnerInfoService;
 
 
     @RequestMapping(value = "/create",method = RequestMethod.POST)
@@ -108,6 +116,19 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
 
     @RequestMapping(value = "/conditionQuery",method = RequestMethod.POST)
     public ApiResponse<Page<ProductionInfoVO>> conditionQuery(@RequestBody QueryRequest queryRequest) {
+
+        User user = iUserService.findById(Context.getCurrUserId());
+        user.getRoles().forEach(role -> {
+            if(!role.getCode().contains("admin")){
+                List<PartnerInfo> partnerInfos = partnerInfoService.findByBelongId(Long.valueOf(user.getCode()));
+                List<Long> collect = partnerInfos.stream().map(PartnerInfo::getFreelancerId).collect(Collectors.toList());
+                QueryItem queryItem = new QueryItem();
+                queryItem.setQueryField("freelancerId");
+                queryItem.setValue(collect);
+                queryItem.setType(QueryType.in);
+                queryRequest.getQueryItems().add(queryItem);
+            }
+        });
         queryRequest.getQueryItems().forEach( queryItem -> {
             if(queryItem.getQueryField().equals("referrer")){
                 List<FreelancerInfo> freelancerInfos = iFreelancerInfoService.findUserByReferrer(Long.valueOf(String.valueOf(queryItem.getValue())));

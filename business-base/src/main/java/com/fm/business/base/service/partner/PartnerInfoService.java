@@ -16,4 +16,6 @@ public interface PartnerInfoService extends Service<PartnerInfo> {
 
     boolean setPartner(List<Long> list, Long id);
 
+    List<PartnerInfo> findByBelongId(Long id);
+
 }

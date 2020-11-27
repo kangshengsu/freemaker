@@ -5,7 +5,6 @@ import com.fm.business.base.model.sm.User;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.query.QueryItem;
 import com.fm.framework.core.service.IStatusService;
-import com.fm.framework.core.service.Service;
 
 import java.util.List;
 
@@ -110,4 +109,6 @@ public interface IUserService extends IStatusService<User> {
     List<User> findAllByOrgId(Long orgId);
 
     void fillUserOtherInfo(List<User> userList);
+
+    User findById(Long id);
 }
