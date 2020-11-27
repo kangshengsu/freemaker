@@ -29,9 +29,19 @@ public class PartnerInfo extends BaseModel implements Serializable, IAudit {
     private Long referrerId;
 
     /**
+     * 推荐人昵称
+     */
+    private transient String referrerIdName;
+
+    /**
      * 所属合伙人编码
      */
     private Long belongId;
+
+    /**
+     * 所属合伙人昵称
+     */
+    private transient String belongIdName;
 
     /**
      * 分配人编码
