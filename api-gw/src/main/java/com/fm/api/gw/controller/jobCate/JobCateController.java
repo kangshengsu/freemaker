@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/v1/jobCate")
+@Api(value = "/v1/jobCate",description ="类目查询接口")
 public class JobCateController extends BaseController<BdJobCateDetail, JobCateDetailVO> {
     @Autowired
     private IBdJobCateService bdJobCateService;
