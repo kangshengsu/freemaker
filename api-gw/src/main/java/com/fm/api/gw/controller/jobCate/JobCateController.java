@@ -52,11 +52,11 @@ public class JobCateController extends BaseController<BdJobCateDetail, JobCateDe
 
     @RequestMapping(value = "getSecondJobCate",method = RequestMethod.GET)
     @ApiOperation("根据一级类目获取二级类目")
-    public ApiResponse<List<JobCateDetailVO>> getSecondJobCate(@RequestParam("cateJobId") Long cateJobId){
-        if (Objects.isNull(cateJobId)){
+    public ApiResponse<List<JobCateDetailVO>> getSecondJobCate(@RequestParam("jobCateId") Long jobCateId){
+        if (Objects.isNull(jobCateId)){
             return failed("请选择类目");
         }
-       return success( bdJobCateDetailService.getSecondJobCate(bdJobCateService.getSecondJobCate(cateJobId)).stream().map(jobCateDetailMapper::toJobCateDetailVO).collect(Collectors.toList()));
+       return success( bdJobCateDetailService.getSecondJobCate(bdJobCateService.getSecondJobCate(jobCateId)).stream().map(jobCateDetailMapper::toJobCateDetailVO).collect(Collectors.toList()));
     }
 
     
