@@ -33,4 +33,6 @@ public interface IBdJobCateDetailService extends Service<BdJobCateDetail> {
 
 
     List<BdJobCateDetail> getSecondJobCate(List<Long> bdJobCateId);
+
+    List<BdJobCate> getAllJobCateByCategoryShow();
 }
