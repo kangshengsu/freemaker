@@ -7,6 +7,7 @@
 package com.fm.api.web.vo.job;
 
 import com.fm.business.base.model.AttachmentInfo;
+import com.fm.business.base.model.job.BdJobCateDetail;
 import com.fm.framework.web.VO;
 import lombok.Data;
 import java.io.Serializable;
@@ -25,9 +26,12 @@ import java.util.List;
 public class BdJobCateVO extends VO implements Serializable {
 
 	private static final long serialVersionUID = 1600497555102L;
-	
+
+	private Long id;
 
 	private String keyword;
+
+	private List<Long> parentIds;
 
     /**
     * 
@@ -78,6 +82,10 @@ public class BdJobCateVO extends VO implements Serializable {
 	 */
 	private List<String> attachmentInfoPaths;
 
+	/**
+	 * 类目信息
+	 */
+	private BdJobCateDetail bdJobCateDetail;
 
     /**
     * 创建时间

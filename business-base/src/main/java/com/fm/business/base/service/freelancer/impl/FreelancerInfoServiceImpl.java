@@ -7,6 +7,7 @@
 package com.fm.business.base.service.freelancer.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.freelancer.IFreelancerInfoMapper;
 import com.fm.business.base.enums.ProductionStatus;
@@ -258,5 +259,13 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
     public List<FreelancerInfo> findUserByReferrer(Long referrer) {
         return getBaseMapper().selectList(Wrappers.lambdaQuery(FreelancerInfo.class)
                 .eq(FreelancerInfo::getReferrer, referrer));
+    }
+
+    @Override
+    public List<FreelancerInfo> findUserByPhones(List<String> phones) {
+        QueryWrapper<FreelancerInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select()
+                .in("phone", phones);
+        return getBaseMapper().selectList(queryWrapper);
     }
 }

@@ -6,10 +6,11 @@
  */
 package com.fm.api.web.vo.freelancer;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.framework.web.VO;
 import lombok.Data;
+
 import java.io.Serializable;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -119,6 +120,11 @@ public class FreelancerInfoVO extends VO implements Serializable {
 	 * 推荐人
 	 */
 	private Long referrer;
+
+	/**
+	 * 推荐人昵称
+	 */
+	private transient String referrerName;
 
 
     /**

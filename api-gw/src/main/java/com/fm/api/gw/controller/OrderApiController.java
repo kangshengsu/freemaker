@@ -25,7 +25,7 @@ import com.fm.business.base.model.order.OrderFollow;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.business.base.model.order.OrderOperateInfo;
-import com.fm.business.base.service.IBdJobCateService;
+import com.fm.business.base.service.job.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.order.IOrderFollowService;

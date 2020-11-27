@@ -4,7 +4,7 @@
  * Copyright(c) 2020 LiuDuo Co. Ltd. 
  * All right reserved. 
  */
-package com.fm.business.base.service;
+package com.fm.business.base.service.job;
 
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.framework.core.service.Service;
@@ -66,5 +66,20 @@ public interface IBdJobCateService extends Service<BdJobCate> {
      * @return
      */
     BdJobCate getJobCate(Long id);
+
+    List<BdJobCate> getParentJobCateByParentId(List<Long> parentIds);
+
+    List<BdJobCate> getFirstJobCate();
+
+    BdJobCate getByParentId(Long id);
+
+
+    List<Long> getSecondJobCate(Long jobCateId);
+    /**
+     * 查询一级类目下所有种类
+     * @param id
+     * @return
+     */
+    List<BdJobCate> findByParentId(Integer id);
 
 }

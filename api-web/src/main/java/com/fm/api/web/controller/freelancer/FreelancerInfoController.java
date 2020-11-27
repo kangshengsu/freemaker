@@ -70,6 +70,7 @@ public class FreelancerInfoController extends BaseController<FreelancerInfo, Fre
     }
 
 
+    @Override
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public ApiResponse<Boolean> create(@RequestBody FreelancerInfoVO form) {
 
@@ -77,6 +78,7 @@ public class FreelancerInfoController extends BaseController<FreelancerInfo, Fre
 
     }
 
+    @Override
     @RequestMapping(value = "delete", method = RequestMethod.POST)
     public ApiResponse<Boolean> delete(@RequestBody Long id) {
 
@@ -84,6 +86,7 @@ public class FreelancerInfoController extends BaseController<FreelancerInfo, Fre
 
     }
 
+    @Override
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public ApiResponse<Boolean> update(@RequestBody FreelancerInfoVO form) {
 
@@ -97,6 +100,7 @@ public class FreelancerInfoController extends BaseController<FreelancerInfo, Fre
         return success(service().get(productionInfo.getFreelancerId()));
     }
 
+    @Override
     @RequestMapping(value = "list", method = RequestMethod.POST)
     public ApiResponse<Page<FreelancerInfoVO>> list(@RequestBody QueryRequest queryRequest) {
 
@@ -104,7 +108,7 @@ public class FreelancerInfoController extends BaseController<FreelancerInfo, Fre
     }
 
     @RequestMapping(value = "/getById", method = RequestMethod.POST)
-    public ApiResponse<FreelancerInfoVO> list(@RequestBody FreelancerInfoVO form) {
+    public ApiResponse<FreelancerInfoVO> getById(@RequestBody FreelancerInfoVO form) {
         return success(convert(freelancerInfoService.get(form.getId())));
     }
 

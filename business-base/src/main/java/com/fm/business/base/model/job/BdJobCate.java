@@ -78,6 +78,11 @@ public class BdJobCate extends BaseModel implements Serializable,IAudit {
     private transient List<AttachmentInfo> attachmentInfos;
 
     /**
+     * 类目信息
+     */
+    private transient BdJobCateDetail bdJobCateDetail;
+
+    /**
     * 创建时间
     **/
 	private Date createTime;

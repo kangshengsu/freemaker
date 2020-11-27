@@ -26,6 +26,8 @@ import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.business.base.service.*;
 import com.fm.business.base.service.evaluation.IEvaluationInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
+import com.fm.business.base.service.job.IBdJobCateService;
+import com.fm.business.base.service.job.IBdJobTagService;
 import com.fm.business.base.service.order.IOrderInfoDetailService;
 import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.framework.core.exception.BusinessException;
@@ -38,7 +40,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;

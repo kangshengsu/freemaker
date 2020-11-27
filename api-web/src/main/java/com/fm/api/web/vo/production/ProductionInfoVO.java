@@ -6,16 +6,15 @@
  */
 package com.fm.api.web.vo.production;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.fm.api.web.vo.AttachmentInfoVO;
-import com.fm.api.web.vo.freelancer.FreelancerInfoVO;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
+import com.fm.business.base.model.partner.PartnerInfo;
 import com.fm.business.base.model.production.ProductionSkillRelation;
 import com.fm.framework.web.VO;
 import lombok.Data;
+
 import java.io.Serializable;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +48,11 @@ public class ProductionInfoVO extends VO implements Serializable {
      * 自由职业者
      */
     private FreelancerInfo freelancerInfo;
+
+    /**
+     * 合伙人信息
+     */
+    private PartnerInfo partnerInfo;
 
     /**
      * 作品标题

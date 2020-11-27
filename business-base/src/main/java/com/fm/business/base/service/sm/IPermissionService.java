@@ -2,7 +2,6 @@ package com.fm.business.base.service.sm;
 
 
 import com.fm.business.base.model.sm.Menu;
-import com.fm.business.base.model.sm.Org;
 import com.fm.business.base.model.sm.Permission;
 import com.fm.business.base.model.sm.Role;
 import com.fm.framework.core.service.IStatusService;
@@ -59,7 +58,7 @@ public interface IPermissionService extends Service<Permission>, IStatusService<
     List<Menu> getAllMenuByRoleIds(List<Long> roleId);
 
 
-    Menu getPermissionMenu(String menuCode);
+    Menu getPermissionMenu(Long roleId, String menuCode);
 
 
     boolean deleteByMenus(List<Menu> menus);

@@ -171,7 +171,7 @@ public class DefaultPermissionServiceImpl extends AuditStatusBaseService<IPermis
     }
 
     @Override
-    public Menu getPermissionMenu(String menuCode) {
+    public Menu getPermissionMenu(Long roleId, String menuCode) {
 
         Menu menu = menuService.getByCode(menuCode);
 
@@ -179,7 +179,8 @@ public class DefaultPermissionServiceImpl extends AuditStatusBaseService<IPermis
             return null;
         }
 
-        Permission permission = getOne(Wrappers.lambdaQuery(Permission.class).eq(Permission::getMenuId, menu.getId()));
+        Permission permission = getOne(Wrappers.lambdaQuery(Permission.class)
+                .eq(Permission::getRoleId, roleId).eq(Permission::getMenuId, menu.getId()));
 
         if(permission != null) {
             return menu;

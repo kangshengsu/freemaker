@@ -10,7 +10,6 @@ import com.fm.framework.core.model.DBFieldConst;
 import com.fm.framework.core.model.DataStatus;
 import com.fm.framework.core.query.*;
 import com.fm.framework.core.service.AuditStatusBaseService;
-import com.fm.framework.core.utils.NamePair;
 import com.fm.framework.core.utils.SubModelCompareResult;
 import com.fm.framework.core.utils.UpdateUtils;
 import lombok.RequiredArgsConstructor;
@@ -182,6 +181,15 @@ public class DefaultUserServiceImpl extends AuditStatusBaseService<IUserMapper, 
                 user.setAccount(accountMap.get(user.getId()));
             }
         });
+    }
+
+    @Override
+    public User findById(Long id) {
+        User user = super.getById(id);
+        ArrayList<User> list = new ArrayList<>();
+        list.add(user);
+        fillUserOtherInfo(list);
+        return user;
     }
 
     @Override

@@ -20,7 +20,7 @@ import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.business.base.model.order.OrderOperateInfo;
 import com.fm.business.base.service.IAttachmentInfoService;
-import com.fm.business.base.service.IBdJobCateService;
+import com.fm.business.base.service.job.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;

@@ -9,7 +9,7 @@ package com.fm.api.web.controller.demand;
 import com.fm.api.web.vo.demand.DemandInfoVO;
 import com.fm.business.base.enums.DemandAttestationType;
 import com.fm.business.base.model.demand.DemandInfo;
-import com.fm.business.base.service.IBdJobCateService;
+import com.fm.business.base.service.job.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
 import com.fm.framework.core.query.OrderItem;

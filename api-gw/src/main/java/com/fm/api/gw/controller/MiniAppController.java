@@ -7,9 +7,11 @@ import com.fm.api.gw.vo.WeChatDecryptVO;
 import com.fm.api.gw.vo.WeChatLoginVO;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
+import com.fm.business.base.model.partner.PartnerInfo;
 import com.fm.business.base.model.sys.SysUser;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
+import com.fm.business.base.service.partner.PartnerInfoService;
 import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.query.QueryItem;
@@ -24,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -50,6 +53,8 @@ public class MiniAppController {
     @Autowired
     private ISysUserService iSysUserService;
 
+    @Autowired
+    private PartnerInfoService partnerInfoService;
 
     @Autowired
     private IFreelancerInfoService iFreelancerInfoService;
@@ -70,6 +75,7 @@ public class MiniAppController {
      * @return
      */
     @RequestMapping(value = "/syncUserInfo", method = {RequestMethod.POST})
+    @Transactional(rollbackFor = RuntimeException.class)
     public ApiResponse<LoginReturnVO> syncUserInfo(HttpServletRequest request, @RequestBody WeChatLoginVO weChatLoginVO) {
         LoginReturnVO loginReturnVO = new LoginReturnVO();
         //获取sessionkey openId unionId
@@ -91,7 +97,20 @@ public class MiniAppController {
             iSysUserService.save(sysUser);
             //获取新增的用户ID todo 理论上新增用户后，sysUser中以填充了userId，详情见此类的方法：BaseService#initDefaultField
             //sysUser = iSysUserService.findByCode(openId);
+
+            //判断是否有推荐人，如有则在合伙人表里插入推荐人数据
+            userId = sysUser.getId();
+            List<QueryItem> queryItems = getQueryItemsForUserId(userId);
+            FreelancerInfo freelancerInfoResult = iFreelancerInfoService.getOne(queryItems);
+            PartnerInfo partnerInfo = new PartnerInfo();
+            if (weChatLoginVO.getScene() != null) {
+                partnerInfo.setReferrerId(weChatLoginVO.getScene());
+                partnerInfo.setBelongId(weChatLoginVO.getScene());
+            }
+            partnerInfo.setFreelancerId(freelancerInfoResult.getId());
+            partnerInfoService.save(partnerInfo);
         }
+
         userId = sysUser.getId();
         RBucket<MiniAppUserVO> currUser = redissonClient.getBucket(cacheToken.get());
 
@@ -104,6 +123,7 @@ public class MiniAppController {
         miniAppUserVO.setFreeLancerId(freelancerInfoResult.getId());
         miniAppUserVO.setUserId(userId);
         miniAppUserVO.setSessionKey(weChatDecryptVO.getSessionKey());
+
         currUser.set(miniAppUserVO, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
 
         boolean isExistPhone = Optional.ofNullable(sysUser)

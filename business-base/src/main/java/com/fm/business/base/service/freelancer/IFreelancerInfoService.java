@@ -50,4 +50,11 @@ public interface IFreelancerInfoService extends Service<FreelancerInfo> {
      * @return
      */
     List<FreelancerInfo> findUserByReferrer(Long referrer);
+
+    /**
+     * 批量根据手机号查询人员信息
+     * @param phones
+     * @return
+     */
+    List<FreelancerInfo> findUserByPhones(List<String> phones);
 }

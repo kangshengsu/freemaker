@@ -36,7 +36,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             return true;
         }
         log.info("小程序网关拦截器进入，token：{}", userToken);
-
+        log.info("小程序拦截路径: {}",request.getRequestURI());
         //region todo zyc mockData to be delete
 //        this.fillMockUser();
 //        userToken = mockToken;

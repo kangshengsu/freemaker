@@ -8,11 +8,11 @@ package com.fm.api.gw.controller;
 
 import com.fm.api.gw.vo.JobCateVO;
 import com.fm.api.gw.vo.JobSkillVO;
-import com.fm.business.base.enums.JobNodeType;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.job.BdJobSkill;
-import com.fm.business.base.service.IBdJobCateService;
-import com.fm.business.base.service.IBdJobSkillService;
+import com.fm.business.base.service.job.IBdJobCateDetailService;
+import com.fm.business.base.service.job.IBdJobCateService;
+import com.fm.business.base.service.job.IBdJobSkillService;
 import com.fm.framework.core.model.TreeNode;
 import com.fm.framework.core.query.QueryItem;
 import com.fm.framework.core.query.QueryType;
@@ -49,9 +49,12 @@ public class JobTreeApi extends BaseController<BdJobCate, JobCateVO> {
     @Autowired
     private IBdJobSkillService bdJobSkillService;
 
+    @Autowired
+    private IBdJobCateDetailService bdJobCateDetailService;
+
     @RequestMapping(value = "treeData",method = RequestMethod.GET)
     public ApiResponse<List<TreeNode<JobCateVO>>> treeData() {
-        List<BdJobCate> bdJobCateVOs = bdJobCateService.getAll();
+        List<BdJobCate> bdJobCateVOs = bdJobCateDetailService.getAllJobCateByCategoryShow();
         if(CollectionUtils.isEmpty(bdJobCateVOs)){
             return ApiResponse.ofSuccess(new ArrayList<>(0));
         }

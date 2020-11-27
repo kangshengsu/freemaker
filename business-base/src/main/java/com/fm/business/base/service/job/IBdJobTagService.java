@@ -4,7 +4,7 @@
  * Copyright(c) 2020 LiuDuo Co. Ltd.
  * All right reserved.
  */
-package com.fm.business.base.service;
+package com.fm.business.base.service.job;
 
 import com.fm.business.base.model.job.BdJobTag;
 import com.fm.framework.core.service.Service;

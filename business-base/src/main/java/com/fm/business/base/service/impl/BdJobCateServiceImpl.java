@@ -15,11 +15,16 @@ import com.fm.business.base.enums.AttachmentType;
 import com.fm.business.base.enums.JobNodeType;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.job.BdJobCate;
+import com.fm.business.base.model.job.BdJobCateDetail;
 import com.fm.business.base.service.IAttachmentInfoService;
-import com.fm.business.base.service.IBdJobCateService;
+import com.fm.business.base.service.job.IBdJobCateDetailService;
+import com.fm.business.base.service.job.IBdJobCateService;
+import com.fm.framework.core.query.Page;
 import com.fm.framework.core.query.QueryItem;
 import com.fm.framework.core.query.QueryType;
 import com.fm.framework.core.service.AuditBaseService;
+import com.fm.framework.core.service.FileService;
+import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,13 +32,13 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @Description:(岗位服务实现)
- *
  * @version: V1.0
  * @author: LiuDuo
- *
  */
 @Slf4j
 @Service("bdJobCateService")
@@ -42,8 +47,15 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
     @Autowired
     private IAttachmentInfoService attachmentInfoService;
 
+    @Autowired
+    private IBdJobCateDetailService bdJobCateDetailService;
+
+    @Autowired
+    private FileService fileService;
+
     /**
      * 获取全部领域 暂时不限制条数
+     *
      * @param keyword 名称或编码
      * @return
      */
@@ -75,6 +87,7 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
 
     /**
      * 获取领域下岗位
+     *
      * @param DomainId 所属领域
      * @param keyword  名称或编码
      * @return
@@ -161,6 +174,14 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
         return getBaseMapper().selectOne(wrapper);
     }
 
+    @Override
+    public List<BdJobCate> findByParentId(Integer id) {
+        LambdaQueryWrapper<BdJobCate> wrapper = Wrappers.lambdaQuery(BdJobCate.class)
+                .eq(BdJobCate::getParentId, id);
+        return getBaseMapper().selectList(wrapper);
+    }
+
+
     private List<BdJobCate> getJobNodes(List<String> treeCodes) {
         List<QueryItem> queryItems = new ArrayList<>();
         QueryItem queryItem = new QueryItem();
@@ -193,7 +214,11 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
         attachmentInfoService.deleteByBusinessCode(model.getCateCode());
         saveAttachments(model);
 
+        bdJobCateDetailService.updateJobCateDetail(model.getBdJobCateDetail());
+
+
     }
+
 
     private boolean saveAttachments(BdJobCate model) {
         List<AttachmentInfo> attachmentInfos = model.getAttachmentInfos();
@@ -206,5 +231,70 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
             return attachmentInfoService.save(attachmentInfos);
         }
         return true;
+    }
+
+    @Override
+    protected Page<BdJobCate> toPage(com.baomidou.mybatisplus.extension.plugins.pagination.Page<BdJobCate> mybatisPlusPage) {
+        Page<BdJobCate> bdJobCatePage = super.toPage(mybatisPlusPage);
+        if (bdJobCatePage.getData() != null && !bdJobCatePage.getData().isEmpty()) {
+            fillBdJobCateInfoDetail(bdJobCatePage.getData());
+        }
+        return bdJobCatePage;
+    }
+
+    private void fillBdJobCateInfoDetail(List<BdJobCate> bdJobCates) {
+        if (CollectionUtils.isEmpty(bdJobCates)) {
+            return;
+        }
+        HashSet<Long> bdJobCateIds = new HashSet<>();
+
+        bdJobCates.forEach(bdJobCate -> {
+            bdJobCateIds.add(bdJobCate.getId());
+        });
+
+
+        Map<Long, BdJobCateDetail> bdJobCateDetailMap = bdJobCateDetailService.getByJobCateIds(bdJobCateIds)
+                .stream().collect(Collectors.toMap(BdJobCateDetail::getJobCateId, Function.identity(), (v1, v2) -> v2));
+        bdJobCates.forEach(bdJobCate -> {
+            if (bdJobCateDetailMap.containsKey(bdJobCate.getId())) {
+                bdJobCate.setBdJobCateDetail(bdJobCateDetailMap.get(bdJobCate.getId()));
+            }
+        });
+        bdJobCates.forEach(bdJobCate -> {
+            if (StringUtil.isNotBlank(bdJobCate.getIcon())) {
+                bdJobCate.setIcon(fileService.getFullPath(bdJobCate.getIcon()));
+            }
+        });
+
+
+    }
+
+    @Override
+    protected void afterSave(BdJobCate model) {
+        super.afterSave(model);
+        model.getBdJobCateDetail().setJobCateId(model.getId());
+        bdJobCateDetailService.save(model.getBdJobCateDetail());
+    }
+
+
+    @Override
+    public List<BdJobCate> getParentJobCateByParentId(List<Long> parentIds) {
+        return getBaseMapper().selectBatchIds(parentIds);
+    }
+
+    @Override
+    public List<BdJobCate> getFirstJobCate() {
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(BdJobCate.class).eq(BdJobCate::getCateType,JobNodeType.JOB.getType()));
+    }
+
+    @Override
+    public BdJobCate getByParentId(Long id) {
+        return getBaseMapper().selectOne(Wrappers.lambdaQuery(BdJobCate.class).eq(BdJobCate::getParentId,id));
+    }
+
+    @Override
+    public List<Long> getSecondJobCate(Long jobCateId) {
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(BdJobCate.class).eq(BdJobCate::getParentId,jobCateId)).stream().map(BdJobCate::getId).collect(Collectors.toList());
+
     }
 }
