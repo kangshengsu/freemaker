@@ -1,5 +1,6 @@
 package com.fm.business.base.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.job.IBdJoBCateDetailMapper;
 import com.fm.business.base.enums.JobCateCategoryShow;
@@ -85,5 +86,13 @@ public class BdJobCateDetailServiceImpl extends AuditBaseService<IBdJoBCateDetai
 
     }
 
+    @Override
+    public List<BdJobCate> getAllJobCateByCategoryShow() {
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(BdJobCateDetail.class)
+                .eq(BdJobCateDetail::getCategoryShow,JobCateCategoryShow.SHOW.getCode())
+                .orderByAsc(BdJobCateDetail::getCategoryShowOrder))
+                .stream().map(BdJobCateDetail::getJobCateId).collect(Collectors.toList())
+                .stream().map(bdJobCateId -> bdJobCateService.get(bdJobCateId)).collect(Collectors.toList());
+    }
 
 }
