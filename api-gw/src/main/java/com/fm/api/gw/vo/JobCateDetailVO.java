@@ -1,4 +1,4 @@
-package com.fm.api.web.vo.job;
+package com.fm.api.gw.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.framework.web.VO;
@@ -11,11 +11,17 @@ import java.util.Date;
 /**
  * @author qdl
  * @version 1.1
- * @date 2020/11/20 18:54
+ * @date 2020/11/26 23:50
  */
 @Data
-public class BdJobCateDetailVO extends VO implements Serializable {
-    private static final long serialVersionUID = 8530789516028699154L;
+public class JobCateDetailVO extends VO implements Serializable {
+    private static final long serialVersionUID = 5441743334720792974L;
+
+    /**
+     * 逻辑主键
+     */
+    private Long id;
+
     /**
      * 对应类目主键
      */

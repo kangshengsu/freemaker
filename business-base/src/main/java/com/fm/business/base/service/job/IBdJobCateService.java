@@ -72,4 +72,7 @@ public interface IBdJobCateService extends Service<BdJobCate> {
     List<BdJobCate> getFirstJobCate();
 
     BdJobCate getByParentId(Long id);
+
+
+    List<Long> getSecondJobCate(Long cateJobId);
 }

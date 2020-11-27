@@ -284,4 +284,10 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
     public BdJobCate getByParentId(Long id) {
         return getBaseMapper().selectOne(Wrappers.lambdaQuery(BdJobCate.class).eq(BdJobCate::getParentId,id));
     }
+
+    @Override
+    public List<Long> getSecondJobCate(Long cateJobId) {
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(BdJobCate.class).eq(BdJobCate::getParentId,cateJobId)).stream().map(BdJobCate::getId).collect(Collectors.toList());
+
+    }
 }

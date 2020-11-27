@@ -21,7 +21,7 @@ public enum JobCateIsHot {
         return code;
     }
 
-    public String getMessage() {
+    public String getName() {
         return name;
     }
 

@@ -22,7 +22,7 @@ public enum JobCateIsNew {
         return code;
     }
 
-    public String getMessage() {
+    public String getName() {
         return name;
     }
 

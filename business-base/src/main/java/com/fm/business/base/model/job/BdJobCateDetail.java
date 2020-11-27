@@ -32,6 +32,21 @@ public class BdJobCateDetail extends BaseModel implements Serializable, IAudit {
     private String cateNameAbb;
 
     /**
+     * 类目名称
+     */
+    private String cateName;
+
+    /**
+     * 类目英文名
+     */
+    private String englishName;
+
+    /**
+     * 类目icon
+     */
+    private String icon;
+
+    /**
      * 类目描述
      */
     private String description;
