@@ -37,10 +37,8 @@ import java.util.stream.Collectors;
 
 /**
  * @Description:(岗位服务实现)
- *
  * @version: V1.0
  * @author: LiuDuo
- *
  */
 @Slf4j
 @Service("bdJobCateService")
@@ -57,6 +55,7 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
 
     /**
      * 获取全部领域 暂时不限制条数
+     *
      * @param keyword 名称或编码
      * @return
      */
@@ -88,6 +87,7 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
 
     /**
      * 获取领域下岗位
+     *
      * @param DomainId 所属领域
      * @param keyword  名称或编码
      * @return
@@ -236,33 +236,35 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
     @Override
     protected Page<BdJobCate> toPage(com.baomidou.mybatisplus.extension.plugins.pagination.Page<BdJobCate> mybatisPlusPage) {
         Page<BdJobCate> bdJobCatePage = super.toPage(mybatisPlusPage);
-        if (bdJobCatePage.getData() != null && !bdJobCatePage.getData().isEmpty()){
+        if (bdJobCatePage.getData() != null && !bdJobCatePage.getData().isEmpty()) {
             fillBdJobCateInfoDetail(bdJobCatePage.getData());
         }
         return bdJobCatePage;
     }
 
     private void fillBdJobCateInfoDetail(List<BdJobCate> bdJobCates) {
-        if (CollectionUtils.isEmpty(bdJobCates)){
-            return ;
+        if (CollectionUtils.isEmpty(bdJobCates)) {
+            return;
         }
         HashSet<Long> bdJobCateIds = new HashSet<>();
 
-        bdJobCates.forEach(bdJobCate -> bdJobCateIds.add(bdJobCate.getId()));
+        bdJobCates.forEach(bdJobCate -> {
+            bdJobCateIds.add(bdJobCate.getId());
+        });
 
-      Map<Long, BdJobCateDetail> bdJobCateDetailMap =  bdJobCateDetailService.getByJobCateIds(bdJobCateIds)
-                .stream().collect(Collectors.toMap(BdJobCateDetail::getJobCateId, Function.identity(), (v1,v2) -> v2));
 
-      bdJobCates.forEach(bdJobCate -> {
-              if (bdJobCateDetailMap.containsKey(bdJobCate.getId())){
-              bdJobCate.setBdJobCateDetail(bdJobCateDetailMap.get(bdJobCate.getId()));
-          }
-      });
-      bdJobCates.forEach(bdJobCate -> {
-          if (StringUtil.isNotBlank(bdJobCate.getIcon())){
+        Map<Long, BdJobCateDetail> bdJobCateDetailMap = bdJobCateDetailService.getByJobCateIds(bdJobCateIds)
+                .stream().collect(Collectors.toMap(BdJobCateDetail::getJobCateId, Function.identity(), (v1, v2) -> v2));
+        bdJobCates.forEach(bdJobCate -> {
+            if (bdJobCateDetailMap.containsKey(bdJobCate.getId())) {
+                bdJobCate.setBdJobCateDetail(bdJobCateDetailMap.get(bdJobCate.getId()));
+            }
+        });
+        bdJobCates.forEach(bdJobCate -> {
+            if (StringUtil.isNotBlank(bdJobCate.getIcon())) {
                 bdJobCate.setIcon(fileService.getFullPath(bdJobCate.getIcon()));
-          }
-      });
+            }
+        });
 
 
     }
@@ -272,5 +274,27 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
         super.afterSave(model);
         model.getBdJobCateDetail().setJobCateId(model.getId());
         bdJobCateDetailService.save(model.getBdJobCateDetail());
+    }
+
+
+    @Override
+    public List<BdJobCate> getParentJobCateByParentId(List<Long> parentIds) {
+        return getBaseMapper().selectBatchIds(parentIds);
+    }
+
+    @Override
+    public List<BdJobCate> getFirstJobCate() {
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(BdJobCate.class).eq(BdJobCate::getCateType,JobNodeType.JOB.getType()));
+    }
+
+    @Override
+    public BdJobCate getByParentId(Long id) {
+        return getBaseMapper().selectOne(Wrappers.lambdaQuery(BdJobCate.class).eq(BdJobCate::getParentId,id));
+    }
+
+    @Override
+    public List<Long> getSecondJobCate(Long cateJobId) {
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(BdJobCate.class).eq(BdJobCate::getParentId,cateJobId)).stream().map(BdJobCate::getId).collect(Collectors.toList());
+
     }
 }

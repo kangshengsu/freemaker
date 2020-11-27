@@ -62,10 +62,6 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
     @Autowired
     private RedisTemplate redisTemplate;
 
-    @Autowired
-    private DisplayConfigServiceImpl displayConfigService;
-
-
 
 
     /**
@@ -160,6 +156,16 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
         return ApiResponse.ofSuccess(Arrays.asList(transferTree(makeTreeCateList(bdJobCateVOs))));
     }
 
+    /**
+     * 获取一级类目
+     * @return
+     */
+    @RequestMapping(value = "getFirstJobCate",method = RequestMethod.GET)
+    public ApiResponse<List<BdJobCateVO>> getFirstJobCate() {
+        List<BdJobCateVO> bdJobCateVOs = bdJobCateService.getFirstJobCate().stream().map(this::convert).collect(Collectors.toList());
+        return ApiResponse.ofSuccess(bdJobCateVOs);
+    }
+
     @RequestMapping(value = "addJob",method = RequestMethod.POST)
     public ApiResponse<Boolean> addJob(@RequestBody BdJobCateVO newNode) {
         return saveJob(newNode, true);
@@ -177,18 +183,16 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
         if (!JobNodeType.SKILL.getType().equals(newNode.getCateType())) {
             if (isAdd) {
                 result = super.create(newNode);
-                String displayKey = "displayConfigs";
-                if (!redisTemplate.opsForHash().values(displayKey).isEmpty()){
-                    redisTemplate.boundHashOps(displayKey).put(newNode.getId().toString(),newNode);
+                if (!redisTemplate.opsForHash().values(DisplayConfigServiceImpl.DISPLAYKEY).isEmpty()){
+                    redisTemplate.boundHashOps(DisplayConfigServiceImpl.DISPLAYKEY).put(newNode.getId().toString(),newNode);
                 }
 
             } else {
                 newNode.setTreeCode(null);
                 newNode.setParentId(null);
                 result = super.update(newNode);
-                String displayKey = "displayConfigs";
-                if (!redisTemplate.opsForHash().values(displayKey).isEmpty()){
-                    redisTemplate.delete(displayKey);
+                if (!redisTemplate.opsForHash().values(DisplayConfigServiceImpl.DISPLAYKEY).isEmpty()){
+                    redisTemplate.delete(DisplayConfigServiceImpl.DISPLAYKEY);
                 }
             }
         } else {
@@ -229,6 +233,12 @@ public class BdJobCateController extends BaseController<BdJobCate, BdJobCateVO> 
         }
 
         return result;
+    }
+
+    @RequestMapping(value = "getParentJobCateByParentId",method = RequestMethod.POST)
+    public ApiResponse<List<BdJobCateVO>> getParentJobCateByParentId(@RequestBody BdJobCateVO form){
+
+        return ApiResponse.ofSuccess(convert(bdJobCateService.getParentJobCateByParentId(form.getParentIds())));
     }
 
     private boolean hasChildNode(Long jobId) {

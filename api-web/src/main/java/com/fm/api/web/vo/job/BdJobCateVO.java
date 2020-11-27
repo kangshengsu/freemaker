@@ -26,9 +26,12 @@ import java.util.List;
 public class BdJobCateVO extends VO implements Serializable {
 
 	private static final long serialVersionUID = 1600497555102L;
-	
+
+	private Long id;
 
 	private String keyword;
+
+	private List<Long> parentIds;
 
     /**
     * 

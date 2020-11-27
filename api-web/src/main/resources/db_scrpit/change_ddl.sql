@@ -105,3 +105,17 @@ SELECT
 id as freelancer_id,referrer as referrer_id,referrer as belong_id,create_time as create_time,
 update_time as update_time,create_user as create_user,update_user as update_user
 FROM freelancer_info;
+
+-- id分布式自增表添加
+INSERT INTO `leaf_alloc`(biz_tag,max_id,step) VALUES('bd_job_cate_detail',1000,50)
+
+
+
+ALTER TABLE `bd_job_cate_detail`
+ADD COLUMN cate_name VARCHAR(50) COMMENT '类目名称' AFTER cate_name_abb
+
+ALTER TABLE `bd_job_cate_detail`
+ADD COLUMN english_name VARCHAR(100) COMMENT '类目英文名称' AFTER cate_name
+
+ALTER TABLE `bd_job_cate_detail`
+ADD COLUMN icon VARCHAR(255) COMMENT '类目ICON' AFTER english_name

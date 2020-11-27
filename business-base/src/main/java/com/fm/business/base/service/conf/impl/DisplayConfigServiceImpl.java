@@ -45,6 +45,8 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
     @Autowired
     private RedisTemplate redisTemplate;
 
+    public static final String DISPLAYKEY = "displayConfigs";
+
 
     @Autowired
     public DisplayConfigServiceImpl(IBdJobCateService bdJobCateService, IProductionInfoService productionInfoService) {
@@ -103,8 +105,7 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
                 .stream()
                 .map(DisplayConfig::getDisplayId)
                 .collect(Collectors.toSet());
-        String displayKey = getDisplayConfigsKey();
-        List bdJobCateList = redisTemplate.opsForHash().values(displayKey);
+        List bdJobCateList = redisTemplate.opsForHash().values(DISPLAYKEY);
         HashMap<String, BdJobCate> map = new HashMap<>();
         if(bdJobCateList.isEmpty()){
             List<BdJobCate> jobCateList = bdJobCateService.getByIds(jobCateIds);
@@ -112,7 +113,7 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
                 for (BdJobCate bdJobCate : jobCateList) {
                     map.put(bdJobCate.getId().toString(), bdJobCate);
                 }
-                redisTemplate.opsForHash().putAll(displayKey, map);
+                redisTemplate.opsForHash().putAll(DISPLAYKEY, map);
             }
             return jobCateList;
         }
@@ -131,11 +132,6 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
             List<BdJobCate> jobCateList = bdJobCateService.getByIds(jobCateIds);
             return jobCateList;
         }
-    private String getDisplayConfigsKey(){
-        String displayKey = "displayConfigs";
-        return displayKey;
-    }
-
     /**
      * 更加展现配置获取领域、岗位
      * @param displayConfigs 展现配置集合

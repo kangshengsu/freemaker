@@ -121,4 +121,5 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
      */
     List<ProductionInfo> findAllByStatus(List<Integer> status);
 
+    List<ProductionInfo> getByJobCateId(Long id);
 }

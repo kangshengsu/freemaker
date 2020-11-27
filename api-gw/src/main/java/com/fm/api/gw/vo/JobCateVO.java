@@ -1,6 +1,7 @@
 package com.fm.api.gw.vo;
 
 import com.fm.business.base.model.AttachmentInfo;
+import com.fm.business.base.model.job.BdJobCateDetail;
 import com.fm.framework.core.model.ITreeNode;
 import com.fm.framework.web.VO;
 import lombok.Data;
@@ -51,6 +52,10 @@ public class JobCateVO extends VO implements ITreeNode, Serializable {
      */
     private transient List<AttachmentInfo> attachmentInfos;
 
+    /**
+     * 类目信息
+     */
+    private transient BdJobCateDetail bdJobCateDetail;
 
     /**
      * 创建时间
