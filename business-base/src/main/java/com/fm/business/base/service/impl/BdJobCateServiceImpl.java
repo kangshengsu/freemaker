@@ -26,6 +26,7 @@ import com.fm.framework.core.service.AuditBaseService;
 import com.fm.framework.core.service.FileService;
 import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.cfg.defs.ISBNDef;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -265,6 +266,18 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
                 bdJobCate.setIcon(fileService.getFullPath(bdJobCate.getIcon()));
             }
         });
+
+
+    }
+
+    @Override
+    protected void beforeUpdate(BdJobCate model) {
+        super.beforeUpdate(model);
+        Optional.ofNullable(bdJobCateDetailService.getSecondJobCate(getBaseMapper().selectList(Wrappers.lambdaQuery(BdJobCate.class)
+                .eq(BdJobCate::getParentId,model.getId()))
+                .stream().map(BdJobCate::getId).collect(Collectors.toList())))
+                .map(bdJobCate -> Objects.isNull(bdJobCate))
+                .orElse(false);
 
 
     }

@@ -17,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Wrapper;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -88,11 +85,21 @@ public class BdJobCateDetailServiceImpl extends AuditBaseService<IBdJoBCateDetai
 
     @Override
     public List<BdJobCate> getAllJobCateByCategoryShow() {
-        return getBaseMapper().selectList(Wrappers.lambdaQuery(BdJobCateDetail.class)
-                .eq(BdJobCateDetail::getCategoryShow,JobCateCategoryShow.SHOW.getCode())
-                .orderByAsc(BdJobCateDetail::getCategoryShowOrder))
-                .stream().map(BdJobCateDetail::getJobCateId).collect(Collectors.toList())
+        List<BdJobCateDetail> jobCateDetails = getBaseMapper().selectList(Wrappers.lambdaQuery(BdJobCateDetail.class)
+                .eq(BdJobCateDetail::getCategoryShow, JobCateCategoryShow.SHOW.getCode())
+                .orderByAsc(BdJobCateDetail::getCategoryShowOrder));
+
+        List<BdJobCate> jobCateList = jobCateDetails.stream().map(BdJobCateDetail::getJobCateId).collect(Collectors.toList())
                 .stream().map(bdJobCateId -> bdJobCateService.get(bdJobCateId)).collect(Collectors.toList());
+
+        Map<Long, BdJobCateDetail> jobCateDetailMap = jobCateDetails.stream().collect(Collectors.toMap(BdJobCateDetail::getJobCateId, Function.identity(), (v1, v2) -> v2));
+
+        jobCateList.forEach(jobCate -> {
+            if (jobCateDetailMap.containsKey(jobCate.getId())){
+                jobCate.setBdJobCateDetail(jobCateDetailMap.get(jobCate.getId()));
+            }
+        });
+        return jobCateList;
     }
 
 }
