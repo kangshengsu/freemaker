@@ -1,4 +1,4 @@
-package com.fm.api.gw.vo;
+package com.fm.api.gw.vo.jobCate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.framework.web.VO;
