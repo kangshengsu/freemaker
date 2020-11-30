@@ -105,6 +105,7 @@ public class FirstJobCateController extends BaseController<BdJobCate, BdJobCateV
     }
 
     @RequestMapping(value = "deleteById", method = RequestMethod.POST)
+    @Transactional(rollbackFor = RuntimeException.class)
     public ApiResponse<Boolean> delete(@RequestBody BdJobCateVO form) {
 
         if (Optional.ofNullable(bdJobCateService.getByParentId(form.getParentId()))
