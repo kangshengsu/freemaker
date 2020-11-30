@@ -19,4 +19,9 @@ public class LoginReturnVO {
      * 是否存在手机号
      */
     private boolean hasPhone;
+
+    /**
+     * 返回用户Id
+     */
+    private Long userId;
 }

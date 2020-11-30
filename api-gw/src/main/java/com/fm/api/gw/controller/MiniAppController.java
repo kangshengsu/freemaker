@@ -132,6 +132,7 @@ public class MiniAppController {
 
         loginReturnVO.setHasPhone(isExistPhone);
         loginReturnVO.setUserToken(cacheToken.get());
+        loginReturnVO.setUserId(sysUser.getId());
 
         return ApiResponse.of(ApiStatus.SUCCESS.getCode(), ApiStatus.SUCCESS.getMessage(), loginReturnVO);
     }
