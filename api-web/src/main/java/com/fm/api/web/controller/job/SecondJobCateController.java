@@ -92,9 +92,9 @@ public class SecondJobCateController extends BaseController<BdJobCate, BdJobCate
 
     @RequestMapping(value = "delete",method = RequestMethod.POST)
     public ApiResponse<Boolean> delete(@RequestBody BdJobCateVO form){
-        List<ProductionInfo> productionInfoList = productionInfoService.getByJobCateId(form.getId());
-        if (Optional.ofNullable(productionInfoList)
-            .map(p -> !CollectionUtils.isEmpty(productionInfoList))
+
+        if (Optional.ofNullable(productionInfoService.getByJobCateId(form.getId()))
+            .map(p -> !CollectionUtils.isEmpty(p))
             .orElse(false)){
             return ApiResponse.of(ApiStatus.FAILED,"类目下有作品不能删除");
         }
