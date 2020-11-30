@@ -130,8 +130,7 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
                 queryRequest.getQueryItems().add(queryItem);
             }
             if(role.getCode().contains("admin") && !role.getCode().equals("admin")){
-                User org = iUserService.findById(user.getOrgId());
-                List<User> allByOrgId = iUserService.findAllByOrgId(org.getOrgId());
+                List<User> allByOrgId = iUserService.findAllByOrgId(user.getOrgId());
                 List<String> collect1 = allByOrgId.stream().map(User::getCode).collect(Collectors.toList());
                 List<Long> collect2 = collect1.stream().map(Long::valueOf).collect(Collectors.toList());
                 List<PartnerInfo> partnerInfos = partnerInfoService.findByBelongIds(collect2);
