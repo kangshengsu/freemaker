@@ -81,6 +81,7 @@ public class MiniAppController {
         //获取sessionkey openId unionId
         WeChatDecryptVO weChatDecryptVO = wxRpcService.getSessionInfo(weChatLoginVO);
         String openId = weChatDecryptVO.getOpenId();
+        log.info("openId: {}",openId);
         SysUser sysUser = iSysUserService.findByCode(openId);
         //token处理
         RBucket<String> cacheToken = redissonClient.getBucket(openId);

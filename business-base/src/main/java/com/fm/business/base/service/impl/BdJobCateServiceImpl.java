@@ -271,18 +271,6 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
     }
 
     @Override
-    protected void beforeUpdate(BdJobCate model) {
-        super.beforeUpdate(model);
-        Optional.ofNullable(bdJobCateDetailService.getSecondJobCate(getBaseMapper().selectList(Wrappers.lambdaQuery(BdJobCate.class)
-                .eq(BdJobCate::getParentId,model.getId()))
-                .stream().map(BdJobCate::getId).collect(Collectors.toList())))
-                .map(bdJobCate -> Objects.isNull(bdJobCate))
-                .orElse(false);
-
-
-    }
-
-    @Override
     protected void afterSave(BdJobCate model) {
         super.afterSave(model);
         model.getBdJobCateDetail().setJobCateId(model.getId());

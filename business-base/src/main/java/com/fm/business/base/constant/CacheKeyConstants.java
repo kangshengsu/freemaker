@@ -14,7 +14,8 @@ public enum CacheKeyConstants {
     /**
      * 登录token redis key
      */
-    LOGIN_TOKEN("login:token:%s");
+    LOGIN_TOKEN("login:token:%s"),
+    FIRST_JOB_CATE("jobCate:firstJobCate:%s");
 
     private String key;
 

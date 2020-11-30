@@ -1,7 +1,9 @@
 package com.fm.business.base.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fm.business.base.constant.CacheKeyConstants;
 import com.fm.business.base.dao.job.IBdJoBCateDetailMapper;
 import com.fm.business.base.enums.JobCateCategoryShow;
 import com.fm.business.base.enums.JobCateHomeShow;
@@ -14,6 +16,7 @@ import com.fm.framework.core.query.QueryItem;
 import com.fm.framework.core.service.AuditBaseService;
 import com.fm.framework.web.request.QueryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.sql.Wrapper;
@@ -28,8 +31,12 @@ import java.util.stream.Collectors;
  */
 @Service
 public class BdJobCateDetailServiceImpl extends AuditBaseService<IBdJoBCateDetailMapper, BdJobCateDetail> implements IBdJobCateDetailService {
+
     @Autowired
     private IBdJobCateService bdJobCateService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public Collection<BdJobCateDetail> getByJobCateIds(HashSet<Long> bdJobCateIds) {
@@ -59,11 +66,18 @@ public class BdJobCateDetailServiceImpl extends AuditBaseService<IBdJoBCateDetai
 
     @Override
     public List<BdJobCateDetail> getHomeShowFirstJobCate() {
-        return getBaseMapper().selectList(Wrappers.lambdaQuery(BdJobCateDetail.class)
+        List<BdJobCateDetail> BdJobCateDetailList = redisTemplate.opsForList().range(CacheKeyConstants.FIRST_JOB_CATE.getKey(), 0, 100);
+        if (!CollectionUtils.isEmpty(BdJobCateDetailList)){
+
+            return BdJobCateDetailList;
+        }
+        List<BdJobCateDetail> jobCateDetails = getBaseMapper().selectList(Wrappers.lambdaQuery(BdJobCateDetail.class)
                 .eq(BdJobCateDetail::getCateType, JobNodeType.JOB.getType())
                 .eq(BdJobCateDetail::getIsHomeShow, JobCateHomeShow.SHOW.getCode())
                 .orderByAsc(BdJobCateDetail::getHomeShowOrder));
+        jobCateDetails.forEach(jobCateDetail -> redisTemplate.opsForList().rightPush(CacheKeyConstants.FIRST_JOB_CATE.getKey(),jobCateDetail));
 
+        return jobCateDetails;
     }
 
     @Override
