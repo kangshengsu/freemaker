@@ -1,4 +1,2 @@
-
-
-
-
+ALTER TABLE partner_info ADD COLUMN `settlement_time` datetime DEFAULT NULL COMMENT '结算时间' AFTER settlement_id;
+ALTER TABLE partner_info ADD COLUMN `distribution_time` datetime DEFAULT NULL COMMENT '分配时间' AFTER distribution_id;

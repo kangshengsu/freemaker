@@ -15,12 +15,14 @@ public interface PartnerInfoService extends Service<PartnerInfo> {
      */
     List<PartnerInfo> findNotExistProduction(List<Long> ids);
 
-    boolean setPartner(List<Long> list, Long id);
+    boolean distribution(List<Long> list, Long id);
 
     List<PartnerInfo> findByBelongId(Long id);
 
-    List<PartnerInfo> findByBelongIds(List<Long> id);
+    List<PartnerInfo> findByBelongIds(List<Long> ids);
 
-    List<PartnerInfo> findByFreelancerIds(Set<Long> id);
+    List<PartnerInfo> findByFreelancerIds(Set<Long> ids);
+
+    boolean settlement(List<Long> ids);
 
 }

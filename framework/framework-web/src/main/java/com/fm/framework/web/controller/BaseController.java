@@ -9,13 +9,10 @@ import com.fm.framework.web.VO;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import com.fm.framework.web.response.ApiStatus;
-import lombok.extern.slf4j.XSlf4j;
 import org.springframework.beans.BeanUtils;
 
-import javax.cache.integration.CacheLoader;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -69,6 +66,11 @@ public abstract class BaseController<M extends BaseModel, V extends VO> {
                 queryRequest.getPagination().getCurrentPage(), queryRequest.getPagination().getPageSize());
 
         return success(convert(pageDatas));
+    }
+
+    public List<M> getDistinct(QueryRequest queryRequest) {
+
+        return this.service().getDistinct(queryRequest.getQueryItems());
     }
 
     protected Page<V> convert(Page<M> page) {

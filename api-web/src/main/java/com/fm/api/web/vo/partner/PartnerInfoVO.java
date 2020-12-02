@@ -49,14 +49,34 @@ public class PartnerInfoVO extends VO implements Serializable {
     private Long distributionId;
 
     /**
+     * 分配人昵称
+     */
+    private transient String distributionIdName;
+
+    /**
+     * 分配时间
+     */
+    private Date distributionTime;
+
+    /**
      * 结算人编码
      */
     private Long settlementId;
 
     /**
+     * 结算人昵称
+     */
+    private transient String settlementIdName;
+
+    /**
      * 结算状态（0-未结算，1-已结算）
      */
     private Integer settlementStatus;
+
+    /**
+     * 结算时间
+     */
+    private Date settlementTime;
 
     /**
      * 是否分配合伙人（0-否，1-是）

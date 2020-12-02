@@ -8,14 +8,14 @@ import lombok.Getter;
 public enum SettlementStatus {
 
     /**
-     * 10-未结算
+     * 0-未结算
      */
-    UNSETTLED(10,"未结算"),
+    UNSETTLED(0,"未结算"),
 
     /**
-     * 20-已结算
+     * 1-已结算
      */
-    SETTLED(20,"已结算");
+    SETTLED(1,"已结算");
 
     /**
      * 编码

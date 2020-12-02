@@ -98,6 +98,8 @@ public interface Service<T extends BaseModel> {
      */
     List<T> get(List<QueryItem> queryItems);
 
+    List<T> getDistinct(List<QueryItem> queryItems);
+
 
     /**
      * 根据查询条件和排序字段获取数据
@@ -106,6 +108,8 @@ public interface Service<T extends BaseModel> {
      * @return 数据
      */
     List<T> get(List<QueryItem> queryItems, OrderItem orderItem);
+
+    List<T> getDistinct(List<QueryItem> queryItems, OrderItem orderItem);
 
 
 

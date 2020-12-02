@@ -7,6 +7,7 @@
 package com.fm.api.web.controller.production;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.fm.api.web.util.CountRequest;
 import com.fm.api.web.vo.production.ProductionInfoVO;
 import com.fm.business.base.enums.BudgetType;
 import com.fm.business.base.enums.DeliveryType;
@@ -115,7 +116,7 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
     }
 
     @RequestMapping(value = "/conditionQuery",method = RequestMethod.POST)
-    public ApiResponse<Page<ProductionInfoVO>> conditionQuery(@RequestBody QueryRequest queryRequest) {
+    public ApiResponse<CountRequest> conditionQuery(@RequestBody QueryRequest queryRequest) {
 
         //根据不同权限展示不同数据
         User user = iUserService.findById(Context.getCurrUserId());
@@ -159,7 +160,10 @@ public class ProductionInfoController extends BaseController<ProductionInfo, Pro
         });
         OrderItem orderItem = new OrderItem(OrderType.desc, "createTime");
         queryRequest.setOrderItem(orderItem);
-        return super.list(queryRequest);
+        CountRequest countRequest = new CountRequest();
+        countRequest.setCount(super.getDistinct(queryRequest).size());
+        countRequest.setData(super.list(queryRequest).getData());
+        return success(countRequest);
     }
 
     @Override

@@ -360,6 +360,11 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
         return get(queryItems, null);
     }
 
+    public List<T> getDistinct(List<QueryItem> queryItems) {
+
+        return getDistinct(queryItems, null);
+    }
+
     @Override
     public List<T> get(List<QueryItem> queryItems, OrderItem orderItem) {
 
@@ -368,6 +373,20 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
         setQueryItem2Wrapper(queryItems, queryWrapper);
 
         setOrderItem2Wrapper(orderItem, queryWrapper);
+
+        return getBaseMapper().selectList(queryWrapper);
+    }
+
+    @Override
+    public List<T> getDistinct(List<QueryItem> queryItems, OrderItem orderItem) {
+
+        QueryWrapper<T> queryWrapper = getQueryWrapper();
+
+        setQueryItem2Wrapper(queryItems, queryWrapper);
+
+        setOrderItem2Wrapper(orderItem, queryWrapper);
+
+        queryWrapper.select("distinct freelancer_id");
 
         return getBaseMapper().selectList(queryWrapper);
     }
