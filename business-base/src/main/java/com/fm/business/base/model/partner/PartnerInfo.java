@@ -1,12 +1,15 @@
 package com.fm.business.base.model.partner;
 
+import com.fm.business.base.model.educationInfo.EducationInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
+import com.fm.business.base.model.workInfo.WorkInfo;
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class PartnerInfo extends BaseModel implements Serializable, IAudit {
@@ -107,6 +110,16 @@ public class PartnerInfo extends BaseModel implements Serializable, IAudit {
     private Long updateUser;
 
     private transient FreelancerInfo freelancerInfo;
+
+    /**
+     * 教育经历
+     */
+    private transient List<EducationInfo> educationInfos;
+
+    /**
+     * 工作经历
+     */
+    private transient List<WorkInfo> workInfos;
 
     /**
      * 获取主键方法，主键整体平台定义成Long数据类型，方便数据的整体插入性能

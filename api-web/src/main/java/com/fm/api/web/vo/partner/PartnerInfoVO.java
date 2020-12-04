@@ -1,12 +1,15 @@
 package com.fm.api.web.vo.partner;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fm.business.base.model.educationInfo.EducationInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
+import com.fm.business.base.model.workInfo.WorkInfo;
 import com.fm.framework.web.VO;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class PartnerInfoVO extends VO implements Serializable {
@@ -117,5 +120,18 @@ public class PartnerInfoVO extends VO implements Serializable {
      *服务作品状态
      */
     private Integer productionStatus;
+
+    /**
+     * 教育经历
+     */
+    private transient List<EducationInfo> educationInfos;
+
+    /**
+     * 工作经历
+     */
+    private transient List<WorkInfo> workInfos;
+
+
+
 
 }

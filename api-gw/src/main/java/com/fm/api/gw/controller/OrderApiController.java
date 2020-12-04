@@ -319,7 +319,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         }
         OrderInfo orderInfo = orderInfoService.get(orderOperateInfoVO.getOrderId());
         // 新增操作表记录
-        this.saveOperateInfo(orderOperateInfoVO.getOrderId(), orderInfo.getStatus(), null, orderOperateInfoVO.getImages());
+        this.saveOperateInfo(orderOperateInfoVO.getOrderId(), OrderStatus.CHECKING_60.getCode(), null, orderOperateInfoVO.getImages());
         return ApiResponse.ofSuccess(true);
     }
 
