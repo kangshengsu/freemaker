@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -283,13 +284,26 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
     }
 
     private void fillFreelancerInfoRelation(Collection<FreelancerInfo> freelancerInfos) {
+
         if (CollectionUtils.isEmpty(freelancerInfos)) {
             return;
         }
+
+        Set<Long> referrerIds = new HashSet<>();
+
         freelancerInfos.forEach(freelancerInfo -> {
-            if(freelancerInfo.getReferrer() != null){
-                SysUser sysUser = iSysUserService.get(freelancerInfo.getReferrer());
-                freelancerInfo.setReferrerName(sysUser.getName());
+            referrerIds.add(freelancerInfo.getReferrer());
+        });
+
+        Map<Long, SysUser> referrerMap = iSysUserService.getByIds(referrerIds)
+                .stream().collect(Collectors.toMap(SysUser::getId, Function.identity(), (v1, v2) -> v2));
+
+        freelancerInfos.forEach(freelancerInfo -> {
+            if (referrerMap.containsKey(freelancerInfo.getReferrer())) {
+                if(referrerMap.get(freelancerInfo.getReferrer()) != null){
+                    SysUser sysUser = iSysUserService.get(referrerMap.get(freelancerInfo.getReferrer()).getId());
+                    freelancerInfo.setReferrerName(sysUser.getName());
+                }
             }
         });
     }
