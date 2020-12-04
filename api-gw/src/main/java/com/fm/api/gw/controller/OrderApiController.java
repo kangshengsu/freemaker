@@ -292,7 +292,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         saveFollow(orderInfoVO);
 
         // 写操作表
-        saveOperateInfo(orderInfoVO.getId(),orderInfoVO.getStatus(),orderInfoVO.getFollowDesc(),orderInfoVO.getAttachmentList());
+        saveOperateInfo(orderInfoVO.getId(),OrderStatus.PAID_51.getCode(),orderInfoVO.getFollowDesc(),orderInfoVO.getAttachmentList());
 
         return ApiResponse.ofSuccess(true);
     }

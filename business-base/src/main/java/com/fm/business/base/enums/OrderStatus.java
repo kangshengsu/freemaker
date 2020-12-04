@@ -13,6 +13,8 @@ public enum OrderStatus {
 
     PAID_50(50, "服务中", 3, OrderOperateRoleType.EMPLOYER.getCode()), // = 已支付
 
+    PAID_51(51, "完成服务", 3, OrderOperateRoleType.EMPLOYER.getCode()), // = 已支付
+
     CHECKING_60(60, "待验收", 4, OrderOperateRoleType.EMPLOYER.getCode()),
 
     CHECK_FAIL_61(61, "验收不通过", 4, OrderOperateRoleType.EMPLOYER.getCode()),//二次待验收

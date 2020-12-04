@@ -53,6 +53,10 @@ public class OrderOperateInfoServiceImpl extends AuditBaseService<IOrderOperateI
             orderOperateInfo.setOperateType(OrderOperateType.RECEIVE.getCode());
             orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
             orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
+        } else if (OrderStatus.PAID_51.getCode().equals(status)) {
+            orderOperateInfo.setOperateType(OrderOperateType.FINISH.getCode());
+            orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
+            orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
         } else if (OrderStatus.CHECKING_60.getCode().equals(status)) {
             orderOperateInfo.setOperateType(OrderOperateType.SUBMIT_PAYMENT_VOUCHER.getCode());
             orderOperateInfo.setOperateUser(Context.getCurrFreelancerId());
