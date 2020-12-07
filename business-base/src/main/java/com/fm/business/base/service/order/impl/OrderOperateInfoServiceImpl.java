@@ -50,15 +50,18 @@ public class OrderOperateInfoServiceImpl extends AuditBaseService<IOrderOperateI
         OrderOperateInfo orderOperateInfo = new OrderOperateInfo();
 
         if (OrderStatus.TAKING_40.getCode().equals(status)) {
-            orderOperateInfo.setOperateType(OrderOperateType.RECEIVE.getCode());
-            orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
-            orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
-        } else if (OrderStatus.PAID_51.getCode().equals(status)) {
-            orderOperateInfo.setOperateType(OrderOperateType.FINISH.getCode());
-            orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
-            orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
+            OrderInfo orderInfo = iOrderInfoService.get(orderId);
+            if(orderInfo.getFreelancerId().equals(Context.getCurrFreelancerId())){
+                orderOperateInfo.setOperateType(OrderOperateType.RECEIVE.getCode());
+                orderOperateInfo.setOperateUser(Context.getCurrFreelancerId());
+                orderOperateInfo.setReceiveUser(Context.getCurrEmployerId());
+            }else {
+                orderOperateInfo.setOperateType(OrderOperateType.SUBMIT_PAYMENT_VOUCHER.getCode());
+                orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
+                orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
+            }
         } else if (OrderStatus.CHECKING_60.getCode().equals(status)) {
-            orderOperateInfo.setOperateType(OrderOperateType.SUBMIT_PAYMENT_VOUCHER.getCode());
+            orderOperateInfo.setOperateType(OrderOperateType.SUBMIT.getCode());
             orderOperateInfo.setOperateUser(Context.getCurrFreelancerId());
             orderOperateInfo.setReceiveUser(Context.getCurrEmployerId());
         } else if (OrderStatus.CHECK_FAIL_61.getCode().equals(status)) {

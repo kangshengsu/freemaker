@@ -7,7 +7,7 @@ public enum OrderOperateType {
     ACCEPT(20,"验收通过"),
     UNACCEPT(30,"验收不通过"),
     RECEIVE(31,"接单"),
-    FINISH(32,"完成服务");
+    FINISH_SERVICE(32,"完成服务");
 
     private Integer code;
     private String name;
