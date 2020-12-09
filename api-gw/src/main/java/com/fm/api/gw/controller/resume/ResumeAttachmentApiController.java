@@ -59,6 +59,8 @@ public class ResumeAttachmentApiController extends BaseController<ResumeAttachme
                     "docx".equals(resumeAttachmentVO.getName().substring(resumeAttachmentVO.getName().toLowerCase().lastIndexOf(".") + 1))) {
                 resumeAttachmentInfoService.doc2Image(resumeAttachmentVO.getPath());
                 return super.create(resumeAttachmentVO);
+            }else {
+                return super.create(resumeAttachmentVO);
             }
         }
         return failed("上传数据错误");

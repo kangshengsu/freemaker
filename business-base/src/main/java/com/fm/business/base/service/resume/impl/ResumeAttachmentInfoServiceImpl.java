@@ -240,6 +240,8 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
             model.setResumeType(split[1]);
             String path = model.getPath().startsWith("http") ? StrUtil.sub(model.getPath(), model.getPath().indexOf("f"), -1) : model.getPath();
             model.setPath(path);
+            String otherPath = model.getOtherPath().startsWith("http") ? StrUtil.sub(model.getOtherPath(), model.getOtherPath().indexOf("f"),-1) : model.getOtherPath();
+            model.setOtherPath(otherPath);
         }
 
     }

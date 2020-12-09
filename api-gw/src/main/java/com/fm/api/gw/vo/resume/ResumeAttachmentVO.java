@@ -50,7 +50,14 @@ public class ResumeAttachmentVO extends VO implements Serializable {
     private String path;
 
     /**
+     * 是否代发服务(10-代发 20-不代发)
+     */
+    private Long isReplace;
+
+
+    /**
      * 预览路径
      */
     private String otherPath;
+
 }
