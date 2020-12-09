@@ -1,5 +1,6 @@
 package com.fm.api.web.controller.sm;
 
+import com.fm.framework.core.constants.SymbolConstants;
 import com.fm.framework.core.service.FileService;
 import com.fm.framework.web.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,9 @@ public class UpLoaderController {
      */
     @Value("${img.postfix}")
     List<String> imgPostfix;
+
+    @Value("${file.postfix}")
+    List<String> filePostfix;
 
     private final int MAX_IMG_SIZE=10*1024*1024;
 
@@ -70,16 +74,16 @@ public class UpLoaderController {
     @RequestMapping(value = "/uploadfile", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
         if (file == null || file.isEmpty()) {
-            return ApiResponse.ofFailed("入参为空");
+            return ApiResponse.ofFailed("文件不能为空");
         }
         String fileName = file.getOriginalFilename();
-        if (Objects.isNull(fileName) || !isImage(fileName)) {
-            return ApiResponse.ofFailed("图片格式不正确");
+        if (Objects.isNull(fileName) || !isFile(fileName)) {
+            return ApiResponse.ofFailed("文件格式不正确");
         }
 
         try(InputStream uploadedStream = file.getInputStream()) {
             String url = fileService.upload(fileName, IOUtils.toByteArray(uploadedStream));
-            log.debug("图片上传成功,图片名称:{},url为:{}", file, url);
+            log.debug("文件上传成功,文件名称:{},url为:{}", file, url);
             return ApiResponse.ofSuccess(fileService.getFullPath(fileName));
         }
     }
@@ -100,6 +104,22 @@ public class UpLoaderController {
         }
         String postfix = fileName.substring(index + 1);
         if (imgPostfix.contains(postfix)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断是否是文件上传
+     */
+    private boolean isFile(String fileName) {
+        String lowerName = fileName.toLowerCase();
+        int index = lowerName.lastIndexOf(SymbolConstants.POINT);
+        if (index < 1){
+            return false;
+        }
+        String postfix = fileName.substring(index + 1);
+        if (filePostfix.contains(postfix)){
             return true;
         }
         return false;

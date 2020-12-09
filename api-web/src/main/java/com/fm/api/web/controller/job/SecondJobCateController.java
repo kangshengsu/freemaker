@@ -98,6 +98,7 @@ public class SecondJobCateController extends BaseController<BdJobCate, BdJobCate
             .orElse(false)){
             return ApiResponse.of(ApiStatus.FAILED,"类目下有作品不能删除");
         }
+        bdJobCateDetailService.deleteByJobCateId(form.getId());
         return super.delete(form.getId());
     }
 
