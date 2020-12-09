@@ -69,9 +69,9 @@ public class ResumeAttachmentApiController extends BaseController<ResumeAttachme
     @RequestMapping(value = "/delById", method = RequestMethod.POST)
     @ApiOperation(value = "删除简历")
     @Transactional
-    public ApiResponse<Boolean> delResumeAttachment(@RequestParam("id") Long id) {
-        if (ObjectUtil.isNotNull(id)) {
-            return super.delete(id);
+    public ApiResponse<Boolean> delResumeAttachment(@RequestBody ResumeAttachmentVO resumeAttachmentVO) {
+        if (ObjectUtil.isNotNull(resumeAttachmentVO.getId())) {
+            return super.delete(resumeAttachmentVO.getId());
         }
         return failed("删除失败");
     }
