@@ -148,8 +148,9 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
 
     @Override
     @Async
-    public void doc2Image(String path) {
+    public void doc2Image(String filePath) {
         try {
+            String path = filePath.startsWith("http") ? filePath.substring(filePath.lastIndexOf(".com/") + 5) : filePath;
             InputStream inputStream = fileService.getInputStream(path);
             Document document = new Document(inputStream);
             ImageSaveOptions imageSaveOptions = new ImageSaveOptions(SaveFormat.PNG);
@@ -197,7 +198,7 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
         URL oldUrl = cosClient.generatePresignedUrl(bucketName, key, expiration);
         String newUrl = oldUrl.toString();
         newUrl = StrUtil.sub(newUrl, newUrl.lastIndexOf(".com/") + 5, newUrl.indexOf("?"));
-        String path = filePath.startsWith("http") ? filePath.substring(filePath.lastIndexOf(".com/") + 5) : filePath;
+
         ResumeAttachmentInfo resumeAttachmentInfo1 = getBaseMapper().selectOne(Wrappers.lambdaQuery(ResumeAttachmentInfo.class).eq(ResumeAttachmentInfo::getPath, filePath));
             resumeAttachmentInfo1.setOtherPath(newUrl);
             update(resumeAttachmentInfo1);
