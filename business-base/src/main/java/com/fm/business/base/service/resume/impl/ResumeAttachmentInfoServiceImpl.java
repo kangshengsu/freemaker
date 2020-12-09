@@ -18,6 +18,7 @@ import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.job.IBdJobCateService;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.business.base.service.resume.IResumeAttachmentInfoService;
+import com.fm.framework.core.Context;
 import com.fm.framework.core.cos.CosProperties;
 import com.fm.framework.core.cos.CosServiceImpl;
 import com.fm.framework.core.query.Page;
@@ -242,6 +243,8 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
             model.setPath(path);
             String otherPath = model.getOtherPath().startsWith("http") ? StrUtil.sub(model.getOtherPath(), model.getOtherPath().indexOf("f"),-1) : model.getOtherPath();
             model.setOtherPath(otherPath);
+            model.setFreelancerId(Context.getCurrFreelancerId());
+            model.setPhone(freelancerInfoService.get(Context.getCurrFreelancerId()).getPhone());
         }
 
     }
