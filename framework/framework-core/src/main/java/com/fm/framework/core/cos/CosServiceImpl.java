@@ -6,8 +6,7 @@ import com.fm.framework.core.exception.OssException;
 import com.fm.framework.core.model.OssTmpSecret;
 import com.fm.framework.core.service.FileService;
 import com.qcloud.cos.COSClient;
-import com.qcloud.cos.model.ObjectMetadata;
-import com.qcloud.cos.model.PutObjectResult;
+import com.qcloud.cos.model.*;
 import com.tencent.cloud.CosStsClient;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -131,6 +130,15 @@ public class CosServiceImpl implements FileService {
             return getBaseUrlWithCDN() + path;
         }
         return path;
+    }
+
+    @Override
+    public InputStream getInputStream(String path) {
+        String bucketName = cosProperties.getBucketName();
+        GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, path);
+        COSObject cosClientObject = cosClient.getObject(getObjectRequest);
+        COSObjectInputStream cosObjectInput = cosClientObject.getObjectContent();
+        return cosObjectInput;
     }
 
     /**

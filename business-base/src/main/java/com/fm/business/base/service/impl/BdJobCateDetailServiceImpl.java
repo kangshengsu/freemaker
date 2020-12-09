@@ -116,4 +116,9 @@ public class BdJobCateDetailServiceImpl extends AuditBaseService<IBdJoBCateDetai
         return jobCateList;
     }
 
+    @Override
+    public void deleteByJobCateId(Long id) {
+        getBaseMapper().delete(Wrappers.lambdaQuery(BdJobCateDetail.class).eq(BdJobCateDetail::getJobCateId,id));
+    }
+
 }

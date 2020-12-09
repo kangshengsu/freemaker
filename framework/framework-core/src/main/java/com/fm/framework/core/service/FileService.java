@@ -2,6 +2,8 @@ package com.fm.framework.core.service;
 
 import com.fm.framework.core.model.OssTmpSecret;
 
+import java.io.InputStream;
+
 /**
  * 文件存储
  *
@@ -45,4 +47,10 @@ public interface FileService {
     OssTmpSecret getTmpSecret();
 
     String getFullPath(String path);
+
+    /**
+     * 获取文件输入流
+     * @return 文件输入流
+     */
+    InputStream getInputStream(String path);
 }

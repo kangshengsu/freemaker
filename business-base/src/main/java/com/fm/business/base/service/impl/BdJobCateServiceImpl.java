@@ -214,8 +214,9 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
          */
         attachmentInfoService.deleteByBusinessCode(model.getCateCode());
         saveAttachments(model);
-
-        bdJobCateDetailService.updateJobCateDetail(model.getBdJobCateDetail());
+        if (CollectionUtils.isEmpty(model.getAttachmentInfos()) && Objects.nonNull(model.getBdJobCateDetail())) {
+            bdJobCateDetailService.updateJobCateDetail(model.getBdJobCateDetail());
+        }
 
 
     }
@@ -285,17 +286,17 @@ public class BdJobCateServiceImpl extends AuditBaseService<IBdJobCateMapper, BdJ
 
     @Override
     public List<BdJobCate> getFirstJobCate() {
-        return getBaseMapper().selectList(Wrappers.lambdaQuery(BdJobCate.class).eq(BdJobCate::getCateType,JobNodeType.JOB.getType()));
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(BdJobCate.class).eq(BdJobCate::getCateType, JobNodeType.JOB.getType()));
     }
 
     @Override
     public BdJobCate getByParentId(Long id) {
-        return getBaseMapper().selectOne(Wrappers.lambdaQuery(BdJobCate.class).eq(BdJobCate::getParentId,id));
+        return getBaseMapper().selectOne(Wrappers.lambdaQuery(BdJobCate.class).eq(BdJobCate::getParentId, id));
     }
 
     @Override
     public List<Long> getSecondJobCate(Long jobCateId) {
-        return getBaseMapper().selectList(Wrappers.lambdaQuery(BdJobCate.class).eq(BdJobCate::getParentId,jobCateId)).stream().map(BdJobCate::getId).collect(Collectors.toList());
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(BdJobCate.class).eq(BdJobCate::getParentId, jobCateId)).stream().map(BdJobCate::getId).collect(Collectors.toList());
 
     }
 }
