@@ -132,7 +132,9 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
         ArrayList<QueryItem> queryList = new ArrayList();
         queryList.add(item);
 
-        List<OrderOperateInfo> orderOperateInfos = orderOperateInfoService.get(queryList);
+        OrderItem orderItem = new OrderItem(OrderType.asc, "createTime");
+
+        List<OrderOperateInfo> orderOperateInfos = orderOperateInfoService.get(queryList, orderItem);
         orderInfoVO.setOrderOperateInfos(new ArrayList<>());
         OrderOperateInfoVO temp;
         List<Long> employerIds = new ArrayList<>();

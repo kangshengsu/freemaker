@@ -13,8 +13,10 @@ import com.fm.business.base.dao.freelancer.IFreelancerInfoMapper;
 import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.business.base.model.sys.SysUser;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
+import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.business.base.service.wx.message.impl.WxMessageSenderService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.cos.CosProperties;
@@ -40,6 +42,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -70,7 +73,8 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
     @Autowired
     private RestTemplate rest;
 
-
+    @Autowired
+    private ISysUserService iSysUserService;
 
     @Value("${wx.miniapp.appid}")
     private String appid;
@@ -267,5 +271,40 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
         queryWrapper.select()
                 .in("phone", phones);
         return getBaseMapper().selectList(queryWrapper);
+    }
+
+    @Override
+    protected Page<FreelancerInfo> toPage(com.baomidou.mybatisplus.extension.plugins.pagination.Page<FreelancerInfo> mybatisPlusPage) {
+        Page<FreelancerInfo> freelancerInfoPage = super.toPage(mybatisPlusPage);
+        if (freelancerInfoPage.getData() != null && !freelancerInfoPage.getData().isEmpty()) {
+            //补全信息
+            fillFreelancerInfoRelation(freelancerInfoPage.getData());
+        }
+        return freelancerInfoPage;
+    }
+
+    private void fillFreelancerInfoRelation(Collection<FreelancerInfo> freelancerInfos) {
+
+        if (CollectionUtils.isEmpty(freelancerInfos)) {
+            return;
+        }
+
+        Set<Long> referrerIds = new HashSet<>();
+
+        freelancerInfos.forEach(freelancerInfo -> {
+            referrerIds.add(freelancerInfo.getReferrer());
+        });
+
+        Map<Long, SysUser> referrerMap = iSysUserService.getByIds(referrerIds)
+                .stream().collect(Collectors.toMap(SysUser::getId, Function.identity(), (v1, v2) -> v2));
+
+        freelancerInfos.forEach(freelancerInfo -> {
+            if (referrerMap.containsKey(freelancerInfo.getReferrer())) {
+                if(referrerMap.get(freelancerInfo.getReferrer()) != null){
+                    SysUser sysUser = iSysUserService.get(referrerMap.get(freelancerInfo.getReferrer()).getId());
+                    freelancerInfo.setReferrerName(sysUser.getName());
+                }
+            }
+        });
     }
 }

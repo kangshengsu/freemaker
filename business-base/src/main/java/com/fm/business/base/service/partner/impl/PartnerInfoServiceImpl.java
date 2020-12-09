@@ -19,10 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service("partnerInfoService")
@@ -102,22 +101,51 @@ public class PartnerInfoServiceImpl extends AuditBaseService<PartnerInfoMapper, 
             return;
         }
 
+        Set<Long> belongIds = new HashSet<>();
+        Set<Long> referrerIds = new HashSet<>();
+        Set<Long> settlementIds = new HashSet<>();
+        Set<Long> distributionIds = new HashSet<>();
+
         partnerInfos.forEach(partnerInfo -> {
-            if(partnerInfo.getBelongId() != null){
-                SysUser sysUser = iSysUserService.get(partnerInfo.getBelongId());
-                partnerInfo.setBelongIdName(sysUser.getName());
+            belongIds.add(partnerInfo.getBelongId());
+            referrerIds.add(partnerInfo.getReferrerId());
+            settlementIds.add(partnerInfo.getSettlementId());
+            distributionIds.add(partnerInfo.getDistributionId());
+        });
+
+        Map<Long, SysUser> belongMap = iSysUserService.getByIds(belongIds)
+                .stream().collect(Collectors.toMap(SysUser::getId, Function.identity(), (v1, v2) -> v2));
+        Map<Long, SysUser> referrerMap = iSysUserService.getByIds(referrerIds)
+                .stream().collect(Collectors.toMap(SysUser::getId, Function.identity(), (v1, v2) -> v2));
+        Map<Long, User> settlementMap = iUserService.getByIds(settlementIds)
+                .stream().collect(Collectors.toMap(User::getId, Function.identity(), (v1, v2) -> v2));
+        Map<Long, User> distributionMap = iUserService.getByIds(distributionIds)
+                .stream().collect(Collectors.toMap(User::getId, Function.identity(), (v1, v2) -> v2));
+
+        partnerInfos.forEach(partnerInfo -> {
+            if (belongMap.containsKey(partnerInfo.getBelongId())) {
+                if(belongMap.get(partnerInfo.getBelongId()) != null){
+                    SysUser sysUser = iSysUserService.get(belongMap.get(partnerInfo.getBelongId()).getId());
+                    partnerInfo.setBelongIdName(sysUser.getName());
+                }
             }
-            if(partnerInfo.getReferrerId() != null){
-                SysUser sysUser = iSysUserService.get(partnerInfo.getReferrerId());
-                partnerInfo.setReferrerIdName(sysUser.getName());
+            if (referrerMap.containsKey(partnerInfo.getReferrerId())) {
+                if(referrerMap.get(partnerInfo.getReferrerId()) != null){
+                    SysUser sysUser = iSysUserService.get(referrerMap.get(partnerInfo.getReferrerId()).getId());
+                    partnerInfo.setReferrerIdName(sysUser.getName());
+                }
             }
-            if(partnerInfo.getSettlementId() != null){
-                User user = iUserService.get(partnerInfo.getSettlementId());
-                partnerInfo.setSettlementIdName(user.getName());
+            if (settlementMap.containsKey(partnerInfo.getSettlementId())) {
+                if(settlementMap.get(partnerInfo.getSettlementId()) != null){
+                    User user = iUserService.get(settlementMap.get(partnerInfo.getSettlementId()).getId());
+                    partnerInfo.setSettlementIdName(user.getName());
+                }
             }
-            if(partnerInfo.getDistributionId() != null){
-                User user = iUserService.get(partnerInfo.getDistributionId());
-                partnerInfo.setDistributionIdName(user.getName());
+            if (distributionMap.containsKey(partnerInfo.getDistributionId())) {
+                if(distributionMap.get(partnerInfo.getDistributionId()) != null){
+                    User user = iUserService.get(distributionMap.get(partnerInfo.getDistributionId()).getId());
+                    partnerInfo.setDistributionIdName(user.getName());
+                }
             }
         });
 

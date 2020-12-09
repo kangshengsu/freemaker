@@ -2,15 +2,19 @@ package com.fm.api.web.controller.partner;
 
 import com.fm.api.web.vo.partner.PartnerInfoVO;
 import com.fm.business.base.enums.ProductionStatus;
+import com.fm.business.base.model.educationInfo.EducationInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.partner.DistributionPartnerInfo;
 import com.fm.business.base.model.partner.PartnerInfo;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.model.sm.User;
+import com.fm.business.base.model.workInfo.WorkInfo;
+import com.fm.business.base.service.educationInfo.EducationInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.partner.PartnerInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.business.base.service.sm.IUserService;
+import com.fm.business.base.service.workInfo.WorkInfoService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.query.*;
 import com.fm.framework.core.service.Service;
@@ -44,6 +48,14 @@ public class PartnerInfoController extends BaseController<PartnerInfo, PartnerIn
 
     @Autowired
     private IUserService iUserService;
+
+    @Autowired
+    private EducationInfoService educationInfoService;
+
+    @Autowired
+    private WorkInfoService workInfoService;
+
+
 
     @Override
     protected Service<PartnerInfo> service() {
@@ -162,6 +174,11 @@ public class PartnerInfoController extends BaseController<PartnerInfo, PartnerIn
                 partnerInfoVO.setProductionStatus(ProductionStatus.REVIEW_NOT_PASS.getCode());
             }
         }
+
+        List<EducationInfo> educationInfos = educationInfoService.getByFreelancerId(model.getFreelancerId());
+        List<WorkInfo> workInfos = workInfoService.getByFreelancerId(model.getFreelancerId());
+        partnerInfoVO.setEducationInfos(educationInfos);
+        partnerInfoVO.setWorkInfos(workInfos);
 
         FreelancerInfo freelancerInfo = iFreelancerInfoService.get(model.getFreelancerId());
         partnerInfoVO.setFreelancerInfo(freelancerInfo);

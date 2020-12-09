@@ -12,13 +12,18 @@ import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
+import com.fm.framework.core.query.OrderItem;
+import com.fm.framework.core.query.OrderType;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -103,7 +108,8 @@ public class FreelancerInfoController extends BaseController<FreelancerInfo, Fre
     @Override
     @RequestMapping(value = "list", method = RequestMethod.POST)
     public ApiResponse<Page<FreelancerInfoVO>> list(@RequestBody QueryRequest queryRequest) {
-
+        OrderItem orderItem = new OrderItem(OrderType.desc, "createTime");
+        queryRequest.setOrderItem(orderItem);
         return super.list(queryRequest);
     }
 

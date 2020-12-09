@@ -8,7 +8,10 @@ package com.fm.business.base.service.order.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.order.IOrderOperateInfoMapper;
-import com.fm.business.base.enums.*;
+import com.fm.business.base.enums.AttachmentBusinessType;
+import com.fm.business.base.enums.AttachmentType;
+import com.fm.business.base.enums.OrderOperateType;
+import com.fm.business.base.enums.OrderStatus;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.model.order.OrderOperateInfo;
@@ -20,7 +23,6 @@ import com.fm.framework.core.enums.YesNoEnum;
 import com.fm.framework.core.service.AuditBaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -48,9 +50,16 @@ public class OrderOperateInfoServiceImpl extends AuditBaseService<IOrderOperateI
         OrderOperateInfo orderOperateInfo = new OrderOperateInfo();
 
         if (OrderStatus.TAKING_40.getCode().equals(status)) {
-            orderOperateInfo.setOperateType(OrderOperateType.SUBMIT_PAYMENT_VOUCHER.getCode());
-            orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
-            orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
+            OrderInfo orderInfo = iOrderInfoService.get(orderId);
+            if(orderInfo.getFreelancerId().equals(Context.getCurrFreelancerId())){
+                orderOperateInfo.setOperateType(OrderOperateType.RECEIVE.getCode());
+                orderOperateInfo.setOperateUser(Context.getCurrFreelancerId());
+                orderOperateInfo.setReceiveUser(Context.getCurrEmployerId());
+            }else {
+                orderOperateInfo.setOperateType(OrderOperateType.SUBMIT_PAYMENT_VOUCHER.getCode());
+                orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
+                orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
+            }
         } else if (OrderStatus.CHECKING_60.getCode().equals(status)) {
             orderOperateInfo.setOperateType(OrderOperateType.SUBMIT.getCode());
             orderOperateInfo.setOperateUser(Context.getCurrFreelancerId());
