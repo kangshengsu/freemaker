@@ -239,9 +239,9 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
             String[] split = model.getName().split("\\.");
             model.setName(split[0]);
             model.setResumeType(split[1]);
-            String path = model.getPath().startsWith("http") ? StrUtil.sub(model.getPath(), model.getPath().indexOf("f"), -1) : model.getPath();
+            String path = model.getPath().startsWith("http") ? model.getPath().substring(model.getPath().lastIndexOf(".com/") + 5) : model.getPath();
             model.setPath(path);
-            String otherPath = model.getOtherPath().startsWith("http") ? StrUtil.sub(model.getOtherPath(), model.getOtherPath().indexOf("f"),-1) : model.getOtherPath();
+            String otherPath = model.getOtherPath().startsWith("http") ? model.getOtherPath().substring( model.getOtherPath().lastIndexOf(".com/") + 5) : model.getOtherPath();
             model.setOtherPath(otherPath);
             model.setUserName(freelancerInfoService.get(Context.getCurrFreelancerId()).getName());
             model.setFreelancerId(Context.getCurrFreelancerId());
