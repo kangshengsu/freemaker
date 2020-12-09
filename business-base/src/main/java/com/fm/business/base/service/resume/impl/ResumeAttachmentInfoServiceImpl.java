@@ -191,20 +191,17 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
      *
      * @param filePath
      */
-    private String updateOtherPath(String filePath) {
+    private void updateOtherPath(String filePath) {
         String bucketName = cosProperties.getBucketName();
         Date expiration = new Date(new Date().getTime() + 5 * 60 * 10000);
         URL oldUrl = cosClient.generatePresignedUrl(bucketName, key, expiration);
         String newUrl = oldUrl.toString();
-        newUrl = StrUtil.sub(newUrl, newUrl.indexOf("f"), newUrl.indexOf("?"));
+        newUrl = StrUtil.sub(newUrl, newUrl.lastIndexOf(".com/") + 5, newUrl.indexOf("?"));
+        String path = filePath.startsWith("http") ? filePath.substring(filePath.lastIndexOf(".com/") + 5) : filePath;
         ResumeAttachmentInfo resumeAttachmentInfo1 = getBaseMapper().selectOne(Wrappers.lambdaQuery(ResumeAttachmentInfo.class).eq(ResumeAttachmentInfo::getPath, filePath));
-        if (ObjectUtil.isNotNull(resumeAttachmentInfo1)) {
             resumeAttachmentInfo1.setOtherPath(newUrl);
             update(resumeAttachmentInfo1);
-            return null;
         }
-        return oldUrl.toString();
-    }
 
     /**
      * 拼接图片
