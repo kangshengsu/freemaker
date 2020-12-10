@@ -42,7 +42,7 @@ public class ResumeAttachmentInfoController extends BaseController<ResumeAttachm
         }
 
         if ("pdf".equals(form.getName().substring(form.getName().toLowerCase().lastIndexOf(".") + 1))) {
-            resumeAttachmentInfoService.pdf2Image(form.getPath());
+            resumeAttachmentInfoService.pdf2Image(form.getPath(),null);
             return super.create(form);
         }
         if ("doc".equals(form.getName().substring(form.getName().toLowerCase().lastIndexOf(".") + 1)) ||

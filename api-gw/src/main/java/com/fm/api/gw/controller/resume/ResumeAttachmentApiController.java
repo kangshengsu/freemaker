@@ -53,7 +53,7 @@ public class ResumeAttachmentApiController extends BaseController<ResumeAttachme
     public ApiResponse<Boolean> creatResumeAttachment(@RequestBody ResumeAttachmentVO resumeAttachmentVO) {
         if (ObjectUtil.isNotNull(resumeAttachmentVO)) {
             if ("pdf".equals(resumeAttachmentVO.getName().substring(resumeAttachmentVO.getName().toLowerCase().lastIndexOf(".") + 1))) {
-                resumeAttachmentInfoService.pdf2Image(resumeAttachmentVO.getPath());
+                resumeAttachmentInfoService.pdf2Image(resumeAttachmentVO.getPath(),null);
                 return super.create(resumeAttachmentVO);
             } else if ("doc".equals(resumeAttachmentVO.getName().substring(resumeAttachmentVO.getName().toLowerCase().lastIndexOf(".") + 1)) ||
                     "docx".equals(resumeAttachmentVO.getName().substring(resumeAttachmentVO.getName().toLowerCase().lastIndexOf(".") + 1))) {
@@ -68,7 +68,7 @@ public class ResumeAttachmentApiController extends BaseController<ResumeAttachme
 
     @RequestMapping(value = "/delById", method = RequestMethod.POST)
     @ApiOperation(value = "删除简历")
-    @Transactional
+    @Transactional(rollbackFor = RuntimeException.class)
     public ApiResponse<Boolean> delResumeAttachment(@RequestBody ResumeAttachmentVO resumeAttachmentVO) {
         if (ObjectUtil.isNotNull(resumeAttachmentVO.getId())) {
             return super.delete(resumeAttachmentVO.getId());

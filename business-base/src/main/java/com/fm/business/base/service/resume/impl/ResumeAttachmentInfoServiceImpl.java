@@ -25,21 +25,26 @@ import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.AuditBaseService;
 import com.fm.framework.core.service.FileService;
 import com.qcloud.cos.COSClient;
+import jodd.util.StringUtil;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -51,7 +56,8 @@ import java.util.stream.Collectors;
 @Service
 @EnableAsync
 public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAttachmentInfoMapper, ResumeAttachmentInfo> implements IResumeAttachmentInfoService {
-    static final String key = "file/" + DateUtil.today() + "/" + DateUtil.date().getTime() + ".png";
+    static String key = "file/" + DateUtil.today() + "/" + DateUtil.date().getTime() + ".png";
+    static String pdfKey = "file/" + DateUtil.today() + "/" + DateUtil.date().getTime() + ".pdf";
     @Autowired
     private IFreelancerInfoService freelancerInfoService;
 
@@ -107,13 +113,17 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
      */
     @Override
     @Async
-    public void pdf2Image(String filePath) {
+    public void pdf2Image(String filePath, byte[] input) {
         ArrayList<BufferedImage> list = new ArrayList<>();
         PDDocument pdDocument = null;
         ByteArrayOutputStream outputStream = null;
         try {
             int dpi = 100;
-            pdDocument = PDDocument.load(fileService.getInputStream(filePath));
+            if (StringUtil.isNotBlank(filePath)) {
+                pdDocument = PDDocument.load(fileService.getInputStream(filePath));
+            } else {
+                pdDocument = PDDocument.load(input);
+            }
             PDFRenderer renderer = new PDFRenderer(pdDocument);
             int pageCount = pdDocument.getNumberOfPages();
             outputStream = new ByteArrayOutputStream();
@@ -149,33 +159,46 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
     @Override
     @Async
     public void doc2Image(String filePath) {
+        ByteArrayOutputStream byteArrayOutputStream = null;
         try {
             String path = filePath.startsWith("http") ? filePath.substring(filePath.lastIndexOf(".com/") + 5) : filePath;
             InputStream inputStream = fileService.getInputStream(path);
             Document document = new Document(inputStream);
-            ImageSaveOptions imageSaveOptions = new ImageSaveOptions(SaveFormat.PNG);
-            int pageCount = document.getPageCount();
-            ArrayList<BufferedImage> list = new ArrayList<>();
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            for (int i = 0; i < pageCount; i++) {
-                document.save(byteArrayOutputStream, imageSaveOptions);
-                ImageInputStream imageInputStream = javax.imageio.ImageIO.createImageInputStream(parse(byteArrayOutputStream));
-                list.add(javax.imageio.ImageIO.read(imageInputStream));
-            }
-            BufferedImage mergeImage = mergeImage(list);
-            ImageIO.write(mergeImage, "png", byteArrayOutputStream);
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            document.save(byteArrayOutputStream, SaveFormat.PDF);
             byteArrayOutputStream.flush();
             byte[] data = byteArrayOutputStream.toByteArray();
-            fileService.upload(key, data);
-            updateOtherPath(path);
+            pdf2Image(null,data);
+            //fileService.upload(pdfKey,data);
+//            ImageSaveOptions imageSaveOptions = new ImageSaveOptions(SaveFormat.PNG);
+//            int pageCount = document.getPageCount();
+//            ArrayList<BufferedImage> list = new ArrayList<>();
+//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//            for (int i = 0; i < pageCount; i++) {
+//                document.save(byteArrayOutputStream, imageSaveOptions);
+//                ImageInputStream imageInputStream = javax.imageio.ImageIO.createImageInputStream(parse(byteArrayOutputStream));
+//                list.add(javax.imageio.ImageIO.read(imageInputStream));
+//            }
+//            BufferedImage mergeImage = mergeImage(list);
+//            ImageIO.write(mergeImage, "png", byteArrayOutputStream);
+//            byteArrayOutputStream.flush();
+//            byte[] data = byteArrayOutputStream.toByteArray();
+//            fileService.upload(key, data);
+//            updateOtherPath(path);
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                byteArrayOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @Override
     public List<ResumeAttachmentInfo> getResumeByFreelancerId(Long freelancerId) {
-        return getBaseMapper().selectList(Wrappers.lambdaQuery(ResumeAttachmentInfo.class).eq(ResumeAttachmentInfo::getFreelancerId,freelancerId));
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(ResumeAttachmentInfo.class).eq(ResumeAttachmentInfo::getFreelancerId, freelancerId));
 
     }
 
@@ -200,9 +223,9 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
         newUrl = StrUtil.sub(newUrl, newUrl.lastIndexOf(".com/") + 5, newUrl.indexOf("?"));
 
         ResumeAttachmentInfo resumeAttachmentInfo1 = getBaseMapper().selectOne(Wrappers.lambdaQuery(ResumeAttachmentInfo.class).eq(ResumeAttachmentInfo::getPath, filePath));
-            resumeAttachmentInfo1.setOtherPath(newUrl);
-            update(resumeAttachmentInfo1);
-        }
+        resumeAttachmentInfo1.setOtherPath(newUrl);
+        update(resumeAttachmentInfo1);
+    }
 
     /**
      * 拼接图片
@@ -233,17 +256,24 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
     @Override
     protected void beforeSave(ResumeAttachmentInfo model) {
         super.beforeSave(model);
-        if (ObjectUtil.isNotNull(model)){
-            String[] split = model.getName().split("\\.");
-            model.setName(split[0]);
-            model.setResumeType(split[1]);
+        if (ObjectUtil.isNotNull(model)) {
+            if (StringUtil.isNotBlank(model.getName())) {
+                int lastIndex = model.getName().toLowerCase().lastIndexOf(".");
+                String resumeType = model.getName().substring(lastIndex + 1);
+                model.setResumeType(resumeType);
+                String name = model.getName().substring(0, lastIndex);
+                model.setName(name);
+
+            }
             String path = model.getPath().startsWith("http") ? model.getPath().substring(model.getPath().lastIndexOf(".com/") + 5) : model.getPath();
             model.setPath(path);
-            String otherPath = model.getOtherPath().startsWith("http") ? model.getOtherPath().substring( model.getOtherPath().lastIndexOf(".com/") + 5) : model.getOtherPath();
+            String otherPath = model.getOtherPath().startsWith("http") ? model.getOtherPath().substring(model.getOtherPath().lastIndexOf(".com/") + 5) : model.getOtherPath();
             model.setOtherPath(otherPath);
-            model.setUserName(freelancerInfoService.get(Context.getCurrFreelancerId()).getName());
-            model.setFreelancerId(Context.getCurrFreelancerId());
-            model.setPhone(freelancerInfoService.get(Context.getCurrFreelancerId()).getPhone());
+            if (ObjectUtil.isNotNull(Context.getCurrFreelancerId())) {
+                model.setUserName(freelancerInfoService.get(Context.getCurrFreelancerId()).getName());
+                model.setFreelancerId(Context.getCurrFreelancerId());
+                model.setPhone(freelancerInfoService.get(Context.getCurrFreelancerId()).getPhone());
+            }
         }
 
     }
@@ -252,9 +282,11 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
     protected void beforeUpdate(ResumeAttachmentInfo model) {
         super.beforeUpdate(model);
         if (model.getName().contains(".")) {
-            String[] split = model.getName().split("\\.");
-            model.setName(split[0]);
-            model.setResumeType(split[1]);
+            int lastIndex = model.getName().toLowerCase().lastIndexOf(".");
+            String resumeType = model.getName().substring(lastIndex + 1);
+            model.setResumeType(resumeType);
+            String name = model.getName().substring(0, lastIndex);
+            model.setName(name);
         }
 
     }
