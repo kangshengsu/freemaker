@@ -53,7 +53,8 @@ public class ResumeAttachmentApiController extends BaseController<ResumeAttachme
     public ApiResponse<Boolean> creatResumeAttachment(@RequestBody ResumeAttachmentVO resumeAttachmentVO) {
         if (ObjectUtil.isNotNull(resumeAttachmentVO)) {
             if ("pdf".equals(resumeAttachmentVO.getName().substring(resumeAttachmentVO.getName().toLowerCase().lastIndexOf(".") + 1))) {
-                resumeAttachmentInfoService.pdf2Image(resumeAttachmentVO.getPath(),null);
+                String path = resumeAttachmentVO.getPath().startsWith("http") ? resumeAttachmentVO.getPath().substring(resumeAttachmentVO.getPath().lastIndexOf(".com/") + 5) : resumeAttachmentVO.getPath();
+                resumeAttachmentInfoService.pdf2Image(path,null);
                 return super.create(resumeAttachmentVO);
             } else if ("doc".equals(resumeAttachmentVO.getName().substring(resumeAttachmentVO.getName().toLowerCase().lastIndexOf(".") + 1)) ||
                     "docx".equals(resumeAttachmentVO.getName().substring(resumeAttachmentVO.getName().toLowerCase().lastIndexOf(".") + 1))) {
