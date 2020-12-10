@@ -144,12 +144,16 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
             e.printStackTrace();
         } finally {
             try {
-                pdDocument.close();
+                if (pdDocument != null) {
+                    pdDocument.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
             try {
-                outputStream.close();
+                if (outputStream != null) {
+                    outputStream.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -168,7 +172,7 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
             document.save(byteArrayOutputStream, SaveFormat.PDF);
             byteArrayOutputStream.flush();
             byte[] data = byteArrayOutputStream.toByteArray();
-            pdf2Image(null,data);
+            pdf2Image(null, data);
             //fileService.upload(pdfKey,data);
 //            ImageSaveOptions imageSaveOptions = new ImageSaveOptions(SaveFormat.PNG);
 //            int pageCount = document.getPageCount();
