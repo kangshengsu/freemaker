@@ -47,6 +47,15 @@ public class ResumeAttachmentApiController extends BaseController<ResumeAttachme
         return null;
     }
 
+    /**
+     * TODO doc处理  else if ("doc".equals(resumeAttachmentVO.getName().substring(resumeAttachmentVO.getName().toLowerCase().lastIndexOf(".") + 1)) ||
+     *                     "docx".equals(resumeAttachmentVO.getName().substring(resumeAttachmentVO.getName().toLowerCase().lastIndexOf(".") + 1))) {
+     *                 resumeAttachmentInfoService.doc2Image(resumeAttachmentVO.getPath());
+     *                 return super.create(resumeAttachmentVO);
+     *             }
+     * @param resumeAttachmentVO
+     * @return
+     */
     @RequestMapping(value = "/creat", method = RequestMethod.POST)
     @ApiOperation(value = "保存简历")
     public ApiResponse<Boolean> creatResumeAttachment(@RequestBody ResumeAttachmentVO resumeAttachmentVO) {
@@ -54,14 +63,8 @@ public class ResumeAttachmentApiController extends BaseController<ResumeAttachme
             if ("pdf".equals(resumeAttachmentVO.getName().substring(resumeAttachmentVO.getName().toLowerCase().lastIndexOf(".") + 1))) {
                 String path = resumeAttachmentVO.getPath().startsWith("http") ? resumeAttachmentVO.getPath().substring(resumeAttachmentVO.getPath().lastIndexOf(".com/") + 5) : resumeAttachmentVO.getPath();
                 resumeAttachmentInfoService.pdf2Image(path,null);
-                return super.create(resumeAttachmentVO);
-            } else if ("doc".equals(resumeAttachmentVO.getName().substring(resumeAttachmentVO.getName().toLowerCase().lastIndexOf(".") + 1)) ||
-                    "docx".equals(resumeAttachmentVO.getName().substring(resumeAttachmentVO.getName().toLowerCase().lastIndexOf(".") + 1))) {
-                resumeAttachmentInfoService.doc2Image(resumeAttachmentVO.getPath());
-                return super.create(resumeAttachmentVO);
-            }else {
-                return super.create(resumeAttachmentVO);
             }
+            return super.create(resumeAttachmentVO);
         }
         return failed("上传数据错误");
     }
