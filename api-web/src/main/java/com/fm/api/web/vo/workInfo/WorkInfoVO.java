@@ -51,7 +51,7 @@ public class WorkInfoVO extends VO implements Serializable, IAudit {
     /**
      * 工作内容
      */
-    private String job_content;
+    private String jobContent;
 
     /**
      * 创建时间

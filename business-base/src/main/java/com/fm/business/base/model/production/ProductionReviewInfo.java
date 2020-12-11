@@ -41,6 +41,15 @@ public class ProductionReviewInfo extends BaseModel implements Serializable,IAud
     **/
 	private Long reviewerId;
 
+    /**
+     * 记录对自由职业者信息的修改记录
+     **/
+    private Long freelancerId;
+
+    /**
+     * 修改内容
+     **/
+    private String modifyContent;
 
     /**
     * 审核意见

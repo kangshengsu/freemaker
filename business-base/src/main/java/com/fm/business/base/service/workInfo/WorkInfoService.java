@@ -13,4 +13,11 @@ public interface WorkInfoService extends Service<WorkInfo> {
      * @return
      */
     List<WorkInfo> getByFreelancerId(Long id);
+
+    /**
+     * 根据freelancerId删除工作经历
+     * @param freelancerId
+     * @return
+     */
+    boolean deleteByFreelancerId(Long freelancerId);
 }

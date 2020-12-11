@@ -1,18 +1,21 @@
 package com.fm.api.web.controller.partner;
 
 import com.fm.api.web.vo.partner.PartnerInfoVO;
+import com.fm.business.base.enums.ProductionReviewStatus;
 import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.educationInfo.EducationInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.partner.DistributionPartnerInfo;
 import com.fm.business.base.model.partner.PartnerInfo;
 import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.business.base.model.production.ProductionReviewInfo;
 import com.fm.business.base.model.sm.User;
 import com.fm.business.base.model.workInfo.WorkInfo;
 import com.fm.business.base.service.educationInfo.EducationInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.partner.PartnerInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
+import com.fm.business.base.service.production.IProductionReviewInfoService;
 import com.fm.business.base.service.sm.IUserService;
 import com.fm.business.base.service.workInfo.WorkInfoService;
 import com.fm.framework.core.Context;
@@ -22,6 +25,7 @@ import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +59,8 @@ public class PartnerInfoController extends BaseController<PartnerInfo, PartnerIn
     @Autowired
     private WorkInfoService workInfoService;
 
+    @Autowired
+    private IProductionReviewInfoService iProductionReviewInfoService;
 
 
     @Override
@@ -183,5 +189,23 @@ public class PartnerInfoController extends BaseController<PartnerInfo, PartnerIn
         FreelancerInfo freelancerInfo = iFreelancerInfoService.get(model.getFreelancerId());
         partnerInfoVO.setFreelancerInfo(freelancerInfo);
         return partnerInfoVO;
+    }
+
+    @RequestMapping(value = "/updateEducationWork",method = RequestMethod.POST)
+    @Transactional(rollbackFor = Throwable.class)
+    public ApiResponse<Boolean> updateEducationWork(@RequestBody PartnerInfoVO partnerInfoVO){
+        boolean delete = educationInfoService.deleteByFreelancerId(partnerInfoVO.getFreelancerId());
+        boolean delete1 = workInfoService.deleteByFreelancerId(partnerInfoVO.getFreelancerId());
+        boolean save = educationInfoService.save(partnerInfoVO.getEducationInfos());
+        boolean save1 = workInfoService.save(partnerInfoVO.getWorkInfos());
+        //记录修改信息
+        ProductionReviewInfo productionReviewInfo = new ProductionReviewInfo();
+        productionReviewInfo.setReviewerId(Context.getCurrUserId());
+        productionReviewInfo.setFreelancerId(partnerInfoVO.getFreelancerId());
+        productionReviewInfo.setStatus(ProductionReviewStatus.REVIEW_PASS.getCode());
+        productionReviewInfo.setModifyContent("修改了教育和工作经历");
+        boolean save2 = iProductionReviewInfoService.save(productionReviewInfo);
+
+        return ApiResponse.ofSuccess(delete&&delete1&&save&&save1&&save2);
     }
 }

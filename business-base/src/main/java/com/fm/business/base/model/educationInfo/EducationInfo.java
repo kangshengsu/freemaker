@@ -38,9 +38,14 @@ public class EducationInfo extends BaseModel implements Serializable, IAudit {
     private String schoolName;
 
     /**
+     * 学历
+     */
+    private Integer education;
+
+    /**
      * 学位
      */
-    private String degree;
+    private Integer degree;
 
     /**
      * 专业

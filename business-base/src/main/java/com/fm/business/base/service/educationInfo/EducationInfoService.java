@@ -13,4 +13,11 @@ public interface EducationInfoService extends Service<EducationInfo> {
      * @return
      */
     List<EducationInfo> getByFreelancerId(Long id);
+
+    /**
+     * 根据freelancerId删除教育经历
+     * @param freelancerId
+     * @return
+     */
+    boolean deleteByFreelancerId(Long freelancerId);
 }

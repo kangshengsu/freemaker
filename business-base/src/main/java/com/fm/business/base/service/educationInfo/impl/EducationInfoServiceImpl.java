@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service("educationInfoService")
@@ -19,5 +20,18 @@ public class EducationInfoServiceImpl extends AuditBaseService<EducationInfoMapp
         queryWrapper.eq("freelancer_id", id);
         queryWrapper.orderByAsc("start_time");
         return getBaseMapper().selectList(queryWrapper);
+    }
+
+    @Override
+    public boolean deleteByFreelancerId(Long freelancerId) {
+        if(Objects.isNull(freelancerId)) {
+            return false;
+        }
+
+        QueryWrapper<EducationInfo> queryWrapper = new QueryWrapper<>();
+
+        queryWrapper.eq("freelancer_id", freelancerId);
+
+        return this.getBaseMapper().delete(queryWrapper) >= 0;
     }
 }

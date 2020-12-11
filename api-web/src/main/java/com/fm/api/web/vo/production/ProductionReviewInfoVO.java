@@ -6,10 +6,11 @@
  */
 package com.fm.api.web.vo.production;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.framework.web.VO;
 import lombok.Data;
+
 import java.io.Serializable;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 
 /**   
@@ -46,6 +47,16 @@ public class ProductionReviewInfoVO extends VO implements Serializable {
     * 审核意见
     **/
 	private String reviewerOpinion;
+
+	/**
+	 * 记录对自由职业者信息的修改记录
+	 **/
+	private Long freelancerId;
+
+	/**
+	 * 修改内容
+	 **/
+	private String modifyContent;
 
 
     /**

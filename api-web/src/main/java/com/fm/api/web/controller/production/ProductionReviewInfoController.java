@@ -116,7 +116,7 @@ public class ProductionReviewInfoController extends BaseController<ProductionRev
     protected ProductionReviewInfoVO convert(ProductionReviewInfo model) {
 
         ProductionReviewInfoVO form = super.convert(model);
-        //获取审核人信息
+        //获取审核状态信息
         form.setStatusName(ProductionReviewStatus.get(model.getStatus()).getName());
 
         //获取作者数据
