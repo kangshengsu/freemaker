@@ -45,11 +45,11 @@ public class ResumeAttachmentInfoController extends BaseController<ResumeAttachm
             resumeAttachmentInfoService.pdf2Image(form.getPath(),null);
             return super.create(form);
         }
-        if ("doc".equals(form.getName().substring(form.getName().toLowerCase().lastIndexOf(".") + 1)) ||
-                "docx".equals(form.getName().substring(form.getName().toLowerCase().lastIndexOf(".") + 1))){
-            resumeAttachmentInfoService.doc2Image(form.getPath());
-        return super.create(form);
-        }
+//        if ("doc".equals(form.getName().substring(form.getName().toLowerCase().lastIndexOf(".") + 1)) ||
+//                "docx".equals(form.getName().substring(form.getName().toLowerCase().lastIndexOf(".") + 1))){
+//            resumeAttachmentInfoService.doc2Image(form.getPath());
+//        return super.create(form);
+//        }
         return ApiResponse.ofFailed("上传文件格式错误");
     }
 

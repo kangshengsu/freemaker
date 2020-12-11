@@ -78,7 +78,6 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
     private CosProperties cosProperties;
 
 
-
     @Override
     protected Page<ResumeAttachmentInfo> toPage(com.baomidou.mybatisplus.extension.plugins.pagination.Page<ResumeAttachmentInfo> mybatisPlusPage) {
         Page<ResumeAttachmentInfo> page = super.toPage(mybatisPlusPage);
@@ -151,7 +150,7 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
             long time = DateUtil.date().getTime();
             String key = "file/" + today + "/" + time + ".png";
             fileService.upload(key, data);
-            updateOtherPath(filePath,key);
+            updateOtherPath(filePath, key);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -173,45 +172,46 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
         }
     }
 
-    @Override
-    @Async
-    public void doc2Image(String filePath) {
-        ByteArrayOutputStream byteArrayOutputStream = null;
-        try {
-            String path = filePath.startsWith("http") ? filePath.substring(filePath.lastIndexOf(".com/") + 5) : filePath;
-            InputStream inputStream = fileService.getInputStream(path);
-            Document document = new Document(inputStream);
-            byteArrayOutputStream = new ByteArrayOutputStream();
-            document.save(byteArrayOutputStream, SaveFormat.PDF);
-            byteArrayOutputStream.flush();
-            byte[] data = byteArrayOutputStream.toByteArray();
-            pdf2Image(null, data);
-            //fileService.upload(pdfKey,data);
-//            ImageSaveOptions imageSaveOptions = new ImageSaveOptions(SaveFormat.PNG);
-//            int pageCount = document.getPageCount();
-//            ArrayList<BufferedImage> list = new ArrayList<>();
-//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//            for (int i = 0; i < pageCount; i++) {
-//                document.save(byteArrayOutputStream, imageSaveOptions);
-//                ImageInputStream imageInputStream = javax.imageio.ImageIO.createImageInputStream(parse(byteArrayOutputStream));
-//                list.add(javax.imageio.ImageIO.read(imageInputStream));
-//            }
-//            BufferedImage mergeImage = mergeImage(list);
-//            ImageIO.write(mergeImage, "png", byteArrayOutputStream);
-//            byteArrayOutputStream.flush();
-//            byte[] data = byteArrayOutputStream.toByteArray();
-//            fileService.upload(key, data);
-//            updateOtherPath(path);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                byteArrayOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+    /**
+     * @Override
+     * @Async public void doc2Image(String filePath) {
+     * ByteArrayOutputStream byteArrayOutputStream = null;
+     * try {
+     * String path = filePath.startsWith("http") ? filePath.substring(filePath.lastIndexOf(".com/") + 5) : filePath;
+     * InputStream inputStream = fileService.getInputStream(path);
+     * Document document = new Document(inputStream);
+     * byteArrayOutputStream = new ByteArrayOutputStream();
+     * document.save(byteArrayOutputStream, SaveFormat.PDF);
+     * byteArrayOutputStream.flush();
+     * byte[] data = byteArrayOutputStream.toByteArray();
+     * pdf2Image(null, data);
+     * fileService.upload(pdfKey,data);
+     * ImageSaveOptions imageSaveOptions = new ImageSaveOptions(SaveFormat.PNG);
+     * int pageCount = document.getPageCount();
+     * ArrayList<BufferedImage> list = new ArrayList<>();
+     * ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+     * for (int i = 0; i < pageCount; i++) {
+     * document.save(byteArrayOutputStream, imageSaveOptions);
+     * ImageInputStream imageInputStream = javax.imageio.ImageIO.createImageInputStream(parse(byteArrayOutputStream));
+     * list.add(javax.imageio.ImageIO.read(imageInputStream));
+     * }
+     * BufferedImage mergeImage = mergeImage(list);
+     * ImageIO.write(mergeImage, "png", byteArrayOutputStream);
+     * byteArrayOutputStream.flush();
+     * byte[] data = byteArrayOutputStream.toByteArray();
+     * fileService.upload(key, data);
+     * updateOtherPath(path);
+     * } catch (Exception e) {
+     * e.printStackTrace();
+     * } finally {
+     * try {
+     * byteArrayOutputStream.close();
+     * } catch (IOException e) {
+     * e.printStackTrace();
+     * }
+     * }
+     * }
+     */
 
     @Override
     public List<ResumeAttachmentInfo> getResumeByFreelancerId(Long freelancerId) {
@@ -233,7 +233,7 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
      * @param filePath
      */
     @Override
-    public void updateOtherPath(String filePath,String key) {
+    public void updateOtherPath(String filePath, String key) {
         String bucketName = cosProperties.getBucketName();
         Date expiration = new Date(new Date().getTime() + 5 * 60 * 10000);
         URL oldUrl = cosClient.generatePresignedUrl(bucketName, key, expiration);
@@ -270,7 +270,6 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
 //        }
 //        return destImage;
 //    }
-
     @Override
     protected void beforeSave(ResumeAttachmentInfo model) {
         super.beforeSave(model);
