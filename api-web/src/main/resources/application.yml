@@ -32,4 +32,6 @@ wx:
 
 img:
   postfix: img,bmp,jpg,png,gif,jpeg
+file:
+  postfix: docx,doc,pdf,jpg,png
 

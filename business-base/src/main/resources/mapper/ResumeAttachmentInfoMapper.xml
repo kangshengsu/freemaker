@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fm.business.base.dao.resume.IResumeAttachmentInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.fm.business.base.model.resume.ResumeAttachmentInfo">
+        <id column="id" property="id" />
+        <id column="freelancer_id" property="freelancerId" />
+        <id column="name" property="name" />
+        <id column="resume_type" property="resumeType" />
+        <id column="job_cate_id" property="jobCateId" />
+        <id column="path" property="path" />
+        <id column="is_replace" property="isReplace" />
+        <id column="create_time" property="createTime" />
+        <id column="update_time" property="updateTime" />
+        <id column="create_user" property="createUser" />
+        <id column="update_user" property="updateUser" />
+        <id column="is_delete" property="isDelete" />
+    </resultMap>
+    <sql id="Base_Column_List">
+		id, freelancer_id, `name`, resume_type, job_cate_id, path, is_replace, create_time, update_time, create_user, update_user, is_deleted
+	</sql>
+</mapper>
