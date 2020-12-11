@@ -172,7 +172,7 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
             }
         }
     }
-
+/**
     @Override
     @Async
     public void doc2Image(String filePath) {
@@ -211,7 +211,7 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
                 e.printStackTrace();
             }
         }
-    }
+    }**/
 
     @Override
     public List<ResumeAttachmentInfo> getResumeByFreelancerId(Long freelancerId) {
