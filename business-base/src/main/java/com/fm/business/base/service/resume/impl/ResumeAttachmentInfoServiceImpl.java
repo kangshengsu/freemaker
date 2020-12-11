@@ -150,7 +150,7 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
             long time = DateUtil.date().getTime();
             String key = "file/" + today + "/" + time + ".png";
             fileService.upload(key, data);
-            updateOtherPath(filePath, key);
+            updateOtherPath(filePath,key);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -233,7 +233,7 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
      * @param filePath
      */
     @Override
-    public void updateOtherPath(String filePath, String key) {
+    public void updateOtherPath(String filePath,String key) {
         String bucketName = cosProperties.getBucketName();
         Date expiration = new Date(new Date().getTime() + 5 * 60 * 10000);
         URL oldUrl = cosClient.generatePresignedUrl(bucketName, key, expiration);
