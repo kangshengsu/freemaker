@@ -26,6 +26,7 @@ import com.fm.framework.core.service.AuditBaseService;
 import com.fm.framework.core.service.FileService;
 import com.qcloud.cos.COSClient;
 import jodd.util.StringUtil;
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -74,6 +76,8 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
 
     @Autowired
     private CosProperties cosProperties;
+
+
 
     @Override
     protected Page<ResumeAttachmentInfo> toPage(com.baomidou.mybatisplus.extension.plugins.pagination.Page<ResumeAttachmentInfo> mybatisPlusPage) {
@@ -116,8 +120,9 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
         ArrayList<BufferedImage> list = new ArrayList<>();
         PDDocument pdDocument = null;
         ByteArrayOutputStream outputStream = null;
+        BufferedImage mergeImage = null;
         try {
-            int dpi = 100;
+            int dpi = 96;
             if (StringUtil.isNotBlank(filePath)) {
                 pdDocument = PDDocument.load(fileService.getInputStream(filePath));
             } else {
@@ -130,11 +135,16 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
              * dpi越大图片越清晰，相对转换越慢
              */
             for (int i = 0; i < pageCount; i++) {
-                BufferedImage bufferedImage = renderer.renderImageWithDPI(i, dpi);
-                list.add(bufferedImage);
+//                BufferedImage bufferedImage = renderer.renderImageWithDPI(i, dpi);
+//                list.add(bufferedImage);
+                ResumeThread thread = new ResumeThread(i, dpi, renderer, list, pageCount, filePath);
+                mergeImage = thread.call();
             }
-            BufferedImage mergeImage = mergeImage(list);
-            ImageIO.write(mergeImage, "png", outputStream);
+//            BufferedImage mergeImage = mergeImage(list);
+            int width = mergeImage.getWidth();
+            int height = mergeImage.getHeight();
+            BufferedImage bufferedImage = Thumbnails.of(mergeImage).scale(0.6).outputQuality(0.6).asBufferedImage();
+            ImageIO.write(bufferedImage, "png", outputStream);
             outputStream.flush();
             byte[] data = outputStream.toByteArray();
             String today = DateUtil.today();
@@ -142,6 +152,7 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
             String key = "file/" + today + "/" + time + ".png";
             fileService.upload(key, data);
             updateOtherPath(filePath,key);
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -221,7 +232,8 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
      *
      * @param filePath
      */
-    private void updateOtherPath(String filePath,String key) {
+    @Override
+    public void updateOtherPath(String filePath,String key) {
         String bucketName = cosProperties.getBucketName();
         Date expiration = new Date(new Date().getTime() + 5 * 60 * 10000);
         URL oldUrl = cosClient.generatePresignedUrl(bucketName, key, expiration);
@@ -236,28 +248,28 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
     /**
      * 拼接图片
      *
-     * @param bufferedImages
+     * @param
      * @return
      */
-    private BufferedImage mergeImage(List<BufferedImage> bufferedImages) {
-        int allH = bufferedImages.stream().mapToInt(BufferedImage::getHeight).sum();
-        int allWMax = bufferedImages.stream().mapToInt(BufferedImage::getWidth).filter(bufferedImage -> bufferedImage >= 0).max().orElse(0);
-        BufferedImage destImage = new BufferedImage(allWMax, allH, BufferedImage.TYPE_INT_RGB);
-        // 合并所有子图片到新图片
-        int wy = 0;
-        for (int i = 0; i < bufferedImages.size(); i++) {
-            BufferedImage img = bufferedImages.get(i);
-            int w1 = img.getWidth();
-            int h1 = img.getHeight();
-            // 从图片中读取RGB
-            int[] ImageArrayOne = new int[w1 * h1];
-            ImageArrayOne = img.getRGB(0, 0, w1, h1, ImageArrayOne, 0, w1); // 逐行扫描图像中各个像素的RGB到数组中
-            // 垂直方向合并
-            destImage.setRGB(0, wy, w1, h1, ImageArrayOne, 0, w1); // 设置上半部分或左半部分的RGB
-            wy += h1;
-        }
-        return destImage;
-    }
+//    private BufferedImage mergeImage(List<BufferedImage> bufferedImages) {
+//        int allH = bufferedImages.stream().mapToInt(BufferedImage::getHeight).sum();
+//        int allWMax = bufferedImages.stream().mapToInt(BufferedImage::getWidth).filter(bufferedImage -> bufferedImage >= 0).max().orElse(0);
+//        BufferedImage destImage = new BufferedImage(allWMax, allH, BufferedImage.TYPE_INT_RGB);
+//        // 合并所有子图片到新图片
+//        int wy = 0;
+//        for (int i = 0; i < bufferedImages.size(); i++) {
+//            BufferedImage img = bufferedImages.get(i);
+//            int w1 = img.getWidth();
+//            int h1 = img.getHeight();
+//            // 从图片中读取RGB
+//            int[] ImageArrayOne = new int[w1 * h1];
+//            ImageArrayOne = img.getRGB(0, 0, w1, h1, ImageArrayOne, 0, w1); // 逐行扫描图像中各个像素的RGB到数组中
+//            // 垂直方向合并
+//            destImage.setRGB(0, wy, w1, h1, ImageArrayOne, 0, w1); // 设置上半部分或左半部分的RGB
+//            wy += h1;
+//        }
+//        return destImage;
+//    }
 
     @Override
     protected void beforeSave(ResumeAttachmentInfo model) {

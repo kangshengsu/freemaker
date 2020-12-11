@@ -13,9 +13,11 @@ import java.util.Set;
  * @date 2020/12/2 17:39
  */
 public interface IResumeAttachmentInfoService extends Service<ResumeAttachmentInfo> {
-     void pdf2Image(String filePath,byte[] input);
+    void pdf2Image(String filePath, byte[] input);
 
-     void doc2Image(String path);
+    void doc2Image(String path);
+
+    void updateOtherPath(String filePath,String key);
 
     List<ResumeAttachmentInfo> getResumeByFreelancerId(Long freelancerId);
 }
