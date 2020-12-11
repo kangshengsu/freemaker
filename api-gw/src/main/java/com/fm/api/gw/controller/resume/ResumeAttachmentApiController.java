@@ -49,7 +49,6 @@ public class ResumeAttachmentApiController extends BaseController<ResumeAttachme
 
     @RequestMapping(value = "/creat", method = RequestMethod.POST)
     @ApiOperation(value = "保存简历")
-    @Transactional
     public ApiResponse<Boolean> creatResumeAttachment(@RequestBody ResumeAttachmentVO resumeAttachmentVO) {
         if (ObjectUtil.isNotNull(resumeAttachmentVO)) {
             if ("pdf".equals(resumeAttachmentVO.getName().substring(resumeAttachmentVO.getName().toLowerCase().lastIndexOf(".") + 1))) {
