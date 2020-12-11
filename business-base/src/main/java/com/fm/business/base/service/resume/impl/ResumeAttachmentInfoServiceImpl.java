@@ -56,8 +56,7 @@ import java.util.stream.Collectors;
 @Service
 @EnableAsync
 public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAttachmentInfoMapper, ResumeAttachmentInfo> implements IResumeAttachmentInfoService {
-    static String key = "file/" + DateUtil.today() + "/" + DateUtil.date().getTime() + ".png";
-    static String pdfKey = "file/" + DateUtil.today() + "/" + DateUtil.date().getTime() + ".pdf";
+
     @Autowired
     private IFreelancerInfoService freelancerInfoService;
 
@@ -138,8 +137,11 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
             ImageIO.write(mergeImage, "png", outputStream);
             outputStream.flush();
             byte[] data = outputStream.toByteArray();
+            String today = DateUtil.today();
+            long time = DateUtil.date().getTime();
+            String key = "file/" + today + "/" + time + ".png";
             fileService.upload(key, data);
-            updateOtherPath(filePath);
+            updateOtherPath(filePath,key);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -219,7 +221,7 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
      *
      * @param filePath
      */
-    private void updateOtherPath(String filePath) {
+    private void updateOtherPath(String filePath,String key) {
         String bucketName = cosProperties.getBucketName();
         Date expiration = new Date(new Date().getTime() + 5 * 60 * 10000);
         URL oldUrl = cosClient.generatePresignedUrl(bucketName, key, expiration);
