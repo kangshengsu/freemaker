@@ -4,12 +4,10 @@ import com.fm.business.base.enums.WxMessageTemplate;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.demand.DemandProductionRelation;
-import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.model.sys.SysUser;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
-import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.business.base.service.wx.message.MessageSenderService;
@@ -18,10 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,7 +67,7 @@ public class RecommendMessageSender {
         String summarize = demandInfo.getSummarize();
         //获取作品名称
         String productionNames = productionInfos.stream().map(ProductionInfo::getTitle).collect(Collectors.joining(","));
-        String message = String.format("平台已为需求推荐人才，请选择人才下单吧！");
+        String message = String.format("平台已为任务匹配人才，请选择合适的人才沟通下单吧！");
 
         WxMessage wxMessage = WxMessage.builder().addToUser(sysUser.getCode()).addPage("pages/demandDetails" +
                 "/demandDetails?demandCode="+demandInfo.getCode())

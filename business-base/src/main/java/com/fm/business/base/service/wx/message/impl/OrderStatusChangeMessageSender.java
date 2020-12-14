@@ -3,12 +3,9 @@ package com.fm.business.base.service.wx.message.impl;
 import com.fm.business.base.enums.OrderStatus;
 import com.fm.business.base.enums.WxMessageTemplate;
 import com.fm.business.base.model.EmployerInfo;
-import com.fm.business.base.model.demand.DemandInfo;
-import com.fm.business.base.model.demand.DemandProductionRelation;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.model.order.OrderInfoDetail;
-import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.model.sys.SysUser;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
@@ -27,7 +24,6 @@ import org.springframework.util.CollectionUtils;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author zhangleqi
@@ -129,11 +125,13 @@ public class OrderStatusChangeMessageSender {
     private String getDescToEmployer(OrderInfo orderInfo,EmployerInfo employerInfo,FreelancerInfo freelancerInfo) {
         switch (OrderStatus.get(orderInfo.getStatus())) {
             case WAITING_20:
-                return String.format("您的订单下单成功,请等待人才接单");
+                return String.format("您已下单成功，请等待人才接单。");
             case TAKING_40:
                 return String.format("您的订单已经被人才接单成功，请前往支付！");
             case REJECT_30:
                 return String.format("很遗憾！您的订单已被人才取消，进入小程序可查看原因。");
+            case UPDATEPRICE_35:
+                return String.format("您的订单已经改价成功，请前往支付，谢谢！");
             case PAID_50:
                 return String.format("您的订单已支付成功，人才马上开始工作。");
             case CHECKING_60:
@@ -152,11 +150,13 @@ public class OrderStatusChangeMessageSender {
                                                   FreelancerInfo freelancerInfo) {
         switch (OrderStatus.get(orderInfo.getStatus())) {
             case WAITING_20:
-                return String.format("您已收到订单,快去认接单吧");
+                return String.format("您已收到订单,快去确认接单吧！");
+            case UPDATEPRICE_35:
+                return String.format("您的订单已经改价成功！");
             case TAKING_40:
-                return String.format("您的订单已经接单成功了，请等待雇佣的支付。");
+                return String.format("您的订单已经接单成功了，请等待雇主支付。");
             case REJECT_30:
-                return String.format("订单已取消成功，进入小程序可查看原因。");
+                return String.format("您的订单已取消成功，进入小程序可查看原因。");
             case PAID_50:
                 return String.format("订单已经付款成功，您可以开始工作了。");
             case CHECKING_60:
@@ -166,7 +166,7 @@ public class OrderStatusChangeMessageSender {
             case CHECK_FAIL_70:
                 return String.format("很遗憾！订单验收不通过，进入小程序可查看原因。");
             case EVALUATED_90:
-                return String.format("订单已经获得评价，快去看看吧。");
+                return String.format("您的订单已经获得雇主评价，快去看看吧。");
             case CANCELD_100:
                 return String.format("很遗憾，订单已被雇主取消。");
         }

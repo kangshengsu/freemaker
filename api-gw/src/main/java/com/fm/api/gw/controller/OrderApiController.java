@@ -301,6 +301,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     @ApiImplicitParam(paramType="body", name = "orderInfoVO", value = "订单操作信息", required = true, dataType = "OrderInfoVO")
     @RequestMapping(value = "updateOrderMny",method = RequestMethod.PUT)
     public ApiResponse<Boolean> updateOrderMny(@RequestBody OrderInfoVO orderInfoVO) {
+        orderInfoVO.setStatus(OrderStatus.UPDATEPRICE_35.getCode());
         this.update(orderInfoVO);
 
         // 写流水

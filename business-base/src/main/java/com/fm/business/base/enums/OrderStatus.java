@@ -7,6 +7,8 @@ public enum OrderStatus {
 
     REJECT_30(30, "已取消", 1, OrderOperateRoleType.FREELANCER.getCode()),//已拒单
 
+    UPDATEPRICE_35(35, "修改价格", 2, OrderOperateRoleType.FREELANCER.getCode()),
+
     TAKING_40(40, "待支付", 2, OrderOperateRoleType.FREELANCER.getCode()),
 
     CANCELD_100(100, "已取消", 2, OrderOperateRoleType.EMPLOYER.getCode()),
