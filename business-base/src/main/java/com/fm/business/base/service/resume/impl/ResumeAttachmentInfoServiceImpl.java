@@ -150,7 +150,7 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
             long time = DateUtil.date().getTime();
             String key = "file/" + today + "/" + time + ".png";
             fileService.upload(key, data);
-            updateOtherPath(filePath,key);
+            updateOtherPath(filePath, key);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -233,7 +233,7 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
      * @param filePath
      */
     @Override
-    public void updateOtherPath(String filePath,String key) {
+    public void updateOtherPath(String filePath, String key) {
         String bucketName = cosProperties.getBucketName();
         Date expiration = new Date(new Date().getTime() + 5 * 60 * 10000);
         URL oldUrl = cosClient.generatePresignedUrl(bucketName, key, expiration);
@@ -274,18 +274,24 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
     protected void beforeSave(ResumeAttachmentInfo model) {
         super.beforeSave(model);
         if (ObjectUtil.isNotNull(model)) {
-            if (StringUtil.isNotBlank(model.getName())) {
-                int lastIndex = model.getName().toLowerCase().lastIndexOf(".");
-                String resumeType = model.getName().substring(lastIndex + 1);
-                model.setResumeType(resumeType);
-                String name = model.getName().substring(0, lastIndex);
-                model.setName(name);
-
+            if (model.getName().contains(".")) {
+                int lastIndexName = model.getName().toLowerCase().lastIndexOf(".");
+                String lastName = model.getPath().substring(lastIndexName + 1);
+                if (lastName.equals("pdf") || lastName.equals("doc") || lastName.equals("docx") || lastName.equals("png") || lastName.equals("jpg") || lastName.equals("jpeg")) {
+                    String name = model.getName().substring(0, lastIndexName);
+                    model.setName(name);
+                }
             }
-            String path = model.getPath().startsWith("http") ? model.getPath().substring(model.getPath().lastIndexOf(".com/") + 5) : model.getPath();
-            model.setPath(path);
-            String otherPath = model.getOtherPath().startsWith("http") ? model.getOtherPath().substring(model.getOtherPath().lastIndexOf(".com/") + 5) : model.getOtherPath();
-            model.setOtherPath(otherPath);
+
+            if (StringUtil.isNotBlank(model.getPath())) {
+                int lastIndex = model.getPath().toLowerCase().lastIndexOf(".");
+                String resumeType = model.getPath().substring(lastIndex + 1);
+                model.setResumeType(resumeType);
+                String path = model.getPath().startsWith("http") ? model.getPath().substring(model.getPath().lastIndexOf(".com/") + 5) : model.getPath();
+                model.setPath(path);
+                String otherPath = model.getOtherPath().startsWith("http") ? model.getOtherPath().substring(model.getOtherPath().lastIndexOf(".com/") + 5) : model.getOtherPath();
+                model.setOtherPath(otherPath);
+            }
             if (ObjectUtil.isNotNull(Context.getCurrFreelancerId())) {
                 model.setUserName(freelancerInfoService.get(Context.getCurrFreelancerId()).getName());
                 model.setFreelancerId(Context.getCurrFreelancerId());
@@ -301,9 +307,11 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
         if (model.getName().contains(".")) {
             int lastIndex = model.getName().toLowerCase().lastIndexOf(".");
             String resumeType = model.getName().substring(lastIndex + 1);
-            model.setResumeType(resumeType);
-            String name = model.getName().substring(0, lastIndex);
-            model.setName(name);
+            if ("pdf".equals(resumeType) || "doc".equals(resumeType) || "docx".equals(resumeType) || "png".equals(resumeType) || "jpg".equals(resumeType) || "jpeg".equals(resumeType)) {
+                model.setResumeType(resumeType);
+                String name = model.getName().substring(0, lastIndex);
+                model.setName(name);
+            }
         }
 
     }
