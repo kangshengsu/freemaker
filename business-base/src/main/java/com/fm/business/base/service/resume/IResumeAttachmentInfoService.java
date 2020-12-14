@@ -15,7 +15,7 @@ import java.util.Set;
 public interface IResumeAttachmentInfoService extends Service<ResumeAttachmentInfo> {
     void pdf2Image(String filePath, byte[] input);
 
-    void doc2Image(String path);
+//    void doc2Image(String path);
 
     void updateOtherPath(String filePath,String key);
 
