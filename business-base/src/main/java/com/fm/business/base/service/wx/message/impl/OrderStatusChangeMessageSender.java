@@ -55,9 +55,8 @@ public class OrderStatusChangeMessageSender {
         OrderInfo orderInfo1 = orderInfoService.get(orderInfo.getId());
         if(orderInfo.getStatus() != null){
             orderInfo1.setStatus(orderInfo.getStatus());
-        }else {
-            orderInfo = orderInfo1;
         }
+        orderInfo = orderInfo1;
         List<OrderInfoDetail> orderInfoDetails = orderInfoDetailService.getOrderDetailByOrderIds(Arrays.asList(orderInfo.getId()));
         if (CollectionUtils.isEmpty(orderInfoDetails)) {
             return;
