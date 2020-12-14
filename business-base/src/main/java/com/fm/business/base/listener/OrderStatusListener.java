@@ -36,7 +36,11 @@ public class OrderStatusListener implements ApplicationListener<OperationEvent> 
                     OrderInfo o2 = (OrderInfo) event.getAfter();
                     OrderInfo o1 = (OrderInfo) event.getBefore();
                     if (!o1.getStatus().equals(o2.getStatus())) {
+                        if (!o1.getOrderMny().equals(o1.getActOrderMny())) {
+                            o2.setStatus(OrderStatus.UPDATEPRICE_35.getCode());
+                        }
                         changeStatus(o2);
+
                     }
                 }
         }
