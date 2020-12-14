@@ -52,9 +52,12 @@ public class OrderStatusChangeMessageSender {
     private ISysUserService sysUserService;
 
     public void sendStatusChangeMessage(OrderInfo orderInfo) {
-        Integer status = orderInfo.getStatus();
-        orderInfo = orderInfoService.get(orderInfo.getId());
-        orderInfo.setStatus(status);
+        OrderInfo orderInfo1 = orderInfoService.get(orderInfo.getId());
+        if(orderInfo.getStatus() != null){
+            orderInfo1.setStatus(orderInfo.getStatus());
+        }else {
+            orderInfo = orderInfo1;
+        }
         List<OrderInfoDetail> orderInfoDetails = orderInfoDetailService.getOrderDetailByOrderIds(Arrays.asList(orderInfo.getId()));
         if (CollectionUtils.isEmpty(orderInfoDetails)) {
             return;
