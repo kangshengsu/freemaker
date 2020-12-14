@@ -37,6 +37,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -93,6 +94,12 @@ public class FreelancerApi extends BaseController<FreelancerInfo, FreelancerInfo
         contactInfoAppVO.setPhone(freelancerInfo.getPhone());
         contactInfoAppVO.setWxCode(StringUtils.isEmpty(freelancerInfo.getAccountCode()) ? "" : freelancerInfo.getAccountCode());
         return contactInfoAppVO;
+    }
+
+    @RequestMapping(value = "/getFreelancerIdByUserId",method = RequestMethod.GET)
+    @ApiOperation("根据用户id获取自由职业者id")
+    public ApiResponse<FreelancerInfoApiVO> getFreelancerIdByUserId(@RequestParam("userId") Long userId){
+        return success(convert(freelancerInfoService.getByUserId(userId)));
     }
 
 
