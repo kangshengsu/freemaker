@@ -32,6 +32,7 @@ public class ImUserSigApiController {
         TLSSigAPIv2 api = new TLSSigAPIv2(SDK_APP_ID, SECRET_KEY);
         if (ObjectUtil.isNotNull(api)) {
             imVO.setUserSig(api.genSig("HowWork", 365 * 86400 * 2));
+            imVO.setSdkAppId(SDK_APP_ID);
         }
         return ApiResponse.ofSuccess(imVO);
     }

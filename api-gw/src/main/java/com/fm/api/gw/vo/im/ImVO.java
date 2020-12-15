@@ -14,5 +14,7 @@ import java.io.Serializable;
 public class ImVO implements Serializable {
     private static final long serialVersionUID = -8919460012280660267L;
 
+    private  Long sdkAppId;
+
     private String userSig;
 }
