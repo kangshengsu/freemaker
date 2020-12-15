@@ -6,9 +6,11 @@ import com.fm.framework.web.response.ApiResponse;
 import com.tencentyun.TLSSigAPIv2;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -26,14 +28,18 @@ public class ImUserSigApiController {
 
     @RequestMapping(value = "/getImUserSig", method = RequestMethod.GET)
     @ApiOperation(value = "获取ImUserSig")
-    public ApiResponse<ImVO> getUserSig() {
+    public ApiResponse<ImVO> getUserSig(@RequestParam("identifier") String identifier) {
         log.info("进入生成Sig方法");
         ImVO imVO = new ImVO();
         TLSSigAPIv2 api = new TLSSigAPIv2(SDK_APP_ID, SECRET_KEY);
         if (ObjectUtil.isNotNull(api)) {
-            imVO.setUserSig(api.genSig("HowWork", 365 * 86400 * 2));
-            imVO.setSdkAppId(SDK_APP_ID);
+            if (StringUtil.isNotBlank(identifier)) {
+                imVO.setUserSig(api.genSig(identifier, 365 * 86400 * 2));
+            } else {
+                imVO.setUserSig(api.genSig("HowWork", 365 * 86400 * 2));
+            }
         }
+        imVO.setSdkAppId(SDK_APP_ID);
         return ApiResponse.ofSuccess(imVO);
     }
 }
