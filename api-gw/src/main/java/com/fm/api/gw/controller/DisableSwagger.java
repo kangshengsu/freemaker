@@ -17,11 +17,11 @@ import java.io.IOException;
  */
 @RestController
 @Slf4j
-//@Profile("!dev")
+@Profile("!dev")
 public class DisableSwagger {
 
-//    @RequestMapping(value = "swagger-ui.html",method = RequestMethod.GET)
-//    public void disableSwagger(HttpServletResponse response) throws IOException {
-//        response.setStatus(HttpStatus.NOT_FOUND.value());
-//    }
+    @RequestMapping(value = "swagger-ui.html",method = RequestMethod.GET)
+    public void disableSwagger(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpStatus.NOT_FOUND.value());
+    }
 }
