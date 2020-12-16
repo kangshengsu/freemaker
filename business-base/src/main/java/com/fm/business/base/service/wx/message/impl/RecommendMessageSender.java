@@ -96,7 +96,7 @@ public class RecommendMessageSender {
 
         WxMessage wxMessage = WxMessage.builder()
                 .addToUser(sysUser.getCode())
-                .addPage("pages/demandDetails/demandDetails?demandCode=" + demandInfo.getCode())
+                .addPage("packageMine/pages/demandDetails/demandDetails?demandCode=" + demandInfo.getCode())
                 .addMiniprogramState(state)
                 .addTemplate(WxMessageTemplate.RECOMMEND_MESSAGE)
                 .addData("number1", String.valueOf(productionInfos.size())).addData("thing2", message).build();
@@ -126,7 +126,7 @@ public class RecommendMessageSender {
 
         WxMessage wxMessage = WxMessage.builder()
                 .addToUser(sysUser.getCode())
-                .addPage("pages/demandDetails/demandDetails?demandCode=" + demandInfo.getCode())
+                .addPage("packageMine/pages/demandDetails/demandDetails?demandCode=" + demandInfo.getCode())
                 .addMiniprogramState(state)
                 .addTemplate(WxMessageTemplate.RECOMMEND_MESSAGE)
                 .addData("number1", String.valueOf(productionInfos.size())).addData("thing2", message).build();
