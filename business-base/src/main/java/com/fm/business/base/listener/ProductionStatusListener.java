@@ -27,7 +27,7 @@ public class ProductionStatusListener implements ApplicationListener<OperationEv
                     ProductionInfo o2 = (ProductionInfo) event.getAfter();
                     ProductionInfo o1 = (ProductionInfo) event.getBefore();
                     if (!o1.getStatus().equals(o2.getStatus())) {
-                        if (o2.getStatus().equals(ProductionStatus.RELEASE.getCode())){
+                        if (o2.getStatus().equals(ProductionStatus.RELEASE.getCode()) || o2.getStatus().equals(ProductionStatus.REVIEW_NOT_PASS.getCode())){
                             o2.setFreelancerId(o1.getFreelancerId());
                             changeStatus(o2);
                         }
