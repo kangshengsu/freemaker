@@ -1,5 +1,6 @@
 package com.fm.business.base.service.wx.message.impl;
 
+import com.fm.business.base.enums.RecommendType;
 import com.fm.business.base.enums.WxMessageTemplate;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.demand.DemandInfo;
@@ -135,10 +136,10 @@ public class RecommendMessageSender {
     }
 
     private String getDescToEmployer(DemandProductionRelation demandProductionRelation) {
-        switch (demandProductionRelation.getStatus()) {
-            case 10:
+        switch (RecommendType.get(demandProductionRelation.getStatus())) {
+            case MY_RECOMMEND:
                 return String.format("已有人才主动接任务啦，请选择人才下单吧！");
-            case 20:
+            case SYSTEM_RECOMMEND:
                 return String.format("平台已为任务匹配人才，请选择人才下单吧！");
         }
         return null;
@@ -146,10 +147,10 @@ public class RecommendMessageSender {
     }
 
     private String getDescToFreelancer(DemandProductionRelation demandProductionRelation) {
-        switch (demandProductionRelation.getStatus()) {
-            case 10:
+        switch (RecommendType.get(demandProductionRelation.getStatus())) {
+            case MY_RECOMMEND:
                 return String.format("您已成功申请任务，请等待雇主与您沟通！");
-            case 20:
+            case SYSTEM_RECOMMEND:
                 return String.format("平台已为您推荐任务，请尽快联系雇主吧！");
         }
         return null;
