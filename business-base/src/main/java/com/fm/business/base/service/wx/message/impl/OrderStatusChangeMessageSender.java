@@ -134,7 +134,7 @@ public class OrderStatusChangeMessageSender {
             case TAKING_40:
                 return String.format("您的订单已经被人才接单成功，请前往支付！");
             case REJECT_30:
-                return String.format("很遗憾！您的订单已被人才取消，进入小程序可查看原因。");
+                return String.format("您的订单被人才取消，进入小程序查看原因。");
             case UPDATEPRICE_35:
                 return String.format("您的订单已经改价成功，请前往支付，谢谢！");
             case PAID_50:
@@ -146,7 +146,7 @@ public class OrderStatusChangeMessageSender {
             case FINISHED_80:
                 return String.format("订单已经完成，期待您的评价。");
             case CHECK_FAIL_70:
-                return String.format("抱歉！订单验收不通过，请等待人才与您沟通。");
+                return String.format("订单验收不通过，请等待人才与您沟通。");
             case EVALUATED_90:
                 return String.format("已评价，感谢您对平台的支持！");
         }
@@ -163,7 +163,7 @@ public class OrderStatusChangeMessageSender {
             case TAKING_40:
                 return String.format("您的订单已经接单成功了，请等待雇主支付。");
             case REJECT_30:
-                return String.format("您的订单已取消成功，进入小程序可查看原因。");
+                return String.format("您的订单已取消成功！");
             case PAID_50:
                 return String.format("订单已经付款成功，您可以开始工作了。");
             case CHECKING_60:
@@ -171,9 +171,9 @@ public class OrderStatusChangeMessageSender {
             case CHECK_FAIL_61:
                 return String.format("订单已经完成交付，请您等待验收。");
             case FINISHED_80:
-                return String.format("恭喜！订单验收成功，请耐心等待平台发薪吧！");
+                return String.format("恭喜！订单验收成功，等待平台发薪吧！");
             case CHECK_FAIL_70:
-                return String.format("很遗憾！订单验收不通过，进入小程序可查看原因。");
+                return String.format("订单验收不通过，进入小程序可查看原因。");
             case EVALUATED_90:
                 return String.format("您的订单已经获得雇主评价，快去看看吧。");
             case CANCELD_100:
