@@ -6,11 +6,13 @@ import com.fm.business.base.service.wx.message.impl.ProductionStatusSender;
 import com.fm.framework.core.event.OperationEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Service;
 
 /**
  * @author G
  * @date 2020/12/16 下午7:04
  */
+@Service
 public class ProductionStatusListener implements ApplicationListener<OperationEvent> {
 
     @Autowired
@@ -26,6 +28,7 @@ public class ProductionStatusListener implements ApplicationListener<OperationEv
                     ProductionInfo o1 = (ProductionInfo) event.getBefore();
                     if (!o1.getStatus().equals(o2.getStatus())) {
                         if (o2.getStatus().equals(ProductionStatus.RELEASE.getCode())){
+                            o2.setFreelancerId(o1.getFreelancerId());
                             changeStatus(o2);
                         }
                     }
