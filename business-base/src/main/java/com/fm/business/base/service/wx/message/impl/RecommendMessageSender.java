@@ -137,9 +137,9 @@ public class RecommendMessageSender {
     private String getDescToEmployer(DemandProductionRelation demandProductionRelation) {
         switch (demandProductionRelation.getStatus()) {
             case 10:
-                return String.format("已有人才主动接任务啦，请选择合适的人才沟通下单吧！");
+                return String.format("已有人才主动接任务啦，请选择人才下单吧！");
             case 20:
-                return String.format("平台已为任务匹配人才，请选择合适的人才沟通下单吧！");
+                return String.format("平台已为任务匹配人才，请选择人才下单吧！");
         }
         return null;
 
@@ -148,9 +148,9 @@ public class RecommendMessageSender {
     private String getDescToFreelancer(DemandProductionRelation demandProductionRelation) {
         switch (demandProductionRelation.getStatus()) {
             case 10:
-                return String.format("您已成功申请任务，请等待雇主与您沟通需求吧！");
+                return String.format("您已成功申请任务，请等待雇主与您沟通！");
             case 20:
-                return String.format("平台已为您推荐一个任务，请尽快联系雇主沟通任务内容吧！");
+                return String.format("平台已为您推荐任务，请尽快联系雇主吧！");
         }
         return null;
 
