@@ -15,15 +15,14 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
+@Profile("dev")
 public class SwaggerConfig {
 
-    @Value("${swagger.enable}")
-    private Boolean swaggerIsEnable;
+
 
     @Bean
     public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .enable(swaggerIsEnable)
                 .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.fm.api.gw"))
