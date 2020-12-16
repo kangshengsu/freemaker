@@ -1,5 +1,6 @@
 package com.fm.api.gw.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -13,7 +14,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
-@Profile({"prod","test"})
+@ConditionalOnProperty(name = "swagger.enable",havingValue = "true")
 public class SwaggerConfig {
 
     @Bean
