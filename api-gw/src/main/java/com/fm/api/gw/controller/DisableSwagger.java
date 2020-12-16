@@ -17,7 +17,7 @@ import java.io.IOException;
  */
 @RestController
 @Slf4j
-@Profile("!prod")
+@Profile("!dev")
 public class DisableSwagger {
 
     @RequestMapping(value = "swagger-ui.html",method = RequestMethod.GET)
