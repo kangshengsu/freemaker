@@ -22,6 +22,7 @@ import com.fm.framework.core.cos.CosProperties;
 import com.fm.framework.core.exception.BusinessException;
 import com.fm.framework.core.service.FileService;
 import com.fm.framework.core.service.Service;
+import com.fm.framework.web.VO;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
 import com.qcloud.cos.COSClient;
@@ -100,6 +101,12 @@ public class FreelancerApi extends BaseController<FreelancerInfo, FreelancerInfo
     @ApiOperation("根据用户id获取自由职业者id")
     public ApiResponse<FreelancerInfoApiVO> getFreelancerIdByUserId(@RequestParam("userId") Long userId){
         return success(convert(freelancerInfoService.getByUserId(userId)));
+    }
+
+    @RequestMapping(value = "/getUserIdByFreelancerId",method = RequestMethod.GET)
+    @ApiOperation("根据自由职业者查出用户id")
+    public ApiResponse<Long> getUserIdByFreelancerId(@RequestParam("freelancerId") Long freelancerId){
+        return success(freelancerInfoService.getUserId(freelancerId));
     }
 
 

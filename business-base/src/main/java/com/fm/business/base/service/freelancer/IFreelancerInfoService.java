@@ -57,4 +57,6 @@ public interface IFreelancerInfoService extends Service<FreelancerInfo> {
      * @return
      */
     List<FreelancerInfo> findUserByPhones(List<String> phones);
+
+    Long getUserId(Long freelancerId);
 }
