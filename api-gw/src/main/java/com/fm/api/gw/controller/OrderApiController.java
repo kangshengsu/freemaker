@@ -258,10 +258,20 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
             orderInfo.setCode(CodeUtil.generateNewCode());
         }
 
+        OrderInfoDetail orderInfoDetail = new OrderInfoDetail();
+        orderInfoDetail.setProvinceCode(orderInfoVO.getProvinceCode());
+        orderInfoDetail.setCityCode(orderInfoVO.getCityCode());
+        orderInfoDetail.setDistrictCode(orderInfoVO.getDistrictCode());
+        orderInfoDetail.setCountyCode(orderInfoVO.getCountyCode());
+        orderInfoDetail.setSummarize(orderInfoVO.getSummarize());
+        orderInfoDetail.setDescription(orderInfoVO.getDescription());
+
+        orderInfo.setOrderInfoDetail(orderInfoDetail);
+
         orderInfoService.save(orderInfo);
 
-        OrderInfoDetail orderInfoDetail = createDetailInfo(orderInfoVO, orderInfo.getId());
-        orderInfoDetailService.save(orderInfoDetail);
+//        OrderInfoDetail orderInfoDetail1 = createDetailInfo(orderInfoVO, orderInfo.getId());
+//        orderInfoDetailService.save(orderInfoDetail1);
 
         // 写流水
         saveFollow(orderInfoVO);

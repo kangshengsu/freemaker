@@ -9,7 +9,6 @@ package com.fm.business.base.model.order;
 import com.fm.framework.core.model.BaseModel;
 import com.fm.framework.core.model.IAudit;
 import lombok.Data;
-import org.springframework.data.annotation.Transient;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -142,6 +141,8 @@ public class OrderInfo extends BaseModel implements Serializable,IAudit {
     * 是否上传支付凭证
     **/
 	private Integer isUploadVoucher;
+
+    private transient OrderInfoDetail orderInfoDetail;
 
     /**
      * 获取主键方法，主键整体平台定义成Long数据类型，方便数据的整体插入性能

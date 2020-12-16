@@ -17,7 +17,7 @@ public enum OrderStatus {
 
     CHECKING_60(60, "待验收", 4, OrderOperateRoleType.EMPLOYER.getCode()),
 
-    CHECK_FAIL_61(61, "验收不通过", 4, OrderOperateRoleType.EMPLOYER.getCode()),//二次待验收
+    CHECK_FAIL_61(61, "待验收", 4, OrderOperateRoleType.EMPLOYER.getCode()),//二次待验收
 
     CHECK_FAIL_70(70, "验收不通过", 4, OrderOperateRoleType.EMPLOYER.getCode()),
 

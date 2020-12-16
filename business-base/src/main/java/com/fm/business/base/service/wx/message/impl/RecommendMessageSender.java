@@ -8,6 +8,7 @@ import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.model.sys.SysUser;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
+import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.business.base.service.sys.ISysUserService;
 import com.fm.business.base.service.wx.message.MessageSenderService;
@@ -27,18 +28,27 @@ import java.util.stream.Collectors;
  */
 @Service
 public class RecommendMessageSender {
+
     @Value("${wx.miniapp.state}")
     private String state;
+
     @Autowired
     private MessageSenderService messageSenderService;
+
     @Autowired
     private IProductionInfoService productionInfoService;
+
     @Autowired
     private IDemandInfoService demandInfoService;
+
     @Autowired
     private IEmployerInfoService employerInfoService;
+
     @Autowired
     private ISysUserService sysUserService;
+
+    @Autowired
+    private IFreelancerInfoService freelancerInfoService;
 
     public void sendMessage(Collection<DemandProductionRelation> demandProductionRelation) {
 
@@ -48,33 +58,101 @@ public class RecommendMessageSender {
         if (CollectionUtils.isEmpty(productionInfos)) {
             return;
         }
-        Long demandId = demandProductionRelation.iterator().next().getDemandId();
+        DemandProductionRelation d = demandProductionRelation.iterator().next();
+
+        Long productionId = d.getProductionId();
+        ProductionInfo productionInfo = productionInfoService.get(productionId);
+        SysUser freelancer = sysUserService.get(productionInfo.getFreelancerId());
+        Long demandId = d.getDemandId();
         DemandInfo demandInfo = demandInfoService.get(demandId);
+
+        EmployerInfo employerInfo = employerInfoService.get(demandInfo.getEmployerId());
+
+        SysUser employer = sysUserService.get(employerInfo.getUserId());
+
+        sendToEmployer(d, productionInfos, demandInfo, employerInfo, employer);
+        sendToFreelancer(d, productionInfos, demandInfo, employerInfo, freelancer);
+    }
+
+    private void sendToEmployer(DemandProductionRelation demandProductionRelation, List<ProductionInfo> productionInfos, DemandInfo demandInfo, EmployerInfo employerInfo, SysUser sysUser) {
+
         if (demandInfo == null || demandInfo.getEmployerId() == null) {
             return;
         }
-        EmployerInfo employerInfo = employerInfoService.get(demandInfo.getEmployerId());
         if (employerInfo == null) {
             return;
         }
-        SysUser sysUser = sysUserService.get(employerInfo.getUserId());
         if (sysUser == null) {
             return;
         }
+
         //雇主姓名
         String employerName = employerInfo.getName();
         //需求名称
         String summarize = demandInfo.getSummarize();
         //获取作品名称
         String productionNames = productionInfos.stream().map(ProductionInfo::getTitle).collect(Collectors.joining(","));
-        String message = String.format("平台已为任务匹配人才，请选择合适的人才沟通下单吧！");
+        String message = getDescToEmployer(demandProductionRelation);
 
-        WxMessage wxMessage = WxMessage.builder().addToUser(sysUser.getCode()).addPage("pages/demandDetails" +
-                "/demandDetails?demandCode="+demandInfo.getCode())
+        WxMessage wxMessage = WxMessage.builder()
+                .addToUser(sysUser.getCode())
+                .addPage("pages/demandDetails/demandDetails?demandCode=" + demandInfo.getCode())
                 .addMiniprogramState(state)
                 .addTemplate(WxMessageTemplate.RECOMMEND_MESSAGE)
                 .addData("number1", String.valueOf(productionInfos.size())).addData("thing2", message).build();
         messageSenderService.sendMessage(wxMessage);
+
+    }
+
+    private void sendToFreelancer(DemandProductionRelation demandProductionRelation, List<ProductionInfo> productionInfos, DemandInfo demandInfo, EmployerInfo employerInfo, SysUser sysUser) {
+
+        if (demandInfo == null || demandInfo.getEmployerId() == null) {
+            return;
+        }
+        if (employerInfo == null) {
+            return;
+        }
+        if (sysUser == null) {
+            return;
+        }
+
+        //雇主姓名
+        String employerName = employerInfo.getName();
+        //需求名称
+        String summarize = demandInfo.getSummarize();
+        //获取作品名称
+        String productionNames = productionInfos.stream().map(ProductionInfo::getTitle).collect(Collectors.joining(","));
+        String message = getDescToFreelancer(demandProductionRelation);
+
+        WxMessage wxMessage = WxMessage.builder()
+                .addToUser(sysUser.getCode())
+                .addPage("pages/demandDetails/demandDetails?demandCode=" + demandInfo.getCode())
+                .addMiniprogramState(state)
+                .addTemplate(WxMessageTemplate.RECOMMEND_MESSAGE)
+                .addData("number1", String.valueOf(productionInfos.size())).addData("thing2", message).build();
+        messageSenderService.sendMessage(wxMessage);
+
+    }
+
+    private String getDescToEmployer(DemandProductionRelation demandProductionRelation) {
+        switch (demandProductionRelation.getStatus()) {
+            case 10:
+                return String.format("已有人才主动接任务啦，请选择合适的人才沟通下单吧！");
+            case 20:
+                return String.format("平台已为任务匹配人才，请选择合适的人才沟通下单吧！");
+        }
+        return null;
+
+    }
+
+    private String getDescToFreelancer(DemandProductionRelation demandProductionRelation) {
+        switch (demandProductionRelation.getStatus()) {
+            case 10:
+                return String.format("您已成功申请任务，请等待雇主与您沟通需求吧！");
+            case 20:
+                return String.format("平台已为您推荐一个任务，请尽快联系雇主沟通任务内容吧！");
+        }
+        return null;
 
     }
 }

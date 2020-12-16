@@ -53,8 +53,9 @@ public class OrderStatusChangeMessageSender {
 
     public void sendStatusChangeMessage(OrderInfo orderInfo) {
         OrderInfo orderInfo1 = orderInfoService.get(orderInfo.getId());
-        if(orderInfo.getStatus() != null){
+        if(orderInfo.getStatus().equals(OrderStatus.UPDATEPRICE_35.getCode())){
             orderInfo1.setStatus(orderInfo.getStatus());
+            orderInfo1.setOrderMny(orderInfo.getActOrderMny());
         }
         orderInfo = orderInfo1;
         List<OrderInfoDetail> orderInfoDetails = orderInfoDetailService.getOrderDetailByOrderIds(Arrays.asList(orderInfo.getId()));
@@ -82,7 +83,7 @@ public class OrderStatusChangeMessageSender {
         WxMessage wxMessage = WxMessage.builder()
                 .addToUser(sysUser.getCode())
                 .addTemplate(WxMessageTemplate.ORDER_STATUS_CHANGE_MESSAGE)
-                .addPage("pages/orderDetails/orderDetails?orderId="+orderInfo.getId())
+                .addPage("packageMine/pages/orderDetails/orderDetails?orderId="+orderInfo.getId())
                 .addMiniprogramState(state)
                 .addData("thing5", orderInfoDetail.getSummarize())
                 .addData("phrase2", OrderStatus.get(orderInfo.getStatus()).getName())
@@ -115,7 +116,7 @@ public class OrderStatusChangeMessageSender {
         WxMessage wxMessage = WxMessage.builder()
                 .addToUser(sysUser.getCode())
                 .addTemplate(WxMessageTemplate.ORDER_STATUS_CHANGE_MESSAGE)
-                .addPage("pages/orderDetails/orderDetails?orderId="+orderInfo.getId())
+                .addPage("packageMine/pages/orderDetails/orderDetails?orderId="+orderInfo.getId())
                 .addMiniprogramState(state)
                 .addData("thing5", orderInfoDetail.getSummarize())
                 .addData("phrase2", OrderStatus.get(orderInfo.getStatus()).getName())
@@ -140,6 +141,8 @@ public class OrderStatusChangeMessageSender {
                 return String.format("您的订单已支付成功，人才马上开始工作。");
             case CHECKING_60:
                 return String.format("您的订单已经交付成功，请您尽快验收吧！");
+            case CHECK_FAIL_61:
+                return String.format("订单已经完成交付，请您验收。");
             case FINISHED_80:
                 return String.format("订单已经完成，期待您的评价。");
             case CHECK_FAIL_70:
@@ -164,6 +167,8 @@ public class OrderStatusChangeMessageSender {
             case PAID_50:
                 return String.format("订单已经付款成功，您可以开始工作了。");
             case CHECKING_60:
+                return String.format("订单已经完成交付，请您等待验收。");
+            case CHECK_FAIL_61:
                 return String.format("订单已经完成交付，请您等待验收。");
             case FINISHED_80:
                 return String.format("恭喜！订单验收成功，请耐心等待平台发薪吧！");

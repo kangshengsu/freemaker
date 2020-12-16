@@ -17,7 +17,7 @@ public enum FollowType {
 
     CHECK_FAIL_61(61, "验收不通过"),//二次待验收
 
-    CHECK_FAIL_70(70, "验收不通过"),
+    CHECK_FAIL_70(70, "验收不通过"),//第一次不通过
 
     FINISHED_80(80, "完成"),
 

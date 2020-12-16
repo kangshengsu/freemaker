@@ -82,7 +82,6 @@ public abstract class BaseService<M extends BaseMapper<T>, T extends BaseModel> 
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
     public boolean save(T model) {
         boolean result;
         initDefaultField(model);
