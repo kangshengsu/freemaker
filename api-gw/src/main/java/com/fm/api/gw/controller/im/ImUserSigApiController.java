@@ -28,7 +28,7 @@ public class ImUserSigApiController {
 
     @RequestMapping(value = "/getImUserSig", method = RequestMethod.GET)
     @ApiOperation(value = "获取ImUserSig")
-    public ApiResponse<ImVO> getUserSig(@RequestParam("identifier") String identifier) {
+    public ApiResponse<ImVO> getUserSig(@RequestParam(value = "identifier",required = false) String identifier) {
         log.info("进入生成Sig方法");
         ImVO imVO = new ImVO();
         TLSSigAPIv2 api = new TLSSigAPIv2(SDK_APP_ID, SECRET_KEY);
