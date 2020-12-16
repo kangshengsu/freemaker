@@ -274,6 +274,11 @@ public class FreelancerInfoServiceImpl extends AuditBaseService<IFreelancerInfoM
     }
 
     @Override
+    public Long getUserId(Long freelancerId) {
+        return getBaseMapper().selectOne(Wrappers.lambdaQuery(FreelancerInfo.class).eq(FreelancerInfo::getId,freelancerId)).getUserId();
+    }
+
+    @Override
     protected Page<FreelancerInfo> toPage(com.baomidou.mybatisplus.extension.plugins.pagination.Page<FreelancerInfo> mybatisPlusPage) {
         Page<FreelancerInfo> freelancerInfoPage = super.toPage(mybatisPlusPage);
         if (freelancerInfoPage.getData() != null && !freelancerInfoPage.getData().isEmpty()) {
