@@ -17,7 +17,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @MapperScan("com.fm.**.dao")
 @EnableCaching
 @EnableSwagger2
-@Profile("dev")
+@Profile("prod")
 public class ApiAppStarter {
 
     public static void main(String[] args) {
