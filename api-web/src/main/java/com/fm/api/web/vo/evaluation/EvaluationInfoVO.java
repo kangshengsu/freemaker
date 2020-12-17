@@ -55,33 +55,47 @@ public class EvaluationInfoVO extends VO implements Serializable {
     /**
      * 总体评价
      */
-    @DecimalMin(value = "0.0",message = "总分不能小于0分")
-    @DecimalMax(value = "5.0",message = "总分不能大于5分")
-    @Digits(integer = 1, fraction = 1,message = "总分不合法,只能有一位小数")
-    @Digits(integer = 1, fraction = 1)
-    public Double totalScore;
+    @DecimalMin(value = "0.00",message = "总分不能小于0分")
+    @DecimalMax(value = "5.00",message = "总分不能大于5分")
+    @Digits(integer = 1, fraction = 2,message = "总分不合法,只能有两位小数")
+    @Digits(integer = 1, fraction = 2)
+    public String totalScore;
     /**
-     * 结果打分
+     * 响应速度
      */
-    @DecimalMin(value = "0.0",message = "结果分不能小于0分")
-    @DecimalMax(value = "5.0",message = "结果分不能大于5分")
-    @Digits(integer = 1, fraction = 1,message = "结果分数不合法,只能有一位小数")
-    @Digits(integer = 1, fraction = 1)
-    public Double resultScore;
+    @DecimalMin(value = "0.00",message = "结果分不能小于0分")
+    @DecimalMax(value = "5.00",message = "结果分不能大于5分")
+    @Digits(integer = 1, fraction = 2,message = "响应速度分数不合法,只能有两位小数")
+    @Digits(integer = 1, fraction = 2)
+    public String responseSpeed;
     /**
-     * 过程打分
+     * 沟通能力
      */
-    @DecimalMin(value = "0.0",message = "过程分不能小于0分")
-    @DecimalMax(value = "5.0",message = "过程分不能大于5分")
-    @Digits(integer = 1, fraction = 1,message = "过程分数不合法,只能有一位小数")
-    public Double processScore;
+    @DecimalMin(value = "0.00",message = "过程分不能小于0分")
+    @DecimalMax(value = "5.00",message = "过程分不能大于5分")
+    @Digits(integer = 1, fraction = 2,message = "沟通能力分数不合法,只能有两位小数")
+    public String communicateCapacity;
+    /**
+     * 完成时间
+     */
+    @DecimalMin(value = "0.00",message = "过程分不能小于0分")
+    @DecimalMax(value = "5.00",message = "过程分不能大于5分")
+    @Digits(integer = 1, fraction = 2,message = "完成时间分数不合法,只能有两位小数")
+    public String completionTime;
+    /**
+     * 完成质量
+     */
+    @DecimalMin(value = "0.00",message = "过程分不能小于0分")
+    @DecimalMax(value = "5.00",message = "过程分不能大于5分")
+    @Digits(integer = 1, fraction = 2,message = "完成质量分数不合法,只能有两位小数")
+    public String accomplishQuality;
     /**
      * 推荐意向
      */
-    @DecimalMin(value = "0.0",message = "推荐分不能小于0分")
-    @DecimalMax(value = "5.0",message = "推荐分不能大于5分")
-    @Digits(integer = 1, fraction = 1,message = "推荐分数不合法,只能有一位小数")
-    public Double recommendScore;
+    @DecimalMin(value = "0.00",message = "推荐分不能小于0分")
+    @DecimalMax(value = "5.00",message = "推荐分不能大于5分")
+    @Digits(integer = 1, fraction = 2,message = "推荐意愿分数不合法,只能有两位小数")
+    public String recommendScore;
     /**
      * 评价描述
      */
