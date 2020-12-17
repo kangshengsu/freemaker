@@ -553,4 +553,11 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         return getBaseMapper().selectList(Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getJobCateId,id));
 
     }
+
+    @Override
+    public List<ProductionInfo> getByJobCateIdPublish(Long id) {
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(ProductionInfo.class)
+                .eq(ProductionInfo::getJobCateId,id)
+                .eq(ProductionInfo::getStatus,ProductionStatus.RELEASE.getCode()));
+    }
 }

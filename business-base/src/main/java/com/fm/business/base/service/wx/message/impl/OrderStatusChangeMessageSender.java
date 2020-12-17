@@ -145,6 +145,8 @@ public class OrderStatusChangeMessageSender {
                 return String.format("订单已经完成交付，请您验收。");
             case FINISHED_80:
                 return String.format("订单已经完成，期待您的评价。");
+            case FINISHED_81:
+                return String.format("二次验收未通过，中止交易。");
             case CHECK_FAIL_70:
                 return String.format("订单验收不通过，请等待人才与您沟通。");
             case EVALUATED_90:
@@ -170,10 +172,12 @@ public class OrderStatusChangeMessageSender {
                 return String.format("订单已经完成交付，请您等待验收。");
             case CHECK_FAIL_61:
                 return String.format("订单已经完成交付，请您等待验收。");
-            case FINISHED_80:
-                return String.format("恭喜！订单验收成功，等待平台发薪吧！");
             case CHECK_FAIL_70:
                 return String.format("订单验收不通过，进入小程序可查看原因。");
+            case FINISHED_80:
+                return String.format("恭喜！订单验收成功，等待平台发薪吧！");
+            case FINISHED_81:
+                return String.format("抱歉，二次验收未通过。");
             case EVALUATED_90:
                 return String.format("您的订单已经获得雇主评价，快去看看吧。");
             case CANCELD_100:
