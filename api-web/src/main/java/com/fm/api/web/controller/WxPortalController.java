@@ -3,10 +3,10 @@ package com.fm.api.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 
@@ -14,7 +14,7 @@ import java.util.Arrays;
  * @author G
  * @date 2020/12/18 下午5:17
  */
-@Controller
+@RestController
 @RequestMapping("/wx/portal")
 @Slf4j
 public class WxPortalController {
