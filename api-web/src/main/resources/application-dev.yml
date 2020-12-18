@@ -1,12 +1,16 @@
 server:
-  port: 80
+  port: 8002
 # mysql
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://172.21.16.11:3306/how_work_test?useUnicode=true&characterEncoding=utf-8&useSSL=false&autoReconnect=true&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull
-    username: how_work_test
-    password: how_work_test
+#    url: jdbc:mysql://172.21.16.11:3306/how_work_test?useUnicode=true&characterEncoding=utf-8&useSSL=false&autoReconnect=true&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull
+    url: jdbc:mysql://localhost:3306/how_work_test?useUnicode=true&characterEncoding=utf-8&useSSL=false&autoReconnect=true&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull
+#    username: how_work_test
+#    password: how_work_test
+    username: root
+    password: 12345678
+
   cos:
     appId: 1301749332
     secretId: AKIDALMUUvExISTJz5nk6LPJ3c37peLtuUXP
@@ -19,7 +23,8 @@ spring:
     cdnUrl: howwork-1301749332.file.myqcloud.com
 
   redis:
-      host: 172.21.16.17
+#      host: 172.21.16.17
+      host: 127.0.0.1
       password: HowWork!
       database: 1
   jackson:
