@@ -560,4 +560,12 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
                 .eq(ProductionInfo::getJobCateId,id)
                 .eq(ProductionInfo::getStatus,ProductionStatus.RELEASE.getCode()));
     }
+
+    @Override
+    public ProductionInfo getByCode(String code) {
+
+        ProductionInfo result = getBaseMapper().selectOne(Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getCode, code));
+
+        return result;
+    }
 }

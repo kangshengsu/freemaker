@@ -29,6 +29,8 @@ wx:
     messageToken: howWorkMessageToken
     accessUrl: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s
     messageUrl: https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=%s
+  public:
+    wxServerAuthenToken: Cz5oH5KnsfJX8Bl536Yxd7CrwjMVazhqxY3mgcQXXRv
 
 img:
   postfix: img,bmp,jpg,png,gif,jpeg

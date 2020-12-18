@@ -129,4 +129,11 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
      * @return
      */
     List<ProductionInfo> getByJobCateIdPublish(Long id);
+
+    /**
+     * 根据code查询作品
+     * @param code
+     * @return
+     */
+    ProductionInfo getByCode(String code);
 }

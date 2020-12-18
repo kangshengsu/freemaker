@@ -6,12 +6,12 @@
  */
 package com.fm.api.web.vo.order;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.business.base.model.order.OrderInfoDetail;
-import com.fm.business.base.model.order.OrderOperateInfo;
 import com.fm.framework.web.VO;
 import lombok.Data;
+
 import java.io.Serializable;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -26,8 +26,6 @@ import java.util.List;
 public class OrderInfoVO extends VO implements Serializable {
 
 	private static final long serialVersionUID = 1600497555102L;
-	
-
 
     /**
     * 订单编码
@@ -74,6 +72,10 @@ public class OrderInfoVO extends VO implements Serializable {
     * 订单金额
     **/
 	private Double orderMny;
+	/**
+	 * 订单金额
+	 **/
+	private Double actOrderMny;
 
 	/**
 	 * 订单单价
@@ -88,7 +90,7 @@ public class OrderInfoVO extends VO implements Serializable {
     /**
     * 期望交付时间
     **/
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+	@JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
 	private Date expectDeliveryTime;
 
 
@@ -168,5 +170,35 @@ public class OrderInfoVO extends VO implements Serializable {
 	private Long updateUser;
 
 	private List<OrderOperateInfoVO> orderOperateInfos;
+
+	/**
+	 * 需求省份编码
+	 **/
+	private String provinceCode;
+
+
+	/**
+	 * 需求城市编码
+	 **/
+	private String cityCode;
+
+
+	/**
+	 * 需求区编码
+	 **/
+	private String districtCode;
+
+
+	/**
+	 * 需求县编码
+	 **/
+	private String countyCode;
+
+	/**
+	 * 流水描述
+	 */
+	private String memo;
+
+	private String productionCode;
 
 }

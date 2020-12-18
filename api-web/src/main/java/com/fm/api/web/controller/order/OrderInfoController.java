@@ -9,6 +9,7 @@ package com.fm.api.web.controller.order;
 import com.fm.api.web.vo.order.OrderInfoVO;
 import com.fm.api.web.vo.order.OrderOperateInfoVO;
 import com.fm.business.base.enums.AttachmentBusinessType;
+import com.fm.business.base.enums.FollowType;
 import com.fm.business.base.enums.OrderOperateType;
 import com.fm.business.base.enums.OrderStatus;
 import com.fm.business.base.model.AttachmentInfo;
@@ -16,25 +17,32 @@ import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
+import com.fm.business.base.model.order.OrderFollow;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.business.base.model.order.OrderOperateInfo;
+import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.service.IAttachmentInfoService;
-import com.fm.business.base.service.job.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
+import com.fm.business.base.service.job.IBdJobCateService;
+import com.fm.business.base.service.order.IOrderFollowService;
 import com.fm.business.base.service.order.IOrderInfoDetailService;
 import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.business.base.service.order.IOrderOperateInfoService;
+import com.fm.business.base.service.production.IProductionInfoService;
+import com.fm.framework.core.Context;
 import com.fm.framework.core.query.*;
 import com.fm.framework.core.service.Service;
+import com.fm.framework.core.utils.CodeUtil;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -65,6 +73,9 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
     private IOrderOperateInfoService orderOperateInfoService;
 
     @Autowired
+    private IOrderFollowService orderFollowService;
+
+    @Autowired
     private IFreelancerInfoService freelancerInfoService;
 
     @Autowired
@@ -78,6 +89,9 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
 
     @Autowired
     private IAttachmentInfoService attachmentInfoService;
+
+    @Autowired
+    private IProductionInfoService productionInfoService;
 
 
     @RequestMapping(value = "create",method = RequestMethod.POST)
@@ -115,13 +129,49 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
         OrderInfoVO orderInfoVO = this.convert(orderInfoService.get(id));
         fillDetailInfo(Arrays.asList(orderInfoVO));
         fillOperateInfo(orderInfoVO);
-        fillEvaluationInfo(orderInfoVO);
 
         return this.success(orderInfoVO);
     }
 
-    private void fillEvaluationInfo(OrderInfoVO orderInfoVO) {
+    @RequestMapping(value = "save",method = RequestMethod.POST)
+    public ApiResponse<Boolean> save(@RequestBody OrderInfoVO orderInfoVO){
+        ProductionInfo productionInfo = productionInfoService.getByCode(orderInfoVO.getProductionCode());
+        EmployerInfo employerInfo = employerInfoService.get(orderInfoVO.getEmployerId());
+        if( productionInfo == null ){
+            return ApiResponse.ofFailed("请检查作品编码");
+        }
+        BdJobCate bdJobCate = iBdJobCateService.get(productionInfo.getJobCateId());
+        orderInfoVO.setStatus(OrderStatus.WAITING_20.getCode());
+        orderInfoVO.setActOrderMny(productionInfo.getHourlyWage().doubleValue()*orderInfoVO.getOrderTimes());
+        orderInfoVO.setProductionId(productionInfo.getId());
+        orderInfoVO.setJobCateId(productionInfo.getJobCateId());
+        orderInfoVO.setCateTreeCode(bdJobCate.getCateCode());
+        orderInfoVO.setBudgetType(productionInfo.getBudgetType());
+        orderInfoVO.setOrderMny(orderInfoVO.getActOrderMny()*orderInfoVO.getOrderTimes());
+        orderInfoVO.setOrderPrice(productionInfo.getHourlyWage().doubleValue());
+        orderInfoVO.setFreelancerId(productionInfo.getFreelancerId());
 
+        OrderInfo orderInfo = this.convert(orderInfoVO);
+        if (StringUtils.isEmpty(orderInfo.getCode())) {
+            orderInfo.setCode(CodeUtil.generateNewCode());
+        }
+
+        OrderInfoDetail orderInfoDetail = new OrderInfoDetail();
+        orderInfoDetail.setProvinceCode(employerInfo.getProvinceCode());
+        orderInfoDetail.setCityCode(employerInfo.getCityCode());
+        orderInfoDetail.setDistrictCode(employerInfo.getDistrictCode());
+        orderInfoDetail.setCountyCode(employerInfo.getCountyCode());
+        orderInfoDetail.setSummarize(orderInfoVO.getSummarize());
+        orderInfoDetail.setDescription(orderInfoVO.getDescription());
+
+        orderInfo.setOrderInfoDetail(orderInfoDetail);
+
+        orderInfoService.save(orderInfo);
+
+        // 写流水
+        saveFollow(orderInfoVO);
+
+        return ApiResponse.ofSuccess(true);
     }
 
     private void fillOperateInfo(OrderInfoVO orderInfoVO) {
@@ -287,6 +337,19 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
         return orderInfoDetailService.get(queryList);
     }
 
+    private void saveFollow(OrderInfoVO orderInfoVO) {
+        this.saveFollow(orderInfoVO, FollowType.get(orderInfoVO.getStatus()).getCode());
+    }
+
+    private void saveFollow(OrderInfoVO orderInfoVO, Integer followType) {
+        // 写流水
+        OrderFollow orderFollow = new OrderFollow();
+        orderFollow.setOrderId(orderInfoVO.getId());
+        orderFollow.setOperateType(followType);
+        orderFollow.setOperateUser(Context.getCurrUserId());
+        orderFollow.setMemo(orderInfoVO.getMemo());
+        orderFollowService.save(orderFollow);
+    }
 
     @Override
     protected Service<OrderInfo> service() {
