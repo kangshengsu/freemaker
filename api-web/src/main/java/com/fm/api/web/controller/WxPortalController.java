@@ -36,7 +36,7 @@ public class WxPortalController {
     }
 
     private boolean checkSignature(String timestamp, String nonce, String signature){
-        String token ="Cz5oH5KnsfJX8Bl536Yxd7CrwjMVazhqxY3mgcQXXRv";
+        String token ="xotIVN87AiUTJ6HicUj3TKZa9Fqa52PN5r6I70GB6ip";
         String[] arr = {token, timestamp, nonce};
         Arrays.sort(arr);
         StringBuilder sb = new StringBuilder();
