@@ -36,6 +36,7 @@ public class WxPortalController {
     }
 
     private boolean checkSignature(String timestamp, String nonce, String signature){
+        log.info("进入check");
         String token ="xotIVN87AiUTJ6HicUj3TKZa9Fqa52PN5r6I70GB6ip";
         String[] arr = {token, timestamp, nonce};
         Arrays.sort(arr);
@@ -43,6 +44,7 @@ public class WxPortalController {
         for (String a : arr){
             sb.append(a);
         }
+        log.info("结束check");
         return DigestUtils.sha1Hex(sb.toString()).equals(signature);
     }
 
