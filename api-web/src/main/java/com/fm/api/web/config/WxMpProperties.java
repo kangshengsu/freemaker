@@ -11,7 +11,7 @@ import java.util.List;
  * @author Binary Wang(https://github.com/binarywang)
  */
 @Data
-@ConfigurationProperties(prefix = "wx.mp")
+@ConfigurationProperties(prefix = "wx.mp.configs")
 public class WxMpProperties {
     /**
      * 是否使用redis存储access token
