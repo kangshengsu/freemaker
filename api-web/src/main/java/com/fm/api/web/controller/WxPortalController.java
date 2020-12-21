@@ -50,6 +50,9 @@ public class WxPortalController {
         }catch (Exception e){
             e.printStackTrace();
         }
+
+        String s = DigestUtils.sha1Hex(sb.toString());
+        log.info("s"+s);
         log.info("结束check");
         return DigestUtils.sha1Hex(sb.toString()).equals(signature);
     }
