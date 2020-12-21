@@ -33,6 +33,11 @@ public class DisplayConfigVO extends VO {
     private String resourceName;
 
     /**
+     * 权重
+     */
+    private Integer recommendWeight;
+
+    /**
      * 过期时间
      */
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")

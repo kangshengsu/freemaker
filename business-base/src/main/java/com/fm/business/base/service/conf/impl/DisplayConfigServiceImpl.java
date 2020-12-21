@@ -76,6 +76,10 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
         return getJobCateForSecond(get(DisplayType.job_cate_2));
     }
 
+    /**
+     * 加入Spring缓存之后两分钟查询会直接走缓存
+     * @return
+     */
     @Override
     @Cacheable(value = "recommendProductInfoConfig")
     public List<ProductionInfo> getRecommendProductInfoConfig() {
@@ -147,10 +151,10 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
         log.info("getProductInfo displayConfigs: {}", displayConfigs);
 
 
-        Set<Long> jobProductIds = displayConfigs
+        List<Long> jobProductIds = displayConfigs
                 .stream()
                 .map(DisplayConfig::getDisplayId)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
 
         return productionInfoService.getFullInfo(jobProductIds, ProductionStatus.RELEASE);
 
@@ -169,8 +173,9 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
         }
 
         return this.list(Wrappers.lambdaQuery(DisplayConfig.class)
-                .eq(DisplayConfig::getDisplayType, displayType.getCode()));
-//                .ge(DisplayConfig::getExpiredTime, new Date()));
+                .eq(DisplayConfig::getDisplayType, displayType.getCode())
+                .ge(DisplayConfig::getExpiredTime, new Date())
+                .orderByAsc(DisplayConfig::getRecommendWeight));
     }
 
     @Override

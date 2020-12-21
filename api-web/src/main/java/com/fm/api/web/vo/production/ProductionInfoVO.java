@@ -110,6 +110,11 @@ public class ProductionInfoVO extends VO implements Serializable {
     private Integer budgetType;
 
     /**
+     * 作品权重
+     */
+    private Integer productionWeight;
+
+    /**
      * 交付方式名称
      */
     private  String deliveryTypeName;
