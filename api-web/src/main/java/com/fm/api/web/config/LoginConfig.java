@@ -40,7 +40,7 @@ public class LoginConfig implements WebMvcConfigurer {
                                          "/**/*.css",
                                          "/**/*.woff",
                                          "/**/*.ttf",
-                                          "/wx/portal"
+                                          "/wx/portal/*"
                                          );    
     }
 }

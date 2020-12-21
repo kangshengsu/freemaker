@@ -3,10 +3,7 @@ package com.fm.api.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 
@@ -19,6 +16,7 @@ import java.util.Arrays;
 @Slf4j
 public class WxPortalController {
 
+    @RequestMapping(value = "/authGet",method = RequestMethod.GET)
     @GetMapping(produces = "text/plain;charset=utf-8")
     public String authGet(@RequestParam(name = "signature", required = false) String signature,
                           @RequestParam(name = "timestamp", required = false) String timestamp,
