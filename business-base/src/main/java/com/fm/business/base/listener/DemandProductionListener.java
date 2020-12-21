@@ -1,11 +1,8 @@
 package com.fm.business.base.listener;
 
 import com.fm.business.base.model.demand.DemandProductionRelation;
-import com.fm.business.base.model.order.OrderInfo;
-import com.fm.business.base.service.wx.message.impl.OrderStatusChangeMessageSender;
 import com.fm.business.base.service.wx.message.impl.RecommendMessageSender;
 import com.fm.framework.core.event.BatchOperationEvent;
-import com.fm.framework.core.event.OperationEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.lang.NonNull;

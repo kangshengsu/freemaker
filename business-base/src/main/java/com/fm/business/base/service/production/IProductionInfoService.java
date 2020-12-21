@@ -124,4 +124,18 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
     List<ProductionInfo> getByJobCateId(Long id);
 
     Page<ProductionInfo> getPageProductionOrderByWeight(Integer currentPage, Integer pageSize);
+
+    /**
+     * 查询同一品类已发布的所有作品
+     * @param id
+     * @return
+     */
+    List<ProductionInfo> getByJobCateIdPublish(Long id);
+
+    /**
+     * 根据code查询作品
+     * @param code
+     * @return
+     */
+    ProductionInfo getByCode(String code);
 }

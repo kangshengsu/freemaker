@@ -19,15 +19,14 @@ import com.fm.business.base.service.production.IProductionReviewInfoService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.exception.BusinessException;
 import com.fm.framework.core.service.AuditBaseService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**   
@@ -82,7 +81,7 @@ public class ProductionReviewInfoServiceImpl extends AuditBaseService<IProductio
         }else if(ProductionReviewStatus.REVIEW_NOT_PASS.equals(productionReviewStatus)){
             updateProductionInfo.setStatus(ProductionStatus.REVIEW_NOT_PASS.getCode());
         }
-        if(!productionInfoService.updateStatus(updateProductionInfo)){
+        if(!productionInfoService.update(updateProductionInfo)){
             //更新作品失败 抛出异常回滚审核记录数据
             throw new BusinessException("审核作品时更新作品状态失败！");
         }
