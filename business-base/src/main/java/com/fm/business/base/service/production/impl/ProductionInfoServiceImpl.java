@@ -164,16 +164,18 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         if (CollectionUtils.isEmpty(ids)) {
             return Collections.emptyList();
         }
+        /**
+         * 为了排序，所以不可以使用in
+         */
+//        LambdaQueryWrapper<ProductionInfo> lambdaQueryWrapper = Wrappers.lambdaQuery(ProductionInfo.class);
+//
+//        lambdaQueryWrapper.in(ProductionInfo::getId, ids);
+//
+//        if(Objects.nonNull(status)) {
+//            lambdaQueryWrapper.eq(ProductionInfo::getStatus, status.getCode());
+//        }
+        List<ProductionInfo> result = ids.stream().map(id -> get(id)).collect(Collectors.toList());
 
-        LambdaQueryWrapper<ProductionInfo> lambdaQueryWrapper = Wrappers.lambdaQuery(ProductionInfo.class);
-
-        lambdaQueryWrapper.in(ProductionInfo::getId, ids);
-
-        if(Objects.nonNull(status)) {
-            lambdaQueryWrapper.eq(ProductionInfo::getStatus, status.getCode());
-        }
-
-        List<ProductionInfo> result = list(lambdaQueryWrapper);
 
         if(CollectionUtils.isEmpty(result)){
             return Collections.emptyList();
@@ -181,7 +183,8 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
         fillProductInfoRelation(result);
 
-        return result.stream().sorted(Comparator.comparing(ProductionInfo::getCreateTime).reversed()).collect(Collectors.toList());
+        return result;
+//        .stream().sorted(Comparator.comparing(ProductionInfo::getCreateTime).reversed()).collect(Collectors.toList())
 
     }
 
@@ -226,7 +229,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         //根据岗位获取作品数据
         Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getStatus, ProductionStatus.RELEASE.getCode())
                 .in(ProductionInfo::getJobCateId, catePosts.stream().map(bdJobCate -> bdJobCate.getId()).collect(Collectors.toSet()))
-                .orderByDesc(ProductionInfo::getCreateTime);
+                .orderByDesc(ProductionInfo::getProductionWeight);
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
     }
@@ -245,7 +248,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class)
                 .eq(ProductionInfo::getStatus, ProductionStatus.RELEASE.getCode())
                 .eq(ProductionInfo::getJobCateId, catePost)
-                .orderByDesc(ProductionInfo::getCreateTime);
+                .orderByDesc(ProductionInfo::getProductionWeight);
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
     }
@@ -342,6 +345,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         if (productionInfoPage.getData() != null && !productionInfoPage.getData().isEmpty()) {
             //补全信息
             fillProductInfoRelation(productionInfoPage.getData());
+            Collections.shuffle(productionInfoPage.getData());
         }
         return productionInfoPage;
     }
@@ -552,6 +556,21 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
     public List<ProductionInfo> getByJobCateId(Long id) {
         return getBaseMapper().selectList(Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getJobCateId,id));
 
+    }
+
+    @Override
+    public Page<ProductionInfo> getPageProductionOrderByWeight(Integer currentPage, Integer pageSize) {
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<ProductionInfo> productionInfoPage = getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
+                Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getStatus, ProductionStatus.RELEASE.getCode()).orderByDesc(ProductionInfo::getProductionWeight));
+        List<ProductionInfo> data = productionInfoPage.getRecords();
+        fillProductInfoRelation(data);
+        Collections.shuffle(data);
+        PageInfo<ProductionInfo> page = new PageInfo<>();
+        page.setCurrentPage(currentPage);
+        page.setPageSize(pageSize);
+        page.setTotal((int)productionInfoPage.getTotal());
+        page.setData(data);
+        return page;
     }
 
     @Override
