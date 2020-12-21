@@ -44,6 +44,12 @@ public class WxPortalController {
         for (String a : arr){
             sb.append(a);
         }
+        try {
+            boolean equals = DigestUtils.sha1Hex(sb.toString()).equals(signature);
+            log.info("equals:"+equals);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         log.info("结束check");
         return DigestUtils.sha1Hex(sb.toString()).equals(signature);
     }
