@@ -37,8 +37,8 @@ public class WxPortalController {
 
     private boolean checkSignature(String timestamp, String nonce, String signature){
         log.info("进入check");
-        String token = "c9bOz7tl87unNE8rlokf6mCRolHm26z5hNrdoQdleuo";
-        String ab ="vxAAPRPq4KPlHoVfMgNITeF2cH2boNEaV7mTMQaj9Go";
+        String aa = "c9bOz7tl87unNE8rlokf6mCRolHm26z5hNrdoQdleuo";
+        String token ="vxAAPRPq4KPlHoVfMgNITeF2cH2boNEaV7mTMQaj9Go";
         String[] arr = {token, timestamp, nonce};
         Arrays.sort(arr);
         StringBuilder sb = new StringBuilder();
