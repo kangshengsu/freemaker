@@ -28,13 +28,11 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -70,21 +68,41 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
     @ApiOperation(value = "获取需求分页信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "currentPage", value = "当前页", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "pageSize", value = "页大小", dataType = "Integer", paramType = "query")})
+            @ApiImplicitParam(name = "pageSize", value = "页大小", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "status", value = "需求状态", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "demandStatus", value = "我的需求状态", dataType = "Integer", paramType = "query")})
     @RequestMapping(value = "getPageByEmployerId", method = RequestMethod.GET)
     public ApiResponse<Page<DemandInfoVO>> getPageByEmployerId(@RequestParam("currentPage") Integer currentPage,
                                                                @RequestParam("pageSize") Integer pageSize,
-                                                               @RequestParam(value = "status", required = false) Integer status) {
-        Long currUserId = Context.getCurrUserId();
+                                                               @RequestParam(value = "status", required = false) Integer status,
+                                                               @RequestParam(value = "demandStatus", required = false) Integer demandStatus) {
         Long currEmployerId = Context.getCurrEmployerId();
-        FreelancerInfo freelancerInfo = iFreelancerInfoService.getByUserId(currUserId);
-        List<ProductionInfo> productionInfoList = iProductionInfoService.findAllProduction(freelancerInfo.getId());
+        Long currFreelancerId = Context.getCurrFreelancerId();
+        List<ProductionInfo> productionInfoList = iProductionInfoService.findAllProduction(currFreelancerId);
         List<Long> productionIds = productionInfoList.stream().map(ProductionInfo::getId).collect(Collectors.toList());
-        List<DemandProductionRelation> demandProductionRelations = demandProductionRelationService.findAllRecommend(productionIds);
+        List<DemandProductionRelation> demandProductionRelations = demandProductionRelationService.findAllRecommendByStatus(productionIds,demandStatus);
         List<Long> demandProductionRelationIds = demandProductionRelations.stream().map(DemandProductionRelation::getDemandId).collect(Collectors.toList());
-        Page<DemandInfoVO> result = new PageInfo<>();
-        Page<DemandInfo> demandInfoPage = demandInfoService.gePageByEmployerId(currentPage, pageSize, currEmployerId, status, demandProductionRelationIds);
-        demandInfoPage.getData().forEach(
+        PageInfo<DemandInfo> result = new PageInfo<>();
+        if(demandStatus == 30){
+            Page<DemandInfo> pageByEmployerId = demandInfoService.getPageByEmployerId(currentPage, pageSize, status, currEmployerId);
+            result.setCurrentPage(pageByEmployerId.getCurrentPage());
+            result.setPageSize(pageByEmployerId.getPageSize());
+            result.setTotal(pageByEmployerId.getTotal());
+            result.setData(pageByEmployerId.getData());
+        }else {
+            if(!CollectionUtils.isEmpty(demandProductionRelations)){
+                Page<DemandInfo> pageByDemandStatus = demandInfoService.getPageByDemandStatus(currentPage, pageSize, status, demandProductionRelationIds);
+                result.setCurrentPage(pageByDemandStatus.getCurrentPage());
+                result.setPageSize(pageByDemandStatus.getPageSize());
+                result.setTotal(pageByDemandStatus.getTotal());
+                result.setData(pageByDemandStatus.getData());
+            }else {
+                result.setData(new ArrayList<>());
+                return ApiResponse.ofSuccess(this.convert(result));
+            }
+        }
+        //Page<DemandInfo> demandInfoPage = demandInfoService.gePageByEmployerId(currentPage, pageSize, currEmployerId, status, demandProductionRelationIds);
+        result.getData().forEach(
                 demandInfo->{
                     if(demandInfo.getEmployerId().longValue() == currEmployerId.longValue()){
                         demandInfo.setDemandStatus(RecommendType.MY_START.getCode());
@@ -98,10 +116,7 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
 
                     }
                 });
-        if (demandInfoPage.getData().size() == 0) {
-            return ApiResponse.ofSuccess(result);
-        }
-        return success(this.convert(demandInfoPage));
+        return success(this.convert(result));
     }
 
     @ApiOperation(value = "按领域获取已经发布的需求分页信息")
@@ -125,10 +140,31 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
 
     @ApiOperation(value = "获取不同状态下的需求总数")
     @RequestMapping(value = "getDemandGroupCount", method = RequestMethod.GET)
-    public ApiResponse<Map<String, Integer>> getDemandGroupCount() {
+    @ApiImplicitParams(@ApiImplicitParam(name = "demandStatus", value = "我的需求状态", dataType = "Integer", paramType = "query"))
+    public ApiResponse<Map<String, Integer>> getDemandGroupCount(@RequestParam(value = "demandStatus", required = false) Integer demandStatus) {
         Long currEmployerId = Context.getCurrEmployerId();
-        Integer openedCount = demandInfoService.getDemandCountByStatus(currEmployerId, DemandStatus.RELEASE.getCode());
-        Integer closedCount = demandInfoService.getDemandCountByStatus(currEmployerId, DemandStatus.CANCEL.getCode());
+        Long currFreelancerId = Context.getCurrFreelancerId();
+        List<ProductionInfo> productionInfoList = iProductionInfoService.findAllProduction(currFreelancerId);
+        List<Long> productionIds = productionInfoList.stream().map(ProductionInfo::getId).collect(Collectors.toList());
+        List<DemandProductionRelation> demandProductionRelations = demandProductionRelationService.findAllRecommendByStatus(productionIds,demandStatus);
+        List<Long> demandProductionRelationIds = demandProductionRelations.stream().map(DemandProductionRelation::getDemandId).collect(Collectors.toList());
+        Integer openedCount;
+        Integer closedCount;
+        if(CollectionUtils.isEmpty(demandProductionRelationIds)){
+            Map<String, Integer> map = new HashMap<>();
+            map.put("total", 0);
+            map.put("opened", 0);
+            map.put("closed", 0);
+
+            return success(map);
+        }
+        if(demandStatus == 30){
+            openedCount = demandInfoService.getDemandCountByStatus(currEmployerId, DemandStatus.RELEASE.getCode());
+            closedCount = demandInfoService.getDemandCountByStatus(currEmployerId, DemandStatus.CANCEL.getCode());
+        }else {
+            openedCount = demandInfoService.getDemandCountByStatus(currEmployerId, DemandStatus.RELEASE.getCode(), demandProductionRelationIds);
+            closedCount = demandInfoService.getDemandCountByStatus(currEmployerId, DemandStatus.CANCEL.getCode(), demandProductionRelationIds);
+        }
 
         Map<String, Integer> groupCount = new HashMap<>();
         groupCount.put("total", openedCount + closedCount);

@@ -147,8 +147,21 @@ public class DemandProductionRelationServiceImpl extends AuditBaseService<IDeman
         if(CollectionUtils.isEmpty(productionIds)){
             return new ArrayList<>();
         }
-        Wrapper queryWrapper = Wrappers.lambdaQuery(DemandProductionRelation.class).in(DemandProductionRelation::getProductionId, productionIds)
+        Wrapper queryWrapper = Wrappers.lambdaQuery(DemandProductionRelation.class)
+                .in(DemandProductionRelation::getProductionId, productionIds)
                 .eq(DemandProductionRelation::getIsDelete,0);
+        return getBaseMapper().selectList(queryWrapper);
+    }
+
+    @Override
+    public List<DemandProductionRelation> findAllRecommendByStatus(List<Long> productionIds, Integer status) {
+        if(CollectionUtils.isEmpty(productionIds)){
+            return new ArrayList<>();
+        }
+        Wrapper queryWrapper = Wrappers.lambdaQuery(DemandProductionRelation.class)
+                .in(DemandProductionRelation::getProductionId, productionIds)
+                .eq(DemandProductionRelation::getIsDelete,0)
+                .eq(status != 30, DemandProductionRelation::getStatus,status);
         return getBaseMapper().selectList(queryWrapper);
     }
 

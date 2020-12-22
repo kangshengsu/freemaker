@@ -223,4 +223,35 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage,pageSize),
                                         Wrappers.lambdaQuery(DemandInfo.class).eq(DemandInfo::getStatus,DemandStatus.RELEASE.getCode()).in(DemandInfo::getId,demandId)));
     }
+    public Page<DemandInfo> getPageByEmployerId(Integer currentPage, Integer pageSize, Integer status, Long employerId) {
+        return toPage(
+                getBaseMapper().selectPage(
+                        new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
+                        getQueryWrapper().lambda()
+                                .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
+                                .eq(status != 0, DemandInfo::getStatus, status)
+                                .eq(DemandInfo::getEmployerId, employerId)
+                                .orderByDesc(DemandInfo::getCreateTime)));
+    }
+
+    @Override
+    public Page<DemandInfo> getPageByDemandStatus(Integer currentPage, Integer pageSize, Integer status, List<Long> demandProductionRelationIds) {
+        return toPage(
+                getBaseMapper().selectPage(
+                        new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
+                        getQueryWrapper().lambda()
+                                .in(!CollectionUtils.isEmpty(demandProductionRelationIds), DemandInfo::getId, demandProductionRelationIds)
+                                .eq(!CollectionUtils.isEmpty(demandProductionRelationIds),DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
+                                .eq(!CollectionUtils.isEmpty(demandProductionRelationIds)&&status != 0, DemandInfo::getStatus, status)
+                                .orderByDesc(DemandInfo::getCreateTime)));
+    }
+
+    @Override
+    public Integer getDemandCountByStatus(Long employerId, Integer status, List<Long> demandProductionRelationIds) {
+        return getBaseMapper().selectCount(
+                getQueryWrapper().lambda()
+                        .in(!CollectionUtils.isEmpty(demandProductionRelationIds), DemandInfo::getId, demandProductionRelationIds)
+                        .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
+                        .eq(DemandInfo::getStatus, status));
+    }
 }
