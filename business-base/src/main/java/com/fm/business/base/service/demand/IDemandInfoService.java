@@ -67,4 +67,5 @@ public interface IDemandInfoService extends Service<DemandInfo> {
 
     List<DemandInfo> findDemandInfoLikeNameOrCode(String str);
 
+    Page<DemandInfo> getPageDemandInfo(List<Long> demandId,Integer currentPage,Integer pageSize);
 }
