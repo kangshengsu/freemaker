@@ -55,31 +55,34 @@ public class CollectInfoApiController extends BaseController<CollectInfo, Collec
     @Autowired
     private DemandInfoMapper demandInfoMapper;
 
-    @RequestMapping(value = "create",method = RequestMethod.POST)
+    @RequestMapping(value = "create", method = RequestMethod.POST)
     @ApiOperation(value = "收藏信息存储")
-    public ApiResponse<Boolean> createCollectInfo(@RequestBody @Valid CollectInfoVO collectInfoVO){
+    public ApiResponse<Boolean> createCollectInfo(@RequestBody @Valid CollectInfoVO collectInfoVO) {
         Long userId = Context.getCurrUserId();
         collectInfoVO.setUserId(userId);
         Long collect = collectInfoVO.getCollect();
         Long collectType = collectInfoVO.getCollectType();
-        CollectInfo collectInfo = collectInfoService.getCollectInfo(userId, collect,collectType);
+        CollectInfo collectInfo = collectInfoService.getCollectInfo(userId, collect, collectType);
         if (ObjectUtil.isNotNull(collectInfo)) {
             if (collectInfo.getStatus() == CollectStatus.CANCEL_COLLECT.getCode()) {
                 collectInfoVO.setId(collectInfo.getId());
                 collectInfoVO.setStatus(CollectStatus.COLLECT.getCode());
-              return success(collectInfoService.update(convert(collectInfoVO)));
+                return success(collectInfoService.update(convert(collectInfoVO)));
+            } else if (collectInfo.getStatus() == CollectStatus.COLLECT.getCode()) {
+                collectInfo.setStatus(CollectStatus.CANCEL_COLLECT.getCode());
+                return success(collectInfoService.update(collectInfo));
             }
         }
         return success(collectInfoService.save(convert(collectInfoVO)));
     }
 
-    @RequestMapping(value = "getCollectProduction",method = RequestMethod.GET)
+    @RequestMapping(value = "getCollectProduction", method = RequestMethod.GET)
     @ApiOperation(value = "获取作品收藏列表")
-    public ApiResponse<CollectInfoVO> getCollectProduction(@RequestParam("currentPage")Integer currentPage,@RequestParam("pageSize")Integer pageSize){
+    public ApiResponse<CollectInfoVO> getCollectProduction(@RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize) {
         CollectInfoVO result = new CollectInfoVO();
         Long userId = Context.getCurrUserId();
         List<Long> productionId = collectInfoService.getProductionId(userId);
-        Page<ProductionInfo> productionInfo = productionInfoService.getPageProductionById(productionId,currentPage, pageSize);
+        Page<ProductionInfo> productionInfo = productionInfoService.getPageProductionById(productionId, currentPage, pageSize);
         if (CollectionUtils.isEmpty(productionInfo.getData())) {
             return failed("获取收藏列表失败");
         }
@@ -93,10 +96,10 @@ public class CollectInfoApiController extends BaseController<CollectInfo, Collec
         return success(result);
     }
 
-    @RequestMapping(value = "getCollectDemand",method = RequestMethod.GET)
+    @RequestMapping(value = "getCollectDemand", method = RequestMethod.GET)
     @ApiOperation(value = "获取需求收藏列表")
-    public ApiResponse<CollectInfoVO> getCollectDemand(@RequestParam("currentPage")Integer currentPage,
-                                                       @RequestParam("pageSize")Integer pageSize){
+    public ApiResponse<CollectInfoVO> getCollectDemand(@RequestParam("currentPage") Integer currentPage,
+                                                       @RequestParam("pageSize") Integer pageSize) {
         CollectInfoVO result = new CollectInfoVO();
         Long userId = Context.getCurrUserId();
         List<Long> demandId = collectInfoService.getDemandId(userId);
@@ -113,22 +116,6 @@ public class CollectInfoApiController extends BaseController<CollectInfo, Collec
         result.setDemandInfo(pageInfo);
         return success(result);
     }
-
-    @RequestMapping(value = "/updateStatus",method = RequestMethod.GET)
-    @ApiOperation(value = "取消收藏接口")
-    public ApiResponse<Boolean> updateStatus(@RequestParam("collect")Long collect,
-                                             @RequestParam("collectType")Long collectType){
-        Long userId = Context.getCurrUserId();
-        CollectInfo collectInfo = collectInfoService.getCollectInfo(userId, collect,collectType);
-        if (ObjectUtil.isNotNull(collectInfo)) {
-            if (collectInfo.getStatus() == CollectStatus.COLLECT.getCode()) {
-                collectInfo.setStatus(CollectStatus.CANCEL_COLLECT.getCode());
-             return success(collectInfoService.update(collectInfo));
-            }
-        }
-        return failed("取消收藏失败");
-    }
-
 
     @Override
     protected Service<CollectInfo> service() {

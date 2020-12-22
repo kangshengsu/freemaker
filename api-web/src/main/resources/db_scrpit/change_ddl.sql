@@ -25,8 +25,8 @@ CREATE TABLE `collect_info` (
 
 
 -- 主键分布式自增
-INSERT INTO `leaf_alloc`(biz_tag,max_id,step) VALUES ('collect_info',2000,2000)
+INSERT INTO `leaf_alloc`(biz_tag,max_id,step) VALUES ('collect_info',2000,2000);
 
 -- 添加收藏状态列
 ALTER TABLE `collect_info`
-ADD COLUMN `status` TINYINT(4) DEFAULT 10 COMMENT '收藏状态(10-收藏  20-取消)' AFTER collect_type
+ADD COLUMN `status` TINYINT(4) DEFAULT 10 COMMENT '收藏状态(10-收藏  20-取消)' AFTER collect_type;
