@@ -57,7 +57,7 @@ public class CollectInfoApiController extends BaseController<CollectInfo, Collec
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
     @ApiOperation(value = "收藏信息存储")
-    public ApiResponse<Boolean> createCollectInfo(@RequestBody @Valid CollectInfoVO collectInfoVO) {
+    public ApiResponse<CollectInfoVO> createCollectInfo(@RequestBody @Valid CollectInfoVO collectInfoVO) {
         Long userId = Context.getCurrUserId();
         collectInfoVO.setUserId(userId);
         Long collect = collectInfoVO.getCollect();
@@ -67,13 +67,25 @@ public class CollectInfoApiController extends BaseController<CollectInfo, Collec
             if (collectInfo.getStatus() == CollectStatus.CANCEL_COLLECT.getCode()) {
                 collectInfoVO.setId(collectInfo.getId());
                 collectInfoVO.setStatus(CollectStatus.COLLECT.getCode());
-                return success(collectInfoService.update(convert(collectInfoVO)));
+                if (collectInfoService.update(convert(collectInfoVO))) {
+                    return success(collectInfoVO);
+                } else {
+                    return failed("收藏失败");
+                }
             } else if (collectInfo.getStatus() == CollectStatus.COLLECT.getCode()) {
                 collectInfo.setStatus(CollectStatus.CANCEL_COLLECT.getCode());
-                return success(collectInfoService.update(collectInfo));
+                if (collectInfoService.update(collectInfo)) {
+                    return success(convert(collectInfo));
+                } else {
+                    return failed("取消收藏失败");
+                }
             }
         }
-        return success(collectInfoService.save(convert(collectInfoVO)));
+        if (collectInfoService.save(convert(collectInfoVO))) {
+            CollectInfo collectInfo1 = collectInfoService.getCollectInfo(collectInfoVO.getUserId(), collectInfoVO.getCollect(), collectInfoVO.getCollectType());
+            return success(convert(collectInfo1));
+        }
+        return failed("收藏失败");
     }
 
     @RequestMapping(value = "getCollectProduction", method = RequestMethod.GET)

@@ -69,6 +69,11 @@ public class ProductionViewVO extends ProductionListVO implements Serializable {
      */
     private  String budgetTypeName;
     /**
+     * 是否收藏
+     */
+    private transient Boolean isCollect;
+
+    /**
      * 创建时间
      **/
     @JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
