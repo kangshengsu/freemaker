@@ -142,13 +142,10 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
         }
         BdJobCate bdJobCate = iBdJobCateService.get(productionInfo.getJobCateId());
         orderInfoVO.setStatus(OrderStatus.WAITING_20.getCode());
-        orderInfoVO.setActOrderMny(productionInfo.getHourlyWage().doubleValue()*orderInfoVO.getOrderTimes());
         orderInfoVO.setProductionId(productionInfo.getId());
         orderInfoVO.setJobCateId(productionInfo.getJobCateId());
         orderInfoVO.setCateTreeCode(bdJobCate.getCateCode());
         orderInfoVO.setBudgetType(productionInfo.getBudgetType());
-        orderInfoVO.setOrderMny(orderInfoVO.getActOrderMny()*orderInfoVO.getOrderTimes());
-        orderInfoVO.setOrderPrice(productionInfo.getHourlyWage().doubleValue());
         orderInfoVO.setFreelancerId(productionInfo.getFreelancerId());
 
         OrderInfo orderInfo = this.convert(orderInfoVO);

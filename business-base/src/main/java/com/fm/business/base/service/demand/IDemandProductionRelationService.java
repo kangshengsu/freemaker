@@ -7,7 +7,6 @@
 package com.fm.business.base.service.demand;
 
 import com.fm.business.base.model.demand.DemandProductionRelation;
-import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.model.production.RecommendProduction;
 import com.fm.framework.core.service.Service;
 
@@ -56,6 +55,13 @@ public interface IDemandProductionRelationService extends Service<DemandProducti
      * @return
      */
     List<DemandProductionRelation> findAllRecommend(List<Long>productionIds);
+
+    /**
+     * 根据状态查询我的作品被推荐过的所有需求
+     * @param productionIds
+     * @return
+     */
+    List<DemandProductionRelation> findAllRecommendByStatus(List<Long>productionIds, Integer status);
 
 
 
