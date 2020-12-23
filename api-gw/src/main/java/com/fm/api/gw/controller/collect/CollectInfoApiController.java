@@ -116,7 +116,7 @@ public class CollectInfoApiController extends BaseController<CollectInfo, Collec
     @ApiOperation(value = "获取需求收藏列表")
     public ApiResponse<CollectInfoVO> getCollectDemand(@RequestParam("currentPage") Integer currentPage,
                                                        @RequestParam("pageSize") Integer pageSize,
-                                                       @RequestParam("demandStatus") Integer demandStatus) {
+                                                       @RequestParam("status") Integer status) {
         CollectInfoVO result = new CollectInfoVO();
         Map<String, Integer> map = new HashMap<>();
         Integer closed;
@@ -129,7 +129,7 @@ public class CollectInfoApiController extends BaseController<CollectInfo, Collec
             map.put("closed", 0);
             result.setDemandInfoCount(map);
         }
-        Page<DemandInfo> pageDemandInfo = demandInfoService.getPageDemandInfo(demandId, currentPage, pageSize,demandStatus);
+        Page<DemandInfo> pageDemandInfo = demandInfoService.getPageDemandInfo(demandId, currentPage, pageSize,status);
         if (CollectionUtils.isEmpty(pageDemandInfo.getData())) {
             return success(result);
         }
