@@ -150,18 +150,18 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         List<Long> demandProductionRelationIds = demandProductionRelations.stream().map(DemandProductionRelation::getDemandId).collect(Collectors.toList());
         Integer openedCount;
         Integer closedCount;
-        if(CollectionUtils.isEmpty(demandProductionRelationIds)){
-            Map<String, Integer> map = new HashMap<>();
-            map.put("total", 0);
-            map.put("opened", 0);
-            map.put("closed", 0);
-
-            return success(map);
-        }
         if(demandStatus == 30){
             openedCount = demandInfoService.getDemandCountByStatus(currEmployerId, DemandStatus.RELEASE.getCode());
             closedCount = demandInfoService.getDemandCountByStatus(currEmployerId, DemandStatus.CANCEL.getCode());
         }else {
+            if(CollectionUtils.isEmpty(demandProductionRelationIds)){
+                Map<String, Integer> map = new HashMap<>();
+                map.put("total", 0);
+                map.put("opened", 0);
+                map.put("closed", 0);
+
+                return success(map);
+            }
             openedCount = demandInfoService.getDemandCountByStatus(currEmployerId, DemandStatus.RELEASE.getCode(), demandProductionRelationIds);
             closedCount = demandInfoService.getDemandCountByStatus(currEmployerId, DemandStatus.CANCEL.getCode(), demandProductionRelationIds);
         }
