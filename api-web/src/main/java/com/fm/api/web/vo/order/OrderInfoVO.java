@@ -7,6 +7,8 @@
 package com.fm.api.web.vo.order;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fm.api.web.vo.AttachmentInfoVO;
+import com.fm.api.web.vo.evaluation.EvaluationInfoVO;
 import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.framework.web.VO;
 import lombok.Data;
@@ -200,5 +202,21 @@ public class OrderInfoVO extends VO implements Serializable {
 	private String memo;
 
 	private String productionCode;
+
+	/**
+	 * 流水描述
+	 */
+	private String followDesc;
+
+	private List<AttachmentInfoVO> attachmentList;
+
+	private Boolean canChargeback;
+
+	/**
+	 * 是否上传支付凭证
+	 **/
+	private Boolean isUploadVoucher;
+
+	EvaluationInfoVO evaluationInfoVO;
 
 }

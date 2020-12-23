@@ -1,17 +1,13 @@
 package com.fm.api.web.controller.evaluation;
 
-import com.fm.api.web.vo.evaluation.EvaluationInfoVO;
 import com.fm.api.web.convert.EvaluationConvert;
-import com.fm.api.web.vo.order.OrderInfoDetailVO;
-import com.fm.api.web.vo.order.OrderInfoVO;
+import com.fm.api.web.vo.evaluation.EvaluationInfoVO;
 import com.fm.business.base.enums.AttachmentBusinessType;
-import com.fm.business.base.enums.EvaluationEnum;
 import com.fm.business.base.enums.EvaluationStatusEnum;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.evaluation.EvaluationInfo;
 import com.fm.business.base.model.order.OrderInfoDetail;
-import com.fm.business.base.model.sm.User;
 import com.fm.business.base.service.IAttachmentInfoService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.evaluation.IEvaluationInfoService;
@@ -23,10 +19,14 @@ import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 评价信息API
@@ -37,6 +37,8 @@ import java.util.*;
 @RestController
 @RequestMapping("/evaluation")
 public class EvaluationInfoController extends BaseController<EvaluationInfo, EvaluationInfoVO> {
+
+    private static String DEFAULT_DESCRIPTION = "没有评价描述";
 
     @Autowired
     private IEvaluationInfoService evaluationInfoService;
@@ -82,6 +84,17 @@ public class EvaluationInfoController extends BaseController<EvaluationInfo, Eva
         ApiResponse<Page<EvaluationInfoVO>> result = super.list(queryRequest);
         fillDetailInfo(result.getData().getData());
         return result;
+    }
+
+    @RequestMapping(value = "/publish", method = RequestMethod.POST)
+    public ApiResponse<Boolean> publish(@RequestBody @Validated EvaluationInfoVO evaluationInfoVO) {
+        EvaluationInfo evaluationInfo = convert(evaluationInfoVO);
+        if (StringUtils.isEmpty(evaluationInfo.getDescription())) {
+            evaluationInfo.setDescription(DEFAULT_DESCRIPTION);
+        }
+
+        evaluationInfoService.save(evaluationInfo);
+        return success(Boolean.TRUE);
     }
 
 

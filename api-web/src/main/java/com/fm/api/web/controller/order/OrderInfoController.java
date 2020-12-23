@@ -1,11 +1,7 @@
-/**
-* @filename:OrderInfoController 2020年09月11日
-* @project HowWork  V1.0
-* Copyright(c) 2020 LiuDuo Co. Ltd.
-* All right reserved.
-*/
 package com.fm.api.web.controller.order;
 
+import com.fm.api.web.vo.AttachmentInfoVO;
+import com.fm.api.web.vo.mapper.AttachmentMapper;
 import com.fm.api.web.vo.order.OrderInfoVO;
 import com.fm.api.web.vo.order.OrderOperateInfoVO;
 import com.fm.business.base.enums.AttachmentBusinessType;
@@ -49,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
 *
@@ -92,6 +89,9 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
 
     @Autowired
     private IProductionInfoService productionInfoService;
+
+    @Autowired
+    private AttachmentMapper attachmentMapper;
 
 
     @RequestMapping(value = "create",method = RequestMethod.POST)
@@ -167,6 +167,41 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
 
         // 写流水
         saveFollow(orderInfoVO);
+
+        return ApiResponse.ofSuccess(true);
+    }
+
+    /**
+     * 订单状态变更
+     * @param orderInfoVO
+     * @return
+     */
+    @RequestMapping(value = "updateOrderStatus",method = RequestMethod.POST)
+    public ApiResponse<Boolean> updateOrderStatus(@RequestBody OrderInfoVO orderInfoVO) {
+        Integer status = orderInfoVO.getStatus();
+        if(status.equals(OrderOperateType.RECEIVE.getCode()) || status.equals(OrderOperateType.SUBMIT_PAYMENT_VOUCHER.getCode())){
+            orderInfoVO.setStatus(OrderStatus.TAKING_40.getCode());
+        }
+        if(status.equals(OrderOperateType.SUBMIT.getCode())){
+            orderInfoVO.setStatus(OrderStatus.CHECKING_60.getCode());
+        }
+        if(status.equals(OrderOperateType.ACCEPT.getCode())){
+            orderInfoVO.setStatus(OrderStatus.FINISHED_80.getCode());
+        }
+        if(status.equals(OrderOperateType.UNACCEPT.getCode())){
+            orderInfoVO.setStatus(OrderStatus.CHECK_FAIL_70.getCode());
+        }
+        if(status.equals(OrderOperateType.SUBMIT_AGAIN.getCode())){
+            orderInfoVO.setStatus(OrderStatus.CHECK_FAIL_61.getCode());
+        }
+
+        this.update(orderInfoVO);
+
+        // 写流水
+        saveFollow(orderInfoVO);
+
+        // 写操作表
+        saveOperateInfo(orderInfoVO.getEmployerId(), orderInfoVO.getFreelancerId(), orderInfoVO.getId(), status, orderInfoVO.getFollowDesc(), orderInfoVO.getAttachmentList());
 
         return ApiResponse.ofSuccess(true);
     }
@@ -346,6 +381,16 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
         orderFollow.setOperateUser(Context.getCurrUserId());
         orderFollow.setMemo(orderInfoVO.getMemo());
         orderFollowService.save(orderFollow);
+    }
+
+    private void saveOperateInfo(Long employerId, Long freelancerId, Long orderId, Integer status, String followDesc, List<AttachmentInfoVO> attachmentList) {
+        List<AttachmentInfo> attachmentInfos = new ArrayList<>();
+        if(!CollectionUtils.isEmpty(attachmentList)){
+            attachmentInfos.addAll(attachmentList.stream()
+                    .map(attachmentInfoVO -> attachmentMapper.toAttachment(attachmentInfoVO))
+                    .collect(Collectors.toList()));
+        }
+        orderOperateInfoService.saveOperateInfoBack(employerId, freelancerId, orderId, status, followDesc, attachmentInfos);
     }
 
     @Override
