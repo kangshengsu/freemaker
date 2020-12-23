@@ -142,9 +142,16 @@ public class CollectInfoApiController extends BaseController<CollectInfo, Collec
             map.put("opened", 0);
             map.put("closed", 0);
             result.setDemandInfoCount(map);
+            return success(result);
         }
         Page<DemandInfo> pageDemandInfo = demandInfoService.getPageDemandInfo(demandId, currentPage, pageSize,status);
         if (CollectionUtils.isEmpty(pageDemandInfo.getData())) {
+            opened = demandInfoService.getOpenedDemandCount(demandId);
+            closed = demandInfoService.getDemandClosedCount(demandId);
+            map.put("total", opened + closed);
+            map.put("opened", opened);
+            map.put("closed", closed);
+            result.setDemandInfoCount(map);
             return success(result);
         }
         opened = demandInfoService.getOpenedDemandCount(demandId);
