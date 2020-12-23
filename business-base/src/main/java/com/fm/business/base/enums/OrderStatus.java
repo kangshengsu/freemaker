@@ -17,13 +17,13 @@ public enum OrderStatus {
 
     CHECKING_60(60, "待验收", 4, OrderOperateRoleType.EMPLOYER.getCode()),
 
-    CHECK_FAIL_61(61, "待验收", 4, OrderOperateRoleType.EMPLOYER.getCode()),//二次待验收
+    CHECK_FAIL_61(61, "二次待验收", 4, OrderOperateRoleType.EMPLOYER.getCode()),//二次待验收
 
     CHECK_FAIL_70(70, "验收不通过", 4, OrderOperateRoleType.EMPLOYER.getCode()),
 
     FINISHED_80(80, "已完成", 5, OrderOperateRoleType.EMPLOYER.getCode()),
 
-    FINISHED_81(81, "验收不通过", 4, OrderOperateRoleType.EMPLOYER.getCode()),//二次验收不通过，终止交易
+    FINISHED_81(81, "二次验收不通过", 4, OrderOperateRoleType.EMPLOYER.getCode()),//二次验收不通过，终止交易
 
     EVALUATED_90(90, "已评价", 6, OrderOperateRoleType.EMPLOYER.getCode());
 

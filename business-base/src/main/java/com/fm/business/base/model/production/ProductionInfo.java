@@ -111,6 +111,11 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
     private Integer budgetType;
 
     /**
+     * 作品权重
+     */
+    private Integer productionWeight;
+
+    /**
      * 交付方式名称
      */
     private transient String deliveryTypeName;
@@ -120,6 +125,10 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
      */
     private transient String budgetTypeName;
 
+    /**
+     * 是否收藏
+     */
+    private transient Boolean isCollect;
 
     /**
     * 创建时间

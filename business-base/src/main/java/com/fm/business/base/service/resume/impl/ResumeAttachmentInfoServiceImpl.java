@@ -276,7 +276,7 @@ public class ResumeAttachmentInfoServiceImpl extends AuditBaseService<IResumeAtt
         if (ObjectUtil.isNotNull(model)) {
             if (model.getName().contains(".")) {
                 int lastIndexName = model.getName().toLowerCase().lastIndexOf(".");
-                String lastName = model.getPath().substring(lastIndexName + 1);
+                String lastName = model.getName().substring(lastIndexName + 1);
                 if (lastName.equals("pdf") || lastName.equals("doc") || lastName.equals("docx") || lastName.equals("png") || lastName.equals("jpg") || lastName.equals("jpeg")) {
                     String name = model.getName().substring(0, lastIndexName);
                     model.setName(name);

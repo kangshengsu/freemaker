@@ -101,6 +101,56 @@ public class OrderOperateInfoServiceImpl extends AuditBaseService<IOrderOperateI
         attachmentInfoService.save(attachmentList);
     }
 
+    @Override
+    public void saveOperateInfoBack(Long employerId, Long freelancerId, Long orderId, Integer status, String description, List<AttachmentInfo> attachmentList) {
+        OrderOperateInfo orderOperateInfo = new OrderOperateInfo();
+
+        if (OrderOperateType.RECEIVE.getCode().equals(status)) {
+            orderOperateInfo.setOperateType(OrderOperateType.RECEIVE.getCode());
+            orderOperateInfo.setOperateUser(freelancerId);
+            orderOperateInfo.setReceiveUser(employerId);
+        }
+        if (OrderOperateType.SUBMIT_PAYMENT_VOUCHER.getCode().equals(status)){
+            orderOperateInfo.setOperateType(OrderOperateType.SUBMIT_PAYMENT_VOUCHER.getCode());
+            orderOperateInfo.setOperateUser(employerId);
+            orderOperateInfo.setReceiveUser(freelancerId);
+        }
+        if (OrderOperateType.SUBMIT.getCode().equals(status)) {
+            orderOperateInfo.setOperateType(OrderOperateType.SUBMIT.getCode());
+            orderOperateInfo.setOperateUser(freelancerId);
+            orderOperateInfo.setReceiveUser(employerId);
+        }
+        if (OrderOperateType.ACCEPT.getCode().equals(status)) {
+            orderOperateInfo.setOperateType(OrderOperateType.ACCEPT.getCode());
+            orderOperateInfo.setOperateUser(employerId);
+            orderOperateInfo.setReceiveUser(freelancerId);
+        }
+        if (OrderOperateType.SUBMIT_AGAIN.getCode().equals(status)) {
+            orderOperateInfo.setOperateType(OrderOperateType.SUBMIT_AGAIN.getCode());
+            orderOperateInfo.setOperateUser(freelancerId);
+            orderOperateInfo.setReceiveUser(employerId);
+        }
+        if (OrderOperateType.UNACCEPT.getCode().equals(status)) {
+            orderOperateInfo.setOperateType(OrderOperateType.UNACCEPT.getCode());
+            orderOperateInfo.setOperateUser(employerId);
+            orderOperateInfo.setReceiveUser(freelancerId);
+        }
+
+        orderOperateInfo.setOrderId(orderId);
+        orderOperateInfo.setDescription(description);
+        this.save(orderOperateInfo);
+
+        if (!CollectionUtils.isEmpty(attachmentList)) {
+            for (AttachmentInfo attachmentInfo : attachmentList) {
+                attachmentInfo.setBusinessCode(orderOperateInfo.getId().toString());
+                attachmentInfo.setType(AttachmentType.PICTURE.getCode());
+                attachmentInfo.setBusinessType(AttachmentBusinessType.ORDER_OPERATE.getCode());
+            }
+        }
+
+        attachmentInfoService.save(attachmentList);
+    }
+
 
     @Override
     protected void afterSave(OrderOperateInfo orderOperateInfo) {

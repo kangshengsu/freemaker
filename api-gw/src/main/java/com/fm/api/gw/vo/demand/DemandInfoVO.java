@@ -164,7 +164,12 @@ public class DemandInfoVO extends VO implements Serializable {
 	/**
 	 * 平台认证:0-未认证,1-认证
 	 */
-	private Long attestation;
+	private Integer attestation;
+
+	/**
+	 * 是否收藏
+	 */
+	private transient Boolean isCollect;
 
 	/**
 	 * 创建时间

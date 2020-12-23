@@ -35,6 +35,7 @@ import com.fm.framework.core.query.PageInfo;
 import com.fm.framework.core.service.AuditBaseService;
 import com.fm.framework.core.utils.CodeUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.UnixCrypt;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -132,7 +133,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
     @Override
     public ProductionInfo get(Long id) {
-        ProductionInfo result =  getById(id);
+        ProductionInfo result = getById(id);
         fillProductInfoRelation(Arrays.asList(result));
         return result;
     }
@@ -150,7 +151,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
         List<ProductionInfo> result = getByIds(ids);
 
-        if(CollectionUtils.isEmpty(result)){
+        if (CollectionUtils.isEmpty(result)) {
             return Collections.emptyList();
         }
 
@@ -164,24 +165,27 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         if (CollectionUtils.isEmpty(ids)) {
             return Collections.emptyList();
         }
+        /**
+         * 为了排序，所以不可以使用in
+         */
+//        LambdaQueryWrapper<ProductionInfo> lambdaQueryWrapper = Wrappers.lambdaQuery(ProductionInfo.class);
+//
+//        lambdaQueryWrapper.in(ProductionInfo::getId, ids);
+//
+//        if(Objects.nonNull(status)) {
+//            lambdaQueryWrapper.eq(ProductionInfo::getStatus, status.getCode());
+//        }
+        List<ProductionInfo> result = ids.stream().map(id -> get(id)).collect(Collectors.toList());
 
-        LambdaQueryWrapper<ProductionInfo> lambdaQueryWrapper = Wrappers.lambdaQuery(ProductionInfo.class);
 
-        lambdaQueryWrapper.in(ProductionInfo::getId, ids);
-
-        if(Objects.nonNull(status)) {
-            lambdaQueryWrapper.eq(ProductionInfo::getStatus, status.getCode());
-        }
-
-        List<ProductionInfo> result = list(lambdaQueryWrapper);
-
-        if(CollectionUtils.isEmpty(result)){
+        if (CollectionUtils.isEmpty(result)) {
             return Collections.emptyList();
         }
 
         fillProductInfoRelation(result);
 
-        return result.stream().sorted(Comparator.comparing(ProductionInfo::getCreateTime).reversed()).collect(Collectors.toList());
+        return result;
+//        .stream().sorted(Comparator.comparing(ProductionInfo::getCreateTime).reversed()).collect(Collectors.toList())
 
     }
 
@@ -226,7 +230,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         //根据岗位获取作品数据
         Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getStatus, ProductionStatus.RELEASE.getCode())
                 .in(ProductionInfo::getJobCateId, catePosts.stream().map(bdJobCate -> bdJobCate.getId()).collect(Collectors.toSet()))
-                .orderByDesc(ProductionInfo::getCreateTime);
+                .orderByDesc(ProductionInfo::getProductionWeight);
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
     }
@@ -245,7 +249,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         Wrapper queryWrapper = Wrappers.lambdaQuery(ProductionInfo.class)
                 .eq(ProductionInfo::getStatus, ProductionStatus.RELEASE.getCode())
                 .eq(ProductionInfo::getJobCateId, catePost)
-                .orderByDesc(ProductionInfo::getCreateTime);
+                .orderByDesc(ProductionInfo::getProductionWeight);
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), queryWrapper));
     }
@@ -263,7 +267,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
         //获取作品下的岗位
         ProductionInfo productionInfo = get(productionId);
-        if(productionInfo == null || productionInfo.getJobCateId() == null){
+        if (productionInfo == null || productionInfo.getJobCateId() == null) {
             return new PageInfo();
         }
         //获取岗位下其他作品
@@ -342,6 +346,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         if (productionInfoPage.getData() != null && !productionInfoPage.getData().isEmpty()) {
             //补全信息
             fillProductInfoRelation(productionInfoPage.getData());
+            Collections.shuffle(productionInfoPage.getData());
         }
         return productionInfoPage;
     }
@@ -401,7 +406,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
         productionInfos.forEach(productionInfo -> {
             if (freelancerInfoMap.containsKey(productionInfo.getFreelancerId())) {
-                if(freelancerInfoMap.get(productionInfo.getFreelancerId()).getReferrer() != null){
+                if (freelancerInfoMap.get(productionInfo.getFreelancerId()).getReferrer() != null) {
                     SysUser sysUser = iSysUserService.get(freelancerInfoMap.get(productionInfo.getFreelancerId()).getReferrer());
                     freelancerInfoMap.get(productionInfo.getFreelancerId()).setReferrerName(sysUser.getName());
                 }
@@ -427,7 +432,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
             }
 
             if (partnerInfoMap.containsKey(productionInfo.getFreelancerId())) {
-                if(partnerInfoMap.get(productionInfo.getFreelancerId()).getBelongId() != null){
+                if (partnerInfoMap.get(productionInfo.getFreelancerId()).getBelongId() != null) {
                     SysUser sysUser = iSysUserService.get(partnerInfoMap.get(productionInfo.getFreelancerId()).getBelongId());
                     partnerInfoMap.get(productionInfo.getFreelancerId()).setBelongIdName(sysUser.getName());
                 }
@@ -523,7 +528,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
     @Override
     public List<ProductionInfo> distinctProductions(List<Long> productionIds) {
-        if(CollectionUtils.isEmpty(productionIds)){
+        if (CollectionUtils.isEmpty(productionIds)) {
             return new ArrayList<>();
         }
         QueryWrapper<ProductionInfo> queryWrapper = new QueryWrapper<>();
@@ -550,15 +555,30 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
     @Override
     public List<ProductionInfo> getByJobCateId(Long id) {
-        return getBaseMapper().selectList(Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getJobCateId,id));
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getJobCateId, id));
 
+    }
+
+    @Override
+    public Page<ProductionInfo> getPageProductionOrderByWeight(Integer currentPage, Integer pageSize) {
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<ProductionInfo> productionInfoPage = getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
+                Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getStatus, ProductionStatus.RELEASE.getCode()).orderByDesc(ProductionInfo::getProductionWeight));
+        List<ProductionInfo> data = productionInfoPage.getRecords();
+        fillProductInfoRelation(data);
+        Collections.shuffle(data);
+        PageInfo<ProductionInfo> page = new PageInfo<>();
+        page.setCurrentPage(currentPage);
+        page.setPageSize(pageSize);
+        page.setTotal((int) productionInfoPage.getTotal());
+        page.setData(data);
+        return page;
     }
 
     @Override
     public List<ProductionInfo> getByJobCateIdPublish(Long id) {
         return getBaseMapper().selectList(Wrappers.lambdaQuery(ProductionInfo.class)
-                .eq(ProductionInfo::getJobCateId,id)
-                .eq(ProductionInfo::getStatus,ProductionStatus.RELEASE.getCode()));
+                .eq(ProductionInfo::getJobCateId, id)
+                .eq(ProductionInfo::getStatus, ProductionStatus.RELEASE.getCode()));
     }
 
     @Override
@@ -567,5 +587,24 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         ProductionInfo result = getBaseMapper().selectOne(Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getCode, code));
 
         return result;
+    }
+
+    @Override
+    public Page<ProductionInfo> getPageProductionById(List<Long> productionId, Integer currentPage, Integer pageSize) {
+        if (CollectionUtils.isEmpty(productionId)) {
+            return new PageInfo<>();
+        }
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<ProductionInfo> productionInfoPage = getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
+                Wrappers.lambdaQuery(ProductionInfo.class).in(ProductionInfo::getId, productionId));
+        List<ProductionInfo> data = productionInfoPage.getRecords();
+        if (data != null && !CollectionUtils.isEmpty(data)) {
+            fillProductInfoRelation(data);
+        }
+        PageInfo<ProductionInfo> pageInfo = new PageInfo<>();
+        pageInfo.setCurrentPage(currentPage);
+        pageInfo.setPageSize(pageSize);
+        pageInfo.setTotal((int) productionInfoPage.getTotal());
+        pageInfo.setData(data);
+        return pageInfo;
     }
 }

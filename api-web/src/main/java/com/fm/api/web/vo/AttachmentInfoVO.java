@@ -6,10 +6,11 @@
  */
 package com.fm.api.web.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.framework.web.VO;
 import lombok.Data;
+
 import java.io.Serializable;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 
 /**   
@@ -60,6 +61,17 @@ public class AttachmentInfoVO extends VO implements Serializable {
     * 其他路径（图片时存放压缩图片）
     **/
 	private String otherPath;
+
+	/**
+	 * 存放路径
+	 **/
+	private String fullPath;
+
+
+	/**
+	 * 其他路径（图片时存放压缩图片）
+	 **/
+	private String fullOtherPath;
 
 
     /**

@@ -137,6 +137,11 @@ public class DemandInfo extends BaseModel implements Serializable, IAudit {
     private Integer budgetType;
 
     /**
+     * 是否收藏
+     */
+    private transient Boolean isCollect;
+
+    /**
      * 创建时间
      **/
     private Date createTime;
