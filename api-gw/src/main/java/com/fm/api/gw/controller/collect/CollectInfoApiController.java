@@ -6,14 +6,17 @@ import com.fm.api.gw.vo.demand.DemandInfoVO;
 import com.fm.api.gw.vo.demand.mapper.DemandInfoMapper;
 import com.fm.api.gw.vo.production.mapper.ProductionMapper;
 import com.fm.api.gw.vo.production.view.ProductionViewVO;
-import com.fm.business.base.enums.CollectStatus;
-import com.fm.business.base.enums.DemandStatus;
-import com.fm.business.base.enums.ProductionStatus;
+import com.fm.business.base.enums.*;
+import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.collect.CollectInfo;
 import com.fm.business.base.model.demand.DemandInfo;
+import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.collect.ICollectInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
+import com.fm.business.base.service.job.IBdJobCateService;
+import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.query.Page;
@@ -32,6 +35,8 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -58,6 +63,15 @@ public class CollectInfoApiController extends BaseController<CollectInfo, Collec
 
     @Autowired
     private DemandInfoMapper demandInfoMapper;
+
+    @Autowired
+    private IEmployerInfoService iEmployerInfoService;
+
+    @Autowired
+    private IBdJobCateService iBdJobCateService;
+
+    @Autowired
+    private IOrderInfoService iOrderInfoService;
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
     @ApiOperation(value = "收藏信息存储")
@@ -138,8 +152,15 @@ public class CollectInfoApiController extends BaseController<CollectInfo, Collec
         map.put("total", opened + closed);
         map.put("opened", opened);
         map.put("closed", closed);
-
         List<DemandInfoVO> data = pageDemandInfo.getData().stream().map(demandInfoMapper::toDemandInfoVO).collect(Collectors.toList());
+        Map<Long, BdJobCate> bdJobCateMap = data.stream().map(DemandInfoVO::getJobCateId).collect(Collectors.toList())
+                .stream().map(jobCateId -> iBdJobCateService.get(jobCateId)).collect(Collectors.toList())
+                .stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
+        data.forEach(demandInfoVO -> {
+            if (bdJobCateMap.containsKey(demandInfoVO.getJobCateId())) {
+                demandInfoVO.setJobCateIdName(bdJobCateMap.get(demandInfoVO.getJobCateId()).getCateName());
+            }
+        });
         PageInfo<DemandInfoVO> pageInfo = new PageInfo<>();
         pageInfo.setCurrentPage(currentPage);
         pageInfo.setPageSize(pageSize);

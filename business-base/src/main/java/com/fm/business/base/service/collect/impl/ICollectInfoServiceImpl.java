@@ -2,6 +2,7 @@ package com.fm.business.base.service.collect.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.collect.ICollectInfoMapper;
+import com.fm.business.base.enums.CollectStatus;
 import com.fm.business.base.enums.CollectType;
 import com.fm.business.base.model.collect.CollectInfo;
 import com.fm.business.base.model.production.ProductionInfo;
@@ -23,13 +24,13 @@ import java.util.stream.Collectors;
 public class ICollectInfoServiceImpl extends AuditBaseService<ICollectInfoMapper, CollectInfo> implements ICollectInfoService {
     @Override
     public List<Long> getProductionId(Long userId) {
-        return getBaseMapper().selectList(Wrappers.lambdaQuery(CollectInfo.class).eq(CollectInfo::getUserId,userId).eq(CollectInfo::getCollectType,CollectType.PRODUCTION.getCode()))
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(CollectInfo.class).eq(CollectInfo::getUserId,userId).eq(CollectInfo::getCollectType,CollectType.PRODUCTION.getCode()).eq(CollectInfo::getStatus, CollectStatus.COLLECT.getCode()))
                 .stream().map(CollectInfo::getCollect).collect(Collectors.toList());
     }
 
     @Override
     public List<Long> getDemandId(Long userId) {
-        return getBaseMapper().selectList(Wrappers.lambdaQuery(CollectInfo.class).eq(CollectInfo::getUserId,userId).eq(CollectInfo::getCollectType,CollectType.DEMAND.getCode()))
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(CollectInfo.class).eq(CollectInfo::getUserId,userId).eq(CollectInfo::getCollectType,CollectType.DEMAND.getCode()).eq(CollectInfo::getStatus,CollectStatus.COLLECT.getCode()))
                 .stream().map(CollectInfo::getCollect).collect(Collectors.toList());
     }
 
