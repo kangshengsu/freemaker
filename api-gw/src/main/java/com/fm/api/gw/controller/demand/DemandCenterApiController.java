@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 @RestController
@@ -86,9 +87,13 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
     @ApiImplicitParams({
             @ApiImplicitParam(name = "code", value = "需求编码", dataType = "String", paramType = "query")})
     @RequestMapping(value = "getDemandCenterDtlByCode", method = RequestMethod.GET)
-    public ApiResponse<DemandInfoVO> getDemandCenterDtlByCode(@RequestParam(value = "code", required = false) String code) {
+    public ApiResponse<DemandInfoVO> getDemandCenterDtlByCode(@RequestParam(value = "code", required = false) String code, HttpServletRequest request) {
         DemandInfo demandInfo = demandCenterInfoService.getDemandCenterDtlByCode(code);
-        Long userId = Context.getCurrUserId();
+        Boolean isNeedValid = Boolean.valueOf(request.getHeader("isNeedValid"));
+        Long userId = null;
+        if (isNeedValid) {
+            userId = Context.getCurrUserId();
+        }
         if (userId != null && ObjectUtil.isNotNull(userId)) {
             CollectInfo collectInfo = collectInfoService.getCollectInfo(userId, demandInfo.getId(), (long) CollectType.DEMAND.getCode());
             if (ObjectUtil.isNotNull(collectInfo) && collectInfo.getStatus() == CollectStatus.COLLECT.getCode()) {

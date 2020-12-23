@@ -7,6 +7,7 @@ import com.fm.framework.web.VO;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Map;
 
 
 /**
@@ -49,5 +50,10 @@ public class CollectInfoVO extends VO implements Serializable {
      * 收藏需求信息
      */
     private transient Page<DemandInfoVO> demandInfo;
+
+    /**
+     * 收藏需求数量
+     */
+    private transient Map<String,Integer> demandInfoCount;
 
 }

@@ -216,12 +216,22 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
     }
 
     @Override
-    public Page<DemandInfo> getPageDemandInfo(List<Long> demandId,Integer currentPage,Integer pageSize) {
+    public Page<DemandInfo> getPageDemandInfo(List<Long> demandId,Integer currentPage,Integer pageSize,Integer demandStatus) {
         if (CollectionUtils.isEmpty(demandId)) {
             return new PageInfo<>();
         }
-        return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage,pageSize),
-                                        Wrappers.lambdaQuery(DemandInfo.class).eq(DemandInfo::getStatus,DemandStatus.RELEASE.getCode()).in(DemandInfo::getId,demandId)));
+        if (demandStatus == DemandStatus.RELEASE.getCode()) {
+            return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
+                Wrappers.lambdaQuery(DemandInfo.class).eq(DemandInfo::getStatus,DemandStatus.RELEASE.getCode()).in(DemandInfo::getId,demandId)));
+        }else if (demandStatus == DemandStatus.CANCEL.getCode()){
+            return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
+                    Wrappers.lambdaQuery(DemandInfo.class).eq(DemandInfo::getStatus,DemandStatus.CANCEL.getCode()).in(DemandInfo::getId,demandId)));
+        }else{
+            return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
+                    Wrappers.lambdaQuery(DemandInfo.class).in(DemandInfo::getId,demandId)));
+        }
+
+
     }
     public Page<DemandInfo> getPageByEmployerId(Integer currentPage, Integer pageSize, Integer status, Long employerId) {
         return toPage(
@@ -253,5 +263,16 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
                         .in(!CollectionUtils.isEmpty(demandProductionRelationIds), DemandInfo::getId, demandProductionRelationIds)
                         .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
                         .eq(DemandInfo::getStatus, status));
+    }
+
+    @Override
+    public Integer getDemandClosedCount(List<Long> demandId) {
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(DemandInfo.class).eq(DemandInfo::getStatus,DemandStatus.CANCEL.getCode()).in(DemandInfo::getId,demandId)).size();
+
+    }
+
+    @Override
+    public Integer getOpenedDemandCount(List<Long> demandId) {
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(DemandInfo.class).eq(DemandInfo::getStatus, DemandStatus.RELEASE.getCode()).in(DemandInfo::getId,demandId)).size();
     }
 }

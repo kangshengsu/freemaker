@@ -35,16 +35,16 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- *
  * <p>说明： 作品API接口层</p>
+ *
  * @version: V1.0
  * @author: LiuDuo
  * @time 2020年09月11日
- *
  */
 @Api(value = "/v1/productionViewApi", description = "作品详情相关接口")
 @RestController
@@ -85,18 +85,23 @@ public class ProductionViewApi extends BaseController<ProductionInfo, Production
     @GetMapping("/getById")
     @ApiOperation(value = "根据作品ID查看作品详情")
     @ApiImplicitParam(name = "id", value = "作品ID", dataType = "Long", paramType = "query")
-    public ApiResponse<ProductionViewVO> getById(@RequestParam("id") Long productionId) {
+    public ApiResponse<ProductionViewVO> getById(@RequestParam("id") Long productionId, HttpServletRequest request) {
 
         ProductionInfo productionInfo = productionInfoService.get(productionId);
-        Long userId = Context.getCurrUserId();
+        String isNeedValid1 = request.getHeader("isNeedValid");
+        Boolean isNeedValid = Boolean.valueOf(isNeedValid1);
+        Long userId = null;
+        if (isNeedValid) {
+            userId = Context.getCurrUserId();
+        }
         if (userId != null && ObjectUtil.isNotNull(userId)) {
             CollectInfo collectInfo = collectInfoService.getCollectInfo(userId, productionId, (long) CollectType.PRODUCTION.getCode());
             if (ObjectUtil.isNotNull(collectInfo) && collectInfo.getStatus() == CollectStatus.COLLECT.getCode()) {
                 productionInfo.setIsCollect(Boolean.TRUE);
-            }else{
+            } else {
                 productionInfo.setIsCollect(Boolean.FALSE);
             }
-        }else {
+        } else {
             productionInfo.setIsCollect(Boolean.FALSE);
         }
         if (productionInfo == null) {

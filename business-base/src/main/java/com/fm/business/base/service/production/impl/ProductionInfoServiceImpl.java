@@ -595,7 +595,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
             return new PageInfo<>();
         }
         com.baomidou.mybatisplus.extension.plugins.pagination.Page<ProductionInfo> productionInfoPage = getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
-                Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getStatus, ProductionStatus.RELEASE.getCode()).in(ProductionInfo::getId, productionId));
+                Wrappers.lambdaQuery(ProductionInfo.class).in(ProductionInfo::getId, productionId));
         List<ProductionInfo> data = productionInfoPage.getRecords();
         if (data != null && !CollectionUtils.isEmpty(data)) {
             fillProductInfoRelation(data);

@@ -68,7 +68,7 @@ public interface IDemandInfoService extends Service<DemandInfo> {
     List<DemandInfo> findDemandInfoLikeNameOrCode(String str);
 
 
-    Page<DemandInfo> getPageDemandInfo(List<Long> demandId,Integer currentPage,Integer pageSize);
+    Page<DemandInfo> getPageDemandInfo(List<Long> demandId,Integer currentPage,Integer pageSize,Integer demandStatus);
     /**
      * 查询我发布的全部需求
      * @param currentPage
@@ -90,4 +90,7 @@ public interface IDemandInfoService extends Service<DemandInfo> {
 
     Integer getDemandCountByStatus(Long employerId, Integer status, List<Long> demandProductionRelationIds);
 
+    Integer getDemandClosedCount(List<Long> demandId);
+
+    Integer getOpenedDemandCount(List<Long> demandId);
 }

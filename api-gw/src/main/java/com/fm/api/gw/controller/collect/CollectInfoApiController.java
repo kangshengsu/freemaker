@@ -7,6 +7,7 @@ import com.fm.api.gw.vo.demand.mapper.DemandInfoMapper;
 import com.fm.api.gw.vo.production.mapper.ProductionMapper;
 import com.fm.api.gw.vo.production.view.ProductionViewVO;
 import com.fm.business.base.enums.CollectStatus;
+import com.fm.business.base.enums.DemandStatus;
 import com.fm.business.base.enums.ProductionStatus;
 import com.fm.business.base.model.collect.CollectInfo;
 import com.fm.business.base.model.demand.DemandInfo;
@@ -22,12 +23,15 @@ import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.mapstruct.ap.shaded.freemarker.template.utility.DeepUnwrap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -96,7 +100,7 @@ public class CollectInfoApiController extends BaseController<CollectInfo, Collec
         List<Long> productionId = collectInfoService.getProductionId(userId);
         Page<ProductionInfo> productionInfo = productionInfoService.getPageProductionById(productionId, currentPage, pageSize);
         if (CollectionUtils.isEmpty(productionInfo.getData())) {
-            return failed("获取收藏列表失败");
+            return success(result);
         }
         List<ProductionViewVO> productionViewVOList = productionInfo.getData().stream().map(productionMapper::toProductionViewVO).collect(Collectors.toList());
         PageInfo<ProductionViewVO> pageInfo = new PageInfo<>();
@@ -111,14 +115,30 @@ public class CollectInfoApiController extends BaseController<CollectInfo, Collec
     @RequestMapping(value = "getCollectDemand", method = RequestMethod.GET)
     @ApiOperation(value = "获取需求收藏列表")
     public ApiResponse<CollectInfoVO> getCollectDemand(@RequestParam("currentPage") Integer currentPage,
-                                                       @RequestParam("pageSize") Integer pageSize) {
+                                                       @RequestParam("pageSize") Integer pageSize,
+                                                       @RequestParam("demandStatus") Integer demandStatus) {
         CollectInfoVO result = new CollectInfoVO();
+        Map<String, Integer> map = new HashMap<>();
+        Integer closed;
+        Integer opened;
         Long userId = Context.getCurrUserId();
         List<Long> demandId = collectInfoService.getDemandId(userId);
-        Page<DemandInfo> pageDemandInfo = demandInfoService.getPageDemandInfo(demandId, currentPage, pageSize);
-        if (CollectionUtils.isEmpty(pageDemandInfo.getData())) {
-            return failed("获取收藏列表失败");
+        if (CollectionUtils.isEmpty(demandId)) {
+            map.put("total", 0);
+            map.put("opened", 0);
+            map.put("closed", 0);
+            result.setDemandInfoCount(map);
         }
+        Page<DemandInfo> pageDemandInfo = demandInfoService.getPageDemandInfo(demandId, currentPage, pageSize,demandStatus);
+        if (CollectionUtils.isEmpty(pageDemandInfo.getData())) {
+            return success(result);
+        }
+        opened = demandInfoService.getOpenedDemandCount(demandId);
+        closed = demandInfoService.getDemandClosedCount(demandId);
+        map.put("total", opened + closed);
+        map.put("opened", opened);
+        map.put("closed", closed);
+
         List<DemandInfoVO> data = pageDemandInfo.getData().stream().map(demandInfoMapper::toDemandInfoVO).collect(Collectors.toList());
         PageInfo<DemandInfoVO> pageInfo = new PageInfo<>();
         pageInfo.setCurrentPage(currentPage);
@@ -126,6 +146,7 @@ public class CollectInfoApiController extends BaseController<CollectInfo, Collec
         pageInfo.setTotal(pageDemandInfo.getTotal());
         pageInfo.setData(data);
         result.setDemandInfo(pageInfo);
+        result.setDemandInfoCount(map);
         return success(result);
     }
 
