@@ -125,6 +125,10 @@ public class ProductionInfo extends BaseModel implements Serializable,IAudit {
      */
     private transient String budgetTypeName;
 
+    /**
+     * 是否收藏
+     */
+    private transient Boolean isCollect;
 
     /**
     * 创建时间

@@ -35,6 +35,7 @@ import com.fm.framework.core.query.PageInfo;
 import com.fm.framework.core.service.AuditBaseService;
 import com.fm.framework.core.utils.CodeUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.UnixCrypt;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -132,7 +133,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
     @Override
     public ProductionInfo get(Long id) {
-        ProductionInfo result =  getById(id);
+        ProductionInfo result = getById(id);
         fillProductInfoRelation(Arrays.asList(result));
         return result;
     }
@@ -150,7 +151,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
         List<ProductionInfo> result = getByIds(ids);
 
-        if(CollectionUtils.isEmpty(result)){
+        if (CollectionUtils.isEmpty(result)) {
             return Collections.emptyList();
         }
 
@@ -177,7 +178,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         List<ProductionInfo> result = ids.stream().map(id -> get(id)).collect(Collectors.toList());
 
 
-        if(CollectionUtils.isEmpty(result)){
+        if (CollectionUtils.isEmpty(result)) {
             return Collections.emptyList();
         }
 
@@ -266,7 +267,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
         //获取作品下的岗位
         ProductionInfo productionInfo = get(productionId);
-        if(productionInfo == null || productionInfo.getJobCateId() == null){
+        if (productionInfo == null || productionInfo.getJobCateId() == null) {
             return new PageInfo();
         }
         //获取岗位下其他作品
@@ -405,7 +406,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
         productionInfos.forEach(productionInfo -> {
             if (freelancerInfoMap.containsKey(productionInfo.getFreelancerId())) {
-                if(freelancerInfoMap.get(productionInfo.getFreelancerId()).getReferrer() != null){
+                if (freelancerInfoMap.get(productionInfo.getFreelancerId()).getReferrer() != null) {
                     SysUser sysUser = iSysUserService.get(freelancerInfoMap.get(productionInfo.getFreelancerId()).getReferrer());
                     freelancerInfoMap.get(productionInfo.getFreelancerId()).setReferrerName(sysUser.getName());
                 }
@@ -431,7 +432,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
             }
 
             if (partnerInfoMap.containsKey(productionInfo.getFreelancerId())) {
-                if(partnerInfoMap.get(productionInfo.getFreelancerId()).getBelongId() != null){
+                if (partnerInfoMap.get(productionInfo.getFreelancerId()).getBelongId() != null) {
                     SysUser sysUser = iSysUserService.get(partnerInfoMap.get(productionInfo.getFreelancerId()).getBelongId());
                     partnerInfoMap.get(productionInfo.getFreelancerId()).setBelongIdName(sysUser.getName());
                 }
@@ -527,7 +528,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
     @Override
     public List<ProductionInfo> distinctProductions(List<Long> productionIds) {
-        if(CollectionUtils.isEmpty(productionIds)){
+        if (CollectionUtils.isEmpty(productionIds)) {
             return new ArrayList<>();
         }
         QueryWrapper<ProductionInfo> queryWrapper = new QueryWrapper<>();
@@ -554,7 +555,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
 
     @Override
     public List<ProductionInfo> getByJobCateId(Long id) {
-        return getBaseMapper().selectList(Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getJobCateId,id));
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getJobCateId, id));
 
     }
 
@@ -568,7 +569,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         PageInfo<ProductionInfo> page = new PageInfo<>();
         page.setCurrentPage(currentPage);
         page.setPageSize(pageSize);
-        page.setTotal((int)productionInfoPage.getTotal());
+        page.setTotal((int) productionInfoPage.getTotal());
         page.setData(data);
         return page;
     }
@@ -576,8 +577,8 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
     @Override
     public List<ProductionInfo> getByJobCateIdPublish(Long id) {
         return getBaseMapper().selectList(Wrappers.lambdaQuery(ProductionInfo.class)
-                .eq(ProductionInfo::getJobCateId,id)
-                .eq(ProductionInfo::getStatus,ProductionStatus.RELEASE.getCode()));
+                .eq(ProductionInfo::getJobCateId, id)
+                .eq(ProductionInfo::getStatus, ProductionStatus.RELEASE.getCode()));
     }
 
     @Override
@@ -586,5 +587,24 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         ProductionInfo result = getBaseMapper().selectOne(Wrappers.lambdaQuery(ProductionInfo.class).eq(ProductionInfo::getCode, code));
 
         return result;
+    }
+
+    @Override
+    public Page<ProductionInfo> getPageProductionById(List<Long> productionId, Integer currentPage, Integer pageSize) {
+        if (CollectionUtils.isEmpty(productionId)) {
+            return new PageInfo<>();
+        }
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<ProductionInfo> productionInfoPage = getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
+                Wrappers.lambdaQuery(ProductionInfo.class).in(ProductionInfo::getId, productionId));
+        List<ProductionInfo> data = productionInfoPage.getRecords();
+        if (data != null && !CollectionUtils.isEmpty(data)) {
+            fillProductInfoRelation(data);
+        }
+        PageInfo<ProductionInfo> pageInfo = new PageInfo<>();
+        pageInfo.setCurrentPage(currentPage);
+        pageInfo.setPageSize(pageSize);
+        pageInfo.setTotal((int) productionInfoPage.getTotal());
+        pageInfo.setData(data);
+        return pageInfo;
     }
 }

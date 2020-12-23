@@ -1,13 +1,14 @@
 package com.fm.api.gw.controller.demand;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.fm.api.gw.vo.demand.DemandInfoVO;
 import com.fm.api.gw.vo.demand.mapper.DemandInfoMapper;
-import com.fm.business.base.enums.BudgetType;
-import com.fm.business.base.enums.DeliveryType;
-import com.fm.business.base.enums.DemandStatus;
+import com.fm.business.base.enums.*;
 import com.fm.business.base.model.EmployerInfo;
+import com.fm.business.base.model.collect.CollectInfo;
 import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.job.BdJobCate;
+import com.fm.business.base.service.collect.ICollectInfoService;
 import com.fm.business.base.service.job.IBdJobCateService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandCenterInfoService;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 @RestController
@@ -50,11 +52,12 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
     @Autowired
     private DemandInfoMapper demandInfoMapper;
 
+    @Autowired
+    private ICollectInfoService collectInfoService;
+
     /**
-     *
      * @param currentPage
      * @param pageSize
-     * @param status
      * @param jobCateId
      * @return
      */
@@ -77,7 +80,6 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
     }
 
     /**
-     *
      * @param code
      * @return
      */
@@ -85,8 +87,23 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
     @ApiImplicitParams({
             @ApiImplicitParam(name = "code", value = "需求编码", dataType = "String", paramType = "query")})
     @RequestMapping(value = "getDemandCenterDtlByCode", method = RequestMethod.GET)
-    public ApiResponse<DemandInfoVO> getDemandCenterDtlByCode(@RequestParam(value = "code", required = false) String code) {
+    public ApiResponse<DemandInfoVO> getDemandCenterDtlByCode(@RequestParam(value = "code", required = false) String code, HttpServletRequest request) {
         DemandInfo demandInfo = demandCenterInfoService.getDemandCenterDtlByCode(code);
+        Boolean isNeedValid = Boolean.valueOf(request.getHeader("isNeedValid"));
+        Long userId = null;
+        if (isNeedValid) {
+            userId = Context.getCurrUserId();
+        }
+        if (userId != null && ObjectUtil.isNotNull(userId)) {
+            CollectInfo collectInfo = collectInfoService.getCollectInfo(userId, demandInfo.getId(), (long) CollectType.DEMAND.getCode());
+            if (ObjectUtil.isNotNull(collectInfo) && collectInfo.getStatus() == CollectStatus.COLLECT.getCode()) {
+                demandInfo.setIsCollect(Boolean.TRUE);
+            }else{
+                demandInfo.setIsCollect(Boolean.FALSE);
+            }
+        }else{
+            demandInfo.setIsCollect(Boolean.FALSE);
+        }
         return success(this.fill(demandInfo));
     }
 
@@ -121,6 +138,7 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
 
     /**
      * 额外填充个人信息头像电话等信息
+     *
      * @param model
      * @return
      */
@@ -146,7 +164,7 @@ public class DemandCenterApiController extends BaseController<DemandInfo, Demand
         form.setOrderCount(iOrderInfoService.getOrderCountByDemandId(form.getId()));
 
         Long currUserId = Context.getCurrUserId();
-        if(currUserId != null){
+        if (currUserId != null) {
             EmployerInfo userEmployerInfo = iEmployerInfoService.getByUserId(currUserId);
             form.setUserEmployerId(userEmployerInfo.getId());
         }

@@ -167,6 +167,11 @@ public class DemandInfoVO extends VO implements Serializable {
 	private Integer attestation;
 
 	/**
+	 * 是否收藏
+	 */
+	private transient Boolean isCollect;
+
+	/**
 	 * 创建时间
 	 **/
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")

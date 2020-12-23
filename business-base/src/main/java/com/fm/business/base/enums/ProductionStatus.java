@@ -28,7 +28,13 @@ public enum ProductionStatus {
     /**
      * 40-已发布
      */
-    RELEASE(40,"已发布");
+    RELEASE(40,"已发布"),
+
+    /**
+     * 50-已删除
+     */
+    DELETE(50,"已删除");
+
     /**
      * 编码
      */
