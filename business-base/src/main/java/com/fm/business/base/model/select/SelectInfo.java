@@ -29,7 +29,12 @@ public class SelectInfo extends BaseModel implements Serializable, IAudit {
     /**
      * 关键词
      */
-    private String keyWord;
+    private String keyword;
+
+    /**
+     * 是否推荐
+     */
+    private Integer isRecommend;
 
     /**
      * 权重

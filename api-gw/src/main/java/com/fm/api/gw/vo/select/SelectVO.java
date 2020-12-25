@@ -19,6 +19,31 @@ public class SelectVO extends VO implements Serializable {
     private static final long serialVersionUID = -2036143260161040625L;
 
     /**
+     * 用户主键
+     */
+    private Long userId;
+
+    /**
+     * 关键词
+     */
+    private String keyword;
+
+    /**
+     * 是否推荐
+     */
+    private Integer isRecommend;
+
+    /**
+     * 是否上推荐
+     */
+    private Integer weight;
+
+    /**
+     * 是否火热
+     */
+    private Integer isHot;
+
+    /**
      * 搜索作品结果
      */
     private Page<ProductionViewVO> productionViewVO;
