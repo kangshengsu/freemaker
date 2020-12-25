@@ -17,4 +17,6 @@ public interface ISelectInfoService extends Service<SelectInfo> {
    List<SelectInfo> getRecommendKeywordsByWeight();
 
     Boolean deleteKeyword(Long userId);
+
+    SelectInfo selectByUserIdAndKeyword(Long userId, String keyword);
 }

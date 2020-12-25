@@ -67,6 +67,10 @@ public class SelectController extends BaseController<SelectInfo, SelectVO> {
             Long userId = Context.getCurrUserId();
             if (ObjectUtil.isNotNull(userId)) {
                 selectVO.setUserId(userId);
+                SelectInfo selectInfo = selectInfoService.selectByUserIdAndKeyword(userId, selectVO.getKeyword());
+                if (ObjectUtil.isNotNull(selectInfo)) {
+                   return success(selectInfoService.update(selectInfo));
+                }
                 return success(selectInfoService.save(convert(selectVO)));
             }
         }
