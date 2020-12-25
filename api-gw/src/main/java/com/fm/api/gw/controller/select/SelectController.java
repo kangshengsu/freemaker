@@ -1,7 +1,6 @@
 package com.fm.api.gw.controller.select;
 
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import com.fm.api.gw.vo.demand.DemandInfoVO;
 import com.fm.api.gw.vo.demand.mapper.DemandInfoMapper;
 import com.fm.api.gw.vo.production.mapper.ProductionMapper;
@@ -24,7 +23,6 @@ import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.ibatis.executor.ResultExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,7 +65,7 @@ public class SelectController extends BaseController<SelectInfo, SelectVO> {
 
     @RequestMapping(value = "insertKeyword", method = RequestMethod.POST)
     @ApiOperation("保存搜索关键词")
-    public ApiResponse<Boolean> insertKeyWord(@Valid @RequestBody SelectVO selectVO,HttpServletRequest request) {
+    public ApiResponse<Boolean> insertKeyWord(@Valid @RequestBody SelectVO selectVO, HttpServletRequest request) {
         Boolean isNeedValid = Boolean.valueOf(request.getHeader("isNeedValid"));
         if (isNeedValid) {
             Long userId = Context.getCurrUserId();
@@ -75,7 +73,7 @@ public class SelectController extends BaseController<SelectInfo, SelectVO> {
                 selectVO.setUserId(userId);
                 SelectInfo selectInfo = selectInfoService.selectByUserIdAndKeyword(userId, selectVO.getKeyword());
                 if (ObjectUtil.isNotNull(selectInfo)) {
-                   return success(selectInfoService.update(selectInfo));
+                    return success(selectInfoService.update(selectInfo));
                 }
                 return success(selectInfoService.save(convert(selectVO)));
             }
@@ -102,13 +100,13 @@ public class SelectController extends BaseController<SelectInfo, SelectVO> {
     public ApiResponse<SelectVO> getPageSelect(@RequestParam("keyword") String keyword,
                                                @RequestParam("currentPage") Integer currentPage,
                                                @RequestParam("pageSize") Integer pageSize,
-                                               @RequestParam("moreStatus")Integer moreStatus) {
+                                               @RequestParam("moreStatus") Integer moreStatus) {
         SelectVO result = new SelectVO();
         if (moreStatus == CollectType.PRODUCTION.getCode()) {
             PageInfo<ProductionViewVO> pageInfo = getProductionViewVOPageInfo(keyword, currentPage, pageSize);
             result.setProductionViewVO(pageInfo);
             return success(result);
-        }else if (moreStatus == CollectType.DEMAND.getCode()){
+        } else if (moreStatus == CollectType.DEMAND.getCode()) {
             PageInfo<DemandInfoVO> demandPageInfo = getDemandInfoVOPageInfo(keyword, currentPage, pageSize);
             result.setDemandInfoVO(demandPageInfo);
             return success(result);
@@ -120,12 +118,12 @@ public class SelectController extends BaseController<SelectInfo, SelectVO> {
         return success(result);
     }
 
-    @RequestMapping(value = "deleteKeyword",method = RequestMethod.GET)
+    @RequestMapping(value = "deleteKeyword", method = RequestMethod.GET)
     @ApiOperation("清空关键词搜索记录")
-    public ApiResponse<Boolean> deleteKeyword(){
+    public ApiResponse<Boolean> deleteKeyword() {
         Long userId = Context.getCurrUserId();
         if (ObjectUtil.isNotNull(userId)) {
-           return success(selectInfoService.deleteKeyword(userId));
+            return success(selectInfoService.deleteKeyword(userId));
         }
         return success(Boolean.FALSE);
     }
@@ -161,12 +159,11 @@ public class SelectController extends BaseController<SelectInfo, SelectVO> {
         return pageInfo;
     }
 
-    @RequestMapping(value = "getRecommendKeywords",method = RequestMethod.GET)
+    @RequestMapping(value = "getRecommendKeywords", method = RequestMethod.GET)
     @ApiOperation("获取推荐关键词")
-    public ApiResponse<List<SelectVO>> getRecommendKeywords(){
-       return success(convert(selectInfoService.getRecommendKeywordsByWeight()));
+    public ApiResponse<List<SelectVO>> getRecommendKeywords() {
+        return success(convert(selectInfoService.getRecommendKeywordsByWeight()));
     }
-
 
 
     @Override
