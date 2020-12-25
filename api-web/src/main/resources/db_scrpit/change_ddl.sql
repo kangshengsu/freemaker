@@ -20,8 +20,28 @@ CREATE TABLE `advert_info` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='广告位信息表';
 
+-- 创建轮播信息表
+CREATE TABLE `rotation_info` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '逻辑主键',
+  `name` varchar(128) NOT NULL COMMENT '模版名称',
+  `role` varchar(128) NOT NULL COMMENT '角色',
+  `content` varchar(128) NOT NULL COMMENT '内容',
+	`money` varchar(128) NOT NULL COMMENT '金额',
+  `type` tinyint(4) NOT NULL COMMENT '类型（10-需求/服务，20-支付，30-评价）',
+  `status` tinyint(4) NOT NULL COMMENT '状态（10-启用，20-停用）',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `create_user` bigint(20) NOT NULL COMMENT '创建人',
+  `update_user` bigint(20) NOT NULL COMMENT '修改人',
+  `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标记（0-否，1-是）',
+  `ts` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '数据库时间戳',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='轮播信息表';
+
 -- 新增是否推荐列
 ALTER TABLE `select_info`
-ADD COLUMN is_recommend TINYINT(4) DEFAULT 20 COMMENT '是否上推荐' AFTER keyword
+ADD COLUMN is_recommend TINYINT(4) DEFAULT 20 COMMENT '是否上推荐' AFTER keyword;
+
 -- 主键分布式自增
 INSERT INTO `leaf_alloc`(biz_tag,max_id,step) VALUES ('advert_info',2000,10);
+INSERT INTO `leaf_alloc`(biz_tag,max_id,step) VALUES ('rotation_info',2000,10);

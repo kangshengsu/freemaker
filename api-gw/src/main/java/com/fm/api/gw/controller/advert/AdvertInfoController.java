@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/v1/advertApi")
-@Api(value = "广告位接口")
+@Api(description = "广告位接口")
 public class AdvertInfoController extends BaseController<AdvertInfo, AdvertInfoVO> {
 
     @Autowired
@@ -34,7 +34,7 @@ public class AdvertInfoController extends BaseController<AdvertInfo, AdvertInfoV
 
     @ApiOperation(value = "广告位查询")
     @RequestMapping(value = "list", method = RequestMethod.GET)
-    public ApiResponse<List<AdvertInfoVO>> getDemandCenterPage() {
+    public ApiResponse<List<AdvertInfoVO>> list() {
 
         List<AdvertInfo> all = advertInfoService.findAll();
 
