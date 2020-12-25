@@ -51,10 +51,13 @@ public class AdvertController extends BaseController<AdvertInfo, AdvertInfoVO> {
 
     @RequestMapping(value = "update",method = RequestMethod.POST)
     public ApiResponse<Boolean> update(@RequestBody AdvertInfoVO advertInfoVO) {
-        if(advertInfoVO.getStatus().equals(TagStatus.ENABLE.getCode())){
-            Integer validCount = advertInfoService.findValidCount();
-            if(validCount >= 3){
-                return ApiResponse.ofFailed("修改失败，启用数量已达三个！");
+        AdvertInfo result = advertInfoService.get(advertInfoVO.getId());
+        if(result.getStatus().equals(TagStatus.DISABLE.getCode())){
+            if(advertInfoVO.getStatus().equals(TagStatus.ENABLE.getCode())){
+                Integer validCount = advertInfoService.findValidCount();
+                if(validCount >= 3){
+                    return ApiResponse.ofFailed("修改失败，启用数量已达三个！");
+                }
             }
         }
         return super.update(advertInfoVO);
