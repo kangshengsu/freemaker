@@ -28,8 +28,7 @@ public class SelectInfoServiceImpl extends AuditBaseService<SelectInfoMapper, Se
         map.put("keywords", getBaseMapper()
                         .selectList(Wrappers.lambdaQuery(SelectInfo.class)
                         .eq(SelectInfo::getUserId, userId)
-                        .orderByDesc(SelectInfo::getUpdateTime)
-                        .last("limit 6"))
+                        .orderByDesc(SelectInfo::getUpdateTime))
                         .stream()
                         .map(SelectInfo::getKeyword)
                         .collect(Collectors.toList()));
