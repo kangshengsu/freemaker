@@ -9,9 +9,11 @@ import com.fm.api.gw.vo.production.view.ProductionViewVO;
 import com.fm.api.gw.vo.select.SelectVO;
 import com.fm.business.base.enums.CollectType;
 import com.fm.business.base.model.demand.DemandInfo;
+import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.model.select.SelectInfo;
 import com.fm.business.base.service.demand.IDemandInfoService;
+import com.fm.business.base.service.job.IBdJobCateService;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.business.base.service.select.ISelectInfoService;
 import com.fm.framework.core.Context;
@@ -31,6 +33,7 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -58,6 +61,9 @@ public class SelectController extends BaseController<SelectInfo, SelectVO> {
 
     @Autowired
     private DemandInfoMapper demandInfoMapper;
+
+    @Autowired
+    private IBdJobCateService iBdJobCateService;
 
     @RequestMapping(value = "insertKeyword", method = RequestMethod.POST)
     @ApiOperation("保存搜索关键词")
@@ -128,6 +134,14 @@ public class SelectController extends BaseController<SelectInfo, SelectVO> {
     private PageInfo<DemandInfoVO> getDemandInfoVOPageInfo(@RequestParam("keyword") String keyword, @RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize) {
         Page<DemandInfo> demandInfoPage = demandInfoService.getDemandByKeyword(keyword, currentPage, pageSize);
         List<DemandInfoVO> demandInfoVOList = demandInfoPage.getData().stream().map(demandInfoMapper::toDemandInfoVO).collect(Collectors.toList());
+        Map<Long, BdJobCate> bdJobCateMap = demandInfoVOList.stream().map(DemandInfoVO::getJobCateId).collect(Collectors.toList())
+                .stream().map(jobCateId -> iBdJobCateService.get(jobCateId)).collect(Collectors.toList())
+                .stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
+        demandInfoVOList.forEach(demandInfoVO -> {
+            if (bdJobCateMap.containsKey(demandInfoVO.getJobCateId())) {
+                demandInfoVO.setJobCateIdName(bdJobCateMap.get(demandInfoVO.getJobCateId()).getCateName());
+            }
+        });
         PageInfo<DemandInfoVO> demandPageInfo = new PageInfo<>();
         demandPageInfo.setCurrentPage(currentPage);
         demandPageInfo.setPageSize(pageSize);
