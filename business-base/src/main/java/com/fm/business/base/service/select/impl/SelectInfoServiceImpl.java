@@ -1,6 +1,7 @@
 package com.fm.business.base.service.select.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.select.SelectInfoMapper;
 import com.fm.business.base.enums.SelectIsRecommend;
@@ -10,9 +11,7 @@ import com.fm.framework.core.service.AuditBaseService;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -27,9 +26,9 @@ public class SelectInfoServiceImpl extends AuditBaseService<SelectInfoMapper, Se
         Map<String, List<String>> map = new HashMap<>();
         QueryWrapper<SelectInfo> wrapper = new QueryWrapper<>();
         map.put("keywords", getBaseMapper()
-                        .selectList(wrapper.select("distinct keyword")
-                        .eq("user_id", userId)
-                        .orderByDesc("create_time")
+                        .selectList(Wrappers.lambdaQuery(SelectInfo.class)
+                        .eq(SelectInfo::getUserId, userId)
+                        .orderByDesc(SelectInfo::getUpdateTime)
                         .last("limit 6"))
                         .stream()
                         .map(SelectInfo::getKeyword)
@@ -47,10 +46,15 @@ public class SelectInfoServiceImpl extends AuditBaseService<SelectInfoMapper, Se
 
     @Override
     public Boolean deleteKeyword(Long userId) {
-        if (getBaseMapper().delete(Wrappers.lambdaQuery(SelectInfo.class).eq(SelectInfo::getUserId,userId)) > 0) {
+        if (getBaseMapper().delete(Wrappers.lambdaQuery(SelectInfo.class).eq(SelectInfo::getUserId, userId)) > 0) {
             return Boolean.TRUE;
-        }else{
+        } else {
             return Boolean.FALSE;
         }
+    }
+
+    @Override
+    public SelectInfo selectByUserIdAndKeyword(Long userId, String keyword) {
+        return getBaseMapper().selectOne(Wrappers.lambdaQuery(SelectInfo.class).eq(SelectInfo::getUserId,userId).eq(SelectInfo::getKeyword,keyword));
     }
 }
