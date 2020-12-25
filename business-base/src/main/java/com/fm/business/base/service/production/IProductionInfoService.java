@@ -140,4 +140,6 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
     ProductionInfo getByCode(String code);
 
     Page<ProductionInfo> getPageProductionById(List<Long> productionId, Integer currentPage, Integer pageSize);
+
+    Page<ProductionInfo> getProductionInfoByKeyword(String keyword, Integer currentPage, Integer pageSize);
 }

@@ -20,5 +20,8 @@ CREATE TABLE `advert_info` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='广告位信息表';
 
+-- 新增是否推荐列
+ALTER TABLE `select_info`
+ADD COLUMN is_recommend TINYINT(4) DEFAULT 20 COMMENT '是否上推荐' AFTER keyword
 -- 主键分布式自增
 INSERT INTO `leaf_alloc`(biz_tag,max_id,step) VALUES ('advert_info',2000,10);

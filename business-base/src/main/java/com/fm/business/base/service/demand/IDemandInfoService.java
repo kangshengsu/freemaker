@@ -93,4 +93,6 @@ public interface IDemandInfoService extends Service<DemandInfo> {
     Integer getDemandClosedCount(List<Long> demandId);
 
     Integer getOpenedDemandCount(List<Long> demandId);
+
+    Page<DemandInfo> getDemandByKeyword(String keyword, Integer currentPage, Integer pageSize);
 }
