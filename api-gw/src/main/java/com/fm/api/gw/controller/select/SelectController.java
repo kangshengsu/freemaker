@@ -59,9 +59,9 @@ public class SelectController extends BaseController<SelectInfo, SelectVO> {
     @Autowired
     private DemandInfoMapper demandInfoMapper;
 
-    @RequestMapping(value = "insertKeyWord", method = RequestMethod.POST)
+    @RequestMapping(value = "insertKeyword", method = RequestMethod.POST)
     @ApiOperation("保存搜索关键词")
-    public ApiResponse<Boolean> insertKeyWord(@RequestBody @Valid SelectVO selectVO,HttpServletRequest request) {
+    public ApiResponse<Boolean> insertKeyWord(@Valid @RequestBody SelectVO selectVO,HttpServletRequest request) {
         Boolean isNeedValid = Boolean.valueOf(request.getHeader("isNeedValid"));
         if (isNeedValid) {
             Long userId = Context.getCurrUserId();
@@ -88,7 +88,7 @@ public class SelectController extends BaseController<SelectInfo, SelectVO> {
     }
 
     @RequestMapping(value = "getPageSelect", method = RequestMethod.GET)
-    @ApiOperation("按关键词查询作品")
+    @ApiOperation("按关键词查询作品及需求")
     public ApiResponse<SelectVO> getPageSelect(@RequestParam("keyword") String keyword,
                                                @RequestParam("currentPage") Integer currentPage,
                                                @RequestParam("pageSize") Integer pageSize,

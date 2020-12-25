@@ -26,7 +26,7 @@ public class SelectInfoServiceImpl extends AuditBaseService<SelectInfoMapper, Se
     public Map<String, List<String>> getKeyWordsByUserId(Long userId) {
         Map<String, List<String>> map = new HashMap<>();
         QueryWrapper<SelectInfo> wrapper = new QueryWrapper<>();
-        map.put("keyWords", getBaseMapper()
+        map.put("keywords", getBaseMapper()
                         .selectList(wrapper.select("distinct keyword")
                         .eq("user_id", userId)
                         .orderByDesc("create_time")

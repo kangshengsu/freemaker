@@ -7,6 +7,7 @@ import com.fm.framework.core.query.Page;
 import com.fm.framework.web.VO;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
@@ -26,6 +27,7 @@ public class SelectVO extends VO implements Serializable {
     /**
      * 关键词
      */
+    @NotBlank(message = "关键词不能为空")
     private String keyword;
 
     /**
