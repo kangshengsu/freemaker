@@ -154,4 +154,9 @@ public class EvaluationInfoController extends BaseController<EvaluationInfo, Eva
         return EvaluationConvert.INSTANCE.to(model);
     }
 
+    @Override
+    protected EvaluationInfo convert(EvaluationInfoVO model) {
+        return EvaluationConvert.INSTANCE.toEvaluation(model);
+    }
+
 }
