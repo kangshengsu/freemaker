@@ -65,7 +65,7 @@ public class MiniAppController {
     /**
      * 默认存活时间
      */
-    private static int DEFALUT_LOGIN_SURVIVE_TIME = 24;
+    private static int DEFALUT_LOGIN_SURVIVE_TIME = 1;
 
     /**
      * 小程序登录
@@ -87,7 +87,7 @@ public class MiniAppController {
         RBucket<String> cacheToken = redissonClient.getBucket(openId);
         //缓存用户token信息，供拦截器使用
         if (!cacheToken.isExists()) {
-            cacheToken.set(JwtUtil.generateToken(openId), DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
+            cacheToken.set(JwtUtil.generateToken(openId), DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.MINUTES);
         }
 
         Long userId = null;
