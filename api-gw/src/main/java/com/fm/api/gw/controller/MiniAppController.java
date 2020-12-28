@@ -65,7 +65,7 @@ public class MiniAppController {
     /**
      * 默认存活时间
      */
-    private static int DEFALUT_LOGIN_SURVIVE_TIME = 1;
+    private static int DEFALUT_LOGIN_SURVIVE_TIME = 7;
 
     /**
      * 小程序登录
@@ -87,7 +87,7 @@ public class MiniAppController {
         RBucket<String> cacheToken = redissonClient.getBucket(openId);
         //缓存用户token信息，供拦截器使用
         if (!cacheToken.isExists()) {
-            cacheToken.set(JwtUtil.generateToken(openId), DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.MINUTES);
+            cacheToken.set(JwtUtil.generateToken(openId), DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.DAYS);
         }
 
         Long userId = null;
@@ -125,7 +125,7 @@ public class MiniAppController {
         miniAppUserVO.setUserId(userId);
         miniAppUserVO.setSessionKey(weChatDecryptVO.getSessionKey());
 
-        currUser.set(miniAppUserVO, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.HOURS);
+        currUser.set(miniAppUserVO, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.DAYS);
 
         boolean isExistPhone = Optional.ofNullable(sysUser)
                 .map(u -> StringUtils.isNotBlank(u.getPhone()))
