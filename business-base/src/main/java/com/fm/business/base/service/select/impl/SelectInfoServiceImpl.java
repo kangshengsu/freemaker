@@ -1,5 +1,6 @@
 package com.fm.business.base.service.select.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.select.SelectInfoMapper;
 import com.fm.business.base.enums.SelectIsRecommend;
