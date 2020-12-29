@@ -194,6 +194,9 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
         if(status.equals(OrderOperateType.SUBMIT_AGAIN.getCode())){
             orderInfoVO.setStatus(OrderStatus.CHECK_FAIL_61.getCode());
         }
+        if(status.equals(OrderOperateType.CANCEL.getCode())){
+            orderInfoVO.setStatus(OrderStatus.REJECT_30.getCode());
+        }
 
         this.update(orderInfoVO);
 

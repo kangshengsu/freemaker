@@ -135,6 +135,11 @@ public class OrderOperateInfoServiceImpl extends AuditBaseService<IOrderOperateI
             orderOperateInfo.setOperateUser(employerId);
             orderOperateInfo.setReceiveUser(freelancerId);
         }
+        if (OrderOperateType.CANCEL.getCode().equals(status)) {
+            orderOperateInfo.setOperateType(OrderOperateType.CANCEL.getCode());
+            orderOperateInfo.setOperateUser(freelancerId);
+            orderOperateInfo.setReceiveUser(employerId);
+        }
 
         orderOperateInfo.setOrderId(orderId);
         orderOperateInfo.setDescription(description);
