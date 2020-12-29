@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum CollectType {
-    PRODUCTION(10,"作品"),
+    PRODUCTION(10,"服务"),
     DEMAND(20,"需求");
     private Integer code;
     private String name;

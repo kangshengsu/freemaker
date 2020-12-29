@@ -7,6 +7,7 @@ import com.fm.framework.core.query.Page;
 import com.fm.framework.web.VO;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
@@ -17,6 +18,32 @@ import java.io.Serializable;
 @Data
 public class SelectVO extends VO implements Serializable {
     private static final long serialVersionUID = -2036143260161040625L;
+
+    /**
+     * 用户主键
+     */
+    private Long userId;
+
+    /**
+     * 关键词
+     */
+    @NotBlank(message = "关键词不能为空")
+    private String keyword;
+
+    /**
+     * 是否推荐
+     */
+    private Integer isRecommend;
+
+    /**
+     * 是否上推荐
+     */
+    private Integer weight;
+
+    /**
+     * 是否火热
+     */
+    private Integer isHot;
 
     /**
      * 搜索作品结果

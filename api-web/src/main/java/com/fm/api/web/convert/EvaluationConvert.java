@@ -18,5 +18,8 @@ public interface EvaluationConvert {
     @Mapping(target = "images", source = "attachmentInfos")
     EvaluationInfoVO to(EvaluationInfo evaluationInfo);
 
+    @Mapping(source = "images", target = "attachmentInfos")
+    EvaluationInfo toEvaluation(EvaluationInfoVO evaluationInfoVO);
+
 
 }

@@ -5,7 +5,8 @@
     <resultMap id="BaseResultMap" type="com.fm.business.base.model.select.SelectInfo">
         <id column="id" property="id" />
         <id column="user_id" property="userId" />
-        <id column="keyword" property="keyWord" />
+        <id column="keyword" property="keyword" />
+        <id column="is_recommend" property="isRecommend" />
         <id column="weight" property="weight" />
         <id column="is_hot" property="isHot" />
         <id column="create_time" property="createTime" />
