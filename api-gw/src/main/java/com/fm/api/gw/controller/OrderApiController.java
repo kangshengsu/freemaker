@@ -13,10 +13,7 @@ import com.fm.api.gw.vo.employer.mapper.EmployerInfoMapper;
 import com.fm.api.gw.vo.freelancer.mapper.FreelancerInfoMapper;
 import com.fm.api.gw.vo.order.OrderOperateInfoVO;
 import com.fm.api.gw.vo.order.mapper.OrderOperateMapper;
-import com.fm.business.base.enums.FollowType;
-import com.fm.business.base.enums.OrderOperateRoleType;
-import com.fm.business.base.enums.OrderOperateType;
-import com.fm.business.base.enums.OrderStatus;
+import com.fm.business.base.enums.*;
 import com.fm.business.base.model.AttachmentInfo;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
@@ -25,9 +22,10 @@ import com.fm.business.base.model.order.OrderFollow;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.business.base.model.order.OrderOperateInfo;
-import com.fm.business.base.service.job.IBdJobCateService;
+import com.fm.business.base.service.IAttachmentInfoService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.freelancer.IFreelancerInfoService;
+import com.fm.business.base.service.job.IBdJobCateService;
 import com.fm.business.base.service.order.IOrderFollowService;
 import com.fm.business.base.service.order.IOrderInfoDetailService;
 import com.fm.business.base.service.order.IOrderInfoService;
@@ -45,6 +43,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -52,6 +51,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -100,6 +100,9 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
     @Autowired
     private OrderOperateMapper orderOperateMapper;
+
+    @Autowired
+    private IAttachmentInfoService attachmentInfoService;
 
     @RequestMapping(value = "getOrderListByStakeholder",method = RequestMethod.GET)
     @ApiOperation(value="根据订单参与者ID获取订单（订单参与者：雇主/自由职业者）")
@@ -188,6 +191,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         }
 
         fillOrderDetailInfo(orderInfoVO);
+        fillOrderOperateInfo(orderInfoVO);
 
         // belong to
         if (Context.getCurrEmployerId().equals(orderInfoVO.getEmployerId())) {
@@ -201,6 +205,44 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         orderInfoVO.setIsUploadVoucher(orderInfo.getIsUploadVoucher() == null ? Boolean.FALSE : BooleanUtils.toBoolean(orderInfo.getIsUploadVoucher()));
 
         return ApiResponse.ofSuccess(orderInfoVO);
+    }
+
+    private void fillOrderOperateInfo(OrderInfoVO orderInfoVO) {
+        List<OrderOperateInfo> orderOperateInfoList = orderOperateInfoService.findByOrderId(orderInfoVO.getId(), OrderOperateType.SUBMIT.getCode());
+        orderInfoVO.setOrderOperateInfo(new ArrayList<>());
+        OrderOperateInfoVO orderOperateInfoVO = new OrderOperateInfoVO();
+        HashSet<Long> freelancerIds = new HashSet<>();
+        HashSet<String> businessCodes = new HashSet<>();
+        orderOperateInfoList.forEach(orderOperateInfo -> {
+            BeanUtils.copyProperties(orderOperateInfo,orderOperateInfoVO);
+            orderInfoVO.getOrderOperateInfo().add(orderOperateInfoVO);
+            businessCodes.add(orderOperateInfo.getId().toString());
+            if (OrderOperateType.SUBMIT.getCode() == orderOperateInfo.getOperateType()) {
+                freelancerIds.add(orderOperateInfo.getOperateUser());
+            }
+        });
+        Map<String, List<AttachmentVO>> attachmentInfoMap = attachmentInfoService.getByCodeAndType(businessCodes, AttachmentBusinessType.ORDER_OPERATE).stream().collect(Collectors.toMap(AttachmentInfo::getBusinessCode, v -> {
+            List<AttachmentVO> list = new ArrayList<>();
+            AttachmentVO attachmentVO = attachmentMapper.toAttachmentVO(v);
+            list.add(attachmentVO);
+            return list;
+        }, (v1, v2) -> {
+            v1.addAll(v2);
+            return v1;
+        }));
+
+        Map<Long, FreelancerInfo> freelancerInfoMap = freelancerInfoService.getByIds(freelancerIds).stream().collect(Collectors.toMap(FreelancerInfo::getId, Function.identity(), (v1, v2) -> v2));
+        orderInfoVO.getOrderOperateInfo().forEach(orderOperateInfoVO1 -> {
+            if (OrderOperateType.SUBMIT.getCode() == orderOperateInfoVO1.getOperateType()) {
+                if (attachmentInfoMap.containsKey(orderOperateInfoVO1.getId().toString())) {
+                    orderOperateInfoVO1.setImages(attachmentInfoMap.get(orderOperateInfoVO1.getId().toString()));
+                }
+                if (freelancerInfoMap.containsKey(orderOperateInfoVO1.getOperateUser())) {
+                    orderOperateInfoVO1.setOperateUserName(freelancerInfoMap.get(orderOperateInfoVO1.getOperateUser()).getName());
+                }
+            }
+        });
+
     }
 
     private boolean isHour48Ago(Long orderId) {
