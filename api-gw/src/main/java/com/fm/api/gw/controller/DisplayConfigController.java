@@ -12,13 +12,10 @@ import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.framework.core.query.Page;
 import com.fm.framework.core.query.PageInfo;
 import com.fm.framework.core.service.Service;
-import com.fm.framework.web.VO;
 import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -71,6 +68,7 @@ public class DisplayConfigController extends BaseController<DisplayConfig, Displ
                     .stream().map(productionMapper::toProductionListVO).collect(Collectors.toList()));
         }
         Page<ProductionInfo> productionInfoPage = productionInfoService.getPageProductionOrderByWeight(currentPage, pageSize);
+        Collections.shuffle(productionInfoPage.getData());
         List<ProductionListVO> list = productionInfoPage.getData().stream().map(productionMapper::toProductionListVO).collect(Collectors.toList());
         PageInfo<ProductionListVO> pageInfo = new PageInfo<>();
         pageInfo.setCurrentPage(productionInfoPage.getCurrentPage());

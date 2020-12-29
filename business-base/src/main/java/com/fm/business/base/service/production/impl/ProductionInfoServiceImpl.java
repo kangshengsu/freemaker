@@ -346,7 +346,6 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         if (productionInfoPage.getData() != null && !productionInfoPage.getData().isEmpty()) {
             //补全信息
             fillProductInfoRelation(productionInfoPage.getData());
-            Collections.shuffle(productionInfoPage.getData());
         }
         return productionInfoPage;
     }
