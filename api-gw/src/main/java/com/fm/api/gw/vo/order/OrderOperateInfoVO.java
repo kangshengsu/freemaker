@@ -6,12 +6,10 @@
  */
 package com.fm.api.gw.vo.order;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.api.gw.vo.attachment.AttachmentVO;
 import com.fm.framework.web.VO;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
@@ -48,9 +46,15 @@ public class OrderOperateInfoVO extends VO implements Serializable {
 	private String description;
 
 	/**
+	 * 操作类型
+	 **/
+	private Integer operateType;
+
+	/**
 	 * 操作人
 	 **/
 	private Long operateUser;
+	private String operateUserName;
 
 	/**
 	 * 创建时间
@@ -60,7 +64,7 @@ public class OrderOperateInfoVO extends VO implements Serializable {
 	/**
 	 * 附件
 	 */
-    @NotEmpty(message = "支付凭证附件列表不能为空",groups = {UploadPayAttachment.class})
+   // @NotEmpty(message = "支付凭证附件列表不能为空",groups = {UploadPayAttachment.class})
     private List<AttachmentVO> images;
 
 
