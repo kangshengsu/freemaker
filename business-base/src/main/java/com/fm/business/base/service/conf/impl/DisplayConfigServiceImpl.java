@@ -175,7 +175,7 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
         return this.list(Wrappers.lambdaQuery(DisplayConfig.class)
                 .eq(DisplayConfig::getDisplayType, displayType.getCode())
                 .ge(DisplayConfig::getExpiredTime, new Date())
-                .orderByAsc(DisplayConfig::getRecommendWeight));
+                .orderByDesc(DisplayConfig::getRecommendWeight));
     }
 
     @Override
@@ -192,7 +192,8 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
 
         return this.count(Wrappers.lambdaQuery(DisplayConfig.class)
                 .eq(DisplayConfig::getDisplayType, displayType.getCode())
-                .eq(DisplayConfig::getDisplayId, displayId));
+                .eq(DisplayConfig::getDisplayId, displayId)
+                .ge(DisplayConfig::getExpiredTime, new Date()));
 
     }
 

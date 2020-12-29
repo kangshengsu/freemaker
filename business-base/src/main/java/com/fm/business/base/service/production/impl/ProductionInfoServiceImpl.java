@@ -35,7 +35,6 @@ import com.fm.framework.core.query.PageInfo;
 import com.fm.framework.core.service.AuditBaseService;
 import com.fm.framework.core.utils.CodeUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.digest.UnixCrypt;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -346,7 +345,6 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         if (productionInfoPage.getData() != null && !productionInfoPage.getData().isEmpty()) {
             //补全信息
             fillProductInfoRelation(productionInfoPage.getData());
-            Collections.shuffle(productionInfoPage.getData());
         }
         return productionInfoPage;
     }
