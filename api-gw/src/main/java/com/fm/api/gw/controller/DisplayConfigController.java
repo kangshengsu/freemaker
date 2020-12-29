@@ -68,7 +68,6 @@ public class DisplayConfigController extends BaseController<DisplayConfig, Displ
                     .stream().map(productionMapper::toProductionListVO).collect(Collectors.toList()));
         }
         Page<ProductionInfo> productionInfoPage = productionInfoService.getPageProductionOrderByWeight(currentPage, pageSize);
-        Collections.shuffle(productionInfoPage.getData());
         List<ProductionListVO> list = productionInfoPage.getData().stream().map(productionMapper::toProductionListVO).collect(Collectors.toList());
         PageInfo<ProductionListVO> pageInfo = new PageInfo<>();
         pageInfo.setCurrentPage(productionInfoPage.getCurrentPage());
