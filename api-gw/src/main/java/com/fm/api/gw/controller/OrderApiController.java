@@ -211,16 +211,18 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         orderInfoVO.setOrderOperateInfo(new ArrayList<>());
         HashSet<Long> freelancerIds = new HashSet<>();
         HashSet<String> businessCodes = new HashSet<>();
+        List<OrderOperateInfoVO> operateInfoVOS = orderOperateInfoList.stream().map(orderOperateMapper::toOrderOperateInfoVO).collect(Collectors.toList());
+        orderInfoVO.setOrderOperateInfo(operateInfoVOS);
         orderOperateInfoList.forEach(orderOperateInfo -> {
-            orderInfoVO.getOrderOperateInfo().add(orderOperateInfo);
             businessCodes.add(orderOperateInfo.getId().toString());
             if (OrderOperateType.SUBMIT.getCode() == orderOperateInfo.getOperateType() || OrderOperateType.SUBMIT_AGAIN.getCode() == orderOperateInfo.getOperateType()) {
                 freelancerIds.add(orderOperateInfo.getOperateUser());
             }
         });
-        Map<String, List<AttachmentInfo>> attachmentInfoMap = attachmentInfoService.getByCodeAndType(businessCodes, AttachmentBusinessType.ORDER_OPERATE).stream().collect(Collectors.toMap(AttachmentInfo::getBusinessCode, v -> {
-            List<AttachmentInfo> list = new ArrayList<>();
-            list.add(v);
+        Map<String, List<AttachmentVO>> attachmentInfoMap = attachmentInfoService.getByCodeAndType(businessCodes, AttachmentBusinessType.ORDER_OPERATE).stream().collect(Collectors.toMap(AttachmentInfo::getBusinessCode, v -> {
+            List<AttachmentVO> list = new ArrayList<>();
+            AttachmentVO attachmentVO = attachmentMapper.toAttachmentVO(v);
+            list.add(attachmentVO);
             return list;
         }, (v1, v2) -> {
             v1.addAll(v2);
@@ -228,13 +230,13 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         }));
 
         Map<Long, FreelancerInfo> freelancerInfoMap = freelancerInfoService.getByIds(freelancerIds).stream().collect(Collectors.toMap(FreelancerInfo::getId, Function.identity(), (v1, v2) -> v2));
-        orderInfoVO.getOrderOperateInfo().forEach(orderOperateInfo1 -> {
-            if (OrderOperateType.SUBMIT.getCode() == orderOperateInfo1.getOperateType() || OrderOperateType.SUBMIT_AGAIN.getCode() == orderOperateInfo1.getOperateType()) {
-                if (attachmentInfoMap.containsKey(orderOperateInfo1.getId().toString())) {
-                    orderOperateInfo1.setAttachmentInfos(attachmentInfoMap.get(orderOperateInfo1.getId().toString()));
+        orderInfoVO.getOrderOperateInfo().forEach(orderOperateInfoVO -> {
+            if (OrderOperateType.SUBMIT.getCode() == orderOperateInfoVO.getOperateType() || OrderOperateType.SUBMIT_AGAIN.getCode() == orderOperateInfoVO.getOperateType()) {
+                if (attachmentInfoMap.containsKey(orderOperateInfoVO.getId().toString())) {
+                    orderOperateInfoVO.setImages(attachmentInfoMap.get(orderOperateInfoVO.getId().toString()));
                 }
-                if (freelancerInfoMap.containsKey(orderOperateInfo1.getOperateUser())) {
-                    orderOperateInfo1.setOperateUserName(freelancerInfoMap.get(orderOperateInfo1.getOperateUser()).getName());
+                if (freelancerInfoMap.containsKey(orderOperateInfoVO.getOperateUser())) {
+                    orderOperateInfoVO.setOperateUserName(freelancerInfoMap.get(orderOperateInfoVO.getOperateUser()).getName());
                 }
             }
         });
