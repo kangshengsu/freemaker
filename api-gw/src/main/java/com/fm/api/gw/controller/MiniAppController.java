@@ -37,7 +37,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
@@ -65,7 +64,7 @@ public class MiniAppController {
     /**
      * 默认存活时间
      */
-    private static int DEFALUT_LOGIN_SURVIVE_TIME = 7;
+    private static int DEFALUT_LOGIN_SURVIVE_TIME = 365;
 
     /**
      * 小程序登录
@@ -81,13 +80,13 @@ public class MiniAppController {
         //获取sessionkey openId unionId
         WeChatDecryptVO weChatDecryptVO = wxRpcService.getSessionInfo(weChatLoginVO);
         String openId = weChatDecryptVO.getOpenId();
-        log.info("openId: {}",openId);
+        log.info("openId: {}", openId);
         SysUser sysUser = iSysUserService.findByCode(openId);
         //token处理
         RBucket<String> cacheToken = redissonClient.getBucket(openId);
         //缓存用户token信息，供拦截器使用
         if (!cacheToken.isExists()) {
-            cacheToken.set(JwtUtil.generateToken(openId), DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.DAYS);
+            cacheToken.set(JwtUtil.generateToken(openId));
         }
 
         Long userId = null;
@@ -124,8 +123,9 @@ public class MiniAppController {
         miniAppUserVO.setFreeLancerId(freelancerInfoResult.getId());
         miniAppUserVO.setUserId(userId);
         miniAppUserVO.setSessionKey(weChatDecryptVO.getSessionKey());
-
-        currUser.set(miniAppUserVO, DEFALUT_LOGIN_SURVIVE_TIME, TimeUnit.DAYS);
+        if (!currUser.isExists()) {
+            currUser.set(miniAppUserVO);
+        }
 
         boolean isExistPhone = Optional.ofNullable(sysUser)
                 .map(u -> StringUtils.isNotBlank(u.getPhone()))
