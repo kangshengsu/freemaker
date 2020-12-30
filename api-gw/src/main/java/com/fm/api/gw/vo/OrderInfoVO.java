@@ -11,8 +11,8 @@ import com.fm.api.gw.vo.attachment.AttachmentVO;
 import com.fm.api.gw.vo.employer.EmployerInfoApiVO;
 import com.fm.api.gw.vo.evaluation.EvaluationInfoVO;
 import com.fm.api.gw.vo.freelancer.FreelancerInfoApiVO;
-import com.fm.api.gw.vo.order.OrderOperateInfoVO;
 import com.fm.business.base.model.order.OrderInfoDetail;
+import com.fm.business.base.model.order.OrderOperateInfo;
 import com.fm.framework.web.VO;
 import lombok.Data;
 
@@ -231,5 +231,5 @@ public class OrderInfoVO extends VO implements Serializable {
 	/**
 	 * 人才上传验收信息
 	 */
-	private transient List<OrderOperateInfoVO> orderOperateInfo;
+	private transient List<OrderOperateInfo> orderOperateInfo;
 }

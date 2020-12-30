@@ -43,7 +43,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -208,23 +207,20 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     }
 
     private void fillOrderOperateInfo(OrderInfoVO orderInfoVO) {
-        List<OrderOperateInfo> orderOperateInfoList = orderOperateInfoService.findByOrderId(orderInfoVO.getId(), OrderOperateType.SUBMIT.getCode());
+        List<OrderOperateInfo> orderOperateInfoList = orderOperateInfoService.findByOrderId(orderInfoVO.getId(), OrderOperateType.SUBMIT.getCode(),OrderOperateType.SUBMIT_AGAIN.getCode());
         orderInfoVO.setOrderOperateInfo(new ArrayList<>());
-        OrderOperateInfoVO orderOperateInfoVO = new OrderOperateInfoVO();
         HashSet<Long> freelancerIds = new HashSet<>();
         HashSet<String> businessCodes = new HashSet<>();
         orderOperateInfoList.forEach(orderOperateInfo -> {
-            BeanUtils.copyProperties(orderOperateInfo,orderOperateInfoVO);
-            orderInfoVO.getOrderOperateInfo().add(orderOperateInfoVO);
+            orderInfoVO.getOrderOperateInfo().add(orderOperateInfo);
             businessCodes.add(orderOperateInfo.getId().toString());
-            if (OrderOperateType.SUBMIT.getCode() == orderOperateInfo.getOperateType()) {
+            if (OrderOperateType.SUBMIT.getCode() == orderOperateInfo.getOperateType() || OrderOperateType.SUBMIT_AGAIN.getCode() == orderOperateInfo.getOperateType()) {
                 freelancerIds.add(orderOperateInfo.getOperateUser());
             }
         });
-        Map<String, List<AttachmentVO>> attachmentInfoMap = attachmentInfoService.getByCodeAndType(businessCodes, AttachmentBusinessType.ORDER_OPERATE).stream().collect(Collectors.toMap(AttachmentInfo::getBusinessCode, v -> {
-            List<AttachmentVO> list = new ArrayList<>();
-            AttachmentVO attachmentVO = attachmentMapper.toAttachmentVO(v);
-            list.add(attachmentVO);
+        Map<String, List<AttachmentInfo>> attachmentInfoMap = attachmentInfoService.getByCodeAndType(businessCodes, AttachmentBusinessType.ORDER_OPERATE).stream().collect(Collectors.toMap(AttachmentInfo::getBusinessCode, v -> {
+            List<AttachmentInfo> list = new ArrayList<>();
+            list.add(v);
             return list;
         }, (v1, v2) -> {
             v1.addAll(v2);
@@ -232,13 +228,13 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         }));
 
         Map<Long, FreelancerInfo> freelancerInfoMap = freelancerInfoService.getByIds(freelancerIds).stream().collect(Collectors.toMap(FreelancerInfo::getId, Function.identity(), (v1, v2) -> v2));
-        orderInfoVO.getOrderOperateInfo().forEach(orderOperateInfoVO1 -> {
-            if (OrderOperateType.SUBMIT.getCode() == orderOperateInfoVO1.getOperateType()) {
-                if (attachmentInfoMap.containsKey(orderOperateInfoVO1.getId().toString())) {
-                    orderOperateInfoVO1.setImages(attachmentInfoMap.get(orderOperateInfoVO1.getId().toString()));
+        orderInfoVO.getOrderOperateInfo().forEach(orderOperateInfo1 -> {
+            if (OrderOperateType.SUBMIT.getCode() == orderOperateInfo1.getOperateType() || OrderOperateType.SUBMIT_AGAIN.getCode() == orderOperateInfo1.getOperateType()) {
+                if (attachmentInfoMap.containsKey(orderOperateInfo1.getId().toString())) {
+                    orderOperateInfo1.setAttachmentInfos(attachmentInfoMap.get(orderOperateInfo1.getId().toString()));
                 }
-                if (freelancerInfoMap.containsKey(orderOperateInfoVO1.getOperateUser())) {
-                    orderOperateInfoVO1.setOperateUserName(freelancerInfoMap.get(orderOperateInfoVO1.getOperateUser()).getName());
+                if (freelancerInfoMap.containsKey(orderOperateInfo1.getOperateUser())) {
+                    orderOperateInfo1.setOperateUserName(freelancerInfoMap.get(orderOperateInfo1.getOperateUser()).getName());
                 }
             }
         });

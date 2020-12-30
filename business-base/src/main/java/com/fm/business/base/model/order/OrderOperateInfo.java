@@ -47,6 +47,7 @@ public class OrderOperateInfo extends BaseModel implements Serializable,IAudit {
      * 操作人
      **/
     private Long operateUser;
+    private transient String operateUserName;
 
 
     /**
