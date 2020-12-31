@@ -31,8 +31,8 @@ wx:
 
   pay:
     appId: wxebd3588df98ae1a7 #微信公众号或者小程序等的appid
-    mchId: test #todo zyc 微信支付商户号
-    mchKey: test #todo zyc 微信支付商户密钥
-    keyPath: test/test #todo zyc p12证书的位置，可以指定绝对路径，也可以指定类路径（以classpath:开头）
+    mchId: 1604308922 #todo zyc 微信支付商户号
+    mchKey: 5b2afa6289e20946fbc850f5937324b0 #todo zyc 微信支付商户密钥
+#    keyPath: test/test #todo zyc p12证书的位置，可以指定绝对路径，也可以指定类路径（以classpath:开头）
 #    subAppId: #服务商模式下的子商户公众账号ID（不用）
 #    subMchId: #服务商模式下的子商户号（不用）
