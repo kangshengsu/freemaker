@@ -610,6 +610,6 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
     public Page<ProductionInfo> getProductionInfoByKeyword(String keyword, Integer currentPage, Integer pageSize) {
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage,pageSize),
-                Wrappers.lambdaQuery(ProductionInfo.class).like(ProductionInfo::getTitle,keyword).like(ProductionInfo::getSummarize,keyword).eq(ProductionInfo::getStatus,ProductionStatus.RELEASE.getCode())));
+                Wrappers.lambdaQuery(ProductionInfo.class).like(ProductionInfo::getTitle,keyword).or().like(ProductionInfo::getSummarize,keyword).eq(ProductionInfo::getStatus,ProductionStatus.RELEASE.getCode())));
     }
 }

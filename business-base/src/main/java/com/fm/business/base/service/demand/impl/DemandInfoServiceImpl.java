@@ -279,6 +279,6 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
     @Override
     public Page<DemandInfo> getDemandByKeyword(String keyword, Integer currentPage, Integer pageSize) {
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage,pageSize),
-                Wrappers.lambdaQuery(DemandInfo.class).like(DemandInfo::getSummarize,keyword).like(DemandInfo::getDescription,keyword).eq(DemandInfo::getStatus,DemandStatus.RELEASE.getCode())));
+                Wrappers.lambdaQuery(DemandInfo.class).like(DemandInfo::getSummarize,keyword).or().like(DemandInfo::getDescription,keyword).eq(DemandInfo::getStatus,DemandStatus.RELEASE.getCode())));
     }
 }
