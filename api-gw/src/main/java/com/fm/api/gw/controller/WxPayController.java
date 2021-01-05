@@ -118,7 +118,6 @@ public class WxPayController {
                 String serialNumber = result.getTransactionId();
                 OrderInfo orderInfo = orderInfoService.get(this.orderId);
                 orderInfo.setSerialNumber(serialNumber);
-                orderInfo.setStatus(OrderStatus.PAID_50.getCode());
                 orderInfoService.update(orderInfo);
             }
                 return WxPayNotifyResponse.success("成功");
