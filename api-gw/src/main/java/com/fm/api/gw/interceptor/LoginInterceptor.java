@@ -52,6 +52,7 @@ public class LoginInterceptor implements HandlerInterceptor {
                     Context.setCurrEmployerId(currUser.getEmployerId());
                     Context.setCurrFreelancerId(currUser.getFreeLancerId());
                     Context.setMiniAppSecretKey(currUser.getSessionKey());
+                    Context.setCurrUserCode(currUser.getOpenId());
                     return true;
                 })
                 .orElseGet(() -> {
@@ -66,6 +67,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         miniAppUserVO.setUserId(8105L);
         miniAppUserVO.setFreeLancerId(8105L);
         miniAppUserVO.setEmployerId(8105L);
+        miniAppUserVO.setOpenId("o9kHZ5eoze26LM5wuw8uAAov-uQA");
 
         RBucket<MiniAppUserVO> currUser = redissonClient.getBucket(mockToken);
         currUser.set(miniAppUserVO, 99999, TimeUnit.HOURS);
