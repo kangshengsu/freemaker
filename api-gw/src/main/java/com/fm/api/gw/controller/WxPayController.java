@@ -1,6 +1,7 @@
 package com.fm.api.gw.controller;
 
 import cn.hutool.core.date.DateUtil;
+import com.fm.api.gw.vo.order.OrderOperateInfoVO;
 import com.fm.business.base.enums.OrderStatus;
 import com.fm.business.base.model.order.OrderInfo;
 import com.fm.business.base.model.order.OrderInfoDetail;
@@ -8,6 +9,7 @@ import com.fm.business.base.service.order.IOrderInfoDetailService;
 import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.utils.RandomStringUtil;
+import com.fm.framework.web.response.ApiResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
@@ -20,7 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -52,16 +57,16 @@ public class WxPayController {
     /**
      * 调用统一下单接口，并组装生成支付所需参数对象.
      *
-     * @param <T>     请使用{@link com.github.binarywang.wxpay.bean.order}包下的类
+     * @param     {@link com.github.binarywang.wxpay.bean.order}包下的类
      * @return 返回 {@link com.github.binarywang.wxpay.bean.order}包下的类对象
      */
     @ApiOperation(value = "统一下单，并组装所需支付参数")
     @PostMapping("/createOrder")
-    public <T> T createOrder(@RequestParam("orderId") Long orderId) throws WxPayException {
-        this.orderId = orderId;
+    public ApiResponse createOrder(@RequestBody OrderOperateInfoVO OrderOperateInfoVO) throws WxPayException {
+        this.orderId = OrderOperateInfoVO.getOrderId();
         WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
-        OrderInfoDetail orderInfoDetail = orderInfoDetailService.getOrderInfoDetailByOrderId(orderId);
-        OrderInfo orderInfo = orderInfoService.get(orderId);
+        OrderInfoDetail orderInfoDetail = orderInfoDetailService.getOrderInfoDetailByOrderId(OrderOperateInfoVO.getOrderId());
+        OrderInfo orderInfo = orderInfoService.get(OrderOperateInfoVO.getOrderId());
         ServletRequestAttributes requestAttributes =
                 (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
@@ -84,7 +89,7 @@ public class WxPayController {
         orderRequest.setOpenid(Context.getCurrUserCode());
         orderRequest.setSpbillCreateIp(ip);
         orderRequest.setNotifyUrl(notifyUrl);
-        return this.wxPayService.createOrder(orderRequest);
+        return ApiResponse.ofSuccess(this.wxPayService.createOrder(orderRequest));
     }
 
     /**
