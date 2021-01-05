@@ -37,6 +37,11 @@ public class OrderInfo extends BaseModel implements Serializable,IAudit {
 	private String code;
 
     /**
+     * 流水号
+     */
+    private String serialNumber;
+
+    /**
      * 作品Id
      */
     private Long productionId;

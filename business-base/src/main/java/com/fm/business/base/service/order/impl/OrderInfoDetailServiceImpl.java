@@ -9,13 +9,11 @@ package com.fm.business.base.service.order.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.order.IOrderInfoDetailMapper;
-import com.fm.business.base.model.demand.DemandProductionRelation;
 import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.business.base.service.order.IOrderInfoDetailService;
 import com.fm.framework.core.service.AuditBaseService;
-import org.springframework.stereotype.Service;
-import com.fm.framework.core.service.BaseService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
@@ -39,5 +37,10 @@ public class OrderInfoDetailServiceImpl extends AuditBaseService<IOrderInfoDetai
         }
         return getBaseMapper().selectList(Wrappers.lambdaQuery(OrderInfoDetail.class).in(OrderInfoDetail::getOrderId,
                 orderIds));
+    }
+
+    @Override
+    public OrderInfoDetail getOrderInfoDetailByOrderId(Long orderId) {
+        return getBaseMapper().selectOne(Wrappers.lambdaQuery(OrderInfoDetail.class).eq(OrderInfoDetail::getOrderId,orderId));
     }
 }

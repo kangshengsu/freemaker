@@ -123,6 +123,7 @@ public class MiniAppController {
         miniAppUserVO.setFreeLancerId(freelancerInfoResult.getId());
         miniAppUserVO.setUserId(userId);
         miniAppUserVO.setSessionKey(weChatDecryptVO.getSessionKey());
+        miniAppUserVO.setOpenId(openId);
         if (!currUser.isExists()) {
             currUser.set(miniAppUserVO);
         }

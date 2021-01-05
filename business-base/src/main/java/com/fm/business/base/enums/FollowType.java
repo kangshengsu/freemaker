@@ -7,7 +7,7 @@ public enum FollowType {
 
     REJECT_30(30, "取消"),//已拒单
 
-    TAKING_40(40, "支付"),
+    TAKING_40(40, "支付"),//待支付
 
     CANCELD_100(100, "取消"),
 

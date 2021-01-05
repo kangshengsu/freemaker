@@ -27,4 +27,5 @@ public interface IOrderInfoDetailService extends Service<OrderInfoDetail> {
     List<OrderInfoDetail> getOrderDetailByOrderIds(Collection<Long> orderIds);
 
 
+    OrderInfoDetail getOrderInfoDetailByOrderId(Long orderId);
 }

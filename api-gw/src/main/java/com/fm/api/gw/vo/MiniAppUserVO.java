@@ -18,4 +18,6 @@ public class MiniAppUserVO  implements Serializable {
     private Long employerId;
 
     private Long userId;
+
+    private String openId;
 }
