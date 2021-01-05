@@ -31,7 +31,7 @@ import java.util.Date;
 
 @Slf4j
 @RestController
-@RequestMapping("/wxPay")
+@RequestMapping("/v1/wxPay")
 public class WxPayController {
 
     @Value("${wx.pay.notifyUrl}")

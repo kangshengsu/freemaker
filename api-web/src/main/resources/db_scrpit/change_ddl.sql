@@ -45,3 +45,7 @@ ADD COLUMN is_recommend TINYINT(4) DEFAULT 20 COMMENT '是否上推荐' AFTER ke
 -- 主键分布式自增
 INSERT INTO `leaf_alloc`(biz_tag,max_id,step) VALUES ('advert_info',2000,10);
 INSERT INTO `leaf_alloc`(biz_tag,max_id,step) VALUES ('rotation_info',2000,10);
+
+-- 新增订单表流水号列
+ALTER TABLE `order_info`
+ADD COLUMN serial_number VARCHAR(255) DEFAULT '' COMMENT '流水号' AFTER CODE
