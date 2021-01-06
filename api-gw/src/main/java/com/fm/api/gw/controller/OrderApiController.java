@@ -402,8 +402,39 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     @ApiImplicitParam(paramType = "body", name = "orderInfoVO", value = "订单操作信息", required = true, dataType = "OrderInfoVO")
     @RequestMapping(value = "updateOrderMny", method = RequestMethod.PUT)
     public ApiResponse<Boolean> updateOrderMny(@RequestBody OrderInfoVO orderInfoVO) {
-        this.update(orderInfoVO);
+        Double actOrderMny = orderInfoVO.getActOrderMny();
+        List<ServiceCharge> serviceCharges = serviceChargeService.getAll();
+        /**
+         * 实收服务费
+         */
+        Double freelancerActServiceCharge = 0.0;
+        if (serviceCharges.get(0).getFreelancerServiceCharge() > 0) {
+            freelancerActServiceCharge = actOrderMny * ((double) serviceCharges.get(0).getFreelancerServiceCharge() / 100);
+        }
+        /**
+         * 人才到手金额
+         */
+        Double freelancerActGetMny = actOrderMny - freelancerActServiceCharge;
 
+        /**
+         * 实收雇主服务费
+         */
+        Double employerActServiceCharge = 0.0;
+        if (serviceCharges.get(0).getCompanyServiceCharge() > 0) {
+            employerActServiceCharge = actOrderMny * ((double) serviceCharges.get(0).getCompanyServiceCharge() / 100);
+        }
+        /**
+         * 雇主实际支付
+         */
+        Double employerActPayMny = employerActServiceCharge + actOrderMny;
+        orderInfoVO.setActOrderMny(employerActPayMny);
+        this.update(orderInfoVO);
+        OrderAmount orderAmount = orderAmountService.getByOrderId(orderInfoVO.getId());
+        orderAmount.setFreelancerActServiceCharge(freelancerActServiceCharge);
+        orderAmount.setEmployerActServiceCharge(employerActServiceCharge);
+        orderAmount.setFreelancerActGetMny(freelancerActGetMny);
+        orderAmount.setEmployerActPayMny(employerActPayMny);
+        orderAmountService.update(orderAmount);
         // 写流水
         saveModifyFollow(orderInfoVO);
         return ApiResponse.ofSuccess(true);
