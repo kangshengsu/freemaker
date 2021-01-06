@@ -344,7 +344,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
          */
         Double employerActServiceCharge = 0.0;
         if (serviceCharges.get(0).getCompanyServiceCharge() > 0) {
-             employerActServiceCharge = actOrderMny * ((double) serviceCharges.get(0).getCompanyServiceCharge() / 100);
+            employerActServiceCharge = actOrderMny * ((double) serviceCharges.get(0).getCompanyServiceCharge() / 100);
         }
         /**
          * 雇主实际支付
@@ -428,7 +428,9 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
          */
         Double employerActPayMny = employerActServiceCharge + actOrderMny;
         orderInfoVO.setActOrderMny(employerActPayMny);
-        orderInfoVO.setOrderPrice(orderInfoVO.getActOrderMny());
+        if (orderInfoVO.getBudgetType() != 0) {
+            orderInfoVO.setOrderPrice(orderInfoVO.getActOrderMny());
+        }
         this.update(orderInfoVO);
         OrderAmount orderAmount = orderAmountService.getByOrderId(orderInfoVO.getId());
         orderAmount.setFreelancerActServiceCharge(freelancerActServiceCharge);
