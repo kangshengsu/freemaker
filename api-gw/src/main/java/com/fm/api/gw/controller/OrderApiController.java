@@ -427,10 +427,11 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
          * 雇主实际支付
          */
         Double employerActPayMny = employerActServiceCharge + actOrderMny;
-        orderInfoVO.setActOrderMny(employerActPayMny);
         if (orderInfoVO.getBudgetType() != 0) {
             orderInfoVO.setOrderPrice(orderInfoVO.getActOrderMny());
         }
+        orderInfoVO.setActOrderMny(employerActPayMny);
+
         this.update(orderInfoVO);
         OrderAmount orderAmount = orderAmountService.getByOrderId(orderInfoVO.getId());
         orderAmount.setFreelancerActServiceCharge(freelancerActServiceCharge);
