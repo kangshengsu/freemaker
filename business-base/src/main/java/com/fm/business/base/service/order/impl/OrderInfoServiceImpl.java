@@ -12,6 +12,7 @@ import com.fm.business.base.dao.order.IOrderInfoMapper;
 import com.fm.business.base.enums.MiniAppOrderTypeEnum;
 import com.fm.business.base.enums.OrderStatus;
 import com.fm.business.base.model.order.OrderInfo;
+import com.fm.business.base.service.order.IOrderAmountService;
 import com.fm.business.base.service.order.IOrderFollowService;
 import com.fm.business.base.service.order.IOrderInfoDetailService;
 import com.fm.business.base.service.order.IOrderInfoService;
@@ -40,6 +41,9 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
 
     @Autowired
     private IOrderInfoDetailService orderInfoDetailService;
+
+    @Autowired
+    private IOrderAmountService orderAmountService;
 
     @Override
     protected void beforeSave(OrderInfo model) {
@@ -102,5 +106,7 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
         orderFollowService.saveOperateFollow(model);
         model.getOrderInfoDetail().setOrderId(model.getId());
         orderInfoDetailService.save(model.getOrderInfoDetail());
+        model.getOrderAmount().setOrderId(model.getId());
+        orderAmountService.save(model.getOrderAmount());
     }
 }

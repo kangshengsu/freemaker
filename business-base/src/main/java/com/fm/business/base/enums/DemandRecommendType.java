@@ -1,5 +1,10 @@
 package com.fm.business.base.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum DemandRecommendType {
     INIT(10, "推荐"),
     RECEIVING(20, "接单"),
@@ -13,7 +18,19 @@ public enum DemandRecommendType {
         this.name = name;
     }
 
-    public Integer getType() {
-        return this.type;
+
+    /**
+     *根据code获取name
+     */
+    public static String getName(Integer code){
+        if (code == null) {
+            return null;
+        }
+        for (DemandRecommendType value : DemandRecommendType.values()) {
+            if (value.getType() == code) {
+                return value.getName();
+            }
+        }
+        return null;
     }
 }

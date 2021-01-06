@@ -66,4 +66,15 @@ public abstract class CommonMapper {
         }
         return null;
     }
+
+    /**
+     * 添加百分号
+     */
+    @Named("addPercent")
+    protected String addPercent(Integer serviceCharge) {
+        if (serviceCharge != null) {
+            return serviceCharge + "%";
+        }
+        return null;
+    }
 }
