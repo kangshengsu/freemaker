@@ -141,7 +141,7 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
             return ApiResponse.ofFailed("请检查作品编码");
         }
         BdJobCate bdJobCate = iBdJobCateService.get(productionInfo.getJobCateId());
-        orderInfoVO.setStatus(OrderStatus.WAITING_20.getCode());
+        orderInfoVO.setStatus(OrderStatus.TAKING_40.getCode());
         orderInfoVO.setProductionId(productionInfo.getId());
         orderInfoVO.setJobCateId(productionInfo.getJobCateId());
         orderInfoVO.setCateTreeCode(bdJobCate.getCateCode());
