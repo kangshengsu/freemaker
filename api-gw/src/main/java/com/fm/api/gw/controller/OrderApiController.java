@@ -304,7 +304,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     @RequestMapping(value = "save", method = RequestMethod.POST)
     public ApiResponse<Boolean> save(@RequestBody OrderInfoVO orderInfoVO) {
         orderInfoVO.setEmployerId(Context.getCurrEmployerId());
-        orderInfoVO.setStatus(OrderStatus.WAITING_20.getCode());
+        orderInfoVO.setStatus(OrderStatus.TAKING_40.getCode());
         orderInfoVO.setActOrderMny(orderInfoVO.getActOrderMny());
 
         // search order info
