@@ -129,12 +129,12 @@ public class OrderStatusChangeMessageSender {
 
     private String getDescToEmployer(OrderInfo orderInfo,EmployerInfo employerInfo,FreelancerInfo freelancerInfo) {
         switch (OrderStatus.get(orderInfo.getStatus())) {
-            case WAITING_20:
-                return String.format("您已下单成功，请等待人才接单。");
+//            case WAITING_20:
+//                return String.format("您已下单成功，请等待人才接单。");
             case TAKING_40:
                 return String.format("您的订单已经被人才接单成功，请前往支付！");
-            case REJECT_30:
-                return String.format("您的订单被人才取消，进入小程序查看原因。");
+//            case REJECT_30:
+//                return String.format("您的订单被人才取消，进入小程序查看原因。");
             case UPDATEPRICE_35:
                 return String.format("您的订单已经改价成功，请前往支付，谢谢！");
             case PAID_50:
@@ -158,14 +158,14 @@ public class OrderStatusChangeMessageSender {
     private String getDescToFreelancer(OrderInfo orderInfo,EmployerInfo employerInfo,
                                                   FreelancerInfo freelancerInfo) {
         switch (OrderStatus.get(orderInfo.getStatus())) {
-            case WAITING_20:
-                return String.format("您已收到订单,快去确认接单吧！");
+//            case WAITING_20:
+//                return String.format("您已收到订单,快去确认接单吧！");
             case UPDATEPRICE_35:
                 return String.format("您的订单已经改价成功！");
             case TAKING_40:
                 return String.format("您的订单已经接单成功了，请等待雇主支付。");
-            case REJECT_30:
-                return String.format("您的订单已取消成功！");
+//            case REJECT_30:
+//                return String.format("您的订单已取消成功！");
             case PAID_50:
                 return String.format("订单已经付款成功，您可以开始工作了。");
             case CHECKING_60:
