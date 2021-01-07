@@ -24,13 +24,4 @@ public class ServiceChargeInfoVO extends VO implements Serializable {
      */
     private String companyServiceCharge;
 
-    /**
-     * 实际扣除服务费
-     */
-    private Double actServiceCharge;
-
-    /**
-     * 人才到手金额
-     */
-    private Double freelancerActGetMny;
 }
