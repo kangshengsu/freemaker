@@ -1,5 +1,6 @@
 package com.fm.api.web.controller.order;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.fm.api.web.vo.AttachmentInfoVO;
 import com.fm.api.web.vo.mapper.AttachmentMapper;
 import com.fm.api.web.vo.order.OrderInfoVO;
@@ -48,13 +49,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
-*
-* <p>说明： 订单信息API接口层</p>
-* @version: V1.0
-* @author: LiuDuo
-* @time    2020年09月11日
-*
-*/
+ * <p>说明： 订单信息API接口层</p>
+ *
+ * @version: V1.0
+ * @author: LiuDuo
+ * @time 2020年09月11日
+ */
 
 @RestController
 @RequestMapping("/order/orderInfo")
@@ -94,27 +94,27 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
     private AttachmentMapper attachmentMapper;
 
 
-    @RequestMapping(value = "create",method = RequestMethod.POST)
+    @RequestMapping(value = "create", method = RequestMethod.POST)
     public ApiResponse<Boolean> create(@RequestBody OrderInfoVO form) {
 
         return super.create(form);
 
     }
 
-    @RequestMapping(value = "delete",method = RequestMethod.POST)
+    @RequestMapping(value = "delete", method = RequestMethod.POST)
     public ApiResponse<Boolean> delete(@RequestBody Long id) {
 
         return super.delete(id);
 
     }
 
-    @RequestMapping(value = "update",method = RequestMethod.POST)
+    @RequestMapping(value = "update", method = RequestMethod.POST)
     public ApiResponse<Boolean> update(@RequestBody OrderInfoVO form) {
         ApiResponse<Boolean> result = super.update(form);
         return result;
     }
 
-    @RequestMapping(value = "list",method = RequestMethod.POST)
+    @RequestMapping(value = "list", method = RequestMethod.POST)
     public ApiResponse<Page<OrderInfoVO>> list(@RequestBody QueryRequest queryRequest) {
         OrderItem orderItem = new OrderItem(OrderType.desc, "createTime");
         queryRequest.setOrderItem(orderItem);
@@ -124,7 +124,7 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
         return result;
     }
 
-    @RequestMapping(value = "getOrderById",method = RequestMethod.GET)
+    @RequestMapping(value = "getOrderById", method = RequestMethod.GET)
     public ApiResponse<OrderInfoVO> getOrderById(Long id) {
         OrderInfoVO orderInfoVO = this.convert(orderInfoService.get(id));
         fillDetailInfo(Arrays.asList(orderInfoVO));
@@ -133,11 +133,11 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
         return this.success(orderInfoVO);
     }
 
-    @RequestMapping(value = "save",method = RequestMethod.POST)
-    public ApiResponse<Boolean> save(@RequestBody OrderInfoVO orderInfoVO){
+    @RequestMapping(value = "save", method = RequestMethod.POST)
+    public ApiResponse<Boolean> save(@RequestBody OrderInfoVO orderInfoVO) {
         ProductionInfo productionInfo = productionInfoService.getByCode(orderInfoVO.getProductionCode());
         EmployerInfo employerInfo = employerInfoService.get(orderInfoVO.getEmployerId());
-        if( productionInfo == null ){
+        if (productionInfo == null) {
             return ApiResponse.ofFailed("请检查作品编码");
         }
         BdJobCate bdJobCate = iBdJobCateService.get(productionInfo.getJobCateId());
@@ -173,28 +173,29 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
 
     /**
      * 订单状态变更
+     *
      * @param orderInfoVO
      * @return
      */
-    @RequestMapping(value = "updateOrderStatus",method = RequestMethod.POST)
+    @RequestMapping(value = "updateOrderStatus", method = RequestMethod.POST)
     public ApiResponse<Boolean> updateOrderStatus(@RequestBody OrderInfoVO orderInfoVO) {
         Integer status = orderInfoVO.getStatus();
-        if(status.equals(OrderOperateType.RECEIVE.getCode()) || status.equals(OrderOperateType.SUBMIT_PAYMENT_VOUCHER.getCode())){
+        if (status.equals(OrderOperateType.RECEIVE.getCode()) || status.equals(OrderOperateType.SUBMIT_PAYMENT_VOUCHER.getCode())) {
             orderInfoVO.setStatus(OrderStatus.TAKING_40.getCode());
         }
-        if(status.equals(OrderOperateType.SUBMIT.getCode())){
+        if (status.equals(OrderOperateType.SUBMIT.getCode())) {
             orderInfoVO.setStatus(OrderStatus.CHECKING_60.getCode());
         }
-        if(status.equals(OrderOperateType.ACCEPT.getCode())){
+        if (status.equals(OrderOperateType.ACCEPT.getCode())) {
             orderInfoVO.setStatus(OrderStatus.FINISHED_80.getCode());
         }
-        if(status.equals(OrderOperateType.UNACCEPT.getCode())){
+        if (status.equals(OrderOperateType.UNACCEPT.getCode())) {
             orderInfoVO.setStatus(OrderStatus.CHECK_FAIL_70.getCode());
         }
-        if(status.equals(OrderOperateType.SUBMIT_AGAIN.getCode())){
+        if (status.equals(OrderOperateType.SUBMIT_AGAIN.getCode())) {
             orderInfoVO.setStatus(OrderStatus.CHECK_FAIL_61.getCode());
         }
-        if(status.equals(OrderOperateType.CANCEL.getCode())){
+        if (status.equals(OrderOperateType.CANCEL.getCode())) {
             orderInfoVO.setStatus(OrderStatus.REJECT_30.getCode());
         }
 
@@ -207,6 +208,18 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
         saveOperateInfo(orderInfoVO.getEmployerId(), orderInfoVO.getFreelancerId(), orderInfoVO.getId(), status, orderInfoVO.getFollowDesc(), orderInfoVO.getAttachmentList());
 
         return ApiResponse.ofSuccess(true);
+    }
+
+    @RequestMapping(value = "updateOrderDetail", method = RequestMethod.POST)
+    public ApiResponse<Boolean> updateOrderDetail(@RequestBody OrderInfoVO orderInfoVO) {
+        if (ObjectUtil.isNotNull(orderInfoVO)) {
+            OrderInfoDetail orderInfoDetail = orderInfoDetailService.getOrderInfoDetailByOrderId(orderInfoVO.getId());
+            orderInfoDetail.setSummarize(orderInfoVO.getSummarize());
+            orderInfoDetail.setDescription(orderInfoVO.getDescription());
+            orderInfoVO.setOrderInfoDetail(orderInfoDetail);
+            return this.update(orderInfoVO);
+        }
+        return failed("修改订单失败");
     }
 
     private void fillOperateInfo(OrderInfoVO orderInfoVO) {
@@ -314,7 +327,7 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
             demandInfoMap.put(demandInfo.getId(), demandInfo);
         }
         for (OrderInfoDetail orderInfoDetail : orderDetails) {
-            orderInfoDetailMap.put(orderInfoDetail.getOrderId(),orderInfoDetail);
+            orderInfoDetailMap.put(orderInfoDetail.getOrderId(), orderInfoDetail);
         }
         for (FreelancerInfo freelancerInfo : freelancerInfos) {
             freelancerInfoMap.put(freelancerInfo.getId(), freelancerInfo);
@@ -334,7 +347,7 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
             if (bdJobCateMap.containsKey(orderInfoVO.getJobCateId())) {
                 orderInfoVO.setJobCateName(bdJobCateMap.get(orderInfoVO.getJobCateId()).getCateName());
             }
-            if(orderInfoDetailMap.containsKey(orderInfoVO.getId())){
+            if (orderInfoDetailMap.containsKey(orderInfoVO.getId())) {
                 orderInfoVO.setOrderInfoDetail(orderInfoDetailMap.get(orderInfoVO.getId()));
             }
             if (demandInfoMap.containsKey(orderInfoVO.getDemandId())) {
@@ -350,11 +363,11 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
             }
 
             if (detailMap.containsKey(orderInfoVO.getId())) {
-                orderInfoVO.setSummarize(detailMap.get(orderInfoVO.getId()).getSummarize()  );
+                orderInfoVO.setSummarize(detailMap.get(orderInfoVO.getId()).getSummarize());
                 orderInfoVO.setDescription(detailMap.get(orderInfoVO.getId()).getDescription());
             }
 
-            orderInfoVO.setStatusName(OrderStatus.get(orderInfoVO.getStatus())!=null?OrderStatus.get(orderInfoVO.getStatus()).getName():"未知");
+            orderInfoVO.setStatusName(OrderStatus.get(orderInfoVO.getStatus()) != null ? OrderStatus.get(orderInfoVO.getStatus()).getName() : "未知");
         }
     }
 
@@ -388,7 +401,7 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
 
     private void saveOperateInfo(Long employerId, Long freelancerId, Long orderId, Integer status, String followDesc, List<AttachmentInfoVO> attachmentList) {
         List<AttachmentInfo> attachmentInfos = new ArrayList<>();
-        if(!CollectionUtils.isEmpty(attachmentList)){
+        if (!CollectionUtils.isEmpty(attachmentList)) {
             attachmentInfos.addAll(attachmentList.stream()
                     .map(attachmentInfoVO -> attachmentMapper.toAttachment(attachmentInfoVO))
                     .collect(Collectors.toList()));

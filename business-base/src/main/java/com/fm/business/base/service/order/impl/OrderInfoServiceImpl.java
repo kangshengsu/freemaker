@@ -109,4 +109,11 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
         model.getOrderAmount().setOrderId(model.getId());
         orderAmountService.save(model.getOrderAmount());
     }
+
+    @Override
+    protected void afterUpdate(OrderInfo model) {
+        super.afterUpdate(model);
+        model.getOrderInfoDetail().setOrderId(model.getId());
+        orderInfoDetailService.update(model.getOrderInfoDetail());
+    }
 }
