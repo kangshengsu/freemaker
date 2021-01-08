@@ -88,3 +88,6 @@ CREATE TABLE `order_amount` (
 
 -- 服务费配置表主键分布式自增
 INSERT INTO `leaf_alloc`(biz_tag,max_id,step) VALUES ('order_amount',1,1000);
+
+-- 修改订单状态为待支付
+UPDATE order_info SET STATUS = 40 WHERE STATUS = 20

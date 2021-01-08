@@ -6,6 +6,7 @@
  */
 package com.fm.api.gw.controller;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.fm.api.gw.vo.OrderInfoVO;
 import com.fm.api.gw.vo.attachment.AttachmentVO;
 import com.fm.api.gw.vo.attachment.mapper.AttachmentMapper;
@@ -128,6 +129,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         fillStatusName(orderInfoVOPage.getData());
         fillJobInfos(orderInfoVOPage.getData());
         fillBelongType(orderInfoVOPage.getData(), currEmployerId, currFreelancerId);
+        fillServiceChargeInfo(null, orderInfoVOPage.getData());
         if (orderInfoVOPage.getData() != null && orderInfoVOPage.getData().size() > 0) {
             fillOrderDetailInfo(orderInfoVOPage.getData());
         }
@@ -197,7 +199,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
         fillOrderDetailInfo(orderInfoVO);
         fillOrderOperateInfo(orderInfoVO);
-        fillServiceChargeInfo(orderInfoVO);
+        fillServiceChargeInfo(orderInfoVO,null);
 
         // belong to
         if (Context.getCurrEmployerId().equals(orderInfoVO.getEmployerId())) {
@@ -213,12 +215,37 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
         return ApiResponse.ofSuccess(orderInfoVO);
     }
 
-    private void fillServiceChargeInfo(OrderInfoVO orderInfoVO) {
-        OrderAmount orderAmount = orderAmountService.getByOrderId(orderInfoVO.getId());
-        OrderAmountVO orderAmountVO = orderAmountMapper.toOrderAmountVO(orderAmount);
+    private void fillServiceChargeInfo(OrderInfoVO orderInfoVO, List<OrderInfoVO> orderInfoVOs) {
+        if (ObjectUtil.isNull(orderInfoVO) && !CollectionUtils.isEmpty(orderInfoVOs)) {
+            orderInfoVOs.forEach(orderInfoVO1 -> {
+                OrderAmountVO orderAmountVO = getOrderAmountVO(orderInfoVO1);
+                if (ObjectUtil.isNull(orderAmountVO)) {
+                    orderAmountVO = new OrderAmountVO();
+                    orderAmountVO.setEmployerActPayMny(orderInfoVO1.getActOrderMny());
+                    orderAmountVO.setFreelancerActGetMny(orderInfoVO1.getActOrderMny());
+                }
+                orderInfoVO1.setOrderAmount(orderAmountVO);
+            });
+        } else if (ObjectUtil.isNotNull(orderInfoVO) && CollectionUtils.isEmpty(orderInfoVOs)) {
+            OrderAmountVO orderAmountVO = getOrderAmountVO(orderInfoVO);
+            if (ObjectUtil.isNull(orderAmountVO)) {
+                orderAmountVO = new OrderAmountVO();
+                orderAmountVO.setFreelancerServiceCharge("0%");
+                orderAmountVO.setEmployerServiceCharge("0%");
+                orderAmountVO.setEmployerActServiceCharge(0.0);
+                orderAmountVO.setFreelancerActServiceCharge(0.0);
+                orderAmountVO.setEmployerActPayMny(orderInfoVO.getActOrderMny());
+                orderAmountVO.setFreelancerActGetMny(orderInfoVO.getActOrderMny());
+            }
 //        String freelancerServiceCharge = orderAmountVO.getFreelancerServiceCharge() + "%";
 //        orderAmountVO.setFreelancerServiceCharge(freelancerServiceCharge);
-        orderInfoVO.setOrderAmount(orderAmountVO);
+            orderInfoVO.setOrderAmount(orderAmountVO);
+        }
+    }
+
+    private OrderAmountVO getOrderAmountVO(OrderInfoVO orderInfoVO) {
+        OrderAmount orderAmount = orderAmountService.getByOrderId(orderInfoVO.getId());
+        return orderAmountMapper.toOrderAmountVO(orderAmount);
     }
 
     private void fillOrderOperateInfo(OrderInfoVO orderInfoVO) {
@@ -304,7 +331,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     @RequestMapping(value = "save", method = RequestMethod.POST)
     public ApiResponse<Boolean> save(@RequestBody OrderInfoVO orderInfoVO) {
         orderInfoVO.setEmployerId(Context.getCurrEmployerId());
-        orderInfoVO.setStatus(OrderStatus.WAITING_20.getCode());
+        orderInfoVO.setStatus(OrderStatus.TAKING_40.getCode());
         orderInfoVO.setActOrderMny(orderInfoVO.getActOrderMny());
 
         // search order info

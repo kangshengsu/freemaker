@@ -6,6 +6,7 @@
  */
 package com.fm.business.base.service.order.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.order.IOrderInfoMapper;
@@ -108,5 +109,14 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
         orderInfoDetailService.save(model.getOrderInfoDetail());
         model.getOrderAmount().setOrderId(model.getId());
         orderAmountService.save(model.getOrderAmount());
+    }
+
+    @Override
+    protected void afterUpdate(OrderInfo model) {
+        super.afterUpdate(model);
+        if (ObjectUtil.isNotNull(model.getOrderInfoDetail())) {
+            model.getOrderInfoDetail().setOrderId(model.getId());
+            orderInfoDetailService.update(model.getOrderInfoDetail());
+        }
     }
 }
