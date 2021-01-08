@@ -3,7 +3,7 @@ package com.fm.business.base.enums;
 public enum OrderStatus {
     INIT_10(10, "已下单", 0, OrderOperateRoleType.EMPLOYER.getCode()),
 
-    WAITING_20(20, "待接单", 1, OrderOperateRoleType.FREELANCER.getCode()),//已下单
+//    WAITING_20(20, "待接单", 1, OrderOperateRoleType.FREELANCER.getCode()),//已下单
 
     REJECT_30(30, "已取消", 1, OrderOperateRoleType.FREELANCER.getCode()),//已拒单
 
