@@ -167,7 +167,16 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
     @Override
     public DemandInfo getByCode(String code) {
         QueryWrapper<DemandInfo> queryWrapper = getQueryWrapper().eq("code", code);
-        return this.getBaseMapper().selectOne(queryWrapper);
+        DemandInfo demandInfo = this.getBaseMapper().selectOne(queryWrapper);
+        fill(demandInfo);
+        return demandInfo;
+    }
+
+    private void fill(DemandInfo demandInfo) {
+        if(demandInfo == null){
+            return;
+        }
+        demandInfo.setEmployerInfo(employerInfoService.getById(demandInfo.getEmployerId()));
     }
 
     @Override

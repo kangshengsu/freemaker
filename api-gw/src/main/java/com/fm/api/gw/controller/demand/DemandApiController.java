@@ -1,6 +1,7 @@
 package com.fm.api.gw.controller.demand;
 
 import com.fm.api.gw.vo.demand.DemandInfoVO;
+import com.fm.api.gw.vo.demand.mapper.DemandInfoMapper;
 import com.fm.business.base.enums.*;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.demand.DemandInfo;
@@ -64,6 +65,9 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
 
     @Autowired
     private IProductionInfoService iProductionInfoService;
+
+    @Autowired
+    private DemandInfoMapper demandInfoMapper;
 
     @ApiOperation(value = "获取需求分页信息")
     @ApiImplicitParams({
@@ -263,7 +267,7 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         if (Objects.isNull(model)) {
             return null;
         }
-        DemandInfoVO form = super.convert(model);
+        DemandInfoVO form = demandInfoMapper.toDemandInfoVO(model);
         //转换枚举值
         form.setStatusName(DemandStatus.get(model.getStatus()).getName());
         form.setDeliveryTypeName(DeliveryType.getNameByCode(model.getDeliveryType()));
