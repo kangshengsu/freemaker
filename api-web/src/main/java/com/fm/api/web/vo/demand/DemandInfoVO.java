@@ -38,12 +38,12 @@ public class DemandInfoVO extends VO implements Serializable {
 
 
     /**
-     * 需求状态（10-未发布，20-已发布，30-已取消，40-已下单）
+     * 需求状态（10-未发布，20-已发布，30-已取消，40-已停用）
      **/
     private Integer status;
 
     /**
-     * 需求状态（10-未发布，20-已发布，30-已取消，40-已下单））
+     * 需求状态（10-未发布，20-已发布，30-已取消，40-已停用））
      **/
     private String statusName;
 
