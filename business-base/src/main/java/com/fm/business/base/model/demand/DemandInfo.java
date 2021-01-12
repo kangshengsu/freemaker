@@ -170,6 +170,11 @@ public class DemandInfo extends BaseModel implements Serializable, IAudit {
     private Integer attestation;
 
     /**
+     * 是否下单:10-已下单，20-未下单
+     */
+    private Integer isOrder;
+
+    /**
      * 状态名称
      */
     private transient String statusName;
