@@ -102,6 +102,11 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
     }
 
     @Override
+    public Long getOrderIdByCode(String code) {
+        return getBaseMapper().selectOne(Wrappers.lambdaQuery(OrderInfo.class).eq(OrderInfo::getCode,code)).getId();
+    }
+
+    @Override
     protected void afterSave(OrderInfo model) {
         super.afterSave(model);
         orderFollowService.saveOperateFollow(model);

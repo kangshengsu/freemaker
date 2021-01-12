@@ -329,7 +329,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     @ApiOperation(value = "下单")
     @ApiImplicitParam(paramType = "query", name = "code", value = "订单信息", required = true, dataType = "String")
     @RequestMapping(value = "save", method = RequestMethod.POST)
-    public ApiResponse<Boolean> save(@RequestBody OrderInfoVO orderInfoVO) {
+    public ApiResponse<Map<String,Long>> save(@RequestBody OrderInfoVO orderInfoVO) {
         orderInfoVO.setEmployerId(Context.getCurrEmployerId());
         orderInfoVO.setStatus(OrderStatus.TAKING_40.getCode());
         orderInfoVO.setActOrderMny(orderInfoVO.getActOrderMny());
@@ -393,8 +393,10 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
         // 写流水
         saveFollow(orderInfoVO);
-
-        return ApiResponse.ofSuccess(true);
+        Long id = orderInfoService.getOrderIdByCode(orderInfo.getCode());
+        HashMap<String, Long> map = new HashMap<>();
+        map.put("id", id);
+        return ApiResponse.ofSuccess(map);
     }
 
     private OrderInfoDetail createDetailInfo(OrderInfoVO orderInfoVO, Long orderId) {
