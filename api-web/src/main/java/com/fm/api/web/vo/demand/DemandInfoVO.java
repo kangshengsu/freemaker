@@ -160,6 +160,11 @@ public class DemandInfoVO extends VO implements Serializable {
      */
     private String remarkInfo;
 
+    /**
+     * 下次联系时间
+     */
+    private Date nextTime;
+
 
     /**
      * 创建时间

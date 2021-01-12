@@ -1,5 +1,6 @@
 package com.fm.api.web.vo.demand;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.framework.web.VO;
 import lombok.Data;
 
@@ -28,7 +29,13 @@ public class DemandRemarkInfoVO extends VO implements Serializable {
     /**
      * 下次联系时间
      */
+    @JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
     private Date nextTime;
+
+    /**
+     * 跟进人
+     */
+    private String userName;
 
     /**
      * 创建时间

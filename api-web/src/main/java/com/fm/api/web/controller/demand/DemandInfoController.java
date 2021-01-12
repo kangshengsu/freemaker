@@ -84,6 +84,7 @@ public class DemandInfoController extends BaseController<DemandInfo, DemandInfoV
             DemandRemarkInfo demandRemarkInfo = demandRemarkInfoService.getRemarkInfoByDemandId(demandInfoVO.getId());
             if (ObjectUtil.isNotNull(demandRemarkInfo)) {
                 demandInfoVO.setRemarkInfo(demandRemarkInfo.getRemarkInfo());
+                demandInfoVO.setNextTime(demandRemarkInfo.getNextTime());
             }
         });
 
