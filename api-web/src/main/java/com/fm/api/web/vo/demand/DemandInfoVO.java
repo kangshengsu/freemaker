@@ -38,12 +38,12 @@ public class DemandInfoVO extends VO implements Serializable {
 
 
     /**
-     * 需求状态（10-未发布，20-已发布，30-已取消，40-已下单）
+     * 需求状态（10-未发布，20-已发布，30-已取消，40-已停用）
      **/
     private Integer status;
 
     /**
-     * 需求状态（10-未发布，20-已发布，30-已取消，40-已下单））
+     * 需求状态（10-未发布，20-已发布，30-已取消，40-已停用））
      **/
     private String statusName;
 
@@ -85,6 +85,15 @@ public class DemandInfoVO extends VO implements Serializable {
      */
     private Integer attestation;
 
+    /**
+     * 通过枚举后返回前端
+     */
+    private String attestationName;
+
+    /**
+     * 是否下单:10-已下单，20-未下单
+     */
+    private Integer isOrder;
 
     /**
      * 推荐人数
@@ -145,6 +154,11 @@ public class DemandInfoVO extends VO implements Serializable {
      * @see com.fm.business.base.enums.BudgetType
      */
     private Integer budgetType;
+
+    /**
+     * 需求备注信息
+     */
+    private String remarkInfo;
 
 
     /**

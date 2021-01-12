@@ -27,7 +27,7 @@ public class ExamineStatusListener implements ApplicationListener<OperationEvent
                 if (event.getBefore() instanceof DemandInfo || event.getAfter() instanceof DemandInfo) {
                     DemandInfo o2 = (DemandInfo) event.getAfter();
                     DemandInfo o1 = (DemandInfo) event.getBefore();
-                    if (!o1.getAttestation().equals(o2.getAttestation())) {
+                    if (o1.getAttestation() != null &&!o1.getAttestation().equals(o2.getAttestation())) {
                         if (o1.getAttestation().equals(DemandAttestationType.NO_ATTESTATION.getCode()) &&
                                 o2.getAttestation() != null){
                             changeStatus(o2);

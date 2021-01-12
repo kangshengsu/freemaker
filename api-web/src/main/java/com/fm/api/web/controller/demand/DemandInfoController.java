@@ -1,17 +1,20 @@
 /**
-* @filename:DemandInfoController 2020年09月11日
-* @project HowWork  V1.0
-* Copyright(c) 2020 LiuDuo Co. Ltd.
-* All right reserved.
-*/
+ * @filename:DemandInfoController 2020年09月11日
+ * @project HowWork  V1.0
+ * Copyright(c) 2020 LiuDuo Co. Ltd.
+ * All right reserved.
+ */
 package com.fm.api.web.controller.demand;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.fm.api.web.vo.demand.DemandInfoVO;
 import com.fm.business.base.enums.DemandAttestationType;
 import com.fm.business.base.model.demand.DemandInfo;
-import com.fm.business.base.service.job.IBdJobCateService;
+import com.fm.business.base.model.demand.DemandRemarkInfo;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
+import com.fm.business.base.service.demand.IDemandRemarkInfoService;
+import com.fm.business.base.service.job.IBdJobCateService;
 import com.fm.framework.core.query.OrderItem;
 import com.fm.framework.core.query.OrderType;
 import com.fm.framework.core.query.Page;
@@ -26,13 +29,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
-*
-* <p>说明： 需求API接口层</p>
-* @version: V1.0
-* @author: LiuDuo
-* @time    2020年09月11日
-*
-*/
+ *
+ * <p>说明： 需求API接口层</p>
+ * @version: V1.0
+ * @author: LiuDuo
+ * @time 2020年09月11日
+ *
+ */
 
 @RestController
 @RequestMapping("/demand/demandInfo")
@@ -47,47 +50,64 @@ public class DemandInfoController extends BaseController<DemandInfo, DemandInfoV
     @Autowired
     private IBdJobCateService iBdJobCateService;
 
-    @RequestMapping(value = "create",method = RequestMethod.POST)
+    @Autowired
+    private IDemandRemarkInfoService demandRemarkInfoService;
+
+    @RequestMapping(value = "create", method = RequestMethod.POST)
     public ApiResponse<Boolean> create(@RequestBody DemandInfoVO form) {
 
         return super.create(form);
 
     }
 
-    @RequestMapping(value = "delete",method = RequestMethod.POST)
+    @RequestMapping(value = "delete", method = RequestMethod.POST)
     public ApiResponse<Boolean> delete(@RequestBody Long id) {
 
         return super.delete(id);
 
     }
 
-    @RequestMapping(value = "update",method = RequestMethod.POST)
+    @RequestMapping(value = "update", method = RequestMethod.POST)
     public ApiResponse<Boolean> update(@RequestBody DemandInfoVO form) {
 
         return super.update(form);
 
     }
 
-    @RequestMapping(value = "list",method = RequestMethod.POST)
+    @RequestMapping(value = "list", method = RequestMethod.POST)
     public ApiResponse<Page<DemandInfoVO>> list(@RequestBody QueryRequest queryRequest) {
         OrderItem orderItem = new OrderItem(OrderType.desc, "createTime");
         queryRequest.setOrderItem(orderItem);
-        return super.list(queryRequest);
+        ApiResponse<Page<DemandInfoVO>> list = super.list(queryRequest);
+        list.getData().getData().forEach(demandInfoVO -> {
+            demandInfoVO.setAttestationName(DemandAttestationType.get(demandInfoVO.getAttestation()).getName());
+            DemandRemarkInfo demandRemarkInfo = demandRemarkInfoService.getRemarkInfoByDemandId(demandInfoVO.getId());
+            if (ObjectUtil.isNotNull(demandRemarkInfo)) {
+                demandInfoVO.setRemarkInfo(demandRemarkInfo.getRemarkInfo());
+            }
+        });
+
+        return list;
     }
 
-    @RequestMapping(value="getDemandInfoLikeNameOrCode", method = RequestMethod.GET)
+    @RequestMapping(value = "getDemandInfoLikeNameOrCode", method = RequestMethod.GET)
     public ApiResponse<List<DemandInfoVO>> getDemandInfoLikeNameOrCode(@RequestParam("keyword") String keyword) {
         return super.success(this.convert(this.demandInfoService.findDemandInfoLikeNameOrCode(keyword)));
     }
 
-    @RequestMapping(value="setDemandAttestation", method = RequestMethod.POST)
+    @RequestMapping(value = "setDemandAttestation", method = RequestMethod.POST)
     public ApiResponse<Boolean> setDemandAttestation(@RequestBody DemandInfoVO form) {
-        if(form.getAttestation() == 0){
-            form.setAttestation(DemandAttestationType.YES_ATTESTATION.getCode());
-        }else {
+        if (form.getAttestation() == 0) {
             form.setAttestation(DemandAttestationType.NO_ATTESTATION.getCode());
+        } else {
+            form.setAttestation(DemandAttestationType.YES_ATTESTATION.getCode());
         }
         return super.update(form);
+    }
+
+    @PostMapping("updateDemandIsOrder")
+    public ApiResponse<Boolean> updateDemandIsOrder(@RequestBody DemandInfoVO demandInfoVO) {
+        return super.update(demandInfoVO);
     }
 
     @Override
@@ -98,7 +118,7 @@ public class DemandInfoController extends BaseController<DemandInfo, DemandInfoV
     @Override
     protected DemandInfo convert(DemandInfoVO form) {
         DemandInfo model = new DemandInfo();
-        BeanUtils.copyProperties(form,model);
+        BeanUtils.copyProperties(form, model);
         return model;
     }
 
