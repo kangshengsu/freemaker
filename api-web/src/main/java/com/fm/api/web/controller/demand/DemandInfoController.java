@@ -99,9 +99,9 @@ public class DemandInfoController extends BaseController<DemandInfo, DemandInfoV
     @RequestMapping(value = "setDemandAttestation", method = RequestMethod.POST)
     public ApiResponse<Boolean> setDemandAttestation(@RequestBody DemandInfoVO form) {
         if (form.getAttestation() == 0) {
-            form.setAttestation(DemandAttestationType.NO_ATTESTATION.getCode());
-        } else {
             form.setAttestation(DemandAttestationType.YES_ATTESTATION.getCode());
+        } else {
+            form.setAttestation(DemandAttestationType.NO_ATTESTATION.getCode());
         }
         return super.update(form);
     }

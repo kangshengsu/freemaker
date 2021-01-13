@@ -27,6 +27,11 @@ public class DemandRemarkInfoVO extends VO implements Serializable {
     private String remarkInfo;
 
     /**
+     * 是否下单
+     */
+    private transient Integer isOrder;
+
+    /**
      * 下次联系时间
      */
     @JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")

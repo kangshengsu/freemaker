@@ -7,7 +7,7 @@ CREATE TABLE `demand_remark_info` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '逻辑主键',
   `demand_id` BIGINT(20) DEFAULT NULL COMMENT '需求主键',
   `remark_info` VARCHAR(255) DEFAULT '' NOT NULL COMMENT '备注信息',
-  `next_time` DATETIME NOT NULL COMMENT '下次联系时间',
+  `next_time` DATETIME  COMMENT '下次联系时间',
   `create_time` DATETIME NOT NULL COMMENT '创建时间',
   `update_time` DATETIME NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `create_user` BIGINT(20) NOT NULL COMMENT '创建人',

@@ -2,7 +2,9 @@ package com.fm.api.web.controller.demand;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.fm.api.web.vo.demand.DemandRemarkInfoVO;
+import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.demand.DemandRemarkInfo;
+import com.fm.business.base.service.demand.IDemandInfoService;
 import com.fm.business.base.service.demand.IDemandRemarkInfoService;
 import com.fm.business.base.service.sm.IUserService;
 import com.fm.framework.core.query.Page;
@@ -11,6 +13,7 @@ import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -27,8 +30,16 @@ public class DemandRemarkInfoController extends BaseController<DemandRemarkInfo,
     @Autowired
     private IUserService userService;
 
+    @Autowired
+    private IDemandInfoService demandInfoService;
+
     @PostMapping("create")
+    @Transactional(rollbackFor = RuntimeException.class)
     public ApiResponse<Boolean> create(@RequestBody DemandRemarkInfoVO demandRemarkInfoVO){
+        DemandInfo demandInfo = new DemandInfo();
+        demandInfo.setId(demandRemarkInfoVO.getDemandId());
+        demandInfo.setIsOrder(demandRemarkInfoVO.getIsOrder());
+        demandInfoService.update(demandInfo);
         return super.create(demandRemarkInfoVO);
     }
 
