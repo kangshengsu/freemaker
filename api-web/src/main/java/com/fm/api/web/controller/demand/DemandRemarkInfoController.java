@@ -14,7 +14,12 @@ import com.fm.framework.web.request.QueryRequest;
 import com.fm.framework.web.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Collections;
 
 /**
  * @author qdl
@@ -52,6 +57,7 @@ public class DemandRemarkInfoController extends BaseController<DemandRemarkInfo,
         list.getData().getData().forEach(demandRemarkInfoVO -> {
               demandRemarkInfoVO.setUserName(userService.get(demandRemarkInfoVO.getCreateUser()).getName());
         });
+        Collections.reverse(list.getData().getData());
         return list;
     }
 
