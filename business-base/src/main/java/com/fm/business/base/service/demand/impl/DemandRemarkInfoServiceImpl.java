@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.IDemandRemarkInfoMapper;
 import com.fm.business.base.model.demand.DemandRemarkInfo;
 import com.fm.business.base.service.demand.IDemandRemarkInfoService;
-import com.fm.framework.core.query.Page;
 import com.fm.framework.core.service.AuditBaseService;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,7 @@ public class DemandRemarkInfoServiceImpl extends AuditBaseService<IDemandRemarkI
 
     @Override
     public DemandRemarkInfo getRemarkInfoByDemandId(Long id) {
-        return getBaseMapper().selectOne(Wrappers.lambdaQuery(DemandRemarkInfo.class).eq(DemandRemarkInfo::getDemandId,id).last("limit 1"));
+        return getBaseMapper().selectOne(Wrappers.lambdaQuery(DemandRemarkInfo.class).eq(DemandRemarkInfo::getDemandId,id).orderByDesc(DemandRemarkInfo::getTs).last("limit 1"));
     }
 
 }
