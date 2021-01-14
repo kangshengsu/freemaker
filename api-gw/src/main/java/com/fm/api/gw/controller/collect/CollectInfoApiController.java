@@ -6,8 +6,7 @@ import com.fm.api.gw.vo.demand.DemandInfoVO;
 import com.fm.api.gw.vo.demand.mapper.DemandInfoMapper;
 import com.fm.api.gw.vo.production.mapper.ProductionMapper;
 import com.fm.api.gw.vo.production.view.ProductionViewVO;
-import com.fm.business.base.enums.*;
-import com.fm.business.base.model.EmployerInfo;
+import com.fm.business.base.enums.CollectStatus;
 import com.fm.business.base.model.collect.CollectInfo;
 import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.job.BdJobCate;
@@ -26,7 +25,6 @@ import com.fm.framework.web.controller.BaseController;
 import com.fm.framework.web.response.ApiResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.mapstruct.ap.shaded.freemarker.template.utility.DeepUnwrap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +33,6 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -160,14 +157,17 @@ public class CollectInfoApiController extends BaseController<CollectInfo, Collec
         map.put("opened", opened);
         map.put("closed", closed);
         List<DemandInfoVO> data = pageDemandInfo.getData().stream().map(demandInfoMapper::toDemandInfoVO).collect(Collectors.toList());
-        Map<Long, BdJobCate> bdJobCateMap = data.stream().map(DemandInfoVO::getJobCateId).collect(Collectors.toList())
-                .stream().map(jobCateId -> iBdJobCateService.get(jobCateId)).collect(Collectors.toList())
-                .stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
-        data.forEach(demandInfoVO -> {
-            if (bdJobCateMap.containsKey(demandInfoVO.getJobCateId())) {
-                demandInfoVO.setJobCateIdName(bdJobCateMap.get(demandInfoVO.getJobCateId()).getCateName());
-            }
-        });
+        List<BdJobCate> list = data.stream().map(DemandInfoVO::getJobCateId).collect(Collectors.toList())
+                .stream().map(jobCateId -> iBdJobCateService.get(jobCateId)).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(list)) {
+            Map<Long, BdJobCate> bdJobCateMap = list.stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
+            data.forEach(demandInfoVO -> {
+                if (bdJobCateMap.containsKey(demandInfoVO.getJobCateId())) {
+                    demandInfoVO.setJobCateIdName(bdJobCateMap.get(demandInfoVO.getJobCateId()).getCateName());
+                }
+            });
+        }
+
         PageInfo<DemandInfoVO> pageInfo = new PageInfo<>();
         pageInfo.setCurrentPage(currentPage);
         pageInfo.setPageSize(pageSize);

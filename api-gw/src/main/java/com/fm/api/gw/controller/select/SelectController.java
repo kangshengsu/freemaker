@@ -24,6 +24,7 @@ import com.fm.framework.web.response.ApiResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -132,14 +133,17 @@ public class SelectController extends BaseController<SelectInfo, SelectVO> {
     private PageInfo<DemandInfoVO> getDemandInfoVOPageInfo(@RequestParam("keyword") String keyword, @RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize) {
         Page<DemandInfo> demandInfoPage = demandInfoService.getDemandByKeyword(keyword, currentPage, pageSize);
         List<DemandInfoVO> demandInfoVOList = demandInfoPage.getData().stream().map(demandInfoMapper::toDemandInfoVO).collect(Collectors.toList());
-        Map<Long, BdJobCate> bdJobCateMap = demandInfoVOList.stream().map(DemandInfoVO::getJobCateId).collect(Collectors.toList())
-                .stream().map(jobCateId -> iBdJobCateService.get(jobCateId)).collect(Collectors.toList())
-                .stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
-        demandInfoVOList.forEach(demandInfoVO -> {
-            if (bdJobCateMap.containsKey(demandInfoVO.getJobCateId())) {
-                demandInfoVO.setJobCateIdName(bdJobCateMap.get(demandInfoVO.getJobCateId()).getCateName());
-            }
-        });
+        List<BdJobCate> list = demandInfoVOList.stream().map(DemandInfoVO::getJobCateId).collect(Collectors.toList())
+                .stream().map(jobCateId -> iBdJobCateService.get(jobCateId)).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(list)) {
+            Map<Long, BdJobCate> bdJobCateMap = list.stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
+            demandInfoVOList.forEach(demandInfoVO -> {
+                if (bdJobCateMap.containsKey(demandInfoVO.getJobCateId())) {
+                    demandInfoVO.setJobCateIdName(bdJobCateMap.get(demandInfoVO.getJobCateId()).getCateName());
+                }
+            });
+        }
+
         PageInfo<DemandInfoVO> demandPageInfo = new PageInfo<>();
         demandPageInfo.setCurrentPage(currentPage);
         demandPageInfo.setPageSize(pageSize);
