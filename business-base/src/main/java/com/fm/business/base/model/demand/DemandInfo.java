@@ -102,6 +102,7 @@ public class DemandInfo extends BaseModel implements Serializable, IAudit {
     private String districtCode;
 
 
+
     /**
      * 需求县编码
      **/
@@ -118,6 +119,11 @@ public class DemandInfo extends BaseModel implements Serializable, IAudit {
      * 需求详细描述
      **/
     private String description;
+
+    /**
+     * 岗位要求（悬赏）
+     */
+    private String jobRequire;
 
     /**
      * 交付方式
@@ -159,7 +165,7 @@ public class DemandInfo extends BaseModel implements Serializable, IAudit {
     /**
      * 工作经验
      */
-    private Integer workExperience;
+    private String workExperience;
 
     /**
      * 年龄要求

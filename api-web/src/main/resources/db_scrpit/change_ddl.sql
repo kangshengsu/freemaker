@@ -9,7 +9,7 @@ ADD COLUMN education_require VARCHAR(32) DEFAULT '' NOT NULL COMMENT '学历要�
 
 
 ALTER TABLE `demand_info`
-ADD COLUMN work_experience TINYINT(4) DEFAULT NULL COMMENT '工作经验' AFTER education_require;
+ADD COLUMN work_experience varchar(32) DEFAULT NULL COMMENT '工作经验' AFTER education_require;
 
 
 ALTER TABLE `demand_info`
@@ -23,5 +23,8 @@ ADD COLUMN recruit_amount TINYINT(10) NOT NULL COMMENT '招聘人数' AFTER reco
 
 ALTER TABLE `demand_info`
 ADD COLUMN sum_money DECIMAL(20,3) NOT NULL COMMENT '总金额' AFTER recruit_amount;
+
+ALTER TABLE `demand_info`
+ADD COLUMN job_require VARCHAR(255) DEFAULT '' COMMENT '岗位要求(悬赏使用)' AFTER description;
 
 -- 将demand_info表的job_cate_id与cate_tree_code去除非空

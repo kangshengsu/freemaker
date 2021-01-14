@@ -217,6 +217,26 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         return success(this.convert(demandInfo));
     }
 
+
+    /**
+     * 悬赏招聘测试数据
+     * @param {
+     * 	"demandType":20,
+     * 	"expectDeliveryTime":"2020-1-15",
+     * 	"summarize":"测试",
+     * 	"description":"测试1",
+     * 	"jobRequire":"岗位要求",
+     * 	"companyName":"无域未来",
+     * 	"salaryRange":"1-3",
+     * 	"educationRequire":"本科",
+     * 	"workExperience":"1-3年",
+     * 	"ageRequire":"18-45岁",
+     * 	"recommendAward":100,
+     * 	"recruitAmount":3,
+     * 	"sumMoney":300
+     * }
+     * @return
+     */
     @ApiOperation(value = "发布新需求")
     @RequestMapping(value = "publish", method = RequestMethod.POST)
     public ApiResponse<String> publish(@RequestBody DemandInfoVO form) {

@@ -156,6 +156,10 @@ public class DemandInfoVO extends VO implements Serializable {
 	 **/
 	private String description;
 
+	/**
+	 * 岗位要求(悬赏)
+	 */
+	private String jobRequire;
 
 	/**
 	 * 交付方式名称
@@ -190,7 +194,7 @@ public class DemandInfoVO extends VO implements Serializable {
 	/**
 	 * 工作经验
 	 */
-	private Integer workExperience;
+	private String workExperience;
 
 	/**
 	 * 年龄要求
