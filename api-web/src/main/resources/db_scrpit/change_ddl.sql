@@ -13,13 +13,15 @@ ADD COLUMN work_experience TINYINT(4) DEFAULT NULL COMMENT '工作经验' AFTER 
 
 
 ALTER TABLE `demand_info`
-ADD COLUMN age_require TINYINT(4) NOT NULL COMMENT '年龄要求' AFTER work_experience;
+ADD COLUMN age_require varchar(32) NOT NULL COMMENT '年龄要求' AFTER work_experience;
 
 ALTER TABLE `demand_info`
-ADD COLUMN recommend_award BIGINT(50) NOT NULL COMMENT '推荐奖励' AFTER age_require;
+ADD COLUMN recommend_award decimal(20,3) NOT NULL COMMENT '推荐奖励' AFTER age_require;
 
 ALTER TABLE `demand_info`
 ADD COLUMN recruit_amount TINYINT(10) NOT NULL COMMENT '招聘人数' AFTER recommend_award;
 
 ALTER TABLE `demand_info`
 ADD COLUMN sum_money DECIMAL(20,3) NOT NULL COMMENT '总金额' AFTER recruit_amount;
+
+-- 将demand_info表的job_cate_id与cate_tree_code去除非空

@@ -36,6 +36,11 @@ public class DemandInfo extends BaseModel implements Serializable, IAudit {
      **/
     private String code;
 
+    /**
+     * 类型
+     */
+    private Integer demandType;
+
 
     /**
      * 发布用户编码
@@ -140,6 +145,42 @@ public class DemandInfo extends BaseModel implements Serializable, IAudit {
      * 是否收藏
      */
     private transient Boolean isCollect;
+
+    /**
+     *薪资范围
+     */
+    private String salaryRange;
+
+    /**
+     * 学历要求
+     */
+    private String educationRequire;
+
+    /**
+     * 工作经验
+     */
+    private Integer workExperience;
+
+    /**
+     * 年龄要求
+     */
+    private String ageRequire;
+
+    /**
+     * 推荐奖励
+     */
+    private Double recommendAward;
+
+    /**
+     * 招聘人数
+     */
+    private Integer recruitAmount;
+
+    /**
+     * 总金额
+     */
+    private Double sumMoney;
+
 
     /**
      * 创建时间
