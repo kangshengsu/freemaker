@@ -84,36 +84,36 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         Long currFreelancerId = Context.getCurrFreelancerId();
         List<ProductionInfo> productionInfoList = iProductionInfoService.findAllProduction(currFreelancerId);
         List<Long> productionIds = productionInfoList.stream().map(ProductionInfo::getId).collect(Collectors.toList());
-        List<DemandProductionRelation> demandProductionRelations = demandProductionRelationService.findAllRecommendByStatus(productionIds,demandStatus);
+        List<DemandProductionRelation> demandProductionRelations = demandProductionRelationService.findAllRecommendByStatus(productionIds, demandStatus);
         List<Long> demandProductionRelationIds = demandProductionRelations.stream().map(DemandProductionRelation::getDemandId).collect(Collectors.toList());
         PageInfo<DemandInfo> result = new PageInfo<>();
-        if(demandStatus == 30){
+        if (demandStatus == 30) {
             Page<DemandInfo> pageByEmployerId = demandInfoService.getPageByEmployerId(currentPage, pageSize, status, currEmployerId);
             result.setCurrentPage(pageByEmployerId.getCurrentPage());
             result.setPageSize(pageByEmployerId.getPageSize());
             result.setTotal(pageByEmployerId.getTotal());
             result.setData(pageByEmployerId.getData());
-        }else {
-            if(!CollectionUtils.isEmpty(demandProductionRelations)){
+        } else {
+            if (!CollectionUtils.isEmpty(demandProductionRelations)) {
                 Page<DemandInfo> pageByDemandStatus = demandInfoService.getPageByDemandStatus(currentPage, pageSize, status, demandProductionRelationIds);
                 result.setCurrentPage(pageByDemandStatus.getCurrentPage());
                 result.setPageSize(pageByDemandStatus.getPageSize());
                 result.setTotal(pageByDemandStatus.getTotal());
                 result.setData(pageByDemandStatus.getData());
-            }else {
+            } else {
                 result.setData(new ArrayList<>());
                 return ApiResponse.ofSuccess(this.convert(result));
             }
         }
         //Page<DemandInfo> demandInfoPage = demandInfoService.gePageByEmployerId(currentPage, pageSize, currEmployerId, status, demandProductionRelationIds);
         result.getData().forEach(
-                demandInfo->{
-                    if(demandInfo.getEmployerId().longValue() == currEmployerId.longValue()){
+                demandInfo -> {
+                    if (demandInfo.getEmployerId().longValue() == currEmployerId.longValue()) {
                         demandInfo.setDemandStatus(RecommendType.MY_START.getCode());
-                    }else {
+                    } else {
                         demandProductionRelations.forEach(
-                                demandProductionRelation->{
-                                    if(demandProductionRelation.getDemandId().longValue() == demandInfo.getId().longValue()){
+                                demandProductionRelation -> {
+                                    if (demandProductionRelation.getDemandId().longValue() == demandInfo.getId().longValue()) {
                                         demandInfo.setDemandStatus(RecommendType.get(demandProductionRelation.getStatus()).getCode());
                                     }
                                 });
@@ -130,12 +130,12 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
             @ApiImplicitParam(name = "jobCateId", value = "领域id", dataType = "Integer", paramType = "query")})
     @RequestMapping(value = "getPageByJobCateId", method = RequestMethod.GET)
     public ApiResponse<Page<DemandInfoVO>> getPageByJobCateId(@RequestParam("currentPage") Integer currentPage,
-                                                               @RequestParam("pageSize") Integer pageSize,
-                                                               @RequestParam(value = "jobCateId", required = false) Integer jobCateId) {
+                                                              @RequestParam("pageSize") Integer pageSize,
+                                                              @RequestParam(value = "jobCateId", required = false) Integer jobCateId) {
         Long currEmployerId = Context.getCurrEmployerId();
         Page<DemandInfoVO> result = new PageInfo<>();
         Page<DemandInfo> demandInfoPage = demandInfoService.gePageByStatusJobCateId(currentPage, pageSize,
-                currEmployerId, DemandStatus.RELEASE.getCode(),jobCateId);
+                currEmployerId, DemandStatus.RELEASE.getCode(), jobCateId);
         if (demandInfoPage.getData().size() == 0) {
             return ApiResponse.ofSuccess(result);
         }
@@ -150,15 +150,15 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         Long currFreelancerId = Context.getCurrFreelancerId();
         List<ProductionInfo> productionInfoList = iProductionInfoService.findAllProduction(currFreelancerId);
         List<Long> productionIds = productionInfoList.stream().map(ProductionInfo::getId).collect(Collectors.toList());
-        List<DemandProductionRelation> demandProductionRelations = demandProductionRelationService.findAllRecommendByStatus(productionIds,demandStatus);
+        List<DemandProductionRelation> demandProductionRelations = demandProductionRelationService.findAllRecommendByStatus(productionIds, demandStatus);
         List<Long> demandProductionRelationIds = demandProductionRelations.stream().map(DemandProductionRelation::getDemandId).collect(Collectors.toList());
         Integer openedCount;
         Integer closedCount;
-        if(demandStatus == 30){
+        if (demandStatus == 30) {
             openedCount = demandInfoService.getDemandCountByStatus(currEmployerId, DemandStatus.RELEASE.getCode());
             closedCount = demandInfoService.getDemandCountByStatus(currEmployerId, DemandStatus.CANCEL.getCode());
-        }else {
-            if(CollectionUtils.isEmpty(demandProductionRelationIds)){
+        } else {
+            if (CollectionUtils.isEmpty(demandProductionRelationIds)) {
                 Map<String, Integer> map = new HashMap<>();
                 map.put("total", 0);
                 map.put("opened", 0);
@@ -203,12 +203,12 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         List<ProductionInfo> productionInfoList = iProductionInfoService.findAllProduction(freelancerInfo.getId());
         List<Long> productionIds = productionInfoList.stream().map(ProductionInfo::getId).collect(Collectors.toList());
         List<DemandProductionRelation> demandProductionRelations = demandProductionRelationService.findAllRecommend(productionIds);
-        if(demandInfo.getEmployerId().longValue() == currEmployerId.longValue()){
+        if (demandInfo.getEmployerId().longValue() == currEmployerId.longValue()) {
             demandInfo.setDemandStatus(RecommendType.MY_START.getCode());
-        }else {
+        } else {
             demandProductionRelations.forEach(
-                    demandProductionRelation->{
-                        if(demandProductionRelation.getDemandId().longValue() == demandInfo.getId().longValue()){
+                    demandProductionRelation -> {
+                        if (demandProductionRelation.getDemandId().longValue() == demandInfo.getId().longValue()) {
                             demandInfo.setDemandStatus(RecommendType.get(demandProductionRelation.getStatus()).getCode());
                         }
                     });
@@ -220,21 +220,21 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
 
     /**
      * 悬赏招聘测试数据
-     * @param {
-     * 	"demandType":20,
-     * 	"expectDeliveryTime":"2020-1-15",
-     * 	"summarize":"测试",
-     * 	"description":"测试1",
-     * 	"jobRequire":"岗位要求",
-     * 	"companyName":"无域未来",
-     * 	"salaryRange":"1-3",
-     * 	"educationRequire":"本科",
-     * 	"workExperience":"1-3年",
-     * 	"ageRequire":"18-45岁",
-     * 	"recommendAward":100,
-     * 	"recruitAmount":3,
-     * 	"sumMoney":300
-     * }
+     *
+     * @param { "demandType":20,
+     *          "expectDeliveryTime":"2020-1-15",
+     *          "summarize":"测试",
+     *          "description":"测试1",
+     *          "jobRequire":"岗位要求",
+     *          "companyName":"无域未来",
+     *          "salaryRange":"1-3",
+     *          "educationRequire":"本科",
+     *          "workExperience":"1-3年",
+     *          "ageRequire":"18-45岁",
+     *          "recommendAward":100,
+     *          "recruitAmount":3,
+     *          "sumMoney":300
+     *          }
      * @return
      */
     @ApiOperation(value = "发布新需求")
@@ -250,6 +250,9 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         form.setCode(CodeUtil.generateNewCode2yyMMddHH());
         form.setEmployerId(Context.getCurrEmployerId());
         ApiResponse<Boolean> booleanApiResponse = super.create(form);
+        if (form.getDemandType() == DemandType.DEMAND.getCode()) {
+            return ApiResponse.ofSuccess(form.getCode());
+        }
         boolean updateCompanyName = iEmployerInfoService.updateCompanyName(form.getEmployerId(), employerInfo);
         if (ApiStatus.SUCCESS.getCode() == booleanApiResponse.getCode() && updateCompanyName) {
             return ApiResponse.ofSuccess(form.getCode());
