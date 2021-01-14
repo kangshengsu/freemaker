@@ -250,7 +250,7 @@ public class DemandApiController extends BaseController<DemandInfo, DemandInfoVO
         form.setCode(CodeUtil.generateNewCode2yyMMddHH());
         form.setEmployerId(Context.getCurrEmployerId());
         ApiResponse<Boolean> booleanApiResponse = super.create(form);
-        if (form.getDemandType() == DemandType.DEMAND.getCode()) {
+        if (form.getDemandType() == DemandType.A_REWARD.getCode()) {
             return ApiResponse.ofSuccess(form.getCode());
         }
         boolean updateCompanyName = iEmployerInfoService.updateCompanyName(form.getEmployerId(), employerInfo);
