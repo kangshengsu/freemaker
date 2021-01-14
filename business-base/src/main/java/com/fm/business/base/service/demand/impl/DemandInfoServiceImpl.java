@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.IDemandInfoMapper;
 import com.fm.business.base.enums.BudgetType;
 import com.fm.business.base.enums.DeliveryType;
+import com.fm.business.base.enums.DemandAttestationType;
 import com.fm.business.base.enums.DemandStatus;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.demand.DemandInfo;
@@ -287,7 +288,14 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
 
     @Override
     public Page<DemandInfo> getDemandByKeyword(String keyword, Integer currentPage, Integer pageSize) {
-        return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage,pageSize),
-                Wrappers.lambdaQuery(DemandInfo.class).like(DemandInfo::getSummarize,keyword).or().like(DemandInfo::getDescription,keyword).eq(DemandInfo::getStatus,DemandStatus.RELEASE.getCode())));
+//        com.baomidou.mybatisplus.extension.plugins.pagination.Page<DemandInfo> demandInfoPage = getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
+//                Wrappers.lambdaQuery(DemandInfo.class).eq(DemandInfo::getStatus, DemandStatus.RELEASE.getCode()).eq(DemandInfo::getAttestation, DemandAttestationType.YES_ATTESTATION.getCode()).like(DemandInfo::getSummarize, keyword).or().like(DemandInfo::getDescription, keyword));
+        QueryWrapper<DemandInfo> wrapper = new QueryWrapper<>();
+        wrapper.eq("status", DemandStatus.RELEASE.getCode());
+        wrapper.eq("attestation", DemandAttestationType.YES_ATTESTATION.getCode());
+        wrapper.and(w -> w.like("summarize", keyword).or()
+                .like("description", keyword));
+
+        return toPage( getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), wrapper));
     }
 }

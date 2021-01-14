@@ -2,6 +2,8 @@ package com.fm.business.base.service.demand.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.IDemandInfoMapper;
+import com.fm.business.base.enums.DemandStatus;
+import com.fm.business.base.enums.DemandType;
 import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.service.IEmployerInfoService;
@@ -32,6 +34,17 @@ public class DemandCenterInfoServiceImpl extends AuditBaseService<IDemandInfoMap
 
         List<BdJobCate> bdJobCates = iBdJobCateService.findByParentId(jobCateId);
         List<Long> collect = bdJobCates.stream().map(BdJobCate::getId).collect(Collectors.toList());
+        if (jobCateId != null && jobCateId == DemandType.A_REWARD.getCode()) {
+            return toPage(
+                    getBaseMapper().selectPage(
+                            new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
+                            getQueryWrapper().lambda()
+                                    .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
+                                    .eq(attestation != 0, DemandInfo::getAttestation, attestation)
+                                    .eq(DemandInfo::getStatus, DemandStatus.RELEASE.getCode())
+                                    .eq(DemandInfo::getDemandType,DemandType.A_REWARD.getCode())
+                                    .orderByDesc(DemandInfo::getCreateTime)));
+        }
 
         return toPage(
                 getBaseMapper().selectPage(
@@ -39,6 +52,7 @@ public class DemandCenterInfoServiceImpl extends AuditBaseService<IDemandInfoMap
                         getQueryWrapper().lambda()
                                 .eq(DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
                                 .eq(attestation != 0, DemandInfo::getAttestation, attestation)
+                                .eq(DemandInfo::getStatus, DemandStatus.RELEASE.getCode())
                                 .in(jobCateId != null, DemandInfo::getJobCateId, collect)
                                 .orderByDesc(DemandInfo::getCreateTime)));
     }

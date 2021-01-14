@@ -157,7 +157,7 @@ public class CollectInfoApiController extends BaseController<CollectInfo, Collec
         map.put("opened", opened);
         map.put("closed", closed);
         List<DemandInfoVO> data = pageDemandInfo.getData().stream().map(demandInfoMapper::toDemandInfoVO).collect(Collectors.toList());
-        List<BdJobCate> list = data.stream().map(DemandInfoVO::getJobCateId).collect(Collectors.toList())
+        List<BdJobCate> list = data.stream().map(DemandInfoVO::getJobCateId).filter(jobCateId -> jobCateId != null).collect(Collectors.toList())
                 .stream().map(jobCateId -> iBdJobCateService.get(jobCateId)).collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(list)) {
             Map<Long, BdJobCate> bdJobCateMap = list.stream().collect(Collectors.toMap(BdJobCate::getId, Function.identity(), (v1, v2) -> v2));
