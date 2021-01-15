@@ -32,6 +32,11 @@ public class DemandInfoVO extends VO implements Serializable {
     private String code;
 
     /**
+     * 类型
+     */
+    private Integer demandType;
+
+    /**
      * 发布用户编码
      **/
     private Long employerId;
@@ -137,6 +142,11 @@ public class DemandInfoVO extends VO implements Serializable {
     private String description;
 
     /**
+     * 岗位要求（悬赏）
+     */
+    private String jobRequire;
+
+    /**
      * 交付方式
      *
      * @see com.fm.business.base.enums.DeliveryType
@@ -164,6 +174,41 @@ public class DemandInfoVO extends VO implements Serializable {
      * 下次联系时间
      */
     private Date nextTime;
+
+    /**
+     *薪资范围
+     */
+    private String salaryRange;
+
+    /**
+     * 学历要求
+     */
+    private String educationRequire;
+
+    /**
+     * 工作经验
+     */
+    private String workExperience;
+
+    /**
+     * 年龄要求
+     */
+    private String ageRequire;
+
+    /**
+     * 推荐奖励
+     */
+    private Double recommendAward;
+
+    /**
+     * 招聘人数
+     */
+    private Integer recruitAmount;
+
+    /**
+     * 总金额
+     */
+    private Double sumMoney;
 
 
     /**
