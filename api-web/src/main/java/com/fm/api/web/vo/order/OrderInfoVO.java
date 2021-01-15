@@ -9,6 +9,7 @@ package com.fm.api.web.vo.order;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fm.api.web.vo.AttachmentInfoVO;
 import com.fm.api.web.vo.evaluation.EvaluationInfoVO;
+import com.fm.business.base.model.order.OrderAmount;
 import com.fm.business.base.model.order.OrderInfoDetail;
 import com.fm.framework.web.VO;
 import lombok.Data;
@@ -218,5 +219,7 @@ public class OrderInfoVO extends VO implements Serializable {
 	private Boolean isUploadVoucher;
 
 	EvaluationInfoVO evaluationInfoVO;
+
+	private transient OrderAmount orderAmount;
 
 }

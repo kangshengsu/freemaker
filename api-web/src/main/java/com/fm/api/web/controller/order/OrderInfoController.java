@@ -14,11 +14,9 @@ import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.freelancer.FreelancerInfo;
 import com.fm.business.base.model.job.BdJobCate;
-import com.fm.business.base.model.order.OrderFollow;
-import com.fm.business.base.model.order.OrderInfo;
-import com.fm.business.base.model.order.OrderInfoDetail;
-import com.fm.business.base.model.order.OrderOperateInfo;
+import com.fm.business.base.model.order.*;
 import com.fm.business.base.model.production.ProductionInfo;
+import com.fm.business.base.model.serviceCharge.ServiceCharge;
 import com.fm.business.base.service.IAttachmentInfoService;
 import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
@@ -29,6 +27,7 @@ import com.fm.business.base.service.order.IOrderInfoDetailService;
 import com.fm.business.base.service.order.IOrderInfoService;
 import com.fm.business.base.service.order.IOrderOperateInfoService;
 import com.fm.business.base.service.production.IProductionInfoService;
+import com.fm.business.base.service.serviceCharge.IServiceChargeService;
 import com.fm.framework.core.Context;
 import com.fm.framework.core.query.*;
 import com.fm.framework.core.service.Service;
@@ -92,6 +91,9 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
 
     @Autowired
     private AttachmentMapper attachmentMapper;
+
+    @Autowired
+    private IServiceChargeService serviceChargeService;
 
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
@@ -162,6 +164,44 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
         orderInfoDetail.setDescription(orderInfoVO.getDescription());
 
         orderInfo.setOrderInfoDetail(orderInfoDetail);
+
+        List<ServiceCharge> serviceCharges = serviceChargeService.getAll();
+        /**
+         * 实际支付金额
+         */
+        Double actOrderMny = orderInfoVO.getActOrderMny();
+        /**
+         * 实收服务费
+         */
+        Double freelancerActServiceCharge = 0.0;
+        if (serviceCharges.get(0).getFreelancerServiceCharge() > 0) {
+            freelancerActServiceCharge = actOrderMny * ((double) serviceCharges.get(0).getFreelancerServiceCharge() / 100);
+        }
+        /**
+         * 人才到手金额
+         */
+        Double freelancerActGetMny = actOrderMny - freelancerActServiceCharge;
+
+        /**
+         * 实收雇主服务费
+         */
+        Double employerActServiceCharge = 0.0;
+        if (serviceCharges.get(0).getCompanyServiceCharge() > 0) {
+            employerActServiceCharge = actOrderMny * ((double) serviceCharges.get(0).getCompanyServiceCharge() / 100);
+        }
+        /**
+         * 雇主实际支付
+         */
+        Double employerActPayMny = employerActServiceCharge + actOrderMny;
+        OrderAmount orderAmount = new OrderAmount();
+        orderAmount.setFreelancerServiceCharge(serviceCharges.get(0).getFreelancerServiceCharge());
+        orderAmount.setEmployerServiceCharge(serviceCharges.get(0).getCompanyServiceCharge());
+        orderAmount.setFreelancerActServiceCharge(freelancerActServiceCharge);
+        orderAmount.setEmployerActServiceCharge(employerActServiceCharge);
+        orderAmount.setFreelancerActGetMny(freelancerActGetMny);
+        orderAmount.setEmployerActPayMny(employerActPayMny);
+        orderInfo.setActOrderMny(actOrderMny);
+        orderInfo.setOrderAmount(orderAmount);
 
         orderInfoService.save(orderInfo);
 
