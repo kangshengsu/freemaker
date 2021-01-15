@@ -14,7 +14,6 @@ public abstract class DemandInfoMapper extends CommonMapper {
             @Mapping(target = "employerInfo.name", source = "employerInfo.name"),
             @Mapping(target = "employerInfo.headImg", source = "employerInfo.headImg",qualifiedByName = "fullHeadImgPath"),
             @Mapping(target = "employerInfo.phone", source = "employerInfo.phone"),
-            @Mapping(target = "companyName", source = "employerInfo.company"),
             @Mapping(target = "jobTitle", source = "employerInfo.jobTitle"),
             @Mapping(target = "demandStatus",source = "demandStatus")
     })
