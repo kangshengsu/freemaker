@@ -1,10 +1,13 @@
 package com.fm.api.web.controller.demand;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.fm.api.web.vo.demand.DemandInfoVO;
 import com.fm.business.base.enums.DemandAttestationType;
 import com.fm.business.base.enums.DemandType;
 import com.fm.business.base.model.demand.DemandInfo;
+import com.fm.business.base.model.demand.DemandRemarkInfo;
 import com.fm.business.base.service.demand.IDemandInfoService;
+import com.fm.business.base.service.demand.IDemandRemarkInfoService;
 import com.fm.framework.core.query.*;
 import com.fm.framework.core.service.Service;
 import com.fm.framework.web.controller.BaseController;
@@ -28,6 +31,9 @@ public class DemandRewardController extends BaseController<DemandInfo, DemandInf
     @Autowired
     private IDemandInfoService demandInfoService;
 
+    @Autowired
+    private IDemandRemarkInfoService demandRemarkInfoService;
+
 
     @PostMapping("list")
     public ApiResponse<Page<DemandInfoVO>> list(@RequestBody QueryRequest queryRequest){
@@ -41,6 +47,11 @@ public class DemandRewardController extends BaseController<DemandInfo, DemandInf
         Page<DemandInfoVO> data = super.list(queryRequest).getData();
         data.getData().forEach(demandInfoVO -> {
             demandInfoVO.setAttestationName(DemandAttestationType.get(demandInfoVO.getAttestation()).getName());
+            DemandRemarkInfo demandRemarkInfo = demandRemarkInfoService.getRemarkInfoByDemandId(demandInfoVO.getId());
+            if (ObjectUtil.isNotNull(demandRemarkInfo)) {
+                demandInfoVO.setRemarkInfo(demandRemarkInfo.getRemarkInfo());
+                demandInfoVO.setNextTime(demandRemarkInfo.getNextTime());
+            }
         });
         PageInfo<DemandInfoVO> pageInfo = new PageInfo<>();
         pageInfo.setCurrentPage(data.getCurrentPage());

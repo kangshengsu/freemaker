@@ -51,7 +51,7 @@ public class WxPayController {
     private IOrderInfoService orderInfoService;
 
     static String nonceStr = RandomStringUtil.getRandomStringByLength(32);
-    static Long orderId = null;
+     Long orderId = null;
 
     /**
      * 调用统一下单接口，并组装生成支付所需参数对象.
