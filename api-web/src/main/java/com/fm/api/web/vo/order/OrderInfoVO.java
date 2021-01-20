@@ -11,6 +11,7 @@ import com.fm.api.web.vo.AttachmentInfoVO;
 import com.fm.api.web.vo.evaluation.EvaluationInfoVO;
 import com.fm.business.base.model.order.OrderAmount;
 import com.fm.business.base.model.order.OrderInfoDetail;
+import com.fm.business.base.model.order.OrderOperateInfo;
 import com.fm.framework.web.VO;
 import lombok.Data;
 
@@ -59,6 +60,11 @@ public class OrderInfoVO extends VO implements Serializable {
     * 订单状态（10-初始态 20-已拒单 30-已接单 40-已支付 50-服务中 60-待验收 70-已完成 80-已评价）
     **/
 	private Integer status;
+
+	/**
+	 * 订单取消审核备注
+	 */
+	private String auditInfo;
 
 	/**
 	 * 预算计算方式(0-时薪  1-一口价  2-面谈)
@@ -173,6 +179,8 @@ public class OrderInfoVO extends VO implements Serializable {
 	private Long updateUser;
 
 	private List<OrderOperateInfoVO> orderOperateInfos;
+
+	private OrderOperateInfo orderOperateInfo;
 
 	/**
 	 * 需求省份编码

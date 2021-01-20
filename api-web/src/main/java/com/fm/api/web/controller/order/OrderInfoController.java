@@ -44,7 +44,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -122,8 +124,45 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
         queryRequest.setOrderItem(orderItem);
         ApiResponse<Page<OrderInfoVO>> result = super.list(queryRequest);
         fillDetailInfo(result.getData().getData());
+        fillOperateInfo(result.getData().getData());
+
 
         return result;
+    }
+
+    private void fillOperateInfo(List<OrderInfoVO> orderInfoVOList) {
+        List<Long> orderIds = orderInfoVOList.stream().map(OrderInfoVO::getId).collect(Collectors.toList());
+        List<OrderOperateInfo> orderOperateInfos = orderOperateInfoService.findByOrderIds(orderIds, OrderOperateType.CANCEL.getCode());
+        if (CollectionUtils.isEmpty(orderOperateInfos)) {
+            return ;
+        }
+        Map<Long, OrderOperateInfo> orderOperateInfoMap = orderOperateInfos.stream().collect(Collectors.toMap(OrderOperateInfo::getOrderId, Function.identity(), (v1, v2) -> v2));
+        orderInfoVOList.forEach(orderInfoVO -> {
+            if (orderOperateInfoMap.containsKey(orderInfoVO.getId())) {
+                orderInfoVO.setOrderOperateInfo(orderOperateInfoMap.get(orderInfoVO.getId()));
+            }
+        });
+        Set<String> orderOperateIds = orderOperateInfos.stream().map(orderOperateInfo -> orderOperateInfo.getId().toString()).collect(Collectors.toSet());
+        Map<String, List<AttachmentInfo>> attachmentMap = attachmentInfoService.getByCodeAndType(orderOperateIds, AttachmentBusinessType.ORDER_CANCEL).stream().collect(Collectors.toMap(AttachmentInfo::getBusinessCode, v -> {
+                    List<AttachmentInfo> list = new ArrayList<>();
+                    list.add(v);
+                    return list;
+                },
+                (v1, v2) -> {
+                    v1.addAll(v2);
+                    return v1;
+                }));
+        orderInfoVOList.forEach(orderInfoVO -> {
+            if (orderInfoVO.getOrderOperateInfo() != null) {
+                if (orderInfoVO.getOrderOperateInfo().getOperateType() == OrderOperateType.CANCEL.getCode()) {
+                    if (attachmentMap.containsKey(orderInfoVO.getOrderOperateInfo().getId().toString())) {
+                        orderInfoVO.getOrderOperateInfo().setAttachmentInfos(attachmentMap.get(orderInfoVO.getOrderOperateInfo().getId().toString()));
+                    }
+                }
+            }
+
+        });
+
     }
 
     @RequestMapping(value = "getOrderById", method = RequestMethod.GET)
@@ -260,6 +299,26 @@ public class OrderInfoController extends BaseController<OrderInfo, OrderInfoVO> 
             return this.update(orderInfoVO);
         }
         return failed("修改订单失败");
+    }
+
+    @RequestMapping(value = "reviewPass", method = RequestMethod.POST)
+    public ApiResponse<Boolean> reviewPass(@Valid @RequestBody OrderInfoVO form) {
+        form.setStatus(OrderStatus.CANCEL_52.getCode());
+        boolean result = orderInfoService.update(convert(form));
+        if (!result) {
+            return failed("操作失败");
+        }
+        return success(Boolean.TRUE);
+    }
+
+    @RequestMapping(value = "reviewNotPass", method = RequestMethod.POST)
+    public ApiResponse<Boolean> reviewNotPass(@Valid @RequestBody OrderInfoVO form) {
+        form.setStatus(OrderStatus.CANCEL_53.getCode());
+        boolean result = orderInfoService.update(convert(form));
+        if (!result) {
+            return failed("操作失败");
+        }
+        return success(Boolean.TRUE);
     }
 
     private void fillOperateInfo(OrderInfoVO orderInfoVO) {

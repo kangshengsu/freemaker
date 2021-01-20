@@ -73,6 +73,11 @@ public class OrderInfoVO extends VO implements Serializable {
     **/
 	private Integer status;
 
+	/**
+	 * 订单取消审核备注
+	 */
+	private String auditInfo;
+
 	private String statusName;
 
 	private Integer statusStep;

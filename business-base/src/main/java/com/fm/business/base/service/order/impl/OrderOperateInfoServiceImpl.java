@@ -195,6 +195,11 @@ public class OrderOperateInfoServiceImpl extends AuditBaseService<IOrderOperateI
         return orderOperateInfos;
     }
 
+    @Override
+    public List<OrderOperateInfo> findByOrderIds(List<Long> orderIds, Integer... orderOperateTypes) {
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(OrderOperateInfo.class).in(OrderOperateInfo::getOperateType,orderOperateTypes).in(OrderOperateInfo::getOrderId,orderIds));
+    }
+
     /**
      * 补全数据
      *

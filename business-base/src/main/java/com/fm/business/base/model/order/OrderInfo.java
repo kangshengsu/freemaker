@@ -64,6 +64,11 @@ public class OrderInfo extends BaseModel implements Serializable,IAudit {
 	private Integer status;
 
     /**
+     * 订单取消审核备注
+     */
+    private String auditInfo;
+
+    /**
      * 预算计算方式(0-时薪  1-一口价  2-面谈)
      */
     private Integer budgetType;

@@ -32,4 +32,6 @@ public interface IOrderOperateInfoService extends Service<OrderOperateInfo> {
     void saveOperateInfoBack(Long employerId, Long freelancerId, Long orderId, Integer status, String description, List<AttachmentInfo> attachmentList);
 
     List<OrderOperateInfo> findByOrderId(Long orderId, Integer... orderOperateTypes);
+
+    List<OrderOperateInfo> findByOrderIds(List<Long> orderIds, Integer... orderOperateTypes);
 }
