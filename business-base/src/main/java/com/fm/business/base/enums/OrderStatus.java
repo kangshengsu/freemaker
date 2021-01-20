@@ -19,7 +19,7 @@ public enum OrderStatus {
 
     CANCEL_52(52,"已取消",2,OrderOperateRoleType.EMPLOYER.getCode()),// 审核通过，取消订单
 
-    CANCEL_53(53,"取消不通过",2,OrderOperateRoleType.EMPLOYER.getCode()),
+    CANCEL_53(53,"服务中",2,OrderOperateRoleType.EMPLOYER.getCode()),// 雇主申请取消审核未通过，返回审核中
 
     CHECKING_60(60, "待验收", 3, OrderOperateRoleType.EMPLOYER.getCode()),
 
