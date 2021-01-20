@@ -249,10 +249,8 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     }
 
     private void fillOrderOperateInfo(OrderInfoVO orderInfoVO) {
-        List<OrderOperateInfo> orderOperateInfoList = new ArrayList<>();
-        if (orderInfoVO.getStatus() == OrderStatus.CHECKING_60.getCode() || orderInfoVO.getStatus() == OrderStatus.CHECK_FAIL_61.getCode()) {
+        List<OrderOperateInfo> orderOperateInfoList;
             orderOperateInfoList = orderOperateInfoService.findByOrderId(orderInfoVO.getId(), OrderOperateType.SUBMIT.getCode(), OrderOperateType.SUBMIT_AGAIN.getCode());
-        }
         if (orderInfoVO.getStatus() == OrderStatus.CANCEL_52.getCode() || orderInfoVO.getStatus() == OrderStatus.CANCEL_53.getCode()) {
             orderOperateInfoList = orderOperateInfoService.findByOrderId(orderInfoVO.getId(), OrderOperateType.CANCEL.getCode());
         }
