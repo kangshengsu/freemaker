@@ -199,7 +199,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
         fillOrderDetailInfo(orderInfoVO);
         fillOrderOperateInfo(orderInfoVO);
-        fillServiceChargeInfo(orderInfoVO,null);
+        fillServiceChargeInfo(orderInfoVO, null);
 
         // belong to
         if (Context.getCurrEmployerId().equals(orderInfoVO.getEmployerId())) {
@@ -250,7 +250,9 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
 
     private void fillOrderOperateInfo(OrderInfoVO orderInfoVO) {
         List<OrderOperateInfo> orderOperateInfoList = new ArrayList<>();
-        orderOperateInfoList = orderOperateInfoService.findByOrderId(orderInfoVO.getId(), OrderOperateType.SUBMIT.getCode(), OrderOperateType.SUBMIT_AGAIN.getCode());
+        if (orderInfoVO.getStatus() == OrderStatus.CHECKING_60.getCode() || orderInfoVO.getStatus() == OrderStatus.CHECK_FAIL_61.getCode()) {
+            orderOperateInfoList = orderOperateInfoService.findByOrderId(orderInfoVO.getId(), OrderOperateType.SUBMIT.getCode(), OrderOperateType.SUBMIT_AGAIN.getCode());
+        }
         if (orderInfoVO.getStatus() == OrderStatus.CANCEL_52.getCode() || orderInfoVO.getStatus() == OrderStatus.CANCEL_53.getCode()) {
             orderOperateInfoList = orderOperateInfoService.findByOrderId(orderInfoVO.getId(), OrderOperateType.CANCEL.getCode());
         }
@@ -264,31 +266,30 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
             businessCodes.add(orderOperateInfo.getId().toString());
             if (OrderOperateType.SUBMIT.getCode() == orderOperateInfo.getOperateType() || OrderOperateType.SUBMIT_AGAIN.getCode() == orderOperateInfo.getOperateType()) {
                 freelancerIds.add(orderOperateInfo.getOperateUser());
-            }else if (OrderOperateType.CANCEL.getCode() == orderOperateInfo.getOperateType()) {
+            } else if (OrderOperateType.CANCEL.getCode() == orderOperateInfo.getOperateType()) {
                 employerIds.add(orderOperateInfo.getOperateUser());
             }
         });
 
         Map<String, List<AttachmentVO>> attachmentInfoMap = attachmentInfoService.getByCodeAndType(businessCodes, AttachmentBusinessType.ORDER_OPERATE).stream().collect(Collectors.toMap(AttachmentInfo::getBusinessCode, v -> {
-                List<AttachmentVO> list = new ArrayList<>();
-                AttachmentVO attachmentVO = attachmentMapper.toAttachmentVO(v);
-                list.add(attachmentVO);
-                return list;
-            }, (v1, v2) -> {
-                v1.addAll(v2);
-                return v1;
-            }));
+            List<AttachmentVO> list = new ArrayList<>();
+            AttachmentVO attachmentVO = attachmentMapper.toAttachmentVO(v);
+            list.add(attachmentVO);
+            return list;
+        }, (v1, v2) -> {
+            v1.addAll(v2);
+            return v1;
+        }));
 
-        Map<String, List<AttachmentVO>>  attachmentInfoMaps = attachmentInfoService.getByCodeAndType(businessCodes, AttachmentBusinessType.ORDER_CANCEL).stream().collect(Collectors.toMap(AttachmentInfo::getBusinessCode, v -> {
-                List<AttachmentVO> list = new ArrayList<>();
-                AttachmentVO attachmentVO = attachmentMapper.toAttachmentVO(v);
-                list.add(attachmentVO);
-                return list;
-            }, (v1, v2) -> {
-                v1.addAll(v2);
-                return v1;
-            }));
-
+        Map<String, List<AttachmentVO>> attachmentInfoMaps = attachmentInfoService.getByCodeAndType(businessCodes, AttachmentBusinessType.ORDER_CANCEL).stream().collect(Collectors.toMap(AttachmentInfo::getBusinessCode, v -> {
+            List<AttachmentVO> list = new ArrayList<>();
+            AttachmentVO attachmentVO = attachmentMapper.toAttachmentVO(v);
+            list.add(attachmentVO);
+            return list;
+        }, (v1, v2) -> {
+            v1.addAll(v2);
+            return v1;
+        }));
 
 
         Map<Long, FreelancerInfo> freelancerInfoMap = freelancerInfoService.getByIds(freelancerIds).stream().collect(Collectors.toMap(FreelancerInfo::getId, Function.identity(), (v1, v2) -> v2));
@@ -359,7 +360,7 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     @ApiOperation(value = "下单")
     @ApiImplicitParam(paramType = "query", name = "code", value = "订单信息", required = true, dataType = "String")
     @RequestMapping(value = "save", method = RequestMethod.POST)
-    public ApiResponse<Map<String,Long>> save(@RequestBody OrderInfoVO orderInfoVO) {
+    public ApiResponse<Map<String, Long>> save(@RequestBody OrderInfoVO orderInfoVO) {
         orderInfoVO.setEmployerId(Context.getCurrEmployerId());
         orderInfoVO.setStatus(OrderStatus.TAKING_40.getCode());
         orderInfoVO.setActOrderMny(orderInfoVO.getActOrderMny());
