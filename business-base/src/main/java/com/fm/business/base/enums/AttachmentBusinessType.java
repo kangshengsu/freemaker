@@ -28,6 +28,7 @@ public enum AttachmentBusinessType {
     ORDER(30,"订单"),
     ORDER_OPERATE(31,"订单操作"),
     ORDER_EVALUATION(32,"订单评价"),
+    ORDER_CANCEL(33,"取消订单"),
     /**
      * 41-技能树头像
      */

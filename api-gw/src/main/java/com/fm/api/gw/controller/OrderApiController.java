@@ -249,29 +249,50 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
     }
 
     private void fillOrderOperateInfo(OrderInfoVO orderInfoVO) {
-        List<OrderOperateInfo> orderOperateInfoList = orderOperateInfoService.findByOrderId(orderInfoVO.getId(), OrderOperateType.SUBMIT.getCode(), OrderOperateType.SUBMIT_AGAIN.getCode());
+        List<OrderOperateInfo> orderOperateInfoList = new ArrayList<>();
+        orderOperateInfoList = orderOperateInfoService.findByOrderId(orderInfoVO.getId(), OrderOperateType.SUBMIT.getCode(), OrderOperateType.SUBMIT_AGAIN.getCode());
+        if (orderInfoVO.getStatus() == OrderStatus.CANCEL_52.getCode() || orderInfoVO.getStatus() == OrderStatus.CANCEL_53.getCode()) {
+            orderOperateInfoList = orderOperateInfoService.findByOrderId(orderInfoVO.getId(), OrderOperateType.CANCEL.getCode());
+        }
         orderInfoVO.setOrderOperateInfo(new ArrayList<>());
         HashSet<Long> freelancerIds = new HashSet<>();
         HashSet<String> businessCodes = new HashSet<>();
+        HashSet<Long> employerIds = new HashSet<>();
         List<OrderOperateInfoVO> operateInfoVOS = orderOperateInfoList.stream().map(orderOperateMapper::toOrderOperateInfoVO).collect(Collectors.toList());
         orderInfoVO.setOrderOperateInfo(operateInfoVOS);
         orderOperateInfoList.forEach(orderOperateInfo -> {
             businessCodes.add(orderOperateInfo.getId().toString());
             if (OrderOperateType.SUBMIT.getCode() == orderOperateInfo.getOperateType() || OrderOperateType.SUBMIT_AGAIN.getCode() == orderOperateInfo.getOperateType()) {
                 freelancerIds.add(orderOperateInfo.getOperateUser());
+            }else if (OrderOperateType.CANCEL.getCode() == orderOperateInfo.getOperateType()) {
+                employerIds.add(orderOperateInfo.getOperateUser());
             }
         });
+
         Map<String, List<AttachmentVO>> attachmentInfoMap = attachmentInfoService.getByCodeAndType(businessCodes, AttachmentBusinessType.ORDER_OPERATE).stream().collect(Collectors.toMap(AttachmentInfo::getBusinessCode, v -> {
-            List<AttachmentVO> list = new ArrayList<>();
-            AttachmentVO attachmentVO = attachmentMapper.toAttachmentVO(v);
-            list.add(attachmentVO);
-            return list;
-        }, (v1, v2) -> {
-            v1.addAll(v2);
-            return v1;
-        }));
+                List<AttachmentVO> list = new ArrayList<>();
+                AttachmentVO attachmentVO = attachmentMapper.toAttachmentVO(v);
+                list.add(attachmentVO);
+                return list;
+            }, (v1, v2) -> {
+                v1.addAll(v2);
+                return v1;
+            }));
+
+        Map<String, List<AttachmentVO>>  attachmentInfoMaps = attachmentInfoService.getByCodeAndType(businessCodes, AttachmentBusinessType.ORDER_CANCEL).stream().collect(Collectors.toMap(AttachmentInfo::getBusinessCode, v -> {
+                List<AttachmentVO> list = new ArrayList<>();
+                AttachmentVO attachmentVO = attachmentMapper.toAttachmentVO(v);
+                list.add(attachmentVO);
+                return list;
+            }, (v1, v2) -> {
+                v1.addAll(v2);
+                return v1;
+            }));
+
+
 
         Map<Long, FreelancerInfo> freelancerInfoMap = freelancerInfoService.getByIds(freelancerIds).stream().collect(Collectors.toMap(FreelancerInfo::getId, Function.identity(), (v1, v2) -> v2));
+        Map<Long, EmployerInfo> employerInfoMap = employerInfoService.getByIds(employerIds).stream().collect(Collectors.toMap(EmployerInfo::getId, Function.identity(), (v1, v2) -> v2));
         orderInfoVO.getOrderOperateInfo().forEach(orderOperateInfoVO -> {
             if (OrderOperateType.SUBMIT.getCode() == orderOperateInfoVO.getOperateType() || OrderOperateType.SUBMIT_AGAIN.getCode() == orderOperateInfoVO.getOperateType()) {
                 if (attachmentInfoMap.containsKey(orderOperateInfoVO.getId().toString())) {
@@ -281,6 +302,15 @@ public class OrderApiController extends BaseController<OrderInfo, OrderInfoVO> {
                     orderOperateInfoVO.setOperateUserName(freelancerInfoMap.get(orderOperateInfoVO.getOperateUser()).getName());
                 }
             }
+            if (OrderOperateType.CANCEL.getCode() == orderOperateInfoVO.getOperateType()) {
+                if (attachmentInfoMaps.containsKey(orderOperateInfoVO.getId().toString())) {
+                    orderOperateInfoVO.setImages(attachmentInfoMaps.get(orderOperateInfoVO.getId().toString()));
+                }
+                if (employerInfoMap.containsKey(orderOperateInfoVO.getOperateUser())) {
+                    orderOperateInfoVO.setOperateUserName(employerInfoMap.get(orderOperateInfoVO.getOperateUser()).getName());
+                }
+            }
+
         });
 
     }

@@ -15,6 +15,12 @@ public enum OrderStatus {
 
     PAID_50(50, "服务中", 2, OrderOperateRoleType.EMPLOYER.getCode()), // = 已支付
 
+    CANCEL_51(51,"取消订单待审核",2,OrderOperateRoleType.EMPLOYER.getCode()),// 制作时雇主取消待审核
+
+    CANCEL_52(52,"已取消",2,OrderOperateRoleType.EMPLOYER.getCode()),// 审核通过，取消订单
+
+    CANCEL_53(53,"取消不通过",2,OrderOperateRoleType.EMPLOYER.getCode()),
+
     CHECKING_60(60, "待验收", 3, OrderOperateRoleType.EMPLOYER.getCode()),
 
     CHECK_FAIL_61(61, "二次待验收", 3, OrderOperateRoleType.EMPLOYER.getCode()),//二次待验收

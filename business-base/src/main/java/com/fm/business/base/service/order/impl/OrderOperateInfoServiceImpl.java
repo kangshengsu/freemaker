@@ -80,8 +80,12 @@ public class OrderOperateInfoServiceImpl extends AuditBaseService<IOrderOperateI
             orderOperateInfo.setOperateType(OrderOperateType.UNACCEPT.getCode());
             orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
             orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
-        }else {
-            // 非此三种操作类型，不记录
+        }else if (OrderStatus.CANCEL_51.getCode().equals(status)) {
+            orderOperateInfo.setOperateType(OrderOperateType.CANCEL.getCode());
+            orderOperateInfo.setOperateUser(Context.getCurrEmployerId());
+            orderOperateInfo.setReceiveUser(Context.getCurrFreelancerId());
+        } else {
+            // 非此几种操作类型，不记录
             return;
         }
 
@@ -90,12 +94,18 @@ public class OrderOperateInfoServiceImpl extends AuditBaseService<IOrderOperateI
         this.save(orderOperateInfo);
 
 
-        if (!CollectionUtils.isEmpty(attachmentList)) {
+        if (!CollectionUtils.isEmpty(attachmentList) && status != OrderStatus.CANCEL_51.getCode()) {
             for (AttachmentInfo attachmentInfo : attachmentList) {
                 attachmentInfo.setBusinessCode(orderOperateInfo.getId().toString());
                 attachmentInfo.setType(AttachmentType.PICTURE.getCode());
                 attachmentInfo.setBusinessType(AttachmentBusinessType.ORDER_OPERATE.getCode());
             }
+        }else if (!CollectionUtils.isEmpty(attachmentList) && status == OrderStatus.CANCEL_51.getCode()){
+            attachmentList.forEach(attachmentInfo -> {
+                attachmentInfo.setBusinessCode(orderOperateInfo.getId().toString());
+                attachmentInfo.setType(AttachmentType.PICTURE.getCode());
+                attachmentInfo.setBusinessType(AttachmentBusinessType.ORDER_CANCEL.getCode());
+            });
         }
 
         attachmentInfoService.save(attachmentList);
