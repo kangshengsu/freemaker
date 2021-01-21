@@ -294,7 +294,7 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
         wrapper.like("summarize", keyword).or()
                 .like("description", keyword).or()
                 .in("employer_id", employerIds);
-        wrapper.eq("status", DemandStatus.RELEASE.getCode());
+        wrapper.and(w -> w.eq("status", DemandStatus.RELEASE.getCode()));
         wrapper.eq("attestation", DemandAttestationType.YES_ATTESTATION.getCode());
 
         return toPage( getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), wrapper));
