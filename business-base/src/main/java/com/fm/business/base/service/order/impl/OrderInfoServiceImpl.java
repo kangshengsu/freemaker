@@ -69,7 +69,7 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
     public Page<OrderInfo> queryOrderInfoByPage(Long employerId, Long freelancerId, long currPage, long pageSize, Integer orderType, Integer status) {
         LambdaQueryWrapper<OrderInfo> wrapper = Wrappers.<OrderInfo>lambdaQuery();
         if (status == OrderStatus.CANCELD_100.getCode()) {
-            wrapper.eq(status > 0, OrderInfo::getStatus, OrderStatus.CANCEL_52.getCode());
+            wrapper.eq(status > 0, OrderInfo::getStatus, OrderStatus.CANCEL_52.getCode()).or();
         }
             wrapper.eq(status > 0, OrderInfo::getStatus, status);
 
