@@ -607,9 +607,14 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
     }
 
     @Override
-    public Page<ProductionInfo> getProductionInfoByKeyword(String keyword, Integer currentPage, Integer pageSize) {
+    public Page<ProductionInfo> getProductionInfoByKeyword(String keyword,List<Long> freelancerIds, Integer currentPage, Integer pageSize) {
+//        Wrappers.lambdaQuery(ProductionInfo.class).like(ProductionInfo::getTitle,keyword).or().like(ProductionInfo::getSummarize,keyword).eq(ProductionInfo::getStatus,ProductionStatus.RELEASE.getCode()));
+        QueryWrapper<ProductionInfo> wrapper = new QueryWrapper<>();
+        wrapper.like("title", keyword).or()
+                .like("summarize", keyword).or()
+                .in("freelancer_id", freelancerIds);
+        wrapper.eq("status", ProductionStatus.RELEASE.getCode());
 
-        return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage,pageSize),
-                Wrappers.lambdaQuery(ProductionInfo.class).like(ProductionInfo::getTitle,keyword).or().like(ProductionInfo::getSummarize,keyword).eq(ProductionInfo::getStatus,ProductionStatus.RELEASE.getCode())));
+        return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage,pageSize),wrapper));
     }
 }

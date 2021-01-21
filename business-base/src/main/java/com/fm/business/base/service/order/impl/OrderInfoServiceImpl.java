@@ -29,10 +29,8 @@ import java.util.Objects;
 
 /**
  * @Description:(订单信息服务实现)
- *
  * @version: V1.0
  * @author: LiuDuo
- *
  */
 @Slf4j
 @Service("orderInfoService")
@@ -68,17 +66,22 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
     }
 
     @Override
-    public Page<OrderInfo> queryOrderInfoByPage(Long employerId, Long freelancerId, long currPage, long pageSize,Integer orderType, Integer status) {
-        LambdaQueryWrapper<OrderInfo> wrapper = Wrappers.<OrderInfo>lambdaQuery()
-                .eq(status > 0, OrderInfo::getStatus, status);
+    public Page<OrderInfo> queryOrderInfoByPage(Long employerId, Long freelancerId, long currPage, long pageSize, Integer orderType, Integer status) {
+        LambdaQueryWrapper<OrderInfo> wrapper = Wrappers.<OrderInfo>lambdaQuery();
+        if (status == OrderStatus.CANCELD_100.getCode()) {
+            wrapper.eq(status > 0, OrderInfo::getStatus, OrderStatus.CANCEL_52.getCode());
+        }
+            wrapper.eq(status > 0, OrderInfo::getStatus, status);
+
+
 
         log.info("queryOrderInfoByPage employerId: {}, freelancerId: {}, status: {}, orderType: {}", employerId, freelancerId, status, orderType);
 
-        if(Objects.isNull(employerId)) {
+        if (Objects.isNull(employerId)) {
             employerId = -1L;
         }
 
-        if(Objects.isNull(freelancerId)) {
+        if (Objects.isNull(freelancerId)) {
             freelancerId = -1L;
         }
 
@@ -94,7 +97,7 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
                 wrapper.eq(OrderInfo::getEmployerId, _employerId);
                 break;
             case ALL:
-                wrapper.and(w-> w.eq(OrderInfo::getFreelancerId, _freelancerId).or().eq(OrderInfo::getEmployerId, _employerId));
+                wrapper.and(w -> w.eq(OrderInfo::getFreelancerId, _freelancerId).or().eq(OrderInfo::getEmployerId, _employerId));
 
         }
         wrapper.orderByDesc(OrderInfo::getCreateTime);
@@ -103,7 +106,7 @@ public class OrderInfoServiceImpl extends AuditBaseService<IOrderInfoMapper, Ord
 
     @Override
     public Long getOrderIdByCode(String code) {
-        return getBaseMapper().selectOne(Wrappers.lambdaQuery(OrderInfo.class).eq(OrderInfo::getCode,code)).getId();
+        return getBaseMapper().selectOne(Wrappers.lambdaQuery(OrderInfo.class).eq(OrderInfo::getCode, code)).getId();
     }
 
     @Override

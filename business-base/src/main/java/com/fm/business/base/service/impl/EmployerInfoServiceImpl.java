@@ -20,6 +20,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description:(雇佣者信息服务实现)
@@ -85,5 +86,10 @@ public class EmployerInfoServiceImpl extends AuditBaseService<IEmployerInfoMappe
         }else {
             return true;
         }
+    }
+
+    @Override
+    public List<Long> getEmployerIdByName(String keyword) {
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(EmployerInfo.class).like(EmployerInfo::getName,keyword)).stream().map(EmployerInfo::getId).collect(Collectors.toList());
     }
 }

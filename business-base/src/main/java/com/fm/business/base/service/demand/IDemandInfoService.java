@@ -94,5 +94,5 @@ public interface IDemandInfoService extends Service<DemandInfo> {
 
     Integer getOpenedDemandCount(List<Long> demandId);
 
-    Page<DemandInfo> getDemandByKeyword(String keyword, Integer currentPage, Integer pageSize);
+    Page<DemandInfo> getDemandByKeyword(String keyword,List<Long> employerIds, Integer currentPage, Integer pageSize);
 }

@@ -11,7 +11,9 @@ import com.fm.business.base.model.demand.DemandInfo;
 import com.fm.business.base.model.job.BdJobCate;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.model.select.SelectInfo;
+import com.fm.business.base.service.IEmployerInfoService;
 import com.fm.business.base.service.demand.IDemandInfoService;
+import com.fm.business.base.service.freelancer.IFreelancerInfoService;
 import com.fm.business.base.service.job.IBdJobCateService;
 import com.fm.business.base.service.production.IProductionInfoService;
 import com.fm.business.base.service.select.ISelectInfoService;
@@ -63,6 +65,12 @@ public class SelectController extends BaseController<SelectInfo, SelectVO> {
 
     @Autowired
     private IBdJobCateService iBdJobCateService;
+
+    @Autowired
+    private IFreelancerInfoService freelancerInfoService;
+
+    @Autowired
+    private IEmployerInfoService employerInfoService;
 
     @RequestMapping(value = "insertKeyword", method = RequestMethod.POST)
     @ApiOperation("保存搜索关键词")
@@ -131,7 +139,8 @@ public class SelectController extends BaseController<SelectInfo, SelectVO> {
 
 
     private PageInfo<DemandInfoVO> getDemandInfoVOPageInfo(@RequestParam("keyword") String keyword, @RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize) {
-        Page<DemandInfo> demandInfoPage = demandInfoService.getDemandByKeyword(keyword, currentPage, pageSize);
+        List<Long> employerIds = employerInfoService.getEmployerIdByName(keyword);
+        Page<DemandInfo> demandInfoPage = demandInfoService.getDemandByKeyword(keyword,employerIds, currentPage, pageSize);
         List<DemandInfoVO> demandInfoVOList = demandInfoPage.getData().stream().map(demandInfoMapper::toDemandInfoVO).collect(Collectors.toList());
         List<BdJobCate> list = demandInfoVOList.stream().map(DemandInfoVO::getJobCateId).filter(jobCateId -> jobCateId != null).collect(Collectors.toList())
                 .stream().map(jobCateId -> iBdJobCateService.get(jobCateId)).collect(Collectors.toList());
@@ -153,7 +162,8 @@ public class SelectController extends BaseController<SelectInfo, SelectVO> {
     }
 
     private PageInfo<ProductionViewVO> getProductionViewVOPageInfo(@RequestParam("keyword") String keyword, @RequestParam("currentPage") Integer currentPage, @RequestParam("pageSize") Integer pageSize) {
-        Page<ProductionInfo> productionInfoPage = productionInfoService.getProductionInfoByKeyword(keyword, currentPage, pageSize);
+        List<Long> freelancerIds = freelancerInfoService.getFreelancerIdLikeName(keyword);
+        Page<ProductionInfo> productionInfoPage = productionInfoService.getProductionInfoByKeyword(keyword,freelancerIds, currentPage, pageSize);
         List<ProductionViewVO> data = productionInfoPage.getData().stream().map(productionMapper::toProductionViewVO).collect(Collectors.toList());
         PageInfo<ProductionViewVO> pageInfo = new PageInfo<>();
         pageInfo.setCurrentPage(currentPage);

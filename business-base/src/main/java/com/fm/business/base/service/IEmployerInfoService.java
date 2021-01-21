@@ -33,5 +33,5 @@ public interface IEmployerInfoService extends Service<EmployerInfo> {
     boolean updateCompanyName(Long employerId, EmployerInfo employerInfo);
 
 
-
+    List<Long> getEmployerIdByName(String keyword);
 }

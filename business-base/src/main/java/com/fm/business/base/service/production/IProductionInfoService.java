@@ -141,5 +141,5 @@ public interface IProductionInfoService extends Service<ProductionInfo> {
 
     Page<ProductionInfo> getPageProductionById(List<Long> productionId, Integer currentPage, Integer pageSize);
 
-    Page<ProductionInfo> getProductionInfoByKeyword(String keyword, Integer currentPage, Integer pageSize);
+    Page<ProductionInfo> getProductionInfoByKeyword(String keyword,List<Long> freelancerIds, Integer currentPage, Integer pageSize);
 }
