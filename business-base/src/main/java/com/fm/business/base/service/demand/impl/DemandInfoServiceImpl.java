@@ -311,7 +311,7 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
         QueryWrapper<DemandInfo> wrapper = new QueryWrapper<>();
         wrapper.like("summarize", keyword).or()
                 .like("description", keyword).or()
-                .in("employer_id", employerIds);
+                .in(employerIds.size() > 0, "employer_id", employerIds);
 
 
         return toPageSelect(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), wrapper));

@@ -629,7 +629,7 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         QueryWrapper<ProductionInfo> wrapper = new QueryWrapper<>();
         wrapper.like("title", keyword).or()
                 .like("summarize", keyword).or()
-                .in("freelancer_id", freelancerIds);
+                .in(freelancerIds.size() > 0,"freelancer_id", freelancerIds);
 
         return toPageSelect(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage,pageSize),wrapper));
     }
