@@ -139,6 +139,8 @@ public class OrderStatusChangeMessageSender {
                 return String.format("您的订单已经改价成功，请前往支付，谢谢！");
             case PAID_50:
                 return String.format("您的订单已支付成功，人才马上开始工作。");
+            case CANCEL_53:
+                return String.format("抱歉，订单取消审核失败，请进入小程序查看原因。");
             case CHECKING_60:
                 return String.format("您的订单已经交付成功，请您尽快验收吧！");
             case CHECK_FAIL_61:
@@ -168,6 +170,8 @@ public class OrderStatusChangeMessageSender {
                 return String.format("您的订单已取消成功！");
             case PAID_50:
                 return String.format("订单已经付款成功，您可以开始工作了。");
+            case CANCEL_52:
+                return String.format("订单已取消成功。");
             case CHECKING_60:
                 return String.format("订单已经完成交付，请您等待验收。");
             case CHECK_FAIL_61:
