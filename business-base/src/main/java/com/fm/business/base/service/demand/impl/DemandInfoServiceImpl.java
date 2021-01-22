@@ -56,6 +56,16 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
     @Override
     protected Page<DemandInfo> toPage(com.baomidou.mybatisplus.extension.plugins.pagination.Page<DemandInfo> mybatisPlusPage) {
         Page<DemandInfo> demandInfoPage = super.toPage(mybatisPlusPage);
+        if (demandInfoPage.getData() != null && !demandInfoPage.getData().isEmpty()) {
+            //补全信息
+            fillOtherInfo(demandInfoPage.getData());
+
+        }
+        return demandInfoPage;
+    }
+
+    protected Page<DemandInfo> toPageSelect(com.baomidou.mybatisplus.extension.plugins.pagination.Page<DemandInfo> mybatisPlusPage) {
+        Page<DemandInfo> demandInfoPage = super.toPage(mybatisPlusPage);
         List<DemandInfo> demandInfos = new ArrayList<>();
         if (demandInfoPage.getData() != null && !demandInfoPage.getData().isEmpty()) {
             demandInfos = demandInfoPage.getData().stream().filter(demandInfo -> demandInfo.getStatus() == 20 && demandInfo.getAttestation() == 1).collect(Collectors.toList());
@@ -304,6 +314,6 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
                 .in("employer_id", employerIds);
 
 
-        return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), wrapper));
+        return toPageSelect(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), wrapper));
     }
 }
