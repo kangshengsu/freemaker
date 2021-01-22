@@ -40,7 +40,7 @@ public class DisplayConfigVO extends VO {
     /**
      * 是否开启IM
      */
-    private Boolean isShowIm;
+    private Integer isShowIm;
 
     /**
      * 过期时间

@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -104,7 +105,7 @@ public class DisplayConfigController extends BaseController<DisplayConfig, Displ
         List<DisplayConfig> displayConfigs = displayConfigService.get(DisplayType.IM);
         DisplayConfig displayConfig = displayConfigs.get(0);
         if (displayConfig != null) {
-            if (form.getIsShowIm() == true) {
+            if (form.getIsShowIm() == 1) {
                 displayConfig.setIsShowIm(1);
             }else{
                 displayConfig.setIsShowIm(0);
@@ -112,6 +113,14 @@ public class DisplayConfigController extends BaseController<DisplayConfig, Displ
            return success(displayConfigService.update(displayConfig));
         }
         return failed("修改失败");
+    }
+
+    @RequestMapping(value = "getIsShowIm",method = RequestMethod.GET)
+    public ApiResponse<Map<String,Integer>> getIsShowIm(){
+        DisplayConfig displayConfig = displayConfigService.get(DisplayType.IM).get(0);
+        Map<String, Integer> map = new HashMap<>();
+        map.put("isShowIm", displayConfig.getIsShowIm());
+        return success(map);
     }
 
 
