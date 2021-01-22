@@ -12,7 +12,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fm.business.base.dao.IDemandInfoMapper;
 import com.fm.business.base.enums.BudgetType;
 import com.fm.business.base.enums.DeliveryType;
-import com.fm.business.base.enums.DemandAttestationType;
 import com.fm.business.base.enums.DemandStatus;
 import com.fm.business.base.model.EmployerInfo;
 import com.fm.business.base.model.demand.DemandInfo;
@@ -57,11 +56,19 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
     @Override
     protected Page<DemandInfo> toPage(com.baomidou.mybatisplus.extension.plugins.pagination.Page<DemandInfo> mybatisPlusPage) {
         Page<DemandInfo> demandInfoPage = super.toPage(mybatisPlusPage);
+        List<DemandInfo> demandInfos = new ArrayList<>();
         if (demandInfoPage.getData() != null && !demandInfoPage.getData().isEmpty()) {
+            demandInfos = demandInfoPage.getData().stream().filter(demandInfo -> demandInfo.getStatus() == 20 && demandInfo.getAttestation() == 1).collect(Collectors.toList());
             //补全信息
-            fillOtherInfo(demandInfoPage.getData());
+            fillOtherInfo(demandInfos);
+
         }
-        return demandInfoPage;
+        PageInfo<DemandInfo> pageInfo = new PageInfo<>();
+        pageInfo.setPageSize(demandInfoPage.getPageSize());
+        pageInfo.setCurrentPage(demandInfoPage.getCurrentPage());
+        pageInfo.setTotal(demandInfoPage.getTotal());
+        pageInfo.setData(demandInfos);
+        return pageInfo;
     }
 
     /**
@@ -131,8 +138,8 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
                                 .eq(DemandInfo::getEmployerId, employerId)
                                 .eq(status != 0, DemandInfo::getStatus, status)
                                 .or().in(!CollectionUtils.isEmpty(demandProductionRelationIds), DemandInfo::getId, demandProductionRelationIds)
-                                .eq(!CollectionUtils.isEmpty(demandProductionRelationIds),DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
-                                .eq(!CollectionUtils.isEmpty(demandProductionRelationIds)&&status != 0, DemandInfo::getStatus, status)
+                                .eq(!CollectionUtils.isEmpty(demandProductionRelationIds), DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
+                                .eq(!CollectionUtils.isEmpty(demandProductionRelationIds) && status != 0, DemandInfo::getStatus, status)
                                 .orderByDesc(DemandInfo::getCreateTime)));
     }
 
@@ -174,7 +181,7 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
     }
 
     private void fill(DemandInfo demandInfo) {
-        if(demandInfo == null){
+        if (demandInfo == null) {
             return;
         }
         demandInfo.setEmployerInfo(employerInfoService.getById(demandInfo.getEmployerId()));
@@ -226,23 +233,24 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
     }
 
     @Override
-    public Page<DemandInfo> getPageDemandInfo(List<Long> demandId,Integer currentPage,Integer pageSize,Integer demandStatus) {
+    public Page<DemandInfo> getPageDemandInfo(List<Long> demandId, Integer currentPage, Integer pageSize, Integer demandStatus) {
         if (CollectionUtils.isEmpty(demandId)) {
             return new PageInfo<>();
         }
         if (demandStatus == DemandStatus.RELEASE.getCode()) {
             return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
-                Wrappers.lambdaQuery(DemandInfo.class).eq(DemandInfo::getStatus,DemandStatus.RELEASE.getCode()).in(DemandInfo::getId,demandId)));
-        }else if (demandStatus == DemandStatus.CANCEL.getCode()){
+                    Wrappers.lambdaQuery(DemandInfo.class).eq(DemandInfo::getStatus, DemandStatus.RELEASE.getCode()).in(DemandInfo::getId, demandId)));
+        } else if (demandStatus == DemandStatus.CANCEL.getCode()) {
             return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
-                    Wrappers.lambdaQuery(DemandInfo.class).eq(DemandInfo::getStatus,DemandStatus.CANCEL.getCode()).in(DemandInfo::getId,demandId)));
-        }else{
+                    Wrappers.lambdaQuery(DemandInfo.class).eq(DemandInfo::getStatus, DemandStatus.CANCEL.getCode()).in(DemandInfo::getId, demandId)));
+        } else {
             return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
-                    Wrappers.lambdaQuery(DemandInfo.class).in(DemandInfo::getId,demandId)));
+                    Wrappers.lambdaQuery(DemandInfo.class).in(DemandInfo::getId, demandId)));
         }
 
 
     }
+
     public Page<DemandInfo> getPageByEmployerId(Integer currentPage, Integer pageSize, Integer status, Long employerId) {
         return toPage(
                 getBaseMapper().selectPage(
@@ -261,8 +269,8 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
                         new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
                         getQueryWrapper().lambda()
                                 .in(!CollectionUtils.isEmpty(demandProductionRelationIds), DemandInfo::getId, demandProductionRelationIds)
-                                .eq(!CollectionUtils.isEmpty(demandProductionRelationIds),DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
-                                .eq(!CollectionUtils.isEmpty(demandProductionRelationIds)&&status != 0, DemandInfo::getStatus, status)
+                                .eq(!CollectionUtils.isEmpty(demandProductionRelationIds), DemandInfo::getIsDelete, DeleteEnum.VALID.getValue())
+                                .eq(!CollectionUtils.isEmpty(demandProductionRelationIds) && status != 0, DemandInfo::getStatus, status)
                                 .orderByDesc(DemandInfo::getCreateTime)));
     }
 
@@ -277,26 +285,25 @@ public class DemandInfoServiceImpl extends AuditBaseService<IDemandInfoMapper, D
 
     @Override
     public Integer getDemandClosedCount(List<Long> demandId) {
-        return getBaseMapper().selectList(Wrappers.lambdaQuery(DemandInfo.class).eq(DemandInfo::getStatus,DemandStatus.CANCEL.getCode()).in(DemandInfo::getId,demandId)).size();
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(DemandInfo.class).eq(DemandInfo::getStatus, DemandStatus.CANCEL.getCode()).in(DemandInfo::getId, demandId)).size();
 
     }
 
     @Override
     public Integer getOpenedDemandCount(List<Long> demandId) {
-        return getBaseMapper().selectList(Wrappers.lambdaQuery(DemandInfo.class).eq(DemandInfo::getStatus, DemandStatus.RELEASE.getCode()).in(DemandInfo::getId,demandId)).size();
+        return getBaseMapper().selectList(Wrappers.lambdaQuery(DemandInfo.class).eq(DemandInfo::getStatus, DemandStatus.RELEASE.getCode()).in(DemandInfo::getId, demandId)).size();
     }
 
     @Override
-    public Page<DemandInfo> getDemandByKeyword(String keyword,List<Long> employerIds, Integer currentPage, Integer pageSize) {
+    public Page<DemandInfo> getDemandByKeyword(String keyword, List<Long> employerIds, Integer currentPage, Integer pageSize) {
 //        com.baomidou.mybatisplus.extension.plugins.pagination.Page<DemandInfo> demandInfoPage = getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize),
 //                Wrappers.lambdaQuery(DemandInfo.class).eq(DemandInfo::getStatus, DemandStatus.RELEASE.getCode()).eq(DemandInfo::getAttestation, DemandAttestationType.YES_ATTESTATION.getCode()).like(DemandInfo::getSummarize, keyword).or().like(DemandInfo::getDescription, keyword));
         QueryWrapper<DemandInfo> wrapper = new QueryWrapper<>();
         wrapper.like("summarize", keyword).or()
                 .like("description", keyword).or()
                 .in("employer_id", employerIds);
-        wrapper.and(w -> w.eq("status", DemandStatus.RELEASE.getCode()));
-        wrapper.eq("attestation", DemandAttestationType.YES_ATTESTATION.getCode());
 
-        return toPage( getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), wrapper));
+
+        return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage, pageSize), wrapper));
     }
 }

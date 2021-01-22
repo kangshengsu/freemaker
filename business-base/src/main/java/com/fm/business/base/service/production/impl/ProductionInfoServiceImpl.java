@@ -342,11 +342,18 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
     @Override
     protected Page<ProductionInfo> toPage(com.baomidou.mybatisplus.extension.plugins.pagination.Page<ProductionInfo> mybatisPlusPage) {
         Page<ProductionInfo> productionInfoPage = super.toPage(mybatisPlusPage);
+        List<ProductionInfo> productionInfos = new ArrayList<>();
         if (productionInfoPage.getData() != null && !productionInfoPage.getData().isEmpty()) {
+            productionInfos = productionInfoPage.getData().stream().filter(productionInfo -> productionInfo.getStatus() == 40).collect(Collectors.toList());
             //补全信息
-            fillProductInfoRelation(productionInfoPage.getData());
+            fillProductInfoRelation(productionInfos);
         }
-        return productionInfoPage;
+        PageInfo<ProductionInfo> pageInfo = new PageInfo<>();
+        pageInfo.setPageSize(productionInfoPage.getPageSize());
+        pageInfo.setCurrentPage(productionInfoPage.getCurrentPage());
+        pageInfo.setTotal(productionInfoPage.getTotal());
+        pageInfo.setData(productionInfos);
+        return pageInfo;
     }
 
 
@@ -613,7 +620,6 @@ public class ProductionInfoServiceImpl extends AuditBaseService<IProductionInfoM
         wrapper.like("title", keyword).or()
                 .like("summarize", keyword).or()
                 .in("freelancer_id", freelancerIds);
-        wrapper.eq("status", ProductionStatus.RELEASE.getCode());
 
         return toPage(getBaseMapper().selectPage(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(currentPage,pageSize),wrapper));
     }
