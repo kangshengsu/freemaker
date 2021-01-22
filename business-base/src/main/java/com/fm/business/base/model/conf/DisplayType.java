@@ -12,6 +12,11 @@ import java.util.Arrays;
 public enum DisplayType {
 
     /**
+     * IM配置
+     */
+    IM(0),
+
+    /**
      * 领域
      */
     job_cate_1(1),

@@ -1,12 +1,12 @@
 package com.fm.api.gw.vo.conf;
 
 import com.fm.api.gw.vo.production.list.ProductionListVO;
-import com.fm.api.gw.vo.production.req.ProductionApiVO;
 import com.fm.framework.core.query.Page;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 展现配置聚合VO
@@ -23,5 +23,7 @@ public class AggDisplayConfigVO implements Serializable {
     private List<ProductionListVO> recommendProductInfos;
 
     private Page<ProductionListVO> productionListInfo;
+
+    private Map<String,Boolean> isShowIm;
 
 }

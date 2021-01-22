@@ -168,7 +168,7 @@ public class DisplayConfigServiceImpl extends AuditBaseService<DisplayConfigMapp
      */
     public List<DisplayConfig> get(DisplayType displayType) {
 
-        if (Objects.isNull(displayType) || displayType.getCode() <= 0) {
+        if (Objects.isNull(displayType) || displayType.getCode() < 0) {
             return Collections.emptyList();
         }
 

@@ -38,6 +38,11 @@ public class DisplayConfigVO extends VO {
     private Integer recommendWeight;
 
     /**
+     * 是否开启IM
+     */
+    private Boolean isShowIm;
+
+    /**
      * 过期时间
      */
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")

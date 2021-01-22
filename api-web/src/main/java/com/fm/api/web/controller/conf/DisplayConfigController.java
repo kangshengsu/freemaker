@@ -99,6 +99,22 @@ public class DisplayConfigController extends BaseController<DisplayConfig, Displ
         return super.delete(id);
     }
 
+    @RequestMapping(value = "isShowIM",method = RequestMethod.POST)
+    public ApiResponse<Boolean> updateIsShowIM(@RequestBody DisplayConfigVO form){
+        List<DisplayConfig> displayConfigs = displayConfigService.get(DisplayType.IM);
+        DisplayConfig displayConfig = displayConfigs.get(0);
+        if (displayConfig != null) {
+            if (form.getIsShowIm() == true) {
+                displayConfig.setIsShowIm(1);
+            }else{
+                displayConfig.setIsShowIm(0);
+            }
+           return success(displayConfigService.update(displayConfig));
+        }
+        return failed("修改失败");
+    }
+
+
     protected List<DisplayConfigVO> convert(DisplayType displayType, List<DisplayConfig> modes) {
         switch (displayType) {
             case job_cate_1:

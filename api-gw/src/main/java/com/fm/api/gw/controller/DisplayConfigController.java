@@ -6,6 +6,7 @@ import com.fm.api.gw.vo.conf.DisplayConfigVO;
 import com.fm.api.gw.vo.production.list.ProductionListVO;
 import com.fm.api.gw.vo.production.mapper.ProductionMapper;
 import com.fm.business.base.model.conf.DisplayConfig;
+import com.fm.business.base.model.conf.DisplayType;
 import com.fm.business.base.model.production.ProductionInfo;
 import com.fm.business.base.service.conf.IDisplayConfigService;
 import com.fm.business.base.service.production.IProductionInfoService;
@@ -20,8 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -76,6 +78,15 @@ public class DisplayConfigController extends BaseController<DisplayConfig, Displ
         pageInfo.setData(list);
         result.setProductionListInfo(pageInfo);
 
+        DisplayConfig displayConfig = displayConfigService.get(DisplayType.IM).get(0);
+        Map<String, Boolean> map = new HashMap<>();
+        result.setIsShowIm(map);
+        if (displayConfig.getIsShowIm() == 1) {
+            map.put("isShowIm", true);
+        }else{
+            map.put("isShowIm", false);
+        }
+        result.setIsShowIm(map);
         return ApiResponse.ofSuccess(result);
 
     }

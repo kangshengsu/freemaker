@@ -37,6 +37,11 @@ public class DisplayConfig extends BaseModel implements IAudit {
     private Integer recommendWeight;
 
     /**
+     * 是否开启IM
+     */
+    private Integer isShowIm;
+
+    /**
      * 过期时间
      */
     private Date expiredTime;
